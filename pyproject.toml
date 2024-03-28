@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "parsnip"
 version = "0.0.2"
-requires-python = ">=3.9" # This could be updated to a minimum of 3.6
+requires-python = ">=3.9"
 description = "Minimal library for parsing CIF/mmCIF files in Python."
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -61,7 +61,7 @@ select = [
     "PIE794", # enable c-style single definition of variables
 ]
 ignore = [
-  "S101", # Assertions are agood thing
+  "S101", # Assertions are a good thing
   "D105", # Magic methods don't require documentation.
   "D107", # __init__ methods don't require documentation.
   "SIM116", # Allow certain branched if statements
