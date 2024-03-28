@@ -1,2 +1,2 @@
 # parsnip
-Minimal library for parsing CIF/mmCIF files in Python
+Minimal library for parsing CIF/mmCIF files in Python.
