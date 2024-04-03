@@ -103,9 +103,9 @@ def read_table(
                     )
 
             elif (not in_header) and (line[:1] == "_"):
-                break  # If we are back to standard data, exit the loop
+                break
 
-        if data_column_indices:  # Exit the loop if we've found our data.
+        if data_column_indices:
             break
 
     if not keep_original_key_order:
