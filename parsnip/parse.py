@@ -11,13 +11,16 @@ def read_table(
     filename: str,
     keys: str,
     filter_line: tuple[tuple[str, str]] = ((r",\s+", ",")),
-    validate: bool = True,
+    keep_original_key_order=False,
 ) -> np.ndarray[str]:
     r"""Extract data from a CIF file loop_ table.
 
-    CIF files store tabular data as whitespace-delimited blocks surrounded by `loop_`.
+    CIF files store tabular data as whitespace-delimited blocks that start with `loop_`.
     Keys are kept at the top of the table, and the vertical position of keys corresponds
-    to the horizontal position of the column storing the data for that key.
+    to the horizontal position of the column storing the data for that key. The end of
+    the table is not necessarily marked: instead, the script detects when the table
+    format is exited.
+
     For example:
 
     ```
@@ -47,35 +50,40 @@ def read_table(
     seperated by commas and whitespace characters, and other sections of the line that
     are also whitespace separated. Adding another tuple to remove single quotes can
     also be helpful: try ``((",\s+",","),(",",""))`` to achieve this. To disable the
-    feature entirely, pass in a tuple of empty strings: ``("","")``
+    feature entirely, pass in a tuple of empty strings: ``("","")``. Note that doing so
+    will cause errors if the table contains non-delimiting whitespaces.
 
     Args:
         filename (str): The name of the .cif file to be parsed.
         keys (tuple[str]): The names of the keys to be parsed.
         filter_line (tuple[tuple[str]], optional):
             A tuple of strings that are compiled to a regex filter and applied to each
-            data line.
-            (Default value: ((r",\s+",",")) )
-
-        validate (bool, optional):
-            Whether to check the output is correct. (Default value: True)
+            data line. (Default value: ((r",\s+",",")) )
+        keep_original_key_order (bool, optional):
+            When True, preserve the order of keys in the table from the cif file.
+            When False, return columns of data in order of the input ``keys`` arg.
+            (Default value: False)
 
     Returns:
         np.ndarray[str]: A numpy array of the data as strings.
     """
     with open(filename) as f:
-        blocks = f.read().split("loop_")
+        tables = f.read().split("loop_")
 
     line_cleaner = LineCleaner(filter_line)
 
-    for table in blocks:
+    for table in tables:
         lines = table.strip().split("\n")
         in_header = True
-        data_column_indices, data = [], []
+        data_column_indices, data, column_order = [], [], []
+        # Column order is the order of keys
 
         for line_number, line in enumerate(lines):
+            line = line.strip()
             if in_header and (line in keys):
                 data_column_indices.append(line_number)
+                if not keep_original_key_order:
+                    column_order.append(keys.index(line))
                 continue
 
             # Take a slice to avoid indexing a 0 length string
