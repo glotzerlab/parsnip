@@ -1,0 +1,83 @@
+[build-system]
+requires = ["setuptools","wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "parsnip"
+version = "0.0.2"
+requires-python = ">=3.9" # This could be updated to a minimum of 3.6
+description = "Minimal library for parsing CIF/mmCIF files in Python."
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+    {name = "Jen Bradley", email = "jenbrad@umich.edu"},
+]
+dependencies = ["numpy>=1.19"]
+keywords = [
+        "Development Status :: 1 - Planning",
+        "License :: OSI Approved :: BSD License",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Topic :: Scientific/Engineering :: Physics",
+        "Topic :: Scientific/Engineering :: Chemistry",
+    ]
+dynamic = ["optional-dependencies"]
+
+[project.urls]
+Source = "https://github.com/glotzerlab/parsnip"
+Issues = "https://github.com/glotzerlab/parsnip/issues"
+
+[tool.setuptools.dynamic]
+optional-dependencies = {tests = { file = ["tests/requirements.txt"] }, doc = { file = ["doc/requirements.txt"] }}
+
+[tool.pytest.ini_options]
+# Add percentage progress bar to the pytest console output
+console_output_style = "progress"
+# Specify the tests folder to speed up collection.
+testpaths = ["tests"]
+
+[tool.ruff]
+include = ["*.py", "*.ipynb"]
+exclude = ["tests/data"]
+line-length = 88
+
+[tool.ruff.lint]
+select = [
+    "B",  # flake8-bugbear
+    "D",  # pydocstyle
+    "E",  # pycodestyle-error
+    "F",  # pyflakes
+    "I",  # isort
+    "N",  # pep8-naming
+    "S",  # flake8-bandit
+    "W",  # pycodestyle-warning
+    "C4", # check list comprehensions and generators
+    "UP", # pyupgrade
+    "NPY",# check for use of deprecated numpy functions
+    "SIM",# check for duplicate/needlessly verbose code
+    "PIE790", # remove unnecessary pass statements
+    "PIE794", # enable c-style single definition of variables
+]
+ignore = [
+  "S101", # Assertions are agood thing
+  "D105", # Magic methods don't require documentation.
+  "D107", # __init__ methods don't require documentation.
+  "SIM116", # Allow certain branched if statements
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.isort]
+known-third-party = ["hypothesis", "pytest"]
+known-first-party = ["parsnip"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D", "B018", "F811"]
+"__init__.py" = ["F401"] # Do not remove "unused" imports in __init__.py files
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
