@@ -1,4 +1,4 @@
-"""TODO."""
+"""Functions and classes to process string data."""
 import re
 
 # Compile in common patterns for cif parsing. These are reused throughout the package.
