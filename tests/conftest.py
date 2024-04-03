@@ -45,8 +45,8 @@ aflow_mC24 = CifData(
 bisd_Ccmm = CifData(
     filename=data_file_path + "B-IncStrDb_Ccmm.cif",
     symop_keys=("_space_group_symop_operation_xyz", "_space_group_symop_id"),
+    # Our code works with extra keys, but gemmi does not!
     atom_site_keys=(atom_site_keys[0], *atom_site_keys[2:]),
-    # atom_site_keys=atom_site_keys, # Contains one extra key!
 )
 
 ccdc_Pm3m = CifData(

@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 from conftest import cif_files_mark
 from gemmi import cif
 
@@ -26,11 +27,25 @@ def test_read_symop(cif_data):
 
 @cif_files_mark
 def test_read_atom_sites(cif_data):
-    print(cif_data.filename)
     parsnip_data = read_table(
         filename=cif_data.filename,
         keys=cif_data.atom_site_keys,
     )
     gemmi_data = _gemmi_read_table(cif_data.filename, cif_data.atom_site_keys)
+
+    np.testing.assert_array_equal(parsnip_data, gemmi_data)
+
+
+@cif_files_mark
+@pytest.mark.parametrize(
+    "subset", [[0], [1, 2, 3], [4, 0]], ids=["single_el", "slice", "end_and_beginning"]
+)
+def test_partial_table_read(cif_data, subset):
+    subset_of_keys = tuple(np.array(cif_data.atom_site_keys)[subset])
+    parsnip_data = read_table(
+        filename=cif_data.filename,
+        keys=subset_of_keys,
+    )
+    gemmi_data = _gemmi_read_table(cif_data.filename, subset_of_keys)
 
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
