@@ -1,10 +1,16 @@
 """CIF parsing tools."""
 
 
+import warnings
+
 import numpy as np
 
-from ._utils import ParseWarning
+from ._utils import ParseError, ParseWarning
 from .patterns import LineCleaner
+
+
+def _remove_comments_from_line(line):
+    return line.split("#")[0].strip()
 
 
 def read_table(
@@ -72,23 +78,30 @@ def read_table(
 
     line_cleaner = LineCleaner(filter_line)
 
-    nontable_line_prefixes = ("_", "#")
+    nontable_line_prefixes = ("_", "#", "")
 
     for table in tables:
         lines = table.strip().split("\n")
         in_header = True
         data_column_indices, data, column_order = [], [], []
-        # Column order is the order of keys
 
         for line_number, line in enumerate(lines):
-            line = line.strip()
+            line = _remove_comments_from_line(line)
+
+            if in_header and line == "":
+                raise ParseError(
+                    "Whitespace may not be used in between keys in the table header. "
+                    "See https://www.iucr.org/resources/cif/spec/version1.1/cifsyntax#general"
+                    ", section 7 for more details."
+                )
+            # Last edge case: Comment line after loop_
 
             if in_header and (line in keys):
                 data_column_indices.append(line_number)
                 if not keep_original_key_order:
                     column_order.append(keys.index(line))
-                continue
 
+                continue
             # Take a slice to avoid indexing a 0 length string
             if data_column_indices and (line[:1] not in nontable_line_prefixes):
                 in_header = False  # Exit the header and start writing data
@@ -97,12 +110,19 @@ def read_table(
                 split_line = clean_line.split()
 
                 # Only add data if the line has at least as many columns as required.
-                if len(split_line) >= len(data_column_indices):
+                n_cols_found, n_cols_expected = (
+                    len(split_line),
+                    len(data_column_indices),
+                )
+                if n_cols_found >= n_cols_expected:
                     data.append(split_line)
                 elif split_line != [] and len(split_line) < len(data_column_indices):
-                    raise ParseWarning(
-                        f"Data line is a fragment and will be skipped: (expected line "
-                        f"with {len(data_column_indices)} values, got {split_line})"
+                    warnings.warn(
+                        ParseWarning(
+                            f"Data line is a fragment and will be skipped: (expected "
+                            f"line with {n_cols_expected} values, got {split_line})."
+                        ),
+                        stacklevel=2,
                     )
 
             elif (not in_header) and (line[:1] == "_"):
