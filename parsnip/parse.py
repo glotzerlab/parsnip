@@ -33,7 +33,6 @@ def read_table(
     7 -x+1/2,-y+1/2,-z
     8 x+1/2,-y+1/2,z+1/2
 
-    loop_
     ```
 
     Only data columns corresponding to a key in the input keys list will be returned.
@@ -86,26 +85,23 @@ def read_table(
                 clean_line = line_cleaner(line)
                 split_line = clean_line.split()
 
-                # Check that we are not appending a fragment line
-                if len(split_line) == len(data_column_indices):
+                # Only add data if the line has at least as many columns as required.
+                if len(split_line) >= len(data_column_indices):
                     data.append(split_line)
-                # Warn if we get a non-empty line with the wrong number of values
-                elif split_line != []:
+                elif split_line != [] and len(split_line) < len(data_column_indices):
                     raise ParseWarning(
-                        f"Data line is a fragment: (expected line with "
-                        f"{len(data_column_indices)} values, got {split_line})"
+                        f"Data line is a fragment and will be skipped: (expected line "
+                        f"with {len(data_column_indices)} values, got {split_line})"
                     )
 
-            elif data_column_indices and line[:1] == "_":
+            elif (not in_header) and (line[:1] == "_"):
                 break  # If we are back to standard data, exit the loop
 
         if data_column_indices:  # Exit the loop if we've found our data.
-            n_keys, n_cols = len(keys), len(data_column_indices)
-            if n_keys != n_cols:
-                raise ParseWarning(
-                    "Data has incorrect number of columns: "
-                    f"(expected {n_keys}, got {n_cols})"
-                )
             break
+
+    if not keep_original_key_order:
+        # Reorder the column indices to match the order of the input keys
+        data_column_indices = np.array(data_column_indices)[np.argsort(column_order)]
 
     return np.atleast_2d(data)[:, data_column_indices]
