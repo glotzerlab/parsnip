@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "parsnip"
 version = "0.0.2"
-requires-python = ">=3.9"
+requires-python = ">=3.9" # This could be updated to a minimum of 3.6
 description = "Minimal library for parsing CIF/mmCIF files in Python."
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -40,6 +40,7 @@ testpaths = ["tests"]
 
 [tool.ruff]
 include = ["*.py", "*.ipynb"]
+exclude = ["tests/data"]
 line-length = 88
 
 [tool.ruff.lint]
@@ -50,6 +51,7 @@ select = [
     "F",  # pyflakes
     "I",  # isort
     "N",  # pep8-naming
+    "S",  # flake8-bandit
     "W",  # pycodestyle-warning
     "C4", # check list comprehensions and generators
     "UP", # pyupgrade
@@ -59,6 +61,7 @@ select = [
     "PIE794", # enable c-style single definition of variables
 ]
 ignore = [
+  "S101", # Assertions are agood thing
   "D105", # Magic methods don't require documentation.
   "D107", # __init__ methods don't require documentation.
   "SIM116", # Allow certain branched if statements
