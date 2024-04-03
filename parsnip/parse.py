@@ -72,6 +72,8 @@ def read_table(
 
     line_cleaner = LineCleaner(filter_line)
 
+    nontable_line_prefixes = ("_", "#")
+
     for table in tables:
         lines = table.strip().split("\n")
         in_header = True
@@ -80,6 +82,7 @@ def read_table(
 
         for line_number, line in enumerate(lines):
             line = line.strip()
+
             if in_header and (line in keys):
                 data_column_indices.append(line_number)
                 if not keep_original_key_order:
@@ -87,7 +90,7 @@ def read_table(
                 continue
 
             # Take a slice to avoid indexing a 0 length string
-            if data_column_indices and line[:1] != "_":
+            if data_column_indices and (line[:1] not in nontable_line_prefixes):
                 in_header = False  # Exit the header and start writing data
 
                 clean_line = line_cleaner(line)
