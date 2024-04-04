@@ -52,7 +52,7 @@ bisd_Ccmm = CifData(
 ccdc_Pm3m = CifData(
     filename=data_file_path + "CCDC_1446529_Pm-3m.cif",
     symop_keys=("_space_group_symop_operation_xyz",),
-    atom_site_keys=atom_site_keys,
+    atom_site_keys=sorted(atom_site_keys),
 )
 
 cod_aP16 = CifData(
