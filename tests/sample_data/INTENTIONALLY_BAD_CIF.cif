@@ -33,8 +33,8 @@ _atom_site_fracccccccc_z # Intentionally bad key
 
 
 
-
-loop_loop_ # incorrect comment - "#" must be after whitespace or eol
+ # incorrect comment - "#" must be after whitespace or eol
+loop_loop_
 _atom_site
 _atom_site_type_symbol
 _atom_site_symmetry_multiplicity

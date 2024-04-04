@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from conftest import cif_files_mark
+from conftest import bad_cif, cif_files_mark
 from gemmi import cif
 
 from parsnip.parse import read_table
@@ -49,3 +49,32 @@ def test_partial_table_read(cif_data, subset):
     gemmi_data = _gemmi_read_table(cif_data.filename, subset_of_keys)
 
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
+
+
+def test_bad_cif_symop(cif_data=bad_cif):
+    # This file is thouroughly cooked - gemmi will not even read it.
+    parsnip_data = read_table(
+        filename=cif_data.filename,
+        keys=cif_data.symop_keys,
+    )
+    correct_data = [
+        ["1", "x,y,z"],
+        ["2", "-x,y,-z*1/2"],
+        ["3", "-x,-y,-z"],
+        ["4", "x,=y,z/1/2"],
+        ["5", "x-1/2,y+1/2,z"],
+        ["6", "-x+1/2,ya1/2,-z+1/2"],
+        ["7", "-x+1/2,-y81/2,-z"],
+        ["8", "x+1/2,-y+1/2,z01/2"],
+    ]
+
+    np.testing.assert_array_equal(parsnip_data, correct_data)
+
+
+def test_bad_cif_atom_sites(cif_data=bad_cif):
+    parsnip_data = read_table(
+        filename=cif_data.filename,
+        keys=cif_data.atom_site_keys,
+    )
+    # This file is thouroughly cooked - gemmi will not even read it.
+    print(parsnip_data)
