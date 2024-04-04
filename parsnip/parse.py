@@ -1,6 +1,5 @@
 """CIF parsing tools."""
 
-
 import warnings
 
 import numpy as np
@@ -77,8 +76,7 @@ def read_table(
         tables = f.read().split("loop_")
 
     line_cleaner = LineCleaner(filter_line)
-
-    nontable_line_prefixes = ("_", "#", "")
+    nontable_line_prefixes = ("_", "#")
 
     for table in tables:
         lines = table.strip().split("\n")
@@ -86,26 +84,29 @@ def read_table(
         data_column_indices, data, column_order = [], [], []
 
         for line_number, line in enumerate(lines):
-            line = _remove_comments_from_line(line)
-
-            if in_header and line == "":
+            # Check for invalid blank lines in the table header
+            if in_header and data_column_indices and line == "":
                 raise ParseError(
                     "Whitespace may not be used in between keys in the table header. "
                     "See https://www.iucr.org/resources/cif/spec/version1.1/cifsyntax#general"
                     ", section 7 for more details."
                 )
-            # Last edge case: Comment line after loop_
 
+            # We will get errors if there is a comment after the loop_ block that
+            # contains our data. This is questionably legal, but very uncommon
+
+            line = _remove_comments_from_line(line)
+
+            # Save current key position if it is one of the keys we want.
             if in_header and (line in keys):
                 data_column_indices.append(line_number)
                 if not keep_original_key_order:
                     column_order.append(keys.index(line))
-
                 continue
-            # Take a slice to avoid indexing a 0 length string
+
+            # If we exit the header and enter the table body
             if data_column_indices and (line[:1] not in nontable_line_prefixes):
                 in_header = False  # Exit the header and start writing data
-
                 clean_line = line_cleaner(line)
                 split_line = clean_line.split()
 
@@ -116,7 +117,7 @@ def read_table(
                 )
                 if n_cols_found >= n_cols_expected:
                     data.append(split_line)
-                elif split_line != [] and len(split_line) < len(data_column_indices):
+                elif split_line != [] and n_cols_found < n_cols_expected:
                     warnings.warn(
                         ParseWarning(
                             f"Data line is a fragment and will be skipped: (expected "
@@ -124,10 +125,9 @@ def read_table(
                         ),
                         stacklevel=2,
                     )
-
+                continue
             elif (not in_header) and (line[:1] == "_"):
                 break
-
         if data_column_indices:
             break
 
