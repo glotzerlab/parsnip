@@ -61,6 +61,17 @@ cod_aP16 = CifData(
     atom_site_keys=atom_site_keys,
 )
 
+bad_cif = CifData(
+    filename=data_file_path + "INTENTIONALLY_BAD_CIF.cif",
+    symop_keys=("_space_group_symop_id", "_space_group_symop_operation_xyz"),
+    atom_site_keys=(
+        "_atom_site",
+        "_atom_site_type_symbol",
+        "_atom_site_symmetry_multiplicity",
+        "_atom_si te",
+        "_atom_site_fract_z",
+    ),
+)
 
 cif_data_array = [aflow_mC24, bisd_Ccmm, ccdc_Pm3m, cod_aP16]
 cif_files_mark = pytest.mark.parametrize(
