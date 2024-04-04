@@ -33,17 +33,17 @@ _atom_site_fracccccccc_z # Intentionally bad key
 
 
 
- # incorrect comment - "#" must be after whitespace or eol
+"#" must be after whitespace or eol
 loop_loop_
 _atom_site
 _atom_site_type_symbol
 _atom_site_symmetry_multiplicity
 _atom_si
-_atom_si te
 _atom_site
+_atom_si te
 _atom_site_fract_z
 _atom_site_occupancy
 Aa(3) Bb 1      c 0.00000(1) 0.25000 0.00000 1.00000
 SL SM 3 d 0.00000  0.(28510)   0.25000 .
 Oo O 5 e 0.19180 0.05170 0.67460 1.00000
-Of O 7 f 0.09390 0.41220 -0.03510 1.00000
+O0f O 7 f 0.09390 0.41220 -0.03510 1.00000

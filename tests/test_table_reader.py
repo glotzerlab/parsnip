@@ -76,5 +76,29 @@ def test_bad_cif_atom_sites(cif_data=bad_cif):
         filename=cif_data.filename,
         keys=cif_data.atom_site_keys,
     )
-    # This file is thouroughly cooked - gemmi will not even read it.
-    print(parsnip_data)
+    # Duplicate keys returns EVERY column from the table with that key
+    # "_atom_site"
+    np.testing.assert_array_equal(
+        parsnip_data[:, [0, 1]],
+        np.array(
+            [
+                ["Aa(3)", "SL", "Oo", "O0f"],
+                ["0.00000(1)", "0.00000", "0.19180", "0.09390"],
+            ]
+        ).T,
+    )
+    # "_atom_site_type_symbol"
+    np.testing.assert_array_equal(parsnip_data[:, 2], ["Bb", "SM", "O", "O"])
+
+    # "_atom_site_symmetry_multiplicity"
+    np.testing.assert_array_equal(parsnip_data[:, 3], ["1", "3", "5", "7"])
+
+    # "_atom_si te"
+    np.testing.assert_array_equal(
+        parsnip_data[:, 4], ["0.25000", "0.(28510)", "0.05170", "0.41220"]
+    )
+
+    # "_atom_site_fract_z"
+    np.testing.assert_array_equal(
+        parsnip_data[:, 5], ["0.00000", "0.25000", "0.67460", "-0.03510"]
+    )
