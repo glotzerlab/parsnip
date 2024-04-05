@@ -195,13 +195,28 @@ def read_key_value_pairs(
             Dict of the key value pairs. Values will either be all strings, or a mixture
             of int and float, and the order will match the order of keys (if provided).
     """
+    # REGEX EXPLANATION
+    # ^        : Match only at the start of the line
+    # (_\w+)   : Match any number/mix of alphanumerics and "_", as a group
+    # [ |\t]+  : Match one or more whitespace " " or tab characters.
+
+    # Parse numbers:
+    # (        : Start new group
+    # -?\d+    : Match 0 or 1 "-" characters, then 1 or more digits 0-9
+    # \.?      : Match 0 or 1 "." characters
+    # \d*      : Match 0 or more digits 0-9
+    # )        : End the group
+
+    # Parse strings:
+    # (        : Start new group
+    # [^#^\n]+ : Match 1 ore more characters that are NOT a "#" or newline "\n"
+    # )        : End the group
+
     data = {}
 
     if only_read_numerics:
-        # match:     _word space  any numeric, with or without a single period
         regexp = r"^(_\w+)[ |\t]+(-?\d+\.?\d*)"
     else:
-        # match:     _word space  any character except newline or "#"
         regexp = r"^(_\w+)[ |\t]+([^#^\n]+)"
 
     if keys is not None:
