@@ -238,6 +238,11 @@ def read_key_value_pairs(
         elif len(keys) == 0:
             break
 
+    if keys is not None and len(keys) != 0:
+        warnings.warn(
+            f"Keys {keys} did not match any data!", ParseWarning, stacklevel=2
+        )
+
     return data
 
 
