@@ -14,15 +14,15 @@ def _gemmi_read_keys(filename, keys, as_number=True):
 
 
 @cif_files_mark
-def test_read_cell_params(cif_data, keys=box_keys):
-    parsnip_data = read_cell_params(filename=cif_data.filename)
-    gemmi_data = _gemmi_read_keys(cif_data.filename, keys)
-    np.testing.assert_array_equal(parsnip_data, gemmi_data)
-
-
-@cif_files_mark
 @random_keys_mark(n_samples=20)
 def test_read_cell_params(cif_data, keys):
     parsnip_data = read_key_value_pairs(filename=cif_data.filename, keys=keys)
     gemmi_data = _gemmi_read_keys(cif_data.filename, keys=keys, as_number=False)
     np.testing.assert_array_equal([*parsnip_data.values()], gemmi_data)
+
+
+@cif_files_mark
+def test_read_cell_params(cif_data, keys=box_keys):
+    parsnip_data = read_cell_params(filename=cif_data.filename)
+    gemmi_data = _gemmi_read_keys(cif_data.filename, keys)
+    np.testing.assert_array_equal(parsnip_data, gemmi_data)
