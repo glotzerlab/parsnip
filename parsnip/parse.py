@@ -1,10 +1,11 @@
 """CIF parsing tools."""
 
+import re
 import warnings
 
 import numpy as np
 
-from ._utils import ParseError, ParseWarning
+from ._utils import ParseError, ParseWarning, _deg2rad, _str2num
 from .patterns import LineCleaner, cast_array_to_float
 
 
@@ -142,6 +143,119 @@ def read_table(
             stacklevel=2,
         )
     return np.atleast_2d(data)[:, data_column_indices]
+
+
+def _parsed_line_generator(filename, regexp):
+    """Apply a regex pattern line by line and yield the pattern's matches.
+
+    This is intended to be an internal function that handles the reading of CIF files.
+    Abstracting this out clarifies which logic belongs to the file parser and which
+    belongs to the actual data manipulation.
+
+    Args:
+        filename (str): The name of the .cif file to be parsed.
+        regexp (str): tring to generate the regex pattern that is applied to each line.
+
+    Yields:
+        tuple(str,str|float|int):
+    """
+    pattern = re.compile(regexp)
+    with open(filename) as file:
+        for line in file:
+            # Line is either empty, or does not start with a valid key
+            if line == "" or line[0] != "_":
+                continue
+            parsed_line = pattern.match(line)
+            if parsed_line:  # Regex matches
+                yield parsed_line
+
+
+def read_key_value_pairs(
+    filename: str,
+    keys: tuple[str] | None = None,
+    only_read_numerics: bool = False,
+):
+    """Extract key-value pairs from a CIF file.
+
+    By default, this function reads all keys and makes no attempt to convert data to a
+    numeric datatype. Setting ``read_strings`` to False and ``map_to_numeric`` to True
+
+    Args:
+        filename (str): The name of the .cif file to be parsed.
+        keys (tuples[str]|None, optional):
+            A tuple of keys to search and return data for.
+            If keys is None, all keys are returned (Default value: None).
+        only_read_numerics (bool, optional):
+            Whether to read only values that cannot be cast to int or float. If set to
+            False, all keys are read and all values are returned as strings.
+            (Default value: False)
+
+    Returns:
+        dict[str,float|int] | dict[str,str]:
+            Dict of the key value pairs. Values will either be all strings, or a mixture
+            of int and float, and the order will match the order of keys (if provided).
+    """
+    data = {}
+
+    if only_read_numerics:
+        # match:     _word space  any numeric, with or without a single period
+        regexp = r"^(_\w+)[ |\t]+(-?\d+\.?\d*)"
+    else:
+        # match:     _word space  any character except newline or "#"
+        regexp = r"^(_\w+)[ |\t]+([^#^\n]+)"
+
+    if keys is not None:
+        # Insertion order our dict with original key order
+        for key in keys:
+            data[key] = None
+        # Convert to mutable datastructure so we can remove identified keys
+        keys = set(keys)
+
+    for parsed_line in _parsed_line_generator(filename, regexp=regexp):
+        key, val = parsed_line.groups()
+        val = _str2num(val) if only_read_numerics else val.strip()
+
+        if keys is None:
+            data[key] = val
+        elif key in keys:
+            data[key] = val
+            keys.remove(key)
+        elif len(keys) == 0:
+            break
+
+    return data
+
+
+def read_cell_params(filename, degrees=True, validate=True):
+    r"""Read the cell lengths and angles from a CIF file.
+
+    Args:
+        filename (str): The name of the .cif file to be parsed.
+        degrees (bool, optional):
+            When True, angles are returned in degrees (as per the cif spec). When False,
+            angles are converted to radians (Default value: True).
+        validate (bool, optional):
+            Whether to check if the results are correct. (Default value: True)
+
+    Returns:
+        tuple:
+            The box vector lengths and angles in degrees or radians
+            :math:`(L_1, L_2, L_3, \alpha, \beta, \gamma)`.
+    """
+    angle_keys = ("_cell_angle_alpha", "_cell_angle_beta", "_cell_angle_gamma")
+    box_keys = ("_cell_length_a", "_cell_length_b", "_cell_length_c") + angle_keys
+
+    cell_data = read_key_value_pairs(filename, keys=box_keys, only_read_numerics=True)
+
+    if validate:
+        assert all(value is not None for value in cell_data.values())
+        assert all(0 < cell_data[key] < 180 for key in angle_keys)
+
+    if not degrees:
+        for key in angle_keys:
+            cell_data[key] = _deg2rad(cell_data[key])
+
+    return tuple(cell_data.values())
 
 
 def read_fractional_positions(
