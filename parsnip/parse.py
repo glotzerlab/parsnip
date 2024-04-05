@@ -5,7 +5,7 @@ import warnings
 import numpy as np
 
 from ._utils import ParseError, ParseWarning
-from .patterns import LineCleaner
+from .patterns import LineCleaner, cast_array_to_float
 
 
 def _remove_comments_from_line(line):
@@ -136,3 +136,34 @@ def read_table(
         data_column_indices = np.array(data_column_indices)[np.argsort(column_order)]
 
     return np.atleast_2d(data)[:, data_column_indices]
+
+
+def read_fractional_positions(
+    filename: str,
+    filter_line: tuple[tuple[str, str]] = ((r",\s+", ",")),
+):
+    r"""Extract the fractional X,Y,Z coordinates from a CIF file.
+
+    Args:
+        filename (str): The name of the .cif file to be parsed.
+        filter_line (tuple[tuple[str]], optional):
+            A tuple of strings that are compiled to a regex filter and applied to each
+            data line. (Default value: ((r",\s+",",")) )
+
+    Returns:
+        np.array[np.float32]: Fractional X,Y,Z coordinates of the unit cell.
+    """
+    xyz_keys = ("_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z")
+    # Once #6 is added, we should warnings.catch_warnings(action="error")
+    xyz_data = read_table(
+        filename=filename,
+        keys=xyz_keys,
+    )
+
+    xyz_data = cast_array_to_float(arr=xyz_data, dtype=np.float32)
+
+    # Validate results
+    assert xyz_data.shape[1] == 3
+    assert xyz_data.dtype == np.float32
+
+    return xyz_data

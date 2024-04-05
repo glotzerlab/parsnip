@@ -1,6 +1,8 @@
 """Functions and classes to process string data."""
 import re
 
+import numpy as np
+
 # Compile in common patterns for cif parsing. These are reused throughout the package.
 _multiple_whitespace_pattern = re.compile(r"\s+")
 _comma_prune_spaces = re.compile(r",\s+")
@@ -16,6 +18,19 @@ def compile_pattern_from_strings(filter_patterns: tuple[str]):
         re.Pattern: Pattern matching any of the input characters.
     """
     return re.compile("|".join(filter_patterns))
+
+
+def cast_array_to_float(arr: np.ndarray, dtype: type = np.float32):
+    """Cast a Numpy array to a dtype, pruning significant digits from numerical values.
+
+    Args:
+        arr (np.array): Array of data to convert
+        dtype (type, optional): dtype to cast array to (Default value: np.float32).
+
+    Returns:
+        np.array[float]: Array with new dtype and no significant digit information.
+    """
+    return np.char.partition(arr, "(")[..., 0].astype(dtype)
 
 
 class LineCleaner:
