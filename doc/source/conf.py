@@ -58,3 +58,4 @@ html_theme_options = {
         "color-brand-content": "#406a8c",
     },
 }
+html_favicon = "_static/parsnip_logo_favicon.svg"
