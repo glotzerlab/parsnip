@@ -35,14 +35,14 @@ Setup
 
 
 Installation via pip
-~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^
 
 .. code:: bash
 
     python -m pip install parsnip
 
 Installation via conda-forge
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code:: bash
 
@@ -50,7 +50,7 @@ Installation via conda-forge
 
 
 Installation from source
-~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 First, clone the repository:
 
@@ -60,8 +60,16 @@ First, clone the repository:
     cd parsnip
 
 Then, choose one of the following. While **parsnip** is only dependent on Numpy,
-additional dependencies
+additional dependencies are required to run the tests and build the docs.
 
 .. code:: bash
 
-    pip install . #
+    pip install .            # Install with no additional dependencies
+    pip install .[tests]     # Install with dependencies required to run tests
+    pip install .[tests,doc] # Install with dependencies required to run tests and make docs
+
+Install Requirements
+^^^^^^^^^^^^^^^^^^^^
+
+.. include:: ../../requirements.txt
+  :literal:
