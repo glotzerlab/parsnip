@@ -37,9 +37,24 @@ autodoc_default_options = {
     "autosummary": True,
 }
 
+pygments_style = "friendly"
+pygments_dark_style = "native"
+
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = "furo"
-html_theme_options = {}
 html_static_path = ["_static"]
+html_theme_options = {
+    "sidebar_hide_name": True,
+    "light_logo": "parsnip_header_dark.svg",
+    "dark_logo": "parsnip_header_light.svg",
+    "dark_css_variables": {
+        "color-brand-primary": "#5187b2",
+        "color-brand-content": "#5187b2",
+    },
+    "light_css_variables": {
+        "color-brand-primary": "#406a8c",
+        "color-brand-content": "#406a8c",
+    },
+}
