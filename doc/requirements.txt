@@ -1,3 +1,4 @@
+autodocsumm
 furo
 numpy>=1.19
 sphinx
