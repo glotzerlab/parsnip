@@ -71,5 +71,5 @@ additional dependencies are required to run the tests and build the docs.
 Install Requirements
 ^^^^^^^^^^^^^^^^^^^^
 
-.. include:: ../../requirements.txt
-  :literal:
+.. literalinclude:: ../../requirements.txt
+  :language: text
