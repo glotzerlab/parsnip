@@ -59,5 +59,7 @@ html_theme_options = {
         "color-brand-primary": "#406a8c",
         "color-brand-content": "#406a8c",
     },
+    "top_of_page_button": "edit",
+    "source_edit_link": "https://github.com/glotzerlab/parsnip",
 }
 html_favicon = "_static/parsnip_logo_favicon.svg"
