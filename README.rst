@@ -15,12 +15,12 @@
 |PyPI|
 |conda-forge|
 
-.. |ReadTheDocs| image:: https://readthedocs.org/projects/parsnip/badge/?version=latest
-   :target: http://parsnip.readthedocs.io/en/latest/?badge=latest
-.. |PyPI| image:: https://img.shields.io/pypi/v/parsnip.svg
-   :target: https://pypi.org/project/parsnip/
-.. |conda-forge| image:: https://img.shields.io/conda/vn/conda-forge/parsnip.svg
-   :target: https://anaconda.org/conda-forge/parsnip
+.. |ReadTheDocs| image:: https://readthedocs.org/projects/parsnip-cif/badge/?version=latest
+   :target: http://parsnip-cif.readthedocs.io/en/latest/?badge=latest
+.. |PyPI| image:: https://img.shields.io/pypi/v/parsnip-cif.svg
+   :target: https://pypi.org/project/parsnip-cif/
+.. |conda-forge| image:: https://img.shields.io/conda/vn/conda-forge/parsnip-cif.svg
+   :target: https://anaconda.org/conda-forge/parsnip-cif
 
 
 .. _introduction:
