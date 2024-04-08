@@ -160,6 +160,9 @@ bad_cif = CifData(
         "_cell_angle_alpha",
         "_cell_angle_beta",
         "_cell_angle_gamma",
+        "__________asdf",
+        "_-wasd",
+        "not_a_valid_key",
     ),
 )
 
