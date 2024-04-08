@@ -1,16 +1,16 @@
-#######################################################################
-#
-# This file contains crystal structure data downloaded from the
-# Cambridge Structural Database (CSD) hosted by the Cambridge
+####################################################################### 
+# 
+# This file contains crystal structure data downloaded from the 
+# Cambridge Structural Database (CSD) hosted by the Cambridge 
 # Crystallographic Data Centre (CCDC).
-#
-# Full information about CCDC data access policies and citation
-# guidelines are available at http://www.ccdc.cam.ac.uk/access/V1
-#
-# Audit and citation data items may have been added by the CCDC.
-# Please retain this information to preserve the provenance of
-# this file and to allow appropriate attribution of the data.
-#
+# 
+# Full information about CCDC data access policies and citation 
+# guidelines are available at http://www.ccdc.cam.ac.uk/access/V1 
+# 
+# Audit and citation data items may have been added by the CCDC. 
+# Please retain this information to preserve the provenance of 
+# this file and to allow appropriate attribution of the data. 
+# 
 #######################################################################
 
 data_MAPbBr3_RT
@@ -21,9 +21,9 @@ _citation_id
 _citation_doi
 _citation_year
 1 10.1021/acscentsci.6b00055 2016
-_audit_update_record
+_audit_update_record             
 ;
-2016-01-10 deposited with the CCDC.	2024-04-02 downloaded from the CCDC.
+2016-01-10 deposited with the CCDC.	2024-04-08 downloaded from the CCDC.
 ;
 
 _audit_creation_method           SHELXL-2014/7
@@ -52,7 +52,7 @@ _space_group_IT_number           221
 _space_group_name_H-M_alt        'P m -3 m'
 _space_group_name_Hall           '-P 4 2 3'
 
-_shelx_space_group_comment
+_shelx_space_group_comment       
 ;
 The symmetry employed for this shelxl refinement is uniquely defined
 by the following loop, which should always be used as a source of
@@ -146,7 +146,7 @@ _exptl_absorpt_special_details   ?
 _diffrn_ambient_temperature      296(2)
 _diffrn_radiation_wavelength     0.7293
 _diffrn_radiation_type           synchrotron
-_diffrn_source
+_diffrn_source                   
 ;
 Advanced Light Source, station 11.3.1
 ;
@@ -179,11 +179,11 @@ _reflns_Friedel_coverage         0.000
 _reflns_Friedel_fraction_max     .
 _reflns_Friedel_fraction_full    .
 
-_reflns_special_details
+_reflns_special_details          
 ;
  Reflections were merged by SHELXL according to the crystal
  class for the calculation of statistics and refinement.
-
+ 
  _reflns_Friedel_fraction is defined as the number of unique
  Friedel pairs measured divided by the number that would be
  possible theoretically, ignoring centric projections and
@@ -195,27 +195,27 @@ _computing_cell_refinement       'SAINT V8.34A(Bruker, 2013)'
 _computing_data_reduction        SAINT
 _computing_structure_solution    'SHELXT (Sheldrick, 2012)'
 _computing_structure_refinement  'SHELXL-2014/7 (Sheldrick, 2014)'
-_computing_molecular_graphics
+_computing_molecular_graphics    
 ;
      	SHELXTL 5.1, XP (Sheldrick, 1994)
 	ShelXle Rev 699 (Hubschle, 2011)
 	WinCoot, (P.Emsley, B.Lohkamp W.G.Scott and K.Cowtand, 2010)
 ;
 _computing_publication_material  SHELXL-2014/7
-_refine_special_details
+_refine_special_details          
 ;
 Hydrogen atoms were not found in the difference map, so were not refined
-in the structure.
+in the structure. 
 
-The methylammonium positions were found in the difference map.
+The methylammonium positions were found in the difference map. 
 The carbon and the nitrogens share the same position in all three sites.
 They were refined with EADP & EXYZ. A DFIX was initially used, but then as
-the refinement progressed, a SADI was employed over all three.
+the refinement progressed, a SADI was employed over all three. 
 ;
 _refine_ls_structure_factor_coef Fsqd
 _refine_ls_matrix_type           full
 _refine_ls_weighting_scheme      calc
-_refine_ls_weighting_details
+_refine_ls_weighting_details     
 'w=1/[\s^2^(Fo^2^)+(0.0263P)^2^+0.0660P] where P=(Fo^2^+2Fc^2^)/3'
 _atom_sites_solution_primary     'intrinsic phasing'
 _atom_sites_solution_secondary   difmap
@@ -271,7 +271,7 @@ _atom_site_aniso_U_12
 Pb01 0.02551(17) 0.02551(17) 0.02551(17) 0.000 0.000 0.000
 Br02 0.0222(5) 0.1364(11) 0.1364(11) 0.000 0.000 0.000
 
-_geom_special_details
+_geom_special_details            
 ;
  All esds (except the esd in the dihedral angle between two l.s. planes)
  are estimated using the full covariance matrix.  The cell esds are taken
@@ -535,7 +535,7 @@ _refine_diff_density_max         0.464
 _refine_diff_density_min         -0.593
 _refine_diff_density_rms         0.151
 
-_shelx_res_file
+_shelx_res_file                  
 ;
 
     sad_a.res created by SHELXL-2014/7
@@ -656,10 +656,10 @@ _shelx_res_checksum              94550
 
 # start Validation Reply Form
 
-_vrf_PLAT973_I
+_vrf_PLAT973_I                   
 ;
 PROBLEM: Check Calcd Positive Residual Density on Pb01 2.62 eA-3
 RESPONSE: Disorder in this site should have been seen in related disorders,
-and as it is less than 3% of a Pb, it was left alone.
+and as it is less than 3% of a Pb, it was left alone. 
 
 ;
