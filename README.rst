@@ -76,8 +76,8 @@ additional dependencies are required to run the tests and build the docs.
     pip install .[tests]     # Install with dependencies required to run tests
     pip install .[tests,doc] # Install with dependencies required to run tests and make docs
 
-Install Dependencies
-^^^^^^^^^^^^^^^^^^^^
+Dependencies
+^^^^^^^^^^^^
 
 .. literalinclude:: ../../requirements.txt
   :language: text
