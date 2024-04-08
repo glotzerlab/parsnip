@@ -52,11 +52,11 @@ html_theme_options = {
     "light_logo": "parsnip_header_dark.svg",
     "dark_logo": "parsnip_header_light.svg",
     "dark_css_variables": {
-        "color-brand-primary": "#5187b2",
+        "color-brand-primary": "#4AA092",
         "color-brand-content": "#5187b2",
     },
     "light_css_variables": {
-        "color-brand-primary": "#406a8c",
+        "color-brand-primary": "#005A50",
         "color-brand-content": "#406a8c",
     },
     "top_of_page_button": "edit",
