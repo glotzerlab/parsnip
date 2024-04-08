@@ -4,13 +4,13 @@ r"""Functions for parsing CIF files in Python.
     :start-after: .. _parse:
     :end-before: .. _installing:
 
-.. tip::
+.. admonition:: The CIF Format
 
-    This is an example of a simple CIF file. A `tag`_ (data name) must start with an
-    underscore, and is seperated from the data value with whitespace characters. Tables
-    begin with the ``loop_`` keyword, and contain a header block and a data block.
-    The vertical position of a tag in the table headings corresponds with the horizontal
-    position of the associated column in the table values.
+    This is an example of a simple CIF file. A `key`_ (data name or tag) must start with
+    an underscore, and is seperated from the data value with whitespace characters.
+    A `table`_ begins with the ``loop_`` keyword, and contain a header block and a data
+    block. The vertical position of a tag in the table headings corresponds with the
+    horizontal position of the associated column in the table values.
 
     .. code-block:: text
 
@@ -37,8 +37,9 @@ r"""Functions for parsing CIF files in Python.
 
         _symmetry_space_group_name_H-M  'C2 / m' # One more key-value pair
 
-.. _tables: https://www.iucr.org/resources/cif/spec/version1.1/cifsyntax#onelevel
-.. _tag: https://www.iucr.org/resources/cif/spec/version1.1/cifsyntax#definitions
+
+.. _key: https://www.iucr.org/resources/cif/spec/version1.1/cifsyntax#definitions
+.. _table: https://www.iucr.org/resources/cif/spec/version1.1/cifsyntax#onelevel
 
 """
 # TODO: Move "special" readers to seperate module?
@@ -86,7 +87,7 @@ def read_table(
         (:math:`(N, N_{keys})` :class:`numpy.ndarray[str]`):
             A numpy array of the data as strings.
 
-    .. note::
+    .. warning::
 
         This function will ONLY return data from a single table. If keys are provided
         that correspond to data from multiple tables, only the first table will be read.
