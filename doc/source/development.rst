@@ -68,6 +68,16 @@ Avoid comments that simply restate the nature of lines of code: for example, the
 On the other hand, the comment "read an underscore-prefixed word and a numeric value seperated by whitespace" is instructive.
 Multiline comments for regex strings may sometimes be necessary.
 
+Building Documentation
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: bash
+
+  cd doc
+  make clean
+  make html
+  open build/html/index.html
+
 
 Unit Tests
 ----------
