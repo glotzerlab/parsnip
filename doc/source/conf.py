@@ -21,6 +21,7 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
     "sphinx.ext.intersphinx",
+    "sphinx.ext.napoleon",
     "autodocsumm",
 ]
 
@@ -36,6 +37,7 @@ autodoc_default_options = {
     "show-inheritance": True,
     "autosummary": True,
 }
+autodoc_typehints = "description"
 
 pygments_style = "friendly"
 pygments_dark_style = "native"

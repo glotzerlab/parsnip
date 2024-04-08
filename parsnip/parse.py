@@ -1,4 +1,48 @@
-"""CIF parsing tools."""
+r"""Functions for parsing CIF files in Python.
+
+.. include:: ../../README.rst
+    :start-after: .. _parse:
+    :end-before: .. _installing:
+
+.. tip::
+
+    This is an example of a simple CIF file. A `tag`_ (data name) must start with an
+    underscore, and is seperated from the data value with whitespace characters. Tables
+    begin with the ``loop_`` keyword, and contain a header block and a data block.
+    The vertical position of a tag in the table headings corresponds with the horizontal
+    position of the associated column in the table values.
+
+    .. code-block:: text
+
+        # Key-value pairs describing the unit cell:
+        _cell_length_a  5.40
+        _cell_length_b  3.43
+        _cell_length_c  5.08
+        _cell_angle_alpha  90.0
+        _cell_angle_beta  132.3
+        _cell_angle_gamma  90.0
+
+        # A table with two columns and three rows:
+        loop_
+        _symmetry_equiv_pos_site_id
+        _symmetry_equiv_pos_as_xyz
+        1  x,y,z
+        2  -x,y,-z
+        3  -x,-y,-z
+        4  x,-y,z
+        5  x+1/2,y+1/2,z
+        6  -x+1/2,y+1/2,-z
+        7  -x+1/2,-y+1/2,-z
+        8  x+1/2,-y+1/2,z
+
+        _symmetry_space_group_name_H-M  'C2 / m' # One more key-value pair
+
+.. _tables: https://www.iucr.org/resources/cif/spec/version1.1/cifsyntax#onelevel
+.. _tag: https://www.iucr.org/resources/cif/spec/version1.1/cifsyntax#definitions
+
+"""
+# TODO: Move "special" readers to seperate module?
+
 
 import re
 import warnings
@@ -16,62 +60,48 @@ def _remove_comments_from_line(line):
 def read_table(
     filename: str,
     keys: str,
-    filter_line: tuple[tuple[str, str]] = ((r",\s+", ",")),
+    filter_line: tuple[str, str] = (r",\s+", ","),
     keep_original_key_order=False,
 ) -> np.ndarray[str]:
-    r"""Extract data from a CIF file loop_ table.
-
-    CIF files store tabular data as whitespace-delimited blocks that start with `loop_`.
-    Keys are kept at the top of the table, and the vertical position of keys corresponds
-    to the horizontal position of the column storing the data for that key. The end of
-    the table is not necessarily marked: instead, the script detects when the table
-    format is exited.
-
-    For example:
-
-    ```
-    loop_
-    _space_group_symop_id
-    _space_group_symop_operation_xyz
-    1 x,y,z
-    2 -x,y,-z+1/2
-    3 -x,-y,-z
-    4 x,-y,z+1/2
-    5 x+1/2,y+1/2,z
-    6 -x+1/2,y+1/2,-z+1/2
-    7 -x+1/2,-y+1/2,-z
-    8 x+1/2,-y+1/2,z+1/2
-
-    ```
-
-    Only data columns corresponding to a key in the input keys list will be returned.
-
-    Note that this function will ONLY return data from a single table. If keys are
-    provided that correspond to data from multiple tables, only the first table will
-    be read.
-
-    The ``filter_line`` argument allows for dynamic input creation of regex filters to
-    apply to each line that contains data to be saved. The default value is
-    ``((",\s+",","))``, which helps differentiate between individual data fragments
-    seperated by commas and whitespace characters, and other sections of the line that
-    are also whitespace separated. Adding another tuple to remove single quotes can
-    also be helpful: try ``((",\s+",","),(",",""))`` to achieve this. To disable the
-    feature entirely, pass in a tuple of empty strings: ``("","")``. Note that doing so
-    will cause errors if the table contains non-delimiting whitespaces.
+    r"""Extract data from a CIF file loop\_ table.
 
     Args:
-        filename (str): The name of the .cif file to be parsed.
-        keys (tuple[str]): The names of the keys to be parsed.
-        filter_line (tuple[tuple[str]], optional):
+        filename (str):
+            The name of the .cif file to be parsed.
+        keys (tuple[str]):
+            The names of the keys to be parsed. The columns associated with these keys
+            will be returned in the final array.
+        filter_line (tuple[str,str], optional):
             A tuple of strings that are compiled to a regex filter and applied to each
-            data line. (Default value: ((r",\s+",",")) )
+            data line. If a tuple of tuples of strings is provided instead, each pattern
+            will be applied seperately.
+            Default value = ``((r",\s+",","))``
         keep_original_key_order (bool, optional):
             When True, preserve the order of keys in the table from the cif file.
             When False, return columns of data in order of the input ``keys`` arg.
-            (Default value: False)
+            Default value = ``False``
+
 
     Returns:
-        np.ndarray[str]: A numpy array of the data as strings.
+        (:math:`(N, N_{keys})` :class:`numpy.ndarray[str]`):
+            A numpy array of the data as strings.
+
+    .. note::
+
+        This function will ONLY return data from a single table. If keys are provided
+        that correspond to data from multiple tables, only the first table will be read.
+
+    .. tip::
+        The ``filter_line`` argument allows for dynamic input creation of regex filters
+        to apply to each line that contains data to be saved. The first value in the
+        tuple is the pattern to match, and the second value is the replacement text.
+        The default value is ``((",\s+",","))``, which removes whitespace following
+        commas to help differentiate between individual data entries that contain spaces
+        from other sections of the line that are also whitespace separated. Adding
+        another tuple to remove single quotes can also be helpful: try
+        ``((",\s+",","),("'",""))`` to achieve this. To disable the feature entirely,
+        pass in a tuple of empty strings: ``("","")``.
+
     """
     with open(filename) as f:
         tables = f.read().split("loop_")
@@ -177,8 +207,10 @@ def read_key_value_pairs(
 ):
     """Extract key-value pairs from a CIF file.
 
-    By default, this function reads all keys and makes no attempt to convert data to a
-    numeric datatype. Setting ``read_strings`` to False and ``map_to_numeric`` to True
+    By default, this function reads all keys and returns data values as strings. Setting
+    ``only_read_numerics`` to True will cause the program to cast data to a nunmeric
+    type (float or int): however, keys that cannot be safely cast into a numeric are
+    skipped.
 
     Args:
         filename (str): The name of the .cif file to be parsed.
@@ -186,14 +218,19 @@ def read_key_value_pairs(
             A tuple of keys to search and return data for.
             If keys is None, all keys are returned (Default value: None).
         only_read_numerics (bool, optional):
-            Whether to read only values that cannot be cast to int or float. If set to
-            False, all keys are read and all values are returned as strings.
+            Whether to read only values that cannot be cast to int or float.
             (Default value: False)
 
     Returns:
         dict[str,float|int] | dict[str,str]:
             Dict of the key value pairs. Values will either be all strings, or a mixture
             of int and float, and the order will match the order of keys (if provided).
+
+    .. note::
+
+            If a no data is found for any of the provided keys, a warning will be raised
+            and the output value will by ``None``.
+
     """
     # REGEX EXPLANATION
     # ^         : Match only at the start of the line
