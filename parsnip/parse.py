@@ -44,6 +44,7 @@ r"""Functions for parsing CIF files in Python.
 """
 # TODO: Move "special" readers to seperate module?
 
+from __future__ import annotations
 
 import re
 import warnings
