@@ -119,10 +119,9 @@ def read_table(
                     data.append(split_line)
                 elif split_line != [] and n_cols_found < n_cols_expected:
                     warnings.warn(
-                        ParseWarning(
-                            f"Data line is a fragment and will be skipped: (expected "
-                            f"line with {n_cols_expected} values, got {split_line})."
-                        ),
+                        f"Data line is a fragment and will be skipped: (expected line "
+                        f"with {n_cols_expected} values, got {split_line}).",
+                        ParseWarning,
                         stacklevel=2,
                     )
                 continue
