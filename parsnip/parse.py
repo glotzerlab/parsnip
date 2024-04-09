@@ -135,6 +135,13 @@ def read_table(
         # Reorder the column indices to match the order of the input keys
         data_column_indices = np.array(data_column_indices)[np.argsort(column_order)]
 
+    if len(column_order) != len(keys):
+        missing_keys = {key for i, key in enumerate(keys) if i not in column_order}
+        warnings.warn(
+            f"Keys {missing_keys} were not found in the table.",
+            ParseWarning,
+            stacklevel=2,
+        )
     return np.atleast_2d(data)[:, data_column_indices]
 
 
