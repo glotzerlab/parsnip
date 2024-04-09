@@ -12,6 +12,7 @@ on:
   push:
     branches:
       - "main"
+      - "breaking"
 
   # trigger on request
   workflow_dispatch:
