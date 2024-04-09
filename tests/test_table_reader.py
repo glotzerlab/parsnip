@@ -3,6 +3,7 @@ import pytest
 from conftest import bad_cif, cif_files_mark
 from gemmi import cif
 
+from parsnip._utils import ParseWarning
 from parsnip.parse import read_fractional_positions, read_table
 
 
@@ -53,10 +54,11 @@ def test_partial_table_read(cif_data, subset):
 
 def test_bad_cif_symop(cif_data=bad_cif):
     # This file is thouroughly cooked - gemmi will not even read it.
-    parsnip_data = read_table(
-        filename=cif_data.filename,
-        keys=cif_data.symop_keys,
-    )
+    with pytest.warns(ParseWarning, match=r"expected line with 2 values, got"):
+        parsnip_data = read_table(
+            filename=cif_data.filename,
+            keys=cif_data.symop_keys,
+        )
     correct_data = [
         ["1", "x,y,z"],
         ["2", "-x,y,-z*1/2"],
@@ -72,35 +74,31 @@ def test_bad_cif_symop(cif_data=bad_cif):
 
 
 def test_bad_cif_atom_sites(cif_data=bad_cif):
-    parsnip_data = read_table(
-        filename=cif_data.filename,
-        keys=cif_data.atom_site_keys,
-    )
-    # Duplicate keys returns EVERY column from the table with that key
+    expected_warning = "Keys {'_this_key_does_not_exist'} were not found in the table."
+    with pytest.warns(ParseWarning, match=expected_warning):
+        parsnip_data = read_table(
+            filename=cif_data.filename,
+            keys=cif_data.atom_site_keys,
+        )
     # "_atom_site"
     np.testing.assert_array_equal(
-        parsnip_data[:, [0, 1]],
-        np.array(
-            [
-                ["Aa(3)", "SL", "Oo", "O0f"],
-                ["0.00000(1)", "0.00000", "0.19180", "0.09390"],
-            ]
-        ).T,
+        parsnip_data[:, 0],
+        np.array(["Aa(3)", "SL", "Oo", "O0f"]),
     )
     # "_atom_site_type_symbol"
-    np.testing.assert_array_equal(parsnip_data[:, 2], ["Bb", "SM", "O", "O"])
+    np.testing.assert_array_equal(parsnip_data[:, 1], ["Bb", "SM", "O", "O"])
 
     # "_atom_site_symmetry_multiplicity"
-    np.testing.assert_array_equal(parsnip_data[:, 3], ["1", "3", "5", "7"])
+    np.testing.assert_array_equal(parsnip_data[:, 2], ["1", "3", "5", "7"])
 
     # "_atom_si te"
     np.testing.assert_array_equal(
-        parsnip_data[:, 4], ["0.25000", "0.(28510)", "0.05170", "0.41220"]
+        parsnip_data[:, 3], ["0.00000(1)", "0.00000", "0.19180", "0.09390"]
     )
 
     # "_atom_site_fract_z"
     np.testing.assert_array_equal(
-        parsnip_data[:, 5], ["0.00000", "0.25000", "0.67460", "-0.03510"]
+        parsnip_data[:, 4], ["0.25000", "0.(28510)", "0.05170", "0.41220"]
     )
 
 

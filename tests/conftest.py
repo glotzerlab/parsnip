@@ -70,6 +70,7 @@ bad_cif = CifData(
         "_atom_site_symmetry_multiplicity",
         "_atom_si te",
         "_atom_site_fract_z",
+        "_this_key_does_not_exist",
     ),
 )
 
