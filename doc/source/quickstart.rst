@@ -95,7 +95,7 @@ Now, let's read a table. To do this, we need a list of keys:
     ...            dtype='<U12')
 
 
-Now, maybe don't need the Wyckoff label - let's select just the numeric values, and export them as floats:
+Now, maybe don't need the atom site or Wyckoff labels - let's select just the numeric values, and export them as floats:
 
 .. code-block:: python
 
