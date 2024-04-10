@@ -237,7 +237,7 @@ def read_key_value_pairs(
 
     By default, this function reads all keys and returns data values as strings. Setting
     ``only_read_numerics`` to True will cause the program to cast data to a nunmeric
-    type (float or int): however, keys that cannot be safely cast into a numeric are
+    type (float or int). However, keys that cannot be safely cast into a numeric are
     skipped.
 
     Args:
