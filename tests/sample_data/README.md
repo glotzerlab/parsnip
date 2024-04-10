@@ -17,3 +17,7 @@ All files for this test suite have been drawn from databases across the web. Cit
 ## Crystallographic Open Database (COD):
 
 [aP16](http://www.crystallography.net/cod/1540955.html)
+
+## Protein Data Bank (PDB):
+
+[4INS](https://doi.org/10.2210/pdb4ins/pdb)
