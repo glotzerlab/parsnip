@@ -53,7 +53,7 @@ import numpy as np
 
 from ._errors import ParseError, ParseWarning
 from ._utils import _deg2rad, _str2num
-from .patterns import LineCleaner, cast_array_to_float
+from .patterns import LineCleaner, cast_array_to_float, remove_nondelimiting_whitespace
 
 
 def _remove_comments_from_line(line):
@@ -63,10 +63,19 @@ def _remove_comments_from_line(line):
 def read_table(
     filename: str,
     keys: str,
-    filter_line: tuple[str, str] = (r",\s+", ","),
+    nondelimiting_whitespace_replacement: str = "_",
+    regex_filter: tuple[str, str] | None = None,
     keep_original_key_order=False,
 ) -> np.ndarray[str]:
     r"""Extract data from a CIF file loop\_ table.
+
+    .. tip::
+
+        CIF tables are whitespace delimited - however, values enclosed in quotation
+        marks may also contain whitespace characters. The parameter
+        ``nondelimiting_whitespace_replacement`` handles this possibility by replacing
+        nondelimiting whitespaces with underscores. This value can be also be set to an
+        empty string, or any arbitrary sequence of characters.
 
     Args:
         filename (str):
@@ -74,11 +83,13 @@ def read_table(
         keys (tuple[str]):
             The names of the keys to be parsed. The columns associated with these keys
             will be returned in the final array.
-        filter_line (tuple[str,str], optional):
+        nondelimiting_whitespace_replacement (str, optional):
+            Character to replace non-delimiting whitespaces with. By default,
+        regex_filter (tuple[str,str], optional):
             A tuple of strings that are compiled to a regex filter and applied to each
             data line. If a tuple of tuples of strings is provided instead, each pattern
             will be applied seperately.
-            Default value = ``((r",\s+",","))``
+            Default value = ``None``
         keep_original_key_order (bool, optional):
             When True, preserve the order of keys in the table from the cif file.
             When False, return columns of data in order of the input ``keys`` arg.
@@ -109,7 +120,8 @@ def read_table(
     with open(filename) as f:
         tables = f.read().split("loop_")
 
-    line_cleaner = LineCleaner(filter_line)
+    if regex_filter is not None:
+        line_cleaner = LineCleaner(regex_filter)
     nontable_line_prefixes = ("_", "#")
 
     for table in tables:
@@ -141,7 +153,13 @@ def read_table(
             # If we exit the header and enter the table body
             if data_column_indices and (line[:1] not in nontable_line_prefixes):
                 in_header = False  # Exit the header and start writing data
-                clean_line = line_cleaner(line)
+
+                if regex_filter is not None:  # Apply user-defined regex, if present
+                    line = line_cleaner(line)
+
+                clean_line = remove_nondelimiting_whitespace(
+                    line.strip(), replacement=nondelimiting_whitespace_replacement
+                )
                 split_line = clean_line.split()
 
                 # Only add data if the line has at least as many columns as required.
