@@ -5,3 +5,4 @@ Patterns Module
 
 .. automodule:: parsnip.patterns
    :members:
+   :special-members:
