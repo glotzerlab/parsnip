@@ -22,15 +22,8 @@
    :caption: Reference
 
    genindex
+   modindex
    development
    changelog
    credits
    license
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
