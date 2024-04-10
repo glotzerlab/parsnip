@@ -312,7 +312,7 @@ def read_key_value_pairs(
     return data
 
 
-def read_cell_params(filename, degrees: bool = True):
+def read_cell_params(filename, degrees: bool = True, mmcif: bool = False):
     r"""Read the cell lengths and angles from a CIF file.
 
     Args:
@@ -321,15 +321,22 @@ def read_cell_params(filename, degrees: bool = True):
             When True, angles are returned in degrees (as per the cif spec). When False,
             angles are converted to radians.
             Default value = ``True``
+        mmcif (bool, optional):
+            When False, the standard CIF key naming is used (e.g. _cell_angle_alpha).
+            When True, the mmCIF standard is used instead (e.g. cell.angle_alpha).
+            Default value = ``False``
 
     Returns:
         tuple:
             The box vector lengths and angles in degrees or radians
             :math:`(L_1, L_2, L_3, \alpha, \beta, \gamma)`.
     """
-    angle_keys = ("_cell_angle_alpha", "_cell_angle_beta", "_cell_angle_gamma")
-    box_keys = ("_cell_length_a", "_cell_length_b", "_cell_length_c") + angle_keys
-
+    if mmcif:
+        angle_keys = ("_cell.angle_alpha", "_cell.angle_beta", "_cell.angle_gamma")
+        box_keys = ("_cell.length_a", "_cell.length_b", "_cell.length_c") + angle_keys
+    else:
+        angle_keys = ("_cell_angle_alpha", "_cell_angle_beta", "_cell_angle_gamma")
+        box_keys = ("_cell_length_a", "_cell_length_b", "_cell_length_c") + angle_keys
     cell_data = read_key_value_pairs(filename, keys=box_keys, only_read_numerics=True)
 
     assert all(value is not None for value in cell_data.values())

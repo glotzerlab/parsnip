@@ -63,8 +63,9 @@ def test_key_value_warnings(cif_data, keys=("_FALSE_KEY")):
 
 @cif_files_mark
 def test_read_cell_params(cif_data, keys=box_keys):
-    if "PDB_4INS_head.cif" in cif_data.filename:
-        return
-    parsnip_data = read_cell_params(filename=cif_data.filename)
+    mmcif = "PDB_4INS_head.cif" in cif_data.filename
+    parsnip_data = read_cell_params(filename=cif_data.filename, mmcif=mmcif)
+    if mmcif:
+        keys = (key[0] + key[1:].replace("_", ".", 1) for key in keys)
     gemmi_data = _gemmi_read_keys(cif_data.filename, keys)
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
