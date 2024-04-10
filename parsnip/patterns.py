@@ -3,22 +3,6 @@ import re
 
 import numpy as np
 
-# Compile in common patterns for cif parsing. These are reused throughout the package.
-_multiple_whitespace_pattern = re.compile(r"\s+")
-_comma_prune_spaces = re.compile(r",\s+")
-
-
-def compile_pattern_from_strings(filter_patterns: tuple[str]):
-    """Return a regex pattern that matches any of the characters in the filter.
-
-    Args:
-        filter_patterns (list[str]): Description
-
-    Returns:
-        re.Pattern: Pattern matching any of the input characters.
-    """
-    return re.compile("|".join(filter_patterns))
-
 
 def cast_array_to_float(arr: np.ndarray, dtype: type = np.float32):
     """Cast a Numpy array to a dtype, pruning significant digits from numerical values.
@@ -31,6 +15,34 @@ def cast_array_to_float(arr: np.ndarray, dtype: type = np.float32):
         np.array[float]: Array with new dtype and no significant digit information.
     """
     return np.char.partition(arr, "(")[..., 0].astype(dtype)
+
+
+def remove_nondelimiting_whitespace(string: str, replacement: str = "_") -> str:
+    """Remove nondelimiting whitespaces from a string.
+
+    For the purpose of this function (and CIF files in general), nondelimiting
+    whitespaces are those that are enclosed either in single or double quotes.
+
+    Args:
+        string (str): Input string to process
+        replacement (str):
+          String that will replace each whitespace. (Default value = "_"")
+
+    Returns:
+        str: String with whitespaces replaced with the replacement character.
+    """
+    in_quotes = False
+    new_str = []
+    for char in string:
+        if in_quotes and char == " ":
+            new_str.append(replacement)
+            continue
+        else:
+            new_str.append(char)
+
+        if char == "'" or char == '"':
+            in_quotes = not in_quotes
+    return "".join(new_str)
 
 
 class LineCleaner:
