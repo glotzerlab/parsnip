@@ -273,9 +273,9 @@ def read_key_value_pairs(
     data = {}
 
     if only_read_numerics:
-        regexp = r"^(_\w+)[ |\t]+(-?\d+\.?\d*)"
+        regexp = r"^(_[\w\.]+)[ |\t]+(-?\d+\.?\d*)"
     else:
-        regexp = r"^(_[\w-]+)[ |\t]+([^#^\n]+)"
+        regexp = r"^(_[\w\.-]+)[ |\t]+([^#^\n]+)"
 
     if keys is not None:
         # Insertion order our dict with original key order
