@@ -257,7 +257,7 @@ def read_key_value_pairs(
     .. note::
 
             If no data is found for any of the provided keys, a warning will be raised
-            and the output value will by ``None``.
+            and the output value will be ``None``.
 
     """
     # REGEX EXPLANATION
