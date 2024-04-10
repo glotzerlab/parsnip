@@ -34,7 +34,8 @@ def remove_nondelimiting_whitespace(string: str, replacement: str = "_") -> str:
     Args:
         string (str): Input string to process
         replacement (str):
-          String that will replace each whitespace. (Default value = "_"")
+          String that will replace each nondelimiting whitespace.
+          Default value = ``"_"``
 
     Returns:
         str: String with whitespaces replaced with the replacement character.

@@ -85,7 +85,8 @@ def read_table(
             The names of the keys to be parsed. The columns associated with these keys
             will be returned in the final array.
         nondelimiting_whitespace_replacement (str, optional):
-            Character to replace non-delimiting whitespaces with. By default,
+            Character to replace non-delimiting whitespaces with.
+            Default value = ``"_"``
         regex_filter (tuple[str,str], optional):
             A tuple of strings that are compiled to a regex filter and applied to each
             data line. If a tuple of tuples of strings is provided instead, each pattern
