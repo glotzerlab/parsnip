@@ -344,15 +344,15 @@ def read_cell_params(filename, degrees=True, validate=True):
 
 def read_fractional_positions(
     filename: str,
-    filter_line: tuple[tuple[str, str]] = ((r",\s+", ",")),
+    regex_filter: tuple[tuple[str, str]] = ((r",\s+", ",")),
 ):
     r"""Extract the fractional X,Y,Z coordinates from a CIF file.
 
     Args:
         filename (str): The name of the .cif file to be parsed.
-        filter_line (tuple[tuple[str]], optional):
+        regex_filter (tuple[tuple[str]], optional):
             A tuple of strings that are compiled to a regex filter and applied to each
-            data line. (Default value: ((r",\s+",",")) )
+            data line. Default value = ``((r",\s+",","))``
 
     Returns:
         :math:`(N, 3)` :class:`numpy.ndarray[np.float32]`:
@@ -360,10 +360,7 @@ def read_fractional_positions(
     """
     xyz_keys = ("_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z")
     # Once #6 is added, we should warnings.catch_warnings(action="error")
-    xyz_data = read_table(
-        filename=filename,
-        keys=xyz_keys,
-    )
+    xyz_data = read_table(filename=filename, keys=xyz_keys, regex_filter=regex_filter)
 
     xyz_data = cast_array_to_float(arr=xyz_data, dtype=np.float32)
 
