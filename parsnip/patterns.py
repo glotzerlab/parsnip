@@ -14,8 +14,10 @@ def cast_array_to_float(arr: np.ndarray, dtype: type = np.float32):
     """Cast a Numpy array to a dtype, pruning significant digits from numerical values.
 
     Args:
-        arr (np.array): Array of data to convert
-        dtype (type, optional): dtype to cast array to (Default value: np.float32).
+        arr (np.array[str]): Array of data to convert
+        dtype (type, optional):
+            dtype to cast array to.
+            Default value = ``np.float32``
 
     Returns:
         np.array[float]: Array with new dtype and no significant digit information.

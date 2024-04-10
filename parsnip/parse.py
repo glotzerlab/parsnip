@@ -243,10 +243,11 @@ def read_key_value_pairs(
         filename (str): The name of the .cif file to be parsed.
         keys (tuples[str]|None, optional):
             A tuple of keys to search and return data for.
-            If keys is None, all keys are returned (Default value: None).
+            If keys is None, all keys are returned.
+            Default value = ``None``.
         only_read_numerics (bool, optional):
             Whether to read only values that cannot be cast to int or float.
-            (Default value: False)
+            Default value = ``False``
 
     Returns:
         dict[str,float|int] | dict[str,str]:
@@ -310,16 +311,15 @@ def read_key_value_pairs(
     return data
 
 
-def read_cell_params(filename, degrees=True, validate=True):
+def read_cell_params(filename, degrees: bool = True):
     r"""Read the cell lengths and angles from a CIF file.
 
     Args:
         filename (str): The name of the .cif file to be parsed.
         degrees (bool, optional):
             When True, angles are returned in degrees (as per the cif spec). When False,
-            angles are converted to radians (Default value: True).
-        validate (bool, optional):
-            Whether to check if the results are correct. (Default value: True)
+            angles are converted to radians.
+            Default value = ``True``
 
     Returns:
         tuple:
@@ -331,9 +331,8 @@ def read_cell_params(filename, degrees=True, validate=True):
 
     cell_data = read_key_value_pairs(filename, keys=box_keys, only_read_numerics=True)
 
-    if validate:
-        assert all(value is not None for value in cell_data.values())
-        assert all(0 < cell_data[key] < 180 for key in angle_keys)
+    assert all(value is not None for value in cell_data.values())
+    assert all(0 < cell_data[key] < 180 for key in angle_keys)
 
     if not degrees:
         for key in angle_keys:
