@@ -1,4 +1,10 @@
-"""Functions and classes to process string data."""
+"""Functions and classes to process string data.
+
+As with any text file format, some string manipulation may be required to process CIF
+data. The classes and functions in this module provide simple tools for the manipulation
+of string data extracted from CIF files by methods in ``parsnip.parse``.
+
+"""
 import re
 
 import numpy as np
