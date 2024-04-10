@@ -1,0 +1,99 @@
+#\#CIF_1.0
+################################################################################
+#                                                                              #
+#                 This CIF is a part of the B-IncStrDB                         #
+#              (Bilbao Incommensurate Structures Database)                     #
+#                  http://www.cryst.ehu.eus/bincstrdb/                         #
+#                                                                              #
+#   Please note that the structure of the CIF file may differ from the one     #
+#   deposited, as it may have been modified to comply with the standard. The   #
+#   file has been validated against official dictionaries as well as local     #
+#   dictionaries including non-standard data names used by SHELXL (Sheldrick,  #
+#   G. M. (2008). Acta Cryst. A 64, 112-122) and JANA (Petricek, V., Dusek, M. #
+#   and Palatinus, L. (2014), Z. Kristallogr. 229, 345-352).                   #
+#                                                                              #
+#   For comments and/or criticisms, please e-mail to administrador-bcs@ehu.es  #
+#                                                                              #
+################################################################################
+data_mod1023433188
+
+_journal_name_full                'Acta Crystallographica Section C'
+_journal_volume                   39
+_journal_year                     1983
+_journal_page_first               678
+_journal_page_last                680
+_journal_paper_doi                https://doi.org/10.1107/S0108270183005909
+_publ_contact_author_name         'Overeijnder, H.'
+_publ_contact_author_email        ?
+
+loop_
+  _publ_author_name
+  'van den Berg, A.J.'
+  'Overeijnder, H.'
+  'Tuinstra, F.'
+
+_publ_section_title
+;The average structure of K~2~MoO~4~ in the incommensurate phase at 633K
+;
+
+_exptl_crystal_type_of_structure   cryst
+_diffrn_ambient_temperature       633
+_diffrn_source                    x-ray
+
+_exptl_special_details
+;Guinier-Lenne camera. Peak intensities estimated with an optical densitometer
+;
+
+_chemical_formula_sum            'K6 Mo4 O16'
+
+_cell_length_a                    10.933(3)
+_cell_length_b                    6.312(2)
+_cell_length_c                    7.944(2)
+_cell_angle_alpha                 90
+_cell_angle_beta                  90
+_cell_angle_gamma                 90
+_cell_volume                      548.2
+
+_cell_formula_units_Z             4
+
+_space_group_crystal_system       orthorhombic
+_space_group_name_H-M_alt         'C c m m'
+
+loop_
+_space_group_symop_id
+_space_group_symop_operation_xyz
+1   x,y,z
+2   -x,-y,z+1/2
+3   x,-y,-z+1/2
+4   -x,y,-z
+5   x+1/2,y+1/2,z
+6   -x+1/2,-y+1/2,z+1/2
+7   x+1/2,-y+1/2,-z+1/2
+8   -x+1/2,y+1/2,-z
+9   -x,-y,-z
+10  x,y,-z+1/2
+11  -x,y,z+1/2
+12  x,-y,z
+13  -x+1/2,-y+1/2,-z
+14  x+1/2,y+1/2,-z+1/2
+15  -x+1/2,y+1/2,z+1/2
+16  x+1/2,-y+1/2,z
+
+_reflns_number_gt                 71
+_refine_ls_R_factor_gt            ?
+_refine_ls_wR_factor_gt           0.063
+
+loop_
+  _atom_site_label
+  _atom_site_occupancy
+  _atom_site_fract_x
+  _atom_site_fract_y
+  _atom_site_fract_z
+  _atom_site_U_iso_or_equiv
+  _atom_site_adp_type
+  K(1)  1          0         0         0  ?  Uiso
+  K(2)  1    0.33333         0  0.320(3)  ?  Uiso
+  Mo    1    0.33333         0  0.760(4)  ?  Uiso
+  O(1)  1   0.179(1)         0  0.791(4)  ?  Uiso
+  O(2)  1   0.406(2)         0  0.950(4)  ?  Uiso
+  O(3)  1   0.374(1)  0.221(1)  0.650(4)  ?  Uiso
