@@ -117,7 +117,3 @@ Extracting the fractional coordinates of a unit cell is a pretty common operatio
     table = parse.read_fractional_positions(filename)
     print(table)
     ...    array([[0., 0., 0.]], dtype=float32)
-
-
-
-For more complete demonstrations of the package's features, see the :ref:`examples`.
