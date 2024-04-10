@@ -5,7 +5,6 @@
    :maxdepth: 2
    :caption: Getting Started
 
-   introduction
    installation
    quickstart
 
