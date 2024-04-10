@@ -15,6 +15,7 @@
    :caption: API
 
    package-parse
+   package-patterns
 
 
 .. toctree::
