@@ -65,7 +65,8 @@ def read_table(
     keys: str,
     nondelimiting_whitespace_replacement: str = "_",
     regex_filter: tuple[str, str] | None = None,
-    keep_original_key_order=False,
+    keep_original_key_order: bool = False,
+    cast_to_float: bool = False,
 ) -> np.ndarray[str]:
     r"""Extract data from a CIF file loop\_ table.
 
@@ -94,7 +95,10 @@ def read_table(
             When True, preserve the order of keys in the table from the cif file.
             When False, return columns of data in order of the input ``keys`` arg.
             Default value = ``False``
-
+        cast_to_float (bool, optional):
+            When True, attempts to cast the entire array to flaoting point numbers,
+            removing precision values (e.g. ``5.98(4)`` would be mapped to ``5.98(4)``).
+            Default value = ``False``
 
     Returns:
         :math:`(N, N_{keys})` :class:`numpy.ndarray[str]`:
@@ -193,7 +197,9 @@ def read_table(
             ParseWarning,
             stacklevel=2,
         )
-    return np.atleast_2d(data)[:, data_column_indices]
+
+    result = np.atleast_2d(data)[:, data_column_indices]
+    return cast_array_to_float(result) if cast_to_float else result
 
 
 def _parsed_line_generator(filename, regexp):
