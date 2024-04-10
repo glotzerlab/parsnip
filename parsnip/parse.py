@@ -51,7 +51,8 @@ import warnings
 
 import numpy as np
 
-from ._utils import ParseError, ParseWarning, _deg2rad, _str2num
+from ._errors import ParseError, ParseWarning
+from ._utils import _deg2rad, _str2num
 from .patterns import LineCleaner, cast_array_to_float
 
 

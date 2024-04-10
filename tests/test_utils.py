@@ -1,7 +1,8 @@
 import numpy as np
 import pytest
 
-from parsnip._utils import ParseError, ParseWarning, _deg2rad, _str2num
+from parsnip._errors import ParseError, ParseWarning
+from parsnip._utils import _deg2rad, _str2num
 
 
 def test_parse_error():

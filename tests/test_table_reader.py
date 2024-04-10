@@ -3,7 +3,7 @@ import pytest
 from conftest import bad_cif, cif_files_mark
 from gemmi import cif
 
-from parsnip._utils import ParseWarning
+from parsnip._errors import ParseWarning
 from parsnip.parse import read_fractional_positions, read_table
 
 

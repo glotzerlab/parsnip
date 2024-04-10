@@ -3,7 +3,7 @@ import pytest
 from conftest import bad_cif, box_keys, cif_files_mark, random_keys_mark
 from gemmi import cif
 
-from parsnip._utils import ParseWarning
+from parsnip._errors import ParseWarning
 from parsnip.parse import read_cell_params, read_key_value_pairs
 
 
