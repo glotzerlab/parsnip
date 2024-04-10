@@ -86,7 +86,7 @@ def read_table(
 
 
     Returns:
-        (:math:`(N, N_{keys})` :class:`numpy.ndarray[str]`):
+        :math:`(N, N_{keys})` :class:`numpy.ndarray[str]`:
             A numpy array of the data as strings.
 
     .. warning::
@@ -331,7 +331,8 @@ def read_fractional_positions(
             data line. (Default value: ((r",\s+",",")) )
 
     Returns:
-        np.array[np.float32]: Fractional X,Y,Z coordinates of the unit cell.
+        :math:`(N, 3)` :class:`numpy.ndarray[np.float32]`:
+            Fractional X,Y,Z coordinates of the unit cell.
     """
     xyz_keys = ("_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z")
     # Once #6 is added, we should warnings.catch_warnings(action="error")
