@@ -230,7 +230,7 @@ def read_key_value_pairs(
 
     .. note::
 
-            If a no data is found for any of the provided keys, a warning will be raised
+            If no data is found for any of the provided keys, a warning will be raised
             and the output value will by ``None``.
 
     """
