@@ -1,12 +1,14 @@
-.. _header:
+.. _images:
 
-.. image:: _static/parsnip_header_dark.svg
+.. image:: doc/source/_static/parsnip_header_dark.svg
   :width: 600
   :class: only-light
 
-.. image:: _static/parsnip_header_light.svg
+.. image:: doc/source/_static/parsnip_header_light.svg
   :width: 600
   :class: only-dark
+
+.. _header:
 
 ..
   TODO: set up Readthedocs, PyPI, and conda-forge

@@ -1,4 +1,13 @@
+.. image:: _static/parsnip_header_dark.svg
+  :width: 600
+  :class: only-light
+
+.. image:: _static/parsnip_header_light.svg
+  :width: 600
+  :class: only-dark
+
 .. include:: ../../README.rst
+  :start-after: .. _header:
 
 
 .. toctree::
