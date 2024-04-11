@@ -278,6 +278,10 @@ def read_key_value_pairs(
     # [^#^\n]+  : Match 1 ore more characters that are NOT a "#" or newline "\n"
     # )         : End the group
 
+    # Ideally, we could use an atomic group (e.g. (?>[ |\t]+)) to match the spaces and
+    # save some time on degenerate cases. However, this feature was added to re in
+    # Python 3.11 so we will exclude it for portability's sake
+
     data = {}
 
     if only_read_numerics:
