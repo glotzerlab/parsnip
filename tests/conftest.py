@@ -60,7 +60,7 @@ atom_site_keys = (
 
 aflow_mC24 = CifData(
     filename=data_file_path + "AFLOW_mC24.cif",
-    symop_keys=("_space_group_symop_id", "_space_group_symop_operation_xyz"),
+    symop_keys=("_space_group_symop_operation_xyz",),
     atom_site_keys=atom_site_keys,
     single_value_keys=(
         "_audit_creation_method",
@@ -77,7 +77,7 @@ aflow_mC24 = CifData(
 
 bisd_Ccmm = CifData(
     filename=data_file_path + "B-IncStrDb_Ccmm.cif",
-    symop_keys=("_space_group_symop_operation_xyz", "_space_group_symop_id"),
+    symop_keys=("_space_group_symop_operation_xyz",),
     # Our code works with extra keys, but gemmi does not!
     atom_site_keys=(atom_site_keys[0], *atom_site_keys[2:]),
     single_value_keys=(
