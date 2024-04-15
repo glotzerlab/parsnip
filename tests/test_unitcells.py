@@ -5,6 +5,7 @@ from gemmi import cif
 from parsnip.unitcells import (
     read_cell_params,
     read_fractional_positions,
+    read_symmetry_operations,
 )
 
 
@@ -38,4 +39,16 @@ def test_read_cell_params(cif_data, keys=box_keys):
     if mmcif:
         keys = (key[0] + key[1:].replace("_", ".", 1) for key in keys)
     gemmi_data = _gemmi_read_keys(cif_data.filename, keys)
+    np.testing.assert_array_equal(parsnip_data, gemmi_data)
+
+
+@cif_files_mark
+def test_read_symmetry_operations(cif_data):
+    if "PDB_4INS_head.cif" in cif_data.filename:
+        return
+
+    parsnip_data = read_symmetry_operations(filename=cif_data.filename)
+    gemmi_data = _gemmi_read_table(filename=cif_data.filename, keys=cif_data.symop_keys)
+    # We clean up the data for easier processing: apply the same transformation to gemmi
+    gemmi_data = [[item.replace(" ", "") for item in row] for row in gemmi_data]
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
