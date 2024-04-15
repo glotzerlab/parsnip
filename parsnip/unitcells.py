@@ -43,7 +43,6 @@ def read_fractional_positions(
             Fractional X,Y,Z coordinates of the unit cell.
     """
     xyz_keys = ("_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z")
-    # Once #6 is added, we should warnings.catch_warnings(action="error")
     xyz_data = read_table(
         filename=filename,
         keys=xyz_keys,
