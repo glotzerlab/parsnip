@@ -44,7 +44,12 @@ def read_fractional_positions(
     """
     xyz_keys = ("_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z")
     # Once #6 is added, we should warnings.catch_warnings(action="error")
-    xyz_data = read_table(filename=filename, keys=xyz_keys, regex_filter=regex_filter)
+    xyz_data = read_table(
+        filename=filename,
+        keys=xyz_keys,
+        nondelimiting_whitespace_replacement="",
+        regex_filter=regex_filter,
+    )
 
     xyz_data = cast_array_to_float(arr=xyz_data, dtype=np.float32)
 
