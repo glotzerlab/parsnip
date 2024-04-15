@@ -205,4 +205,4 @@ def extract_unit_cell(filename: str, n_decimal_places: int = 4):
 
     # TODO: add "fractional" flag?
 
-    return np.unique(pos.round(n_decimal_places), axis=0)
+    return pos[np.unique(pos.round(n_decimal_places), return_index=True, axis=0)[1]]
