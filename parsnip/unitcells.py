@@ -206,28 +206,3 @@ def extract_unit_cell(filename: str, n_decimal_places: int = 4):
     # TODO: add "fractional" flag?
 
     return np.unique(pos.round(n_decimal_places), axis=0)
-
-
-if __name__ == "__main__":
-    import glob
-
-    fns = glob.glob("../../aflow_cif_db/AFLOW/*.cif")
-    key = ("_aflow_Pearson",)
-    overs, unders = 0, 0
-    for filename in fns:
-        uc = extract_unit_cell(filename, n_decimal_places=4)
-        pears = read_key_value_pairs(filename, keys=key)
-        measured, expected = (
-            len(uc),
-            int(re.sub(r"[^\d]*", "", pears["_aflow_Pearson"])),
-        )
-        try:
-            assert measured == expected, f"{measured} vf {expected}"
-        except AssertionError:
-            if measured > expected:
-                overs += 1
-            else:
-                unders += 1
-            # print(pears)
-    print(overs, unders)
-    print(len(fns))
