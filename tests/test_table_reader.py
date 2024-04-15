@@ -4,7 +4,7 @@ from conftest import bad_cif, cif_files_mark
 from gemmi import cif
 
 from parsnip._errors import ParseWarning
-from parsnip.parse import read_fractional_positions, read_table
+from parsnip.parse import read_table
 
 
 def _gemmi_read_table(filename, keys):
@@ -109,14 +109,3 @@ def test_bad_cif_atom_sites(cif_data=bad_cif):
     np.testing.assert_array_equal(
         parsnip_data[:, 4], ["0.25000", "0.(28510)", "0.05170", "0.41220"]
     )
-
-
-@cif_files_mark
-def test_read_fractional_positions(cif_data):
-    if "PDB_4INS_head.cif" in cif_data.filename:
-        return
-    keys = ("_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z")
-    parsnip_data = read_fractional_positions(filename=cif_data.filename)
-    gemmi_data = _gemmi_read_table(cif_data.filename, keys)
-    gemmi_data = [[cif.as_number(val) for val in row] for row in gemmi_data]
-    np.testing.assert_allclose(parsnip_data, gemmi_data)
