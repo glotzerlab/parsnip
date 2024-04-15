@@ -49,12 +49,8 @@ def read_fractional_positions(
         nondelimiting_whitespace_replacement="",
         regex_filter=regex_filter,
     )
-
-    xyz_data = cast_array_to_float(arr=xyz_data, dtype=np.float32)
-
-    # Validate results
+    xyz_data = cast_array_to_float(arr=xyz_data, dtype=np.float64)
     assert xyz_data.shape[1] == 3
-    assert xyz_data.dtype == np.float32
 
     return xyz_data
 
@@ -158,12 +154,13 @@ def _safe_eval(str_input: str, x: int | float, y: int | float, z: int | float):
             :math:`(N,3)` list of fractional coordinates.
 
     """
-    ordered_inputs = {"x": "{0}", "y": "{1}", "z": "{2}"}
+    ordered_inputs = {"x": "{0:.20f}", "y": "{1:.20f}", "z": "{2:.20f}"}
     # Replace any x, y, or z with the same character surrounded by curly braces. Then,
     # perform substitutions to insert the actual values.
     substituted_string = (
         re.sub(r"([xyz])", r"{\1}", str_input).format(**ordered_inputs).format(x, y, z)
     )
+
     # Remove any unexpected characters from the string.
     safe_string = re.sub(r"[^\d\[\]\,\+\-\/\*\.]", "", substituted_string)
     # Double check to be sure:
@@ -173,17 +170,17 @@ def _safe_eval(str_input: str, x: int | float, y: int | float, z: int | float):
     return eval(safe_string, {"__builtins__": {}}, {})  # noqa: S307
 
 
-def extract_unit_cell(filename: str, n_decimal_places: int = 5):
-    """Return a complete unit cell from a .cif file in fractional coordinates.
+def extract_unit_cell(filename: str, n_decimal_places: int = 4):
+    """Return a complete unit cell from a CIF file in fractional coordinates.
 
     Args:
         filename (str): The name of the .cif file to be parsed.
         n_decimal_places (int, optional):
             The number of decimal places to round each position to for the uniqueness
-            comparison. Because CIF files only store limited precision, a relatively low
-            value is reccomended. 5 decimal places is usually enough to differentiate
-            every unique position.
-            Default value = ``5``
+            comparison. Because CIF files only store a few decimal places, a relatively
+            low value is required for good results. 4 decimal places is usually enough
+            to differentiate every unique position.
+            Default value = ``4``
 
     Returns:
         :math:`(N, 3)` :class:`numpy.ndarray[np.float32]`:
@@ -212,17 +209,25 @@ def extract_unit_cell(filename: str, n_decimal_places: int = 5):
 
 
 if __name__ == "__main__":
-    filename = "../tests/sample_data/AFLOW_mC24.cif"
+    import glob
 
-    fractional_positions = read_fractional_positions(filename=filename)
-    pos = extract_unit_cell(filename)
-    cell = read_cell_params(filename, degrees=False)
-    print(pos)
-
-    # TODO: test against pearson symbols. Do we get the correct number of atoms? And how
-    # much precision can we use for the uniqueness comparison?
-    # Also - is it helpful to map to known fractions? Probably not?
-
-    # Performance: about 4ms for  CCDC file - 250 lines read, 8 XYZ positions * 48 sym
-    # This requires a unique ~200us, reading symopes ~120 ms, fractional positons 200
-    # Total sum is around a ms: eval is likely slow?
+    fns = glob.glob("../../aflow_cif_db/AFLOW/*.cif")
+    key = ("_aflow_Pearson",)
+    overs, unders = 0, 0
+    for filename in fns:
+        uc = extract_unit_cell(filename, n_decimal_places=4)
+        pears = read_key_value_pairs(filename, keys=key)
+        measured, expected = (
+            len(uc),
+            int(re.sub(r"[^\d]*", "", pears["_aflow_Pearson"])),
+        )
+        try:
+            assert measured == expected, f"{measured} vf {expected}"
+        except AssertionError:
+            if measured > expected:
+                overs += 1
+            else:
+                unders += 1
+            # print(pears)
+    print(overs, unders)
+    print(len(fns))
