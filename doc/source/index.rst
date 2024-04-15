@@ -24,7 +24,7 @@
 
    package-parse
    package-patterns
-   package-supercells
+   package-unitcells
 
 
 .. toctree::
