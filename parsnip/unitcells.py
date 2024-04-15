@@ -22,7 +22,7 @@ from parsnip.patterns import cast_array_to_float
 
 def read_fractional_positions(
     filename: str,
-    regex_filter: tuple[tuple[str, str]] = ((r",\s+", ",")),
+    regex_filter: tuple[tuple[str, str]] | None = ((r",\s+", ",")),
 ):
     r"""Extract the fractional X,Y,Z coordinates from a CIF file.
 
@@ -36,7 +36,7 @@ def read_fractional_positions(
         filename (str): The name of the .cif file to be parsed.
         regex_filter (tuple[tuple[str]], optional):
             A tuple of strings that are compiled to a regex filter and applied to each
-            data line. Default value = ``((r",\s+",","))``
+            data line. Default value = ``None``
 
     Returns:
         :math:`(N, 3)` :class:`numpy.ndarray[np.float32]`:
@@ -55,8 +55,22 @@ def read_fractional_positions(
     return xyz_data
 
 
-def read_symmetry_operations(filename):
-    """TODO."""
+def read_symmetry_operations(
+    filename,
+    regex_filter: tuple[tuple[str, str]] | None = None,
+):
+    r"""Extract the symmetry operations from a CIF file.
+
+    Args:
+        filename (str): The name of the .cif file to be parsed.
+        regex_filter (tuple[tuple[str]], optional):
+            A tuple of strings that are compiled to a regex filter and applied to each
+            data line. Default value = ``None``
+
+    Returns:
+        :math:`(N,)` :class:`numpy.ndarray[str]`:
+            Symmetry operations as strings.
+    """
     symmetry_keys = (
         "_symmetry_equiv_pos_as_xyz",
         "_space_group_symop_operation_xyz",
@@ -66,7 +80,7 @@ def read_symmetry_operations(filename):
         data = read_table(
             filename=filename,
             keys=symmetry_keys,
-            # regex_filter=("'", ""),
+            regex_filter=regex_filter,
             nondelimiting_whitespace_replacement="",
         )
 
