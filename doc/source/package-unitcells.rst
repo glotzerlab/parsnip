@@ -1,7 +1,7 @@
-Supercells Module
+Unitcells Module
 ==============================
 
 .. rubric:: Overview
 
-.. automodule:: parsnip.supercells
+.. automodule:: parsnip.unitcells
    :members:
