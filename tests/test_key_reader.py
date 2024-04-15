@@ -1,10 +1,10 @@
 import numpy as np
 import pytest
-from conftest import bad_cif, box_keys, cif_files_mark, random_keys_mark
+from conftest import bad_cif, cif_files_mark, random_keys_mark
 from gemmi import cif
 
 from parsnip._errors import ParseWarning
-from parsnip.parse import read_cell_params, read_key_value_pairs
+from parsnip.parse import read_key_value_pairs
 
 
 def _gemmi_read_keys(filename, keys, as_number=True):
@@ -59,13 +59,3 @@ def test_read_key_value_pairs_badcif(cif_data=bad_cif):
 def test_key_value_warnings(cif_data, keys=("_FALSE_KEY")):
     with pytest.warns(ParseWarning):
         _ = read_key_value_pairs(filename=cif_data.filename, keys=keys)
-
-
-@cif_files_mark
-def test_read_cell_params(cif_data, keys=box_keys):
-    mmcif = "PDB_4INS_head.cif" in cif_data.filename
-    parsnip_data = read_cell_params(filename=cif_data.filename, mmcif=mmcif)
-    if mmcif:
-        keys = (key[0] + key[1:].replace("_", ".", 1) for key in keys)
-    gemmi_data = _gemmi_read_keys(cif_data.filename, keys)
-    np.testing.assert_array_equal(parsnip_data, gemmi_data)

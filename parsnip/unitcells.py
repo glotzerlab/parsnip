@@ -206,6 +206,8 @@ def extract_unit_cell(filename: str, n_decimal_places: int = 5):
     # Wrap particles into the box
     pos %= 1
 
+    # TODO: add "fractional" flag?
+
     return np.unique(pos.round(n_decimal_places), axis=0)
 
 
