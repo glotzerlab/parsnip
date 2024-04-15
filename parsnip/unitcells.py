@@ -192,7 +192,7 @@ def extract_unit_cell(filename: str, n_decimal_places: int = 4):
     symops_str = np.array2string(
         symops,
         separator=",",  # Place a comma after each line in the array. Required to eval
-        threshold=1024,  # Ensure that every line is included in the string
+        threshold=np.inf,  # Ensure that every line is included in the string
         floatmode="unique",  # Ensures strings can uniquely represent each float number
     )
 
