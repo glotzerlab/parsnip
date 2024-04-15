@@ -42,7 +42,6 @@ r"""Functions for parsing CIF files in Python.
 .. _table: https://www.iucr.org/resources/cif/spec/version1.1/cifsyntax#onelevel
 
 """
-# TODO: Move "special" readers to seperate module?
 
 from __future__ import annotations
 
