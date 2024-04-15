@@ -1,4 +1,12 @@
-"""A."""
+"""Functions for constructing unit cells from cif file data.
+
+Rather than storing an entire unit cell's atomic positions, cif files instead include
+the data required to recreate those positions based on symmetry rules. Symmetry
+operations (stored as strings of x,y,z position permutations) are applied to the Wyckoff
+(symmetry irreducible) positions to create a list of possible atomic sites. These are
+then wrapped into the unit cell and filtered for uniqueness to yield the final crystal.
+
+"""
 from __future__ import annotations
 
 import re
