@@ -42,7 +42,6 @@ r"""Functions for parsing CIF files in Python.
 .. _table: https://www.iucr.org/resources/cif/spec/version1.1/cifsyntax#onelevel
 
 """
-# TODO: Move "special" readers to seperate module?
 
 from __future__ import annotations
 
@@ -112,6 +111,7 @@ def read_table(
         that correspond to data from multiple tables, only the first table will be read.
 
     .. tip::
+
         The ``regex_filter`` argument allows for dynamic input creation of regex filters
         to apply to each line that contains data to be saved. Each filter should be a
         tuple of strings corresponding to a pattern to match and a replacement for that
