@@ -63,10 +63,10 @@ def _remove_comments_from_line(line):
 def read_table(
     filename: str,
     keys: str,
-    nondelimiting_whitespace_replacement: str = "_",
-    regex_filter: tuple[str, str] | None = None,
     keep_original_key_order: bool = False,
     cast_to_float: bool = False,
+    nondelimiting_whitespace_replacement: str = "_",
+    regex_filter: tuple[str, str] | None = None,
 ) -> np.ndarray[str]:
     r"""Extract data from a CIF file loop\_ table.
 
@@ -84,14 +84,6 @@ def read_table(
         keys (tuple[str]):
             The names of the keys to be parsed. The columns associated with these keys
             will be returned in the final array.
-        nondelimiting_whitespace_replacement (str, optional):
-            Character to replace non-delimiting whitespaces with.
-            Default value = ``"_"``
-        regex_filter (tuple[str,str], optional):
-            A tuple of strings that are compiled to a regex filter and applied to each
-            data line. If a tuple of tuples of strings is provided instead, each pattern
-            will be applied seperately.
-            Default value = ``None``
         keep_original_key_order (bool, optional):
             When True, preserve the order of keys in the table from the cif file.
             When False, return columns of data in order of the input ``keys`` arg.
@@ -100,6 +92,15 @@ def read_table(
             When True, attempts to cast the entire array to flaoting point numbers,
             removing precision values (e.g. ``5.98(4)`` would be mapped to ``5.98(4)``).
             Default value = ``False``
+        nondelimiting_whitespace_replacement (str, optional):
+            Character to replace non-delimiting whitespaces with.
+            Default value = ``"_"``
+        regex_filter (tuple[str,str], optional):
+            A tuple of strings that are compiled to a regex filter and applied to each
+            data line. If a tuple of tuples of strings is provided instead, each pattern
+            will be applied seperately.
+            Default value = ``None``
+
 
     Returns:
         :math:`(N, N_{keys})` :class:`numpy.ndarray[str]`:
@@ -111,15 +112,13 @@ def read_table(
         that correspond to data from multiple tables, only the first table will be read.
 
     .. tip::
-        The ``filter_line`` argument allows for dynamic input creation of regex filters
-        to apply to each line that contains data to be saved. The first value in the
-        tuple is the pattern to match, and the second value is the replacement text.
-        The default value is ``((",\s+",","))``, which removes whitespace following
-        commas to help differentiate between individual data entries that contain spaces
-        from other sections of the line that are also whitespace separated. Adding
-        another tuple to remove single quotes can also be helpful: try
-        ``((",\s+",","),("'",""))`` to achieve this. To disable the feature entirely,
-        pass in a tuple of empty strings: ``("","")``.
+        The ``regex_filter`` argument allows for dynamic input creation of regex filters
+        to apply to each line that contains data to be saved. Each filter should be a
+        tuple of strings corresponding to a pattern to match and a replacement for that
+        pattern. To apply multiple filters, pass in a list of these tuples.
+
+        For example, single quotes could be removed by setting
+        ``regex_filter=(("'",""),)``.
 
     """
     with open(filename) as f:
