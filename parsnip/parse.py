@@ -69,14 +69,6 @@ def read_table(
 ) -> np.ndarray[str]:
     r"""Extract data from a CIF file loop\_ table.
 
-    .. tip::
-
-        CIF tables are whitespace delimited - however, values enclosed in quotation
-        marks may also contain whitespace characters. The parameter
-        ``nondelimiting_whitespace_replacement`` handles this possibility by replacing
-        nondelimiting whitespaces with underscores. This value can be also be set to an
-        empty string, or any arbitrary sequence of characters.
-
     Args:
         filename (str):
             The name of the .cif file to be parsed.
@@ -112,13 +104,21 @@ def read_table(
 
     .. tip::
 
+        CIF tables are whitespace delimited - however, values enclosed in quotation
+        marks may also contain whitespace characters. The parameter
+        ``nondelimiting_whitespace_replacement`` handles this possibility by replacing
+        nondelimiting whitespaces with underscores. This value can be also be set to an
+        empty string, or any arbitrary sequence of characters.
+
+    .. tip::
+
         The ``regex_filter`` argument allows for dynamic input creation of regex filters
         to apply to each line that contains data to be saved. Each filter should be a
         tuple of strings corresponding to a pattern to match and a replacement for that
         pattern. To apply multiple filters, pass in a list of these tuples.
 
         For example, single quotes could be removed by setting
-        ``regex_filter=(("'",""),)``.
+        ``regex_filter=("'","")``.
 
     """
     # Split tables on the `loop_` keyword and throw away any comments on that line.
