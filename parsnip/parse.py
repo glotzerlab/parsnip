@@ -9,7 +9,7 @@ r"""Functions for parsing CIF files in Python.
     This is an example of a simple CIF file. A `key`_ (data name or tag) must start with
     an underscore, and is seperated from the data value with whitespace characters.
     A `table`_ begins with the ``loop_`` keyword, and contain a header block and a data
-    block. The vertical position of a tag in the table headings corresponds with the
+    block. The vertical position of a tag in the table heading corresponds with the
     horizontal position of the associated column in the table values.
 
     .. code-block:: text
@@ -22,7 +22,7 @@ r"""Functions for parsing CIF files in Python.
         _cell_angle_beta  132.3
         _cell_angle_gamma  90.0
 
-        # A table with two columns and three rows:
+        # A table with two columns and eight rows:
         loop_
         _symmetry_equiv_pos_site_id
         _symmetry_equiv_pos_as_xyz
@@ -151,6 +151,8 @@ def read_table(
             # Save current key position if it is one of the keys we want.
             if in_header and (line in keys):
                 data_column_indices.append(line_number)
+                # If keep_original_key_order is True, we reorder the output to match the
+                # order of columns in the original CIF file
                 if not keep_original_key_order:
                     column_order.append(keys.index(line))
                 continue
