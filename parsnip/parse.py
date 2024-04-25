@@ -214,7 +214,7 @@ def _parsed_line_generator(filename, regexp):
 
     Args:
         filename (str): The name of the .cif file to be parsed.
-        regexp (str): tring to generate the regex pattern that is applied to each line.
+        regexp (str): String to generate the regex pattern that is applied to each line.
 
     Yields:
         tuple(str,str|float|int):
