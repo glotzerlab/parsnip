@@ -121,8 +121,11 @@ def read_table(
         ``regex_filter=(("'",""),)``.
 
     """
+    # Split tables on the `loop_` keyword and throw away any comments on that line.
+    table_delimiter = r"loop_[^\n]*"
+
     with open(filename) as f:
-        tables = f.read().split("loop_")
+        tables = re.split(table_delimiter, f.read())
 
     if regex_filter is not None:
         line_cleaner = LineCleaner(regex_filter)
@@ -142,9 +145,7 @@ def read_table(
                     ", section 7 for more details."
                 )
 
-            # We will get errors if there is a comment after the loop_ block that
-            # contains our data. This is questionably legal, but very uncommon
-
+            # Remove comments from the line to ensure we only save data.
             line = _remove_comments_from_line(line)
 
             # Save current key position if it is one of the keys we want.
