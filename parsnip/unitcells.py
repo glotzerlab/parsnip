@@ -183,17 +183,48 @@ def _safe_eval(str_input: str, x: int | float, y: int | float, z: int | float):
     return eval(safe_string, {"__builtins__": {}}, {})  # noqa: S307
 
 
-def extract_unit_cell(filename: str, n_decimal_places: int = 4):
-    """Return a complete unit cell from a CIF file in fractional coordinates.
+def _write_debug_output(unique_indices, unique_counts, pos, check="Initial"):
+    print(f"{check} uniqueness check:")
+    if len(unique_indices) == len(pos):
+        print("... all points are unique (within tolerance).")
+    else:
+        print("(duplicate point, number of occurences)")
+        [
+            print(pt, count)
+            for pt, count in zip(pos[unique_indices], unique_counts)
+            if count > 1
+        ]
+
+    print()
+
+
+def extract_atomic_positions(
+    filename: str,
+    fractional: bool = True,
+    n_decimal_places: int = 4,
+    verbose: bool = False,
+):
+    """Reconstruct atomic positions from Wyckoff sites and symmetry operations.
+
+    .. warning::
+
+        Reconstructing positions requires several floating point calculations that can
+        be impacted by low-precision data in CIF files. Typically, at least four decimal
+        places are required to accurately reconstruct complicated unit cells: less
+        precision than this can yield cells with duplicate or missing positions.
 
     Args:
         filename (str): The name of the .cif file to be parsed.
+        fractional (bool, optional):
+            Whether to return fractional or absolute coordinates.
+            Default value = ``True``
         n_decimal_places (int, optional):
             The number of decimal places to round each position to for the uniqueness
-            comparison. Because CIF files only store a few decimal places, a relatively
-            low value is required for good results. 4 decimal places is usually enough
-            to differentiate every unique position.
+            comparison. Values higher than 4 may not work for all CIF files.
             Default value = ``4``
+        verbose (bool, optional):
+            Whether to print debug information about the uniqueness checks.
+            Default value = ``False``
 
     Returns:
         :math:`(N, 3)` :class:`numpy.ndarray[np.float32]`:
@@ -201,10 +232,14 @@ def extract_unit_cell(filename: str, n_decimal_places: int = 4):
     """
     fractional_positions = read_fractional_positions(filename=filename)
 
+    # Read the cell params and conver to a matrix of basis vectors
+    cell = read_cell_params(filename, degrees=False, mmcif=False)
+    cell_matrix = _matrix_from_lengths_and_angles(*cell)
+
     symops = read_symmetry_operations(filename)
     symops_str = np.array2string(
         symops,
-        separator=",",  # Place a comma after each line in the array. Required to eval
+        separator=",",  # Place a comma after each line in the array. Required for eval
         threshold=np.inf,  # Ensure that every line is included in the string
         floatmode="unique",  # Ensures strings can uniquely represent each float number
     )
@@ -212,10 +247,43 @@ def extract_unit_cell(filename: str, n_decimal_places: int = 4):
     all_frac_positions = [_safe_eval(symops_str, *xyz) for xyz in fractional_positions]
 
     pos = np.vstack(all_frac_positions)
+    pos %= 1  # Wrap particles into the box
 
-    # Wrap particles into the box
-    pos %= 1
+    # Filter unique points. This takese some time, but makes the method faster overall
+    _, unique_indices, unique_counts = np.unique(
+        pos.round(n_decimal_places), return_index=True, return_counts=True, axis=0
+    )
 
-    # TODO: add "fractional" flag?
+    if verbose:
+        _write_debug_output(unique_indices, unique_counts, pos, check="Initial")
 
-    return pos[np.unique(pos.round(n_decimal_places), return_index=True, axis=0)[1]]
+    # Remove initial duplicates, then map to real space for a second check
+    pos = pos[unique_indices]
+    real_space_positions = pos @ cell_matrix
+
+    _, unique_indices, unique_counts = np.unique(
+        real_space_positions.round(n_decimal_places),
+        return_index=True,
+        return_counts=True,
+        axis=0,
+    )
+
+    if verbose:
+        _write_debug_output(unique_indices, unique_counts, pos, check="Secondary")
+
+    """
+    # This code allows for parity with Gemmi - however, the results are effectively
+    # identical to the code above. This could be re-enabled in the future if desired.
+    if not np.isclose(merge_dist,0):
+        dists,i_inds,j_inds = _get_distances(real_space_positions[unique_indices])
+
+        # Now, get the positions that are less than merge_dist apart and remove them
+        overlapping_point_indices = np.vstack([i_inds,j_inds])[:, dists<merge_dist**2].T
+        pos = np.delete(pos, overlapping_point_indices[:,1],axis=0)
+        if verbose:
+            print("Tertiary uniqueness check:")
+            print(f"... {len(overlapping_point_indices)} points removed")
+        real_space_positions = pos@cell_matrix
+    """
+
+    return pos[unique_indices] if fractional else real_space_positions[unique_indices]
