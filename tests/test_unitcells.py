@@ -1,4 +1,3 @@
-import gemmi
 import numpy as np
 import pytest
 from conftest import box_keys, cif_files_mark
@@ -58,38 +57,32 @@ def test_read_symmetry_operations(cif_data):
 
 
 @cif_files_mark
-@pytest.mark.parametrize("n_decimal_places", [3, 4, 5, 6, 7, 8])  # range(2, 14)
-def test_extract_unit_cell(cif_data, n_decimal_places):
+@pytest.mark.parametrize("n_decimal_places", [3, 4, 5])
+def test_extract_atomic_positions(cif_data, n_decimal_places):
+    from ase import io
+    from ase.build import supercells
+
     if "PDB_4INS_head.cif" in cif_data.filename:
-        pytest.xfail("Function not compatible with PDB data.")
-    elif any(failing in cif_data.filename for failing in ["CCDC", "B-IncStr"]):
-        pytest.xfail("Uniqueness comparison not sufficient to differentiate points!")
+        pytest.skip("Function not compatible with PDB data.")
 
     parsnip_positions = extract_atomic_positions(
-        filename=cif_data.filename, n_decimal_places=n_decimal_places
+        filename=cif_data.filename, n_decimal_places=n_decimal_places, fractional=False
     )
-    print(len(parsnip_positions))
 
     # Read the structure, then extract to Python builtin types. Then, wrap into the box
-    # GEMMI is not ground truth here! Need to test against something else
-    gemmi_structure = gemmi.read_small_structure(cif_data.filename)
-    gemmi_positions = np.array(
-        [[*site.fract] for site in gemmi_structure.get_all_unit_cell_sites()]
-    )
-    gemmi_positions %= 1
+    ase_file = io.read(cif_data.filename)
+    ase_data = supercells.make_supercell(ase_file, np.diag([1, 1, 1]))
 
     # Arrays must be sorted to guarantee correct comparison
     parsnip_positions = np.array(
-        sorted(parsnip_positions, key=lambda x: (x[0], x[1], x[2]))
+        sorted(parsnip_positions.round(14), key=lambda x: (x[0], x[1], x[2]))
     )
-    gemmi_positions = np.array(
-        sorted(gemmi_positions, key=lambda x: (x[0], x[1], x[2]))
+    ase_positions = np.array(
+        sorted(ase_data.get_positions(), key=lambda x: (x[0], x[1], x[2]))
     )
 
     parsnip_minmax = [parsnip_positions.min(axis=0), parsnip_positions.max(axis=0)]
-    gemmi_minmax = [gemmi_positions.min(axis=0), gemmi_positions.max(axis=0)]
-    np.testing.assert_allclose(parsnip_minmax, gemmi_minmax, atol=1e-6)
+    ase_minmax = [ase_positions.min(axis=0), ase_positions.max(axis=0)]
+    np.testing.assert_allclose(parsnip_minmax, ase_minmax, atol=1e-6)
 
-    np.testing.assert_allclose(
-        parsnip_positions, gemmi_positions, atol=10**-n_decimal_places
-    )
+    np.testing.assert_allclose(parsnip_positions, ase_positions, atol=1e-12)
