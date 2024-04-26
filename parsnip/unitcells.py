@@ -30,7 +30,7 @@ def _matrix_from_lengths_and_angles(l1, l2, l3, alpha, beta, gamma):
         raise ValueError("The provided angles can not form a valid box.")
     a3z = np.sqrt(under_sqrt)
     a3 = np.array([l3 * a3x, l3 * a3y, l3 * a3z])
-    return np.array([a1, a2, a3]).T
+    return np.array([a1, a2, a3])
 
 
 def read_wyckoff_positions(
