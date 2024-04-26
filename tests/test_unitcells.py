@@ -59,8 +59,12 @@ def test_read_symmetry_operations(cif_data):
 @cif_files_mark
 @pytest.mark.parametrize("n_decimal_places", [3, 4, 5])
 def test_extract_atomic_positions(cif_data, n_decimal_places):
+    import warnings
+
     from ase import io
     from ase.build import supercells
+
+    warnings.filterwarnings("ignore", "crystal system", category=UserWarning)
 
     if "PDB_4INS_head.cif" in cif_data.filename:
         pytest.skip("Function not compatible with PDB data.")
