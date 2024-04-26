@@ -82,14 +82,15 @@ def read_symmetry_operations(
         "_symmetry_equiv_pos_as_xyz",
         "_space_group_symop_operation_xyz",
     )
-    with warnings.catch_warnings(category=ParseWarning, action="ignore"):
-        # Only one of the two keys will be matched. We can safely ignore that warning.
-        data = read_table(
-            filename=filename,
-            keys=symmetry_keys,
-            regex_filter=regex_filter,
-            nondelimiting_whitespace_replacement="",
-        )
+
+    # Only one of the two keys will be matched. We can safely ignore that warning.
+    warnings.filterwarnings("ignore", "Keys {'_", category=ParseWarning)
+    data = read_table(
+        filename=filename,
+        keys=symmetry_keys,
+        regex_filter=regex_filter,
+        nondelimiting_whitespace_replacement="",
+    )
 
     return data
 
