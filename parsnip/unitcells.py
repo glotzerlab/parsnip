@@ -33,17 +33,11 @@ def _matrix_from_lengths_and_angles(l1, l2, l3, alpha, beta, gamma):
     return np.array([a1, a2, a3]).T
 
 
-def read_fractional_positions(
+def read_wyckoff_positions(
     filename: str,
     regex_filter: tuple[tuple[str, str]] | None = ((r",\s+", ",")),
 ):
-    r"""Extract the fractional X,Y,Z coordinates from a CIF file.
-
-    .. warning::
-
-        This function ONLY returns the symmetry irreducible positions that are directly
-        stored in the CIF file. To build out the full unit cell, use
-        :meth:`extract_unit_cell`.
+    r"""Extract the symmetry-irreducible, fractional X,Y,Z coordinates from a CIF file.
 
     Args:
         filename (str): The name of the .cif file to be parsed.
@@ -230,7 +224,7 @@ def extract_atomic_positions(
         :math:`(N, 3)` :class:`numpy.ndarray[np.float32]`:
             The full unit cell of the crystal structure.
     """
-    fractional_positions = read_fractional_positions(filename=filename)
+    fractional_positions = read_wyckoff_positions(filename=filename)
 
     # Read the cell params and conver to a matrix of basis vectors
     cell = read_cell_params(filename, degrees=False, mmcif=False)

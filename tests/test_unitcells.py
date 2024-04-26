@@ -5,10 +5,10 @@ from conftest import box_keys, cif_files_mark
 from gemmi import cif
 
 from parsnip.unitcells import (
-    extract_unit_cell,
+    extract_atomic_positions,
     read_cell_params,
-    read_fractional_positions,
     read_symmetry_operations,
+    read_wyckoff_positions,
 )
 
 
@@ -25,11 +25,11 @@ def _gemmi_read_keys(filename, keys, as_number=True):
 
 
 @cif_files_mark
-def test_read_fractional_positions(cif_data):
+def test_read_wyckoff_positions(cif_data):
     if "PDB_4INS_head.cif" in cif_data.filename:
         return
     keys = ("_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z")
-    parsnip_data = read_fractional_positions(filename=cif_data.filename)
+    parsnip_data = read_wyckoff_positions(filename=cif_data.filename)
     gemmi_data = _gemmi_read_table(cif_data.filename, keys)
     gemmi_data = [[cif.as_number(val) for val in row] for row in gemmi_data]
     np.testing.assert_allclose(parsnip_data, gemmi_data)
@@ -65,11 +65,13 @@ def test_extract_unit_cell(cif_data, n_decimal_places):
     elif any(failing in cif_data.filename for failing in ["CCDC", "B-IncStr"]):
         pytest.xfail("Uniqueness comparison not sufficient to differentiate points!")
 
-    parsnip_positions = extract_unit_cell(
+    parsnip_positions = extract_atomic_positions(
         filename=cif_data.filename, n_decimal_places=n_decimal_places
     )
+    print(len(parsnip_positions))
 
     # Read the structure, then extract to Python builtin types. Then, wrap into the box
+    # GEMMI is not ground truth here! Need to test against something else
     gemmi_structure = gemmi.read_small_structure(cif_data.filename)
     gemmi_positions = np.array(
         [[*site.fract] for site in gemmi_structure.get_all_unit_cell_sites()]
