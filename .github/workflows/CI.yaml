@@ -14,7 +14,7 @@ on:
 
 
 jobs:
-  run_tests:
+  set_up_tests:
     runs-on: ubuntu-latest
     steps:
       # Steps common to both groups
@@ -36,8 +36,8 @@ jobs:
       run: |
         python -m pytest -v
 
-  modern_python:
-    needs: run_tests
+  modern_python_tests:
+    needs: set_up_tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -48,8 +48,8 @@ jobs:
         echo "Successfully ran tests for ${{ matrix.python-version }}"
 
 
-  legacy_python:
-    needs: run_tests
+  legacy_python_tests:
+    needs: set_up_tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
