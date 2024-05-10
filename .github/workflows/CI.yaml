@@ -14,7 +14,7 @@ on:
 
 
 jobs:
-  modern_python_tests:
+  run_tests:
     strategy:
       fail-fast: true
       matrix:
