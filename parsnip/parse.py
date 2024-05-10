@@ -1,5 +1,4 @@
 """CIF parsing tools."""
-
 import warnings
 
 import numpy as np
@@ -15,9 +14,9 @@ def _remove_comments_from_line(line):
 def read_table(
     filename: str,
     keys: str,
-    filter_line: tuple[tuple[str, str]] = ((r",\s+", ",")),
+    filter_line: tuple = ((r",\s+", ",")),
     keep_original_key_order=False,
-) -> np.ndarray[str]:
+) -> np.ndarray:
     r"""Extract data from a CIF file loop_ table.
 
     CIF files store tabular data as whitespace-delimited blocks that start with `loop_`.
@@ -61,7 +60,7 @@ def read_table(
     Args:
         filename (str): The name of the .cif file to be parsed.
         keys (tuple[str]): The names of the keys to be parsed.
-        filter_line (tuple[tuple[str]], optional):
+        filter_line (tuple[tuple[str,str]], optional):
             A tuple of strings that are compiled to a regex filter and applied to each
             data line. (Default value: ((r",\s+",",")) )
         keep_original_key_order (bool, optional):
@@ -146,13 +145,13 @@ def read_table(
 
 def read_fractional_positions(
     filename: str,
-    filter_line: tuple[tuple[str, str]] = ((r",\s+", ",")),
+    filter_line: tuple = ((r",\s+", ",")),
 ):
     r"""Extract the fractional X,Y,Z coordinates from a CIF file.
 
     Args:
         filename (str): The name of the .cif file to be parsed.
-        filter_line (tuple[tuple[str]], optional):
+        filter_line (tuple[tuple[str,str]], optional):
             A tuple of strings that are compiled to a regex filter and applied to each
             data line. (Default value: ((r",\s+",",")) )
 

@@ -8,11 +8,11 @@ _multiple_whitespace_pattern = re.compile(r"\s+")
 _comma_prune_spaces = re.compile(r",\s+")
 
 
-def compile_pattern_from_strings(filter_patterns: tuple[str]):
+def compile_pattern_from_strings(filter_patterns: tuple):
     """Return a regex pattern that matches any of the characters in the filter.
 
     Args:
-        filter_patterns (list[str]): Description
+        filter_patterns (tuple[str]): Description
 
     Returns:
         re.Pattern: Pattern matching any of the input characters.
@@ -46,7 +46,7 @@ class LineCleaner:
             what that pattern will be replaced with.
     """
 
-    def __init__(self, patterns: tuple[tuple[str, str]]):
+    def __init__(self, patterns: tuple):
         self.patterns, self.replacements = [], []
 
         # If we only have a single tuple
