@@ -1,31 +1,23 @@
 name: Run Tests
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+#concurrency:
+#  group: ${{ github.workflow }}-${{ github.ref }}
+#  cancel-in-progress: true
 
 on:
-  # trigger on pull requests
   pull_request:
-
-  # trigger on all commits to master
   push:
     branches:
       - "main"
       - "breaking"
-
-  # trigger on request
   workflow_dispatch:
+
 
 jobs:
   run_tests:
-    name: Run tests on ubuntu-latest with Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: true
-      matrix:
-        python-version: ["3.9","3.10","3.11","3.12"]
     steps:
+      # Steps common to both groups
     - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
@@ -38,8 +30,22 @@ jobs:
     - name: Install package
       run: |
         python --version
-        python -c "import numpy; print('numpy', numpy.__version__)"
+        python -c "import parsnip; print('parsnip', parsnip.__version__)"
         python -m pip install . -v --progress-bar off
     - name: Test with pytest
       run: |
         python -m pytest -v
+
+  modern_python:
+    needs: run_tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9, 3.10, 3.11, 3.12]
+
+  legacy_python:
+    needs: run_tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.6, 3.7, 3.8]
