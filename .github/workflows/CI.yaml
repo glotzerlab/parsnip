@@ -10,7 +10,7 @@ on:
 
 
 jobs:
-  test_modern:
+  run-tests-modern-python:
     strategy:
       fail-fast: true
       matrix:
@@ -20,8 +20,8 @@ jobs:
     with:
       python-version: ${{ matrix.python-version }}
 
-  test_legacy:
-    needs: test_modern # Wait until modern version pass to run legacy tests.
+  run-tests-legacy-python:
+    needs: run-tests-modern-python # Wait until tests pass on python 3.9+
     strategy:
       fail-fast: true
       matrix:
