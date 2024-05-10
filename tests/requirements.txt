@@ -1,1 +1,2 @@
 gemmi
+pytest
