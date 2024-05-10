@@ -2,11 +2,6 @@
 
 .. image:: doc/source/_static/parsnip_header_dark.svg
   :width: 600
-  :class: only-light
-
-.. image:: doc/source/_static/parsnip_header_light.svg
-  :width: 600
-  :class: only-dark
 
 .. _header:
 
