@@ -25,6 +25,7 @@ jobs:
       python-version: ${{ matrix.python-version }}
 
   test_legacy:
+    needs: test_modern # Wait until modern version pass to run legacy tests.
     strategy:
       fail-fast: true
       matrix:
