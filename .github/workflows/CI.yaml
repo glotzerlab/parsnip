@@ -15,10 +15,12 @@ jobs:
       fail-fast: true
       matrix:
         python-version: ["3.9", "3.10", "3.11", "3.12"]
+        runs-on: ["ubuntu-latest"]
     # Pull in the test script from run_tests and distribute python from matrix versions
     uses: ./.github/workflows/run_tests.yaml
     with:
       python-version: ${{ matrix.python-version }}
+      runs-on: ${{ matrix.runs-on }}
 
   run-tests-legacy-python:
     needs: run-tests-modern-python # Wait until tests pass on python 3.9+
@@ -26,6 +28,8 @@ jobs:
       fail-fast: true
       matrix:
         python-version: ["3.6", "3.7", "3.8"]
+        runs-on: ["ubuntu-22.04"]
     uses: ./.github/workflows/run_tests.yaml
     with:
       python-version: ${{ matrix.python-version }}
+      runs-on: ${{ matrix.runs-on }}

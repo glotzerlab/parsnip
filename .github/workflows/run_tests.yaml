@@ -9,7 +9,7 @@ on:
 
 jobs:
   run_test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runs-on }}
     steps:
       # Steps common to both groups
     - uses: actions/checkout@v4
