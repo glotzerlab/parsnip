@@ -6,6 +6,9 @@ on:
       python-version:
         required: true
         type: string
+      runs-on:
+        required: true
+        type: string
 
 jobs:
   run_test:
