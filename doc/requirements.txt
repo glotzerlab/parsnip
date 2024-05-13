@@ -1,4 +1,4 @@
-autodocsumm
-furo
+autodocsumm==0.2.12
+furo==2024.5.6
 numpy>=1.19
-sphinx
+sphinx==7.3.7
