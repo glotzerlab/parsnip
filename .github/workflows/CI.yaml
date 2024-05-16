@@ -21,6 +21,7 @@ jobs:
     with:
       python-version: ${{ matrix.python-version }}
       runs-on: ${{ matrix.runs-on }}
+      requirements-file: "tests/requirements.txt"
 
   run-tests-legacy-python:
     needs: run-tests-modern-python # Wait until tests pass on python 3.9+
@@ -33,3 +34,4 @@ jobs:
     with:
       python-version: ${{ matrix.python-version }}
       runs-on: ${{ matrix.runs-on }}
+      requirements-file: "tests/requirements-legacy.txt"
