@@ -1,18 +1,12 @@
-import dataclasses
 import os
+from collections import namedtuple
 
 import pytest
 
 # ruff: noqa: N816. Allow mixed-case global variables
 
 
-@dataclasses.dataclass
-class CifData:
-    """Class to hold the filename and stored keys for a CIF file."""
-
-    filename: str
-    symop_keys: tuple[str]
-    atom_site_keys: tuple[str]
+CifData = namedtuple("CifData", ["filename", "symop_keys", "atom_site_keys"])
 
 
 box_keys = (
