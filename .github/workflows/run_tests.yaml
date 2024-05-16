@@ -10,7 +10,7 @@ on:
         required: true
         type: string
       requirements-file:
-        required: true
+        default: "tests/requirements.txt"
         type: string
 
 jobs:
