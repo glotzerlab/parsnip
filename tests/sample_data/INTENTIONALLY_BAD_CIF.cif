@@ -1,29 +1,35 @@
 data_# CIF file
 
 _cell_length_a    1.000000(x)
-_cell_length_b    4.32343242
+_cell_length_b    4.32343242   
 _cell_length_c    3.1415926535897932384626433832795028841971693993751058209749
-_cell_angle_alpha 90.00000
+_cell_angle_alpha 90.00000  
 _cell_angle_beta  -10.12345
 _cell_angle_gamma 210.00000
 
+__________asdf  123 
+__________asdf \t _1.234-56789
+_-wasd          45.6a/\s # This is a comment
+not_a_valid_key valid_data
+
+
 # NOTE: Adding comments on loop_ keyword lines breaks the table reader
-loop_
-loop_
-_space_group_symop_id # this is a comment
-_space_group_symop_operation_xyz
+loop_ 
+loop_ # This line breaks str.split() on loops_. re.split works though!
+_space_group_symop_id # this is a comment 
+_space_group_symop_operation_xyz  
 _atom_site_fracccccccc_z # Intentionally bad key
 # COMMENT2
 
 1  x, y,z .
 2  -x,y,    -z*1/2 ?
 3   -x,-y,  -z (x) # What About Here
-4 x,=y, z/1/2 zzzzzzzzzz
+4 x,=y, z/1/2 zzzzzzzzzz 
 
 5    x-1/2,y+1/2,z asdf
-6 -x+1/2,  ya1/2,   -z+1/2 :)
+6 -x+1/2,  ya1/2,   -z+1/2 :) 
 # testing
-7 -x+1/2, -y81/2, -z ahh
+7 -x+1/2, -y81/2, -z ahh  
 
 8    x+1/2,  -y+1/2, z01/2 goblue
 

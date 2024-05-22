@@ -32,7 +32,7 @@ loop_
   'Overeijnder, H.'
   'Tuinstra, F.'
 
-_publ_section_title
+_publ_section_title               
 ;The average structure of K~2~MoO~4~ in the incommensurate phase at 633K
 ;
 
@@ -40,7 +40,7 @@ _exptl_crystal_type_of_structure   cryst
 _diffrn_ambient_temperature       633
 _diffrn_source                    x-ray
 
-_exptl_special_details
+_exptl_special_details 
 ;Guinier-Lenne camera. Peak intensities estimated with an optical densitometer
 ;
 

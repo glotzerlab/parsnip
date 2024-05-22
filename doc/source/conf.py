@@ -21,6 +21,7 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
     "sphinx.ext.intersphinx",
+    "sphinx.ext.napoleon",
     "autodocsumm",
 ]
 
@@ -36,6 +37,7 @@ autodoc_default_options = {
     "show-inheritance": True,
     "autosummary": True,
 }
+autodoc_typehints = "description"
 
 pygments_style = "friendly"
 pygments_dark_style = "native"
@@ -50,12 +52,14 @@ html_theme_options = {
     "light_logo": "parsnip_header_dark.svg",
     "dark_logo": "parsnip_header_light.svg",
     "dark_css_variables": {
-        "color-brand-primary": "#5187b2",
+        "color-brand-primary": "#4AA092",
         "color-brand-content": "#5187b2",
     },
     "light_css_variables": {
-        "color-brand-primary": "#406a8c",
+        "color-brand-primary": "#005A50",
         "color-brand-content": "#406a8c",
     },
+    "top_of_page_button": "edit",
+    "source_edit_link": "https://github.com/glotzerlab/parsnip",
 }
 html_favicon = "_static/parsnip_logo_favicon.svg"

@@ -1,11 +1,19 @@
+.. image:: _static/parsnip_header_dark.svg
+  :width: 600
+  :class: only-light
+
+.. image:: _static/parsnip_header_light.svg
+  :width: 600
+  :class: only-dark
+
 .. include:: ../../README.rst
+  :start-after: .. _header:
 
 
 .. toctree::
    :maxdepth: 2
    :caption: Getting Started
 
-   introduction
    installation
    quickstart
 
@@ -15,6 +23,7 @@
    :caption: API
 
    package-parse
+   package-patterns
 
 
 .. toctree::
@@ -22,15 +31,8 @@
    :caption: Reference
 
    genindex
+   modindex
    development
    changelog
    credits
    license
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
