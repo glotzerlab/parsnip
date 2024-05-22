@@ -63,7 +63,7 @@ def read_table(
     keep_original_key_order: bool = False,
     cast_to_float: bool = False,
     nondelimiting_whitespace_replacement: str = "_",
-    regex_filter: tuple | None = None,
+    regex_filter: tuple = None,
 ) -> np.ndarray:
     r"""Extract data from a CIF file loop\_ table.
 
@@ -230,7 +230,7 @@ def _parsed_line_generator(filename, regexp):
 
 def read_key_value_pairs(
     filename: str,
-    keys: tuple | None = None,
+    keys: tuple = None,
     only_read_numerics: bool = False,
 ):
     """Extract key-value pairs from a CIF file.

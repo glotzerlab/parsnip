@@ -6,6 +6,6 @@ def _str2num(val: str):
     return float(val) if "." in val else int(val)
 
 
-def _deg2rad(val: float | int):
+def _deg2rad(val: float):
     """Convert a value in degrees to one in radians."""
     return val * np.pi / 180
