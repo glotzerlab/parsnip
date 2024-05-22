@@ -43,8 +43,6 @@ r"""Functions for parsing CIF files in Python.
 
 """
 
-from __future__ import annotations
-
 import re
 import warnings
 
@@ -65,8 +63,8 @@ def read_table(
     keep_original_key_order: bool = False,
     cast_to_float: bool = False,
     nondelimiting_whitespace_replacement: str = "_",
-    regex_filter: tuple[str, str] | None = None,
-) -> np.ndarray[str]:
+    regex_filter: tuple | None = None,
+) -> np.ndarray:
     r"""Extract data from a CIF file loop\_ table.
 
     Args:
@@ -232,7 +230,7 @@ def _parsed_line_generator(filename, regexp):
 
 def read_key_value_pairs(
     filename: str,
-    keys: tuple[str] | None = None,
+    keys: tuple | None = None,
     only_read_numerics: bool = False,
 ):
     """Extract key-value pairs from a CIF file.
@@ -357,13 +355,13 @@ def read_cell_params(filename, degrees: bool = True, mmcif: bool = False):
 
 def read_fractional_positions(
     filename: str,
-    regex_filter: tuple[tuple[str, str]] = ((r",\s+", ",")),
+    regex_filter: tuple = ((r",\s+", ",")),
 ):
     r"""Extract the fractional X,Y,Z coordinates from a CIF file.
 
     Args:
         filename (str): The name of the .cif file to be parsed.
-        regex_filter (tuple[tuple[str]], optional):
+        regex_filter (tuple[tuple[str,str]], optional):
             A tuple of strings that are compiled to a regex filter and applied to each
             data line. Default value = ``((r",\s+",","))``
 
