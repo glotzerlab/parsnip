@@ -6,6 +6,7 @@ repos:
     rev: 'v4.4.0'
     hooks:
       - id: end-of-file-fixer
+        exclude: tests/sample_data
       - id: trailing-whitespace
         exclude: tests/sample_data
       - id: check-builtin-literals

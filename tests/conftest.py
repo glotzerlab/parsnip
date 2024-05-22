@@ -1,5 +1,5 @@
-import dataclasses
 import os
+from collections import namedtuple
 
 import numpy as np
 import pytest
@@ -9,15 +9,9 @@ import pytest
 data_file_path = os.path.dirname(__file__) + "/sample_data/"
 
 
-@dataclasses.dataclass
-class CifData:
-    """Class to hold the filename and stored keys for a CIF file."""
-
-    filename: str
-    symop_keys: tuple[str]
-    atom_site_keys: tuple[str]
-    single_value_keys: tuple[str]
-
+CifData = namedtuple(
+    "CifData", ["filename", "symop_keys", "atom_site_keys", "single_value_keys"]
+)
 
 # Assorted keys to select from
 assorted_keys = np.loadtxt(data_file_path + "cif_file_keys.txt", dtype=str)

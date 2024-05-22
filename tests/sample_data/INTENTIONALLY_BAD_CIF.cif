@@ -15,7 +15,7 @@ not_a_valid_key valid_data
 
 # NOTE: Adding comments on loop_ keyword lines breaks the table reader
 loop_ 
-loop_ 
+loop_ # This line breaks str.split() on loops_. re.split works though!
 _space_group_symop_id # this is a comment 
 _space_group_symop_operation_xyz  
 _atom_site_fracccccccc_z # Intentionally bad key

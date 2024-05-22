@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import numpy as np
 
 
@@ -8,12 +6,12 @@ def _str2num(val: str):
     return float(val) if "." in val else int(val)
 
 
-def _deg2rad(val: float | int):
+def _deg2rad(val: float):
     """Convert a value in degrees to one in radians."""
     return val * np.pi / 180
 
 
-def _get_distances(positions):
+def _get_distances(positions: np.ndarray):
     # Get all indices i!=j
     i_indices, j_indices = np.triu_indices(len(positions), k=1)
 

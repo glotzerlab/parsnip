@@ -22,7 +22,7 @@ r"""Functions for parsing CIF files in Python.
         _cell_angle_beta  132.3
         _cell_angle_gamma  90.0
 
-        # A table with two columns and three rows:
+        # A table with two columns and eight rows:
         loop_
         _symmetry_equiv_pos_site_id
         _symmetry_equiv_pos_as_xyz
@@ -43,8 +43,6 @@ r"""Functions for parsing CIF files in Python.
 
 """
 
-from __future__ import annotations
-
 import re
 import warnings
 
@@ -62,20 +60,12 @@ def _remove_comments_from_line(line):
 def read_table(
     filename: str,
     keys: str,
-    nondelimiting_whitespace_replacement: str = "_",
-    regex_filter: tuple[str, str] | None = None,
     keep_original_key_order: bool = False,
     cast_to_float: bool = False,
-) -> np.ndarray[str]:
+    nondelimiting_whitespace_replacement: str = "_",
+    regex_filter: tuple = None,
+) -> np.ndarray:
     r"""Extract data from a CIF file loop\_ table.
-
-    .. tip::
-
-        CIF tables are whitespace delimited - however, values enclosed in quotation
-        marks may also contain whitespace characters. The parameter
-        ``nondelimiting_whitespace_replacement`` handles this possibility by replacing
-        nondelimiting whitespaces with underscores. This value can be also be set to an
-        empty string, or any arbitrary sequence of characters.
 
     Args:
         filename (str):
@@ -83,14 +73,6 @@ def read_table(
         keys (tuple[str]):
             The names of the keys to be parsed. The columns associated with these keys
             will be returned in the final array.
-        nondelimiting_whitespace_replacement (str, optional):
-            Character to replace non-delimiting whitespaces with.
-            Default value = ``"_"``
-        regex_filter (tuple[str,str], optional):
-            A tuple of strings that are compiled to a regex filter and applied to each
-            data line. If a tuple of tuples of strings is provided instead, each pattern
-            will be applied seperately.
-            Default value = ``None``
         keep_original_key_order (bool, optional):
             When True, preserve the order of keys in the table from the cif file.
             When False, return columns of data in order of the input ``keys`` arg.
@@ -99,6 +81,15 @@ def read_table(
             When True, attempts to cast the entire array to flaoting point numbers,
             removing precision values (e.g. ``5.98(4)`` would be mapped to ``5.98(4)``).
             Default value = ``False``
+        nondelimiting_whitespace_replacement (str, optional):
+            Character to replace non-delimiting whitespaces with.
+            Default value = ``"_"``
+        regex_filter (tuple[str,str] | tuple[tuple[str,str]], optional):
+            A tuple of strings that are compiled to a regex filter and applied to each
+            data line. If a tuple of tuples of strings is provided instead, each pattern
+            will be applied seperately.
+            Default value = ``None``
+
 
     Returns:
         :math:`(N, N_{keys})` :class:`numpy.ndarray[str]`:
@@ -110,19 +101,29 @@ def read_table(
         that correspond to data from multiple tables, only the first table will be read.
 
     .. tip::
-        The ``filter_line`` argument allows for dynamic input creation of regex filters
-        to apply to each line that contains data to be saved. The first value in the
-        tuple is the pattern to match, and the second value is the replacement text.
-        The default value is ``((",\s+",","))``, which removes whitespace following
-        commas to help differentiate between individual data entries that contain spaces
-        from other sections of the line that are also whitespace separated. Adding
-        another tuple to remove single quotes can also be helpful: try
-        ``((",\s+",","),("'",""))`` to achieve this. To disable the feature entirely,
-        pass in a tuple of empty strings: ``("","")``.
+
+        CIF tables are whitespace delimited - however, values enclosed in quotation
+        marks may also contain whitespace characters. The parameter
+        ``nondelimiting_whitespace_replacement`` handles this possibility by replacing
+        nondelimiting whitespaces with underscores. This value can be also be set to an
+        empty string, or any arbitrary sequence of characters.
+
+    .. tip::
+
+        The ``regex_filter`` argument allows for dynamic input creation of regex filters
+        to apply to each line that contains data to be saved. Each filter should be a
+        tuple of strings corresponding to a pattern to match and a replacement for that
+        pattern. To apply multiple filters, pass in a list of these tuples.
+
+        For example, single quotes could be removed by setting
+        ``regex_filter=("'","")``.
 
     """
+    # Split tables on the `loop_` keyword and throw away any comments on that line.
+    table_delimiter = r"loop_[^\n]*"
+
     with open(filename) as f:
-        tables = f.read().split("loop_")
+        tables = re.split(table_delimiter, f.read())
 
     if regex_filter is not None:
         line_cleaner = LineCleaner(regex_filter)
@@ -142,14 +143,14 @@ def read_table(
                     ", section 7 for more details."
                 )
 
-            # We will get errors if there is a comment after the loop_ block that
-            # contains our data. This is questionably legal, but very uncommon
-
+            # Remove comments from the line to ensure we only save data.
             line = _remove_comments_from_line(line)
 
             # Save current key position if it is one of the keys we want.
             if in_header and (line in keys):
                 data_column_indices.append(line_number)
+                # If keep_original_key_order is True, we reorder the output to match the
+                # order of columns in the original CIF file
                 if not keep_original_key_order:
                     column_order.append(keys.index(line))
                 continue
@@ -211,7 +212,7 @@ def _parsed_line_generator(filename, regexp):
 
     Args:
         filename (str): The name of the .cif file to be parsed.
-        regexp (str): tring to generate the regex pattern that is applied to each line.
+        regexp (str): String to generate the regex pattern that is applied to each line.
 
     Yields:
         tuple(str,str|float|int):
@@ -229,13 +230,13 @@ def _parsed_line_generator(filename, regexp):
 
 def read_key_value_pairs(
     filename: str,
-    keys: tuple[str] | None = None,
+    keys: tuple = None,
     only_read_numerics: bool = False,
 ):
     """Extract key-value pairs from a CIF file.
 
     By default, this function reads all keys and returns data values as strings. Setting
-    ``only_read_numerics`` to True will cause the program to cast data to a nunmeric
+    ``only_read_numerics`` to True will cause the program to cast data to a numeric
     type (float or int). However, keys that cannot be safely cast into a numeric are
     skipped.
 
