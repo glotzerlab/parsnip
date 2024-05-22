@@ -9,7 +9,9 @@ import pytest
 data_file_path = os.path.dirname(__file__) + "/sample_data/"
 
 
-CifData = namedtuple("CifData", ["filename", "symop_keys", "atom_site_keys"])
+CifData = namedtuple(
+    "CifData", ["filename", "symop_keys", "atom_site_keys", "single_value_keys"]
+)
 
 # Assorted keys to select from
 assorted_keys = np.loadtxt(data_file_path + "cif_file_keys.txt", dtype=str)
