@@ -67,7 +67,7 @@ class LineCleaner:
             what that pattern will be replaced with.
     """
 
-    def __init__(self, patterns: tuple[tuple[str, str]]):
+    def __init__(self, patterns: tuple):
         self.patterns, self.replacements = [], []
 
         # If we only have a single tuple

@@ -1,0 +1,37 @@
+name: Run tests
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        required: true
+        type: string
+      runs-on:
+        required: true
+        type: string
+      requirements-file:
+        default: "tests/requirements.txt"
+        type: string
+
+jobs:
+  run_test:
+    runs-on: ${{ inputs.runs-on }}
+    steps:
+      # Steps common to both groups
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ inputs.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install -r requirements.txt
+        python -m pip install -r ${{ inputs.requirements-file }}
+    - name: Install package
+      run: |
+        python --version
+        python -m pip install . -v --progress-bar off
+        python -c "import parsnip; print('parsnip', parsnip.__version__)"
+    - name: Test with pytest
+      run: |
+        python -m pytest -v
