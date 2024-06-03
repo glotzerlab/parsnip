@@ -7,11 +7,7 @@
 attrs==22.2.0
     # via pytest
 gemmi==0.6.3
-    # via -r requirements-legacy.in
-importlib-metadata==4.8.3
-    # via
-    #   pluggy
-    #   pytest
+    # via -r tests/requirements-legacy.in
 iniconfig==1.1.1
     # via pytest
 packaging==21.3
@@ -23,10 +19,6 @@ py==1.11.0
 pyparsing==3.1.2
     # via packaging
 pytest==7.0.1
-    # via -r requirements-legacy.in
+    # via -r tests/requirements-legacy.in
 tomli==1.2.3
     # via pytest
-typing-extensions==4.1.1
-    # via importlib-metadata
-zipp==3.6.0
-    # via importlib-metadata
