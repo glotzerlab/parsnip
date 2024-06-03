@@ -4,7 +4,7 @@
 #
 #    pip-compile --strip-extras requirements.in
 #
-gemmi==0.6.5
+gemmi==0.6.6
     # via -r tests/requirements.in
 iniconfig==2.0.0
     # via pytest
