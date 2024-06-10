@@ -176,7 +176,11 @@ def _safe_eval(str_input: str, x: int | float, y: int | float, z: int | float):
     # Double check to be sure:
     assert all(
         char in ",.0123456789+-/*[]" for char in safe_string
-    ), "Check that string only contains numerics or characters in { [],.+-/ }."
+    ), (
+        "Evaluation aborted. Check that symmetry operation string only contains "
+        "numerics or characters in { [],.+-/ } and adjust `regex_filter` param "
+        "accordingly."
+    )
     return eval(safe_string, {"__builtins__": {}}, {})  # noqa: S307
 
 
