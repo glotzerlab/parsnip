@@ -272,19 +272,5 @@ def extract_atomic_positions(
     if verbose:
         _write_debug_output(unique_indices, unique_counts, pos, check="Secondary")
 
-    """
-    # This code allows for parity with Gemmi - however, the results are effectively
-    # identical to the code above. This could be re-enabled in the future if desired.
-    if not np.isclose(merge_dist,0):
-        dists,i_inds,j_inds = _get_distances(real_space_positions[unique_indices])
-
-        # Now, get the positions that are less than merge_dist apart and remove them
-        overlapping_point_indices = np.vstack([i_inds,j_inds])[:, dists<merge_dist**2].T
-        pos = np.delete(pos, overlapping_point_indices[:,1],axis=0)
-        if verbose:
-            print("Tertiary uniqueness check:")
-            print(f"... {len(overlapping_point_indices)} points removed")
-        real_space_positions = pos@cell_matrix
-    """
 
     return pos[unique_indices] if fractional else real_space_positions[unique_indices]
