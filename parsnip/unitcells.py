@@ -123,7 +123,9 @@ def read_cell_params(filename, degrees: bool = True, mmcif: bool = False):
     cell_data = read_key_value_pairs(filename, keys=box_keys, only_read_numerics=True)
 
     assert all(value is not None for value in cell_data.values())
-    assert all(0 < cell_data[key] < 180 for key in angle_keys)
+    assert all(
+        0 < cell_data[key] < 180 for key in angle_keys
+    ), "Read cell params were not in the expected range (0 < angle < 180 degrees)."
 
     if not degrees:
         for key in angle_keys:
