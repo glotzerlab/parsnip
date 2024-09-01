@@ -6,7 +6,7 @@
 #
 alabaster==0.7.16
     # via sphinx
-autodocsumm==0.2.12
+autodocsumm==0.2.13
     # via -r doc/requirements.in
 babel==2.15.0
     # via sphinx
@@ -18,7 +18,7 @@ charset-normalizer==3.3.2
     # via requests
 docutils==0.21.2
     # via sphinx
-furo==2024.5.6
+furo==2024.8.6
     # via -r doc/requirements.in
 idna==3.7
     # via requests
@@ -28,7 +28,7 @@ jinja2==3.1.4
     # via sphinx
 markupsafe==2.1.5
     # via jinja2
-numpy==2.0.0
+numpy==2.1.0
     # via -r doc/requirements.in
 packaging==24.0
     # via sphinx
