@@ -1,2 +1,2 @@
-gemmi==0.6.6
+gemmi==0.7.0
 pytest==8.2.1
