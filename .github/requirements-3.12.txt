@@ -8,7 +8,7 @@ cycler==0.12.1
     # via matplotlib
 fonttools==4.55.3
     # via matplotlib
-gemmi==0.6.6
+gemmi==0.7.0
     # via -r tests/requirements.in
 iniconfig==2.0.0
     # via pytest
@@ -33,7 +33,7 @@ pluggy==1.5.0
     # via pytest
 pyparsing==3.2.0
     # via matplotlib
-pytest==8.2.1
+pytest==8.3.4
     # via -r tests/requirements.in
 python-dateutil==2.9.0.post0
     # via matplotlib

@@ -174,9 +174,7 @@ def _safe_eval(str_input: str, x: int | float, y: int | float, z: int | float):
     # Remove any unexpected characters from the string.
     safe_string = re.sub(r"[^\d\[\]\,\+\-\/\*\.]", "", substituted_string)
     # Double check to be sure:
-    assert all(
-        char in ",.0123456789+-/*[]" for char in safe_string
-    ), (
+    assert all(char in ",.0123456789+-/*[]" for char in safe_string), (
         "Evaluation aborted. Check that symmetry operation string only contains "
         "numerics or characters in { [],.+-/ } and adjust `regex_filter` param "
         "accordingly."
@@ -271,6 +269,5 @@ def extract_atomic_positions(
 
     if verbose:
         _write_debug_output(unique_indices, unique_counts, pos, check="Secondary")
-
 
     return pos[unique_indices] if fractional else real_space_positions[unique_indices]

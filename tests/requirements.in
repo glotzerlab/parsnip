@@ -1,2 +1,3 @@
-gemmi==0.6.6
-pytest==8.2.1
+ase
+gemmi
+pytest
