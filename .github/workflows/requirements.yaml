@@ -1,8 +1,6 @@
 name: Generate lockfiles
 
 on:
-  push: # TODO: temp, remove once run on current PR
-  pull_request:
   schedule: [ "0 0 1 * *" ]
 
 jobs:
