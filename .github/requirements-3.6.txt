@@ -8,7 +8,7 @@ exceptiongroup==0.0.0a0
 fonttools==4.27.1
 # This file was MANUALLY MODIFIED based on an initial state generated via the following command:
 #    uv pip compile --python-version=3.7 pyproject.toml tests/requirements.in
-future-annotations=1.0.0
+future-annotations==1.0.0
     # via matplotlib
 gemmi==0.6.3
     # via -r tests/requirements.in
