@@ -1,5 +1,4 @@
-# This file was MANUALLY MODIFIED based on an initial state generated via the following command:
-#    uv pip compile --python-version=3.7 pyproject.toml tests/requirements.in
+    # manual, required to use __future__ annotations style in py3.6
 ase==3.22.1
     # via -r tests/requirements.in
 cycler==0.11.0
@@ -7,6 +6,9 @@ cycler==0.11.0
 exceptiongroup==0.0.0a0
     # via pytest
 fonttools==4.27.1
+# This file was MANUALLY MODIFIED based on an initial state generated via the following command:
+#    uv pip compile --python-version=3.7 pyproject.toml tests/requirements.in
+future-annotations=1.0.0
     # via matplotlib
 gemmi==0.6.3
     # via -r tests/requirements.in
