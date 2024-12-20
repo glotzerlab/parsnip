@@ -28,7 +28,7 @@
 .. _parse:
 
 The ``parsnip.parse`` module handles standard CIF files (including those under the `CIF 1.1 <https://www.iucr.org/resources/cif/spec/version1.1>`_ and `CIF 2.0 <https://www.iucr.org/resources/cif/cif2>`_ standards), as well as many features from the `mmCIF <https://pdb101.rcsb.org/learn/guide-to-understanding-pdb-data/beginner’s-guide-to-pdb-structures-and-the-pdbx-mmcif-format>`_ format.
-The package includes a table reader for `loop\_`-delimited tables as well as a key-value pair reader. Provide a filename and a list of keys to either of these functions and you're all set to read start parsing CIF and mmCIF files!
+The package includes a table reader for `loop\_`-delimited tables as well as a key-value pair reader. Provide a filename and a list of keys to either of these functions and you're all set to read start parsing CIF files!
 
 .. _installing:
 
