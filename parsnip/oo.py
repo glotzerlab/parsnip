@@ -1,6 +1,8 @@
 # Copyright (c) 2024, Glotzer Group
 # This file is from the parsnip project, released under the BSD 3-Clause License.
+
 from __future__ import annotations
+
 import re
 import warnings
 
@@ -10,8 +12,10 @@ from parsnip.parse import _parsed_line_generator
 
 NONTABLE_LINE_PREFIXES = ("_", "#")
 
-def is_key(line :str | None):
+
+def is_key(line: str | None):
     return line is not None and line.strip()[:1] == "_"
+
 
 def is_data(line: str | None):
     return line is not None and line.strip()[:1] != "_"
@@ -19,6 +23,7 @@ def is_data(line: str | None):
 
 def strip_comments(s: str):
     return s.split("#")[0].strip()
+
 
 def semicolon_to_string(line: str):
     if "'" in line and '"' in line:
@@ -33,8 +38,10 @@ def semicolon_to_string(line: str):
     # This is technically against spec, but is almost never meaningful
     return line.replace(";", "'" if "'" not in line else '"')
 
+
 def line_is_continued(line: str):
     return line.strip()[:1] == ";"
+
 
 class CifFile:
     """Parsed CIF file."""
@@ -68,7 +75,6 @@ class CifFile:
     }
 
     def _parse(self):
-
         data_iter = peekable(self._data.split("\n"))
 
         for line in data_iter:
@@ -86,13 +92,13 @@ class CifFile:
 
             # TODO: could support multi-block files in the future ======================
             block = re.match(self._cpat["block_delimiter"], line)
-            if block is not None: continue
+            if block is not None:
+                continue
 
             # Extract key-value pairs and save to the internal state ===================
             pair = self._cpat["key_value_general"].match(line)
             if pair is not None:
                 self._pairs.update({pair.groups()[0]: pair.groups()[1]})
-
 
             # Build up tables by incrementing through the iterator =====================
             table = re.match(self._cpat["table_delimiter"], line)
@@ -122,10 +128,10 @@ class CifFile:
                 print("KEYS:", table_keys)
                 print("VALS:", table_data)
 
-
             if data_iter.peek(None) is None:
                 break
         [print(pair) for pair in self._pairs.items()]
+
 
 fn = "tests/sample_data/B-IncStrDb_Ccmm.cif"
 gen = _parsed_line_generator(fn, regexp=".*")
