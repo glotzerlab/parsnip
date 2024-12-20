@@ -9,7 +9,7 @@ r"""Functions for parsing CIF files in Python.
     This is an example of a simple CIF file. A `key`_ (data name or tag) must start with
     an underscore, and is seperated from the data value with whitespace characters.
     A `table`_ begins with the ``loop_`` keyword, and contain a header block and a data
-    block. The vertical position of a tag in the table heading corresponds with the
+    block. The vertical position of a tag in the table headings corresponds with the
     horizontal position of the associated column in the table values.
 
     .. code-block:: text
@@ -49,7 +49,7 @@ import warnings
 import numpy as np
 
 from ._errors import ParseError, ParseWarning
-from ._utils import _deg2rad, _str2num
+from ._utils import _str2num
 from .patterns import LineCleaner, cast_array_to_float, remove_nondelimiting_whitespace
 
 
@@ -84,7 +84,7 @@ def read_table(
         nondelimiting_whitespace_replacement (str, optional):
             Character to replace non-delimiting whitespaces with.
             Default value = ``"_"``
-        regex_filter (tuple[str,str], optional):
+        regex_filter (tuple[str,str] | tuple[tuple[str,str]], optional):
             A tuple of strings that are compiled to a regex filter and applied to each
             data line. If a tuple of tuples of strings is provided instead, each pattern
             will be applied seperately.
@@ -314,69 +314,3 @@ def read_key_value_pairs(
         )
 
     return data
-
-
-def read_cell_params(filename, degrees: bool = True, mmcif: bool = False):
-    r"""Read the cell lengths and angles from a CIF file.
-
-    Args:
-        filename (str): The name of the .cif file to be parsed.
-        degrees (bool, optional):
-            When True, angles are returned in degrees (as per the cif spec). When False,
-            angles are converted to radians.
-            Default value = ``True``
-        mmcif (bool, optional):
-            When False, the standard CIF key naming is used (e.g. _cell_angle_alpha).
-            When True, the mmCIF standard is used instead (e.g. cell.angle_alpha).
-            Default value = ``False``
-
-    Returns:
-        tuple:
-            The box vector lengths and angles in degrees or radians
-            :math:`(L_1, L_2, L_3, \alpha, \beta, \gamma)`.
-    """
-    if mmcif:
-        angle_keys = ("_cell.angle_alpha", "_cell.angle_beta", "_cell.angle_gamma")
-        box_keys = ("_cell.length_a", "_cell.length_b", "_cell.length_c") + angle_keys
-    else:
-        angle_keys = ("_cell_angle_alpha", "_cell_angle_beta", "_cell_angle_gamma")
-        box_keys = ("_cell_length_a", "_cell_length_b", "_cell_length_c") + angle_keys
-    cell_data = read_key_value_pairs(filename, keys=box_keys, only_read_numerics=True)
-
-    assert all(value is not None for value in cell_data.values())
-    assert all(0 < cell_data[key] < 180 for key in angle_keys)
-
-    if not degrees:
-        for key in angle_keys:
-            cell_data[key] = _deg2rad(cell_data[key])
-
-    return tuple(cell_data.values())
-
-
-def read_fractional_positions(
-    filename: str,
-    regex_filter: tuple = ((r",\s+", ",")),
-):
-    r"""Extract the fractional X,Y,Z coordinates from a CIF file.
-
-    Args:
-        filename (str): The name of the .cif file to be parsed.
-        regex_filter (tuple[tuple[str,str]], optional):
-            A tuple of strings that are compiled to a regex filter and applied to each
-            data line. Default value = ``((r",\s+",","))``
-
-    Returns:
-        :math:`(N, 3)` :class:`numpy.ndarray[np.float32]`:
-            Fractional X,Y,Z coordinates of the unit cell.
-    """
-    xyz_keys = ("_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z")
-    # Once #6 is added, we should warnings.catch_warnings(action="error")
-    xyz_data = read_table(filename=filename, keys=xyz_keys, regex_filter=regex_filter)
-
-    xyz_data = cast_array_to_float(arr=xyz_data, dtype=np.float32)
-
-    # Validate results
-    assert xyz_data.shape[1] == 3
-    assert xyz_data.dtype == np.float32
-
-    return xyz_data

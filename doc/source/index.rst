@@ -24,6 +24,7 @@
 
    package-parse
    package-patterns
+   package-unitcells
 
 
 .. toctree::

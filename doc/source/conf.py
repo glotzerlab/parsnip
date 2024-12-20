@@ -44,7 +44,7 @@ pygments_dark_style = "native"
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
-
+source_repository = "https://github.com/glotzerlab/parsnip/"
 html_theme = "furo"
 html_static_path = ["_static"]
 html_theme_options = {
@@ -59,7 +59,8 @@ html_theme_options = {
         "color-brand-primary": "#005A50",
         "color-brand-content": "#406a8c",
     },
-    "top_of_page_button": "edit",
-    "source_edit_link": "https://github.com/glotzerlab/parsnip",
+    "source_edit_link": "https://github.com/glotzerlab/parsnip/edit/main/doc/source/{filename}",
+    "source_view_link": "https://github.com/glotzerlab/parsnip",
 }
+
 html_favicon = "_static/parsnip_logo_favicon.svg"

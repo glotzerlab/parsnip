@@ -1,0 +1,23 @@
+name: Generate lockfiles
+
+on:
+  schedule: [ "0 0 1 * *" ]
+
+jobs:
+  install-python-and-run:
+    runs-on: "ubuntu-20.04"
+
+    strategy:
+      # Python 3.6 file cannot be generated with `uv`, and is manually resolved
+      matrix: { python-version: [3.7, 3.8, 3.9, 3.10, 3.11, 3.12, 3.13] }
+
+    steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run generate-files.sh
+        run: |
+          uv pip compile --python-version=${{ matrix.python-version}} \
+          pyproject.toml tests/requirements.in > .github/requirements-${{ matrix.python-version }}.txt
