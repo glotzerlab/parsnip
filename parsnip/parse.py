@@ -278,7 +278,7 @@ def read_key_value_pairs(
 
     # Parse strings:
     # (         : Start new group
-    # [^#^\n]+  : Match 1 ore more characters that are NOT a "#" or newline "\n"
+    # [^#^\n]+  : Match 1 or more characters that are NOT a "#" or newline "\n"
     # )         : End the group
 
     # Ideally, we could use an atomic group (e.g. (?>[ |\t]+)) to match the spaces and

@@ -12,7 +12,7 @@ license = { file = "LICENSE" }
 authors = [
     {name = "Jen Bradley", email = "jenbrad@umich.edu"},
 ]
-dependencies = ["numpy>=1.19"]
+dependencies = ["numpy>=1.19", "more-itertools"]
 keywords = [
         "Development Status :: 4 - Beta",
         "License :: OSI Approved :: BSD License",
@@ -78,6 +78,7 @@ known-first-party = ["parsnip"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["D", "B018", "F811"]
+"parsnip/*" = ["E701"]
 "__init__.py" = ["F401"] # Do not remove "unused" imports in __init__.py files
 
 [tool.ruff.format]

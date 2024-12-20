@@ -26,9 +26,11 @@ _journal_paper_doi                https://doi.org/10.1107/S0108270183005909
 _publ_contact_author_name         'Overeijnder, H.'
 _publ_contact_author_email        ?
 
-loop_
+loop_ _asdf _gk_j    _qrewwer#e #_ghsd _#jj
   _publ_author_name
+  _llll _ bbbb
   'van den Berg, A.J.'
+  # asdf
   'Overeijnder, H.'
   'Tuinstra, F.'
 
