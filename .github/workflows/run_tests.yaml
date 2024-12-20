@@ -29,14 +29,14 @@ jobs:
         version: "0.5.11"
     - name: Set up environment with dependencies
       run: |
-        uv venv # --python ${{ inputs.python-version }}
+        uv venv
         uv pip install -r ${{ inputs.requirements-file }}
+        . .venv/bin/activate
+        echo PATH=$PATH >> $GITHUB_ENV
     - name: Install package
       run: |
-        source .venv/bin/activate
         python --version
         uv pip install . -v
-        uv pip list
         python -c "import parsnip; print('parsnip', parsnip.__version__)"
     - name: Test with pytest
       run: |
