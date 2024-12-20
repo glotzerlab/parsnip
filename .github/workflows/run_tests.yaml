@@ -29,7 +29,8 @@ jobs:
         version: "0.5.11"
     - name: Set up environment with dependencies
       run: |
-        uv venv --python ${{ inputs.python-version }}
+        uv venv # --python ${{ inputs.python-version }}
+        source .venv/bin/activate
         uv pip install -r ${{ inputs.requirements-file }}
     - name: Install package
       run: |
