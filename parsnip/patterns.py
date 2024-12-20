@@ -1,3 +1,6 @@
+# Copyright (c) 2024, Glotzer Group
+# This file is from the parsnip project, released under the BSD 3-Clause License.
+
 """Functions and classes to process string data.
 
 As with any text file format, some string manipulation may be required to process CIF

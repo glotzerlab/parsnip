@@ -1,3 +1,6 @@
+# Copyright (c) 2024, Glotzer Group
+# This file is from the parsnip project, released under the BSD 3-Clause License.
+
 """``parsnip``: a package for the simple reading and processing of .cif files.
 
 While there are many packages for handling cif files exist, the vast majority suffer

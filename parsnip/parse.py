@@ -1,3 +1,6 @@
+# Copyright (c) 2024, Glotzer Group
+# This file is from the parsnip project, released under the BSD 3-Clause License.
+
 r"""Functions for parsing CIF files in Python.
 
 .. include:: ../../README.rst
