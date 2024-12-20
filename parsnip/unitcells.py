@@ -1,3 +1,6 @@
+# Copyright (c) 2024, Glotzer Group
+# This file is from the parsnip project, released under the BSD 3-Clause License.
+
 """Functions for constructing unit cells from CIF file data.
 
 Rather than storing an entire unit cell's atomic positions, CIF files instead include
