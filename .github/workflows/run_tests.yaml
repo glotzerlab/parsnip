@@ -26,7 +26,7 @@ jobs:
     - name: Install uv
       uses: astral-sh/setup-uv@v4
       with:
-        version: "5.0.1"
+        version: "0.5.11"
     - name: Install dependencies
       run: |
         uv pip install -r ${{ inputs.requirements-file }}
