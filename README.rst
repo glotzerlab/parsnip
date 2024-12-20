@@ -75,8 +75,8 @@ additional dependencies are required to run the tests and build the docs.
 Dependencies
 ^^^^^^^^^^^^
 
-.. literalinclude:: ../../requirements.txt
+.. code:: text
 
-  :language: text
+   numpy>=1.19
 
 .. _contributing:
