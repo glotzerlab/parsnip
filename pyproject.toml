@@ -30,7 +30,7 @@ Source = "https://github.com/glotzerlab/parsnip"
 Issues = "https://github.com/glotzerlab/parsnip/issues"
 
 [tool.setuptools.dynamic]
-optional-dependencies = {tests = { file = ["tests/requirements.txt"] }, doc = { file = ["doc/requirements.txt"] }}
+optional-dependencies = {tests = { file = ["tests/requirements.in"] }, doc = { file = ["doc/requirements.txt"] }}
 
 [tool.pytest.ini_options]
 # Add percentage progress bar to the pytest console output
