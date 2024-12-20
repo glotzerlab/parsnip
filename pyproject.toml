@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "parsnip"
 version = "0.0.2"
-requires-python = ">=3.6"
+requires-python = ">=3.7"
 description = "Minimal library for parsing CIF & mmCIF files in Python."
 readme = "README.md"
 license = { file = "LICENSE" }
