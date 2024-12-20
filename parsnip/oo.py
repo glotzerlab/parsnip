@@ -1,6 +1,6 @@
 # Copyright (c) 2024, Glotzer Group
 # This file is from the parsnip project, released under the BSD 3-Clause License.
-
+from __future__ import annotations
 import re
 import warnings
 
@@ -10,11 +10,31 @@ from parsnip.parse import _parsed_line_generator
 
 NONTABLE_LINE_PREFIXES = ("_", "#")
 
-def is_key(line):
+def is_key(line :str | None):
     return line is not None and line.strip()[:1] == "_"
 
-def is_data(line):
+def is_data(line: str | None):
     return line is not None and line.strip()[:1] != "_"
+
+
+def strip_comments(s: str):
+    return s.split("#")[0].strip()
+
+def semicolon_to_string(line: str):
+    if "'" in line and '"' in line:
+        warnings.warn(
+            (
+                "String contains single and double quotes - "
+                "line may be parsed incorrectly"
+            ),
+            stacklevel=2,
+        )
+    # WARNING: because we split our string, we strip "\n" implicitly
+    # This is technically against spec, but is almost never meaningful
+    return line.replace(";", "'" if "'" not in line else '"')
+
+def line_is_continued(line: str):
+    return line.strip()[:1] == ";"
 
 class CifFile:
     """Parsed CIF file."""
@@ -48,23 +68,6 @@ class CifFile:
     }
 
     def _parse(self):
-        def strip_comments(s: str):
-            return s.split("#")[0].strip()
-
-        def semicolon_to_string(line: str):
-            if "'" in line and '"' in line:
-                warnings.warn(
-                    (
-                        "String contains single and double quotes - "
-                        "line may be parsed incorrectly"
-                    ),
-                    stacklevel=2,
-                )
-            # WARNING: because we split our string, we strip "\n" implicitly
-            return line.replace(";", "'" if "'" not in line else '"')
-
-        def line_is_continued(line: str):
-            return line.strip()[:1] == ";"
 
         data_iter = peekable(self._data.split("\n"))
 
