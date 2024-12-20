@@ -17,18 +17,19 @@ jobs:
   run_test:
     runs-on: ${{ inputs.runs-on }}
     steps:
-      # Steps common to both groups
     - uses: actions/checkout@v4
-    - name: Set up Python ${{ inputs.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ inputs.python-version }}
+    # - name: Set up Python ${{ inputs.python-version }}
+    #   uses: actions/setup-python@v5
+    #   with:
+    #     python-version: ${{ inputs.python-version }}
     - name: Install uv
       uses: astral-sh/setup-uv@v4
       with:
+        python-version: ${{ inputs.python-version }}
         version: "0.5.11"
-    - name: Install dependencies
+    - name: Set up environment with dependencies
       run: |
+        uv venv --python ${{ inputs.python-version }}
         uv pip install -r ${{ inputs.requirements-file }}
     - name: Install package
       run: |
