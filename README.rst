@@ -76,6 +76,7 @@ Dependencies
 ^^^^^^^^^^^^
 
 .. literalinclude:: ../../requirements.txt
+
   :language: text
 
 .. _contributing:
