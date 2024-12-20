@@ -54,7 +54,7 @@ class CifFile:
             return line.replace(";", "'" if "'" not in line else '"')
 
         def line_is_continued(line: str):
-            return data_iter.peek().strip()[:1] == ";"
+            return line.strip()[:1] == ";"
 
         data_iter = peekable(self._data.split("\n"))
 
@@ -63,17 +63,28 @@ class CifFile:
                 break  # Exit without StopIteration
 
             # Combine nonsimple data values into a single, parseable line
-            while line_is_continued(line):
-                print("CONTINUING")
+            while line_is_continued(data_iter.peek()):
                 line += strip_comments(next(data_iter))
             line = semicolon_to_string(line)
+
+            # Skip processing if the line contains no data
             if line == "" or strip_comments(line) == "":
                 continue
+
+            # TODO: could support multi-block files in the future
+            block = re.match(self._cpat["block_delimiter"], line)
+            if block is not None: continue
+
+            pair = self._cpat["key_value_general"].match(line)
+            if pair is not None:
+                self._pairs.update({pair.groups()[0]: pair.groups()[1]})
+            # print(pair.groups() if pair is not None else None)
+
 
             table = re.match(self._cpat["table_delimiter"], line)
 
             if table is not None:
-                print("ENTERING TABLE")
+                print("\nENTERING TABLE")
                 table_keys, table_data = [], []
                 # First, extract table headers. Must be prefixed with underscore
                 line_groups = table.groups()
@@ -87,40 +98,30 @@ class CifFile:
 
                 # Extract table headers from subsequent lines
                 def is_key(line):
-                    stripped = line.strip()
-                    return stripped != "" and stripped[0] == "_"
+                    return line is not None and line.strip()[:1] == "_"
 
                 def is_data(line):
-                    stripped = line.strip()
-                    return stripped[:1] != "_"
+                    return line is not None and line.strip()[:1] != "_"
 
-                line = strip_comments(next(data_iter))
+                # line = strip_comments(next(data_iter))
 
-                while is_key(line):
+                while is_key(data_iter.peek(None)):
+                    line = strip_comments(next(data_iter))
                     table_keys.extend(self._cpat["key_list"].findall(line))
                     line = strip_comments(next(data_iter))
 
-                while is_data(line):
+                while is_data(data_iter.peek(None)):
+                    line = strip_comments(next(data_iter))
                     parsed_line = self._cpat["space_delimited_data"].findall(line)
                     table_data.extend([parsed_line] if parsed_line else [])
-                    line = strip_comments(next(data_iter))
 
                 print("KEYS:", table_keys)
                 print("VALS:", table_data)
 
-            # TODO: could support multi-block files in the future
-            block = re.match(self._cpat["block_delimiter"], line)
-            if block is not None:
-                continue
 
-            print(line)
-            print(self._cpat["key_value_general"].match(line).groups())
-            print()
-            # self.pairs.update({})
-
-            if next(data_iter, None) is None:
+            if data_iter.peek(None) is None:
                 break
-
+        [print(pair) for pair in self._pairs.items()]
 
 fn = "tests/sample_data/B-IncStrDb_Ccmm.cif"
 gen = _parsed_line_generator(fn, regexp=".*")
