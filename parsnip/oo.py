@@ -10,6 +10,11 @@ from parsnip.parse import _parsed_line_generator
 
 NONTABLE_LINE_PREFIXES = ("_", "#")
 
+def is_key(line):
+    return line is not None and line.strip()[:1] == "_"
+
+def is_data(line):
+    return line is not None and line.strip()[:1] != "_"
 
 class CifFile:
     """Parsed CIF file."""
@@ -17,6 +22,7 @@ class CifFile:
     def __init__(self, fn: str):
         self._fn = fn
         self._pairs = {}
+        self._tables = []
 
         self._cpat = {k: re.compile(pattern) for (k, pattern) in self.PATTERNS.items()}
 
@@ -27,6 +33,10 @@ class CifFile:
     @property
     def pairs(self):
         return self._pairs
+
+    @property
+    def tables(self):
+        return self._tables
 
     PATTERNS = {
         "key_value_numeric": r"^(_[\w\.]+)[ |\t]+(-?\d+\.?\d*)",
@@ -62,30 +72,31 @@ class CifFile:
             if data_iter.peek(None) is None:
                 break  # Exit without StopIteration
 
-            # Combine nonsimple data values into a single, parseable line
+            # Combine nonsimple data values into a single, parseable line ==============
             while line_is_continued(data_iter.peek()):
                 line += strip_comments(next(data_iter))
             line = semicolon_to_string(line)
 
-            # Skip processing if the line contains no data
+            # Skip processing if the line contains no data =============================
             if line == "" or strip_comments(line) == "":
                 continue
 
-            # TODO: could support multi-block files in the future
+            # TODO: could support multi-block files in the future ======================
             block = re.match(self._cpat["block_delimiter"], line)
             if block is not None: continue
 
+            # Extract key-value pairs and save to the internal state ===================
             pair = self._cpat["key_value_general"].match(line)
             if pair is not None:
                 self._pairs.update({pair.groups()[0]: pair.groups()[1]})
-            # print(pair.groups() if pair is not None else None)
 
 
+            # Build up tables by incrementing through the iterator =====================
             table = re.match(self._cpat["table_delimiter"], line)
 
             if table is not None:
-                print("\nENTERING TABLE")
                 table_keys, table_data = [], []
+
                 # First, extract table headers. Must be prefixed with underscore
                 line_groups = table.groups()
                 if line_groups[-1] != "":  # Extract table keys from the _loop line
@@ -96,19 +107,9 @@ class CifFile:
                     else:
                         continue
 
-                # Extract table headers from subsequent lines
-                def is_key(line):
-                    return line is not None and line.strip()[:1] == "_"
-
-                def is_data(line):
-                    return line is not None and line.strip()[:1] != "_"
-
-                # line = strip_comments(next(data_iter))
-
                 while is_key(data_iter.peek(None)):
                     line = strip_comments(next(data_iter))
                     table_keys.extend(self._cpat["key_list"].findall(line))
-                    line = strip_comments(next(data_iter))
 
                 while is_data(data_iter.peek(None)):
                     line = strip_comments(next(data_iter))
