@@ -30,6 +30,8 @@ def _strip_comments(s: str):
 
 def _strip_quotes(s: str):
     return s.replace("'", "").replace('"', "")
+def _dtype_from_int(i: int):
+    return f"<U{i}"
 
 
 def _semicolon_to_string(line: str):
@@ -46,7 +48,7 @@ def _semicolon_to_string(line: str):
     return line.replace(";", "'" if "'" not in line else '"')
 
 
-def _line_is_continued(line: str):
+def _line_is_continued(line: str | None):
     return line is not None and line.strip()[:1] == ";"
 
 
@@ -78,6 +80,8 @@ class CifFile:
         self._fn = fn
         self._pairs = {}
         self._tables = []
+        # self._table_keys = []
+        # self._table_data = []
 
         self._cpat = {k: re.compile(pattern) for (k, pattern) in self.PATTERNS.items()}
         self._cast_values = cast_values
@@ -89,8 +93,26 @@ class CifFile:
 
     @property
     def cast_values(self):
-        """"""
+        """Whether to cast "number-like" values to ints & floats.
+
+        When set to `True` after construction, the values are modified in-place. This
+        action cannot be reversed
+        """
         return self._cast_values
+
+    @cast_values.setter
+    def cast_values(self, cast:bool):
+        if cast:
+            self._pairs = {
+                k: _try_cast_to_numeric(_strip_quotes(v)) for (k,v) in self.pairs
+            }
+        else:
+            warnings.warn(
+                "Setting cast_values True->False has no effect on stored data.",
+                category=ParseWarning, 
+                stacklevel=2
+            )
+        self._cast_values = cast
 
     @property
     def pairs(self):
@@ -109,7 +131,7 @@ class CifFile:
     def tables(self):
         """A list of data tables extracted from the file.
 
-        These are stored as tuples of (keys, data) where data is a numpy array.
+        These are stored as tuples of (keys, data) where data is a numpy array or list.
 
         Returns:
         --------
@@ -118,9 +140,24 @@ class CifFile:
         """
         return self._tables
 
+
+    @property
+    def table_keys(self):
+        """Column labels for tables extracted from the file.
+
+        This is *only the labels* from the :meth:`~.tables` property.
+
+        Returns:
+        --------
+        list[:math:`(N, N_{keys})` :class:`numpy.ndarray[str]`]:
+            A list of arrays corresponding with the data of the system.
+        """
+        return [cols for (cols, data) in self.tables]
+
+
     @property
     def table_data(self):
-        """Data from tables extracted from the file.
+        """Data for tables extracted from the file.
 
         This is *only the data* from the :meth:`~.tables` property.
 
@@ -129,7 +166,7 @@ class CifFile:
         list[:math:`(N, N_{keys})` :class:`numpy.ndarray[str]`]:
             A list of arrays corresponding with the data of the system.
         """
-        return self._tables
+        return [data for (cols, data) in self.tables]
 
     PATTERNS = {
         "key_value_numeric": r"^(_[\w\.]+)[ |\t]+(-?\d+\.?\d*)",
@@ -177,7 +214,6 @@ class CifFile:
 
             # Extract key-value pairs and save to the internal state ===================
             pair = self._cpat["key_value_general"].match(line)
-            print(pair)
             if pair is not None:
                 self._pairs.update(
                     {
@@ -236,6 +272,8 @@ class CifFile:
                         category=ParseWarning,
                         stacklevel=2,
                     )
+                    # self._table_keys.append(table_keys)
+                    # self._table_data.append(table_data)
                     self.tables.append((table_keys, table_data))
                     continue
                 if not all(len(key) == len(table_keys[0]) for key in table_keys):
@@ -245,9 +283,17 @@ class CifFile:
                     #     stacklevel=1,
                     # )
                     table_data = np.array([*flatten(table_data)]).reshape(-1, n_cols)
+                dt = _dtype_from_int(max(max(len(s) for s in l) for l in table_data))
 
                 print("KEYS:", table_keys, f"N = {len(table_keys)}")
                 print("DATA:", table_data)
+                # print(max(max(len(s) for s in l) for l in table_data))
+                print(dt)
+                x = np.atleast_2d(table_data)
+                x.dtype = [*zip(table_keys, [dt]*n_cols)]
+                print(x)
+                print(x.dtype)
+                print(x["_publ_author_name"])
                 self.tables.append((table_keys, np.atleast_2d(table_data)))
 
             if data_iter.peek(None) is None:
@@ -259,6 +305,6 @@ if __name__ == "__main__":
     gen = _parsed_line_generator(fn, regexp=".*")
 
     cf = CifFile(fn=fn)
-    [print(pair) for pair in cf.pairs.items()]
+    # [print(pair) for pair in cf.pairs.items()]
 
     # print(cf.tables[0])
