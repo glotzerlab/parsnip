@@ -7,9 +7,10 @@ import re
 import warnings
 
 import numpy as np
-from more_itertools import peekable
+from more_itertools import flatten, peekable
 
 from parsnip.parse import _parsed_line_generator
+from parsnip._errors import ParseError, ParseWarning
 
 NONTABLE_LINE_PREFIXES = ("_", "#")
 
@@ -45,7 +46,7 @@ def _semicolon_to_string(line: str):
 
 
 def _line_is_continued(line: str):
-    return line.strip()[:1] == ";"
+    return line is not None and line.strip()[:1] == ";"
 
 
 def _try_cast_to_numeric(s: str):
@@ -127,7 +128,8 @@ class CifFile:
         "table_delimiter": r"([Ll][Oo][Oo][Pp]_)[ |\t]*([^\n]*)",
         "block_delimiter": r"([Dd][Aa][Tt][Aa]_)[ |\t]*([^\n]*)",
         "key_list": r"_[\w_\.]+",
-        "space_delimited_data": r"'[^']*'|\"[^\"]*\"|\S+",
+        # "space_delimited_data": r"'[^']*'|\"[^\"]*\"|\S+",
+        "space_delimited_data" : r"(\'[^\']*\'|\"[^\"]*\"]|[^\'\" \t]*)[ | \t]*"
     }
 
     def __getitem__(self, key: str):
@@ -185,20 +187,47 @@ class CifFile:
 
                 while _is_key(data_iter.peek(None)):
                     line = _strip_comments(next(data_iter))
+                    while _line_is_continued(data_iter.peek(None)):
+                        line += _strip_comments(next(data_iter))
+                    line = _semicolon_to_string(line)
                     table_keys.extend(self._cpat["key_list"].findall(line))
 
                 while _is_data(data_iter.peek(None)):
                     line = _strip_comments(next(data_iter))
+                    while _line_is_continued(data_iter.peek(None)):
+                        line += _strip_comments(next(data_iter))
+                    line = _semicolon_to_string(line)
                     parsed_line = self._cpat["space_delimited_data"].findall(line)
-                    print(parsed_line)
+                    parsed_line = [_strip_quotes(m) for m in parsed_line if m != ""]
                     table_data.extend([parsed_line] if parsed_line else [])
-                print("KEYS:", table_keys)
-                print("DATA:", table_data)
 
-                print([len(l) for l in table_data])
-                print(sum(len(l) for l in table_data))
-                print(len(table_keys))
-                # try:
+                n_elements, n_cols = sum(len(row) for row in table_data), len(table_keys)
+
+                if n_cols == 0:
+                    continue # Skip empty tables
+
+                if n_elements % n_cols != 0:
+                    warnings.warn(
+                        f"Parsed data for table {len(self.tables)+1} cannot be resolved"
+                        f" into a table of the expected size and will be returned as a "
+                        f"list(got n={n_elements} items, expected c={n_cols} columns: "
+                        f"n%c={n_elements % n_cols}).",
+                        category=ParseWarning,
+                        stacklevel=2
+                    )
+                    self.tables.append((table_keys, table_data))
+                    continue
+                if not all(len(key)==len(table_keys[0]) for key in table_keys):
+                    warnings.warn(
+                        f"Data for table {len(self.tables)+1} was parsed into a ragged "
+                        "array. Please verify the columns are aligned as expected!",
+                        category=ParseWarning,
+                        stacklevel=2
+                    )
+                    table_data = np.array([*flatten(table_data)]).reshape(-1, n_cols)
+
+                print("KEYS:", table_keys, f"N = {len(table_keys)}")
+                print("DATA:", table_data)
                 self.tables.append((table_keys, np.atleast_2d(table_data)))
 
             if data_iter.peek(None) is None:
