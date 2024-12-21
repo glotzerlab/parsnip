@@ -13,6 +13,8 @@ def _gemmi_read_table(filename, keys):
 
 @cif_files_mark
 def test_read_symop(cif_data):
+    cf = cif_data.file
+    print(cf)
     if "PDB_4INS_head.cif" in cif_data.filename:
         return
     parsnip_data = read_table(filename=cif_data.filename, keys=cif_data.symop_keys)

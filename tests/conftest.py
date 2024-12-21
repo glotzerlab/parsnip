@@ -4,13 +4,15 @@ from collections import namedtuple
 import numpy as np
 import pytest
 
+from parsnip.oo import CifFile
+
 # ruff: noqa: N816. Allow mixed-case global variables
 
 data_file_path = os.path.dirname(__file__) + "/sample_data/"
 
 
 CifData = namedtuple(
-    "CifData", ["filename", "symop_keys", "atom_site_keys", "single_value_keys"]
+    "CifData", ["filename", "symop_keys", "atom_site_keys", "single_value_keys", "file"]
 )
 
 # Assorted keys to select from
@@ -67,6 +69,7 @@ aflow_mC24 = CifData(
         "_aflow_Strukturbericht",
         "_aflow_Pearson",
     ),
+    file=CifFile(data_file_path + "AFLOW_mC24.cif",),
 )
 
 bisd_Ccmm = CifData(
@@ -87,6 +90,7 @@ bisd_Ccmm = CifData(
         "_space_group_crystal_system",
         "_refine_ls_wR_factor_gt",
     ),
+    file=CifFile(data_file_path + "B-IncStrDb_Ccmm.cif",),
 )
 
 ccdc_Pm3m = CifData(
@@ -109,6 +113,7 @@ ccdc_Pm3m = CifData(
         "_refine_diff_density_min",
         "_refine_diff_density_rms",
     ),
+    file=CifFile(data_file_path + "CCDC_1446529_Pm-3m.cif",),
 )
 
 cod_aP16 = CifData(
@@ -134,6 +139,7 @@ cod_aP16 = CifData(
         "_cod_original_formula_sum",
         "_cod_database_code",
     ),
+    file=CifFile(data_file_path + "COD_1540955_aP16.cif"),
 )
 
 pdb_4INS = CifData(
@@ -165,6 +171,7 @@ pdb_4INS = CifData(
         "_refine_hist.d_res_high",
         "_refine_hist.d_res_low",
     ),
+    file=CifFile(data_file_path + "PDB_4INS_head.cif"),
 )
 
 bad_cif = CifData(
@@ -189,6 +196,7 @@ bad_cif = CifData(
         "_-wasd",
         "not_a_valid_key",
     ),
+    file=CifFile(data_file_path + "INTENTIONALLY_BAD_CIF.cif"),
 )
 
 cif_data_array = [aflow_mC24, bisd_Ccmm, ccdc_Pm3m, cod_aP16, pdb_4INS]
