@@ -131,7 +131,11 @@ class CifFile:
     def tables(self):
         """A list of data tables extracted from the file.
 
-        These are stored as tuples of (keys, data) where data is a numpy array or list.
+        These are stored as :obj:`np.recarray` objects (see
+        [the docs](https://numpy.org/doc/stable/reference/generated/numpy.recarray.html)
+        for more information), which can be indexed by column labels.
+
+        .. TODO: add Examples block
 
         Returns:
         --------
@@ -140,33 +144,16 @@ class CifFile:
         """
         return self._tables
 
-
     @property
-    def table_keys(self):
-        """Column labels for tables extracted from the file.
+    def table_labels(self):
+        """A list of column labels for each data array.
 
-        This is *only the labels* from the :meth:`~.tables` property.
-
-        Returns:
-        --------
-        list[:math:`(N, N_{keys})` :class:`numpy.ndarray[str]`]:
-            A list of arrays corresponding with the data of the system.
+        This property is equivalent to `[arr.dtype.names for arr in self.tables]`.
         """
-        return [cols for (cols, data) in self.tables]
+        return [arr.dtype.names for arr in self.tables]
 
+    # def _find_column_for_()
 
-    @property
-    def table_data(self):
-        """Data for tables extracted from the file.
-
-        This is *only the data* from the :meth:`~.tables` property.
-
-        Returns:
-        --------
-        list[:math:`(N, N_{keys})` :class:`numpy.ndarray[str]`]:
-            A list of arrays corresponding with the data of the system.
-        """
-        return [data for (cols, data) in self.tables]
 
     PATTERNS = {
         "key_value_numeric": r"^(_[\w\.]+)[ |\t]+(-?\d+\.?\d*)",
@@ -272,16 +259,9 @@ class CifFile:
                         category=ParseWarning,
                         stacklevel=2,
                     )
-                    # self._table_keys.append(table_keys)
-                    # self._table_data.append(table_data)
                     self.tables.append((table_keys, table_data))
                     continue
                 if not all(len(key) == len(table_keys[0]) for key in table_keys):
-                    # warnings.warn(
-                    #     f"Data for table {len(self.tables)+1} was parsed as a ragged arr",
-                    #     category=ParseWarning,
-                    #     stacklevel=1,
-                    # )
                     table_data = np.array([*flatten(table_data)]).reshape(-1, n_cols)
                 dt = _dtype_from_int(max(max(len(s) for s in l) for l in table_data))
 
@@ -289,12 +269,13 @@ class CifFile:
                 print("DATA:", table_data)
                 # print(max(max(len(s) for s in l) for l in table_data))
                 print(dt)
-                x = np.atleast_2d(table_data)
-                x.dtype = [*zip(table_keys, [dt]*n_cols)]
-                print(x)
-                print(x.dtype)
-                print(x["_publ_author_name"])
-                self.tables.append((table_keys, np.atleast_2d(table_data)))
+                rectable = np.atleast_2d(table_data)
+                rectable.dtype = [*zip(table_keys, [dt]*n_cols)]
+                print(rectable)
+                print(rectable.dtype)
+                # print(rectable["_publ_author_name"])
+                # self.tables.append((table_keys, np.atleast_2d(table_data)))
+                self.tables.append(rectable)
 
             if data_iter.peek(None) is None:
                 break
