@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 import re
 import warnings
 
@@ -67,21 +68,29 @@ def _try_cast_to_numeric(s: str):
 class CifFile:
     """Parsed CIF file."""
 
-    def __init__(self, fn: str):
+    def __init__(self, fn: str, cast_values: bool = False):
         """Create a CifFile object from a filename.
 
         On construction, the entire file is parsed into key-value pairs and data tables.
         Comment lines are ignored.
+
         """
         self._fn = fn
         self._pairs = {}
         self._tables = []
 
         self._cpat = {k: re.compile(pattern) for (k, pattern) in self.PATTERNS.items()}
+        self._cast_values = cast_values
 
         with open(fn) as file:
             self._data = file.read()
         self._parse()
+
+
+    @property
+    def cast_values(self):
+        """"""
+        return self._cast_values
 
     @property
     def pairs(self):
@@ -131,9 +140,18 @@ class CifFile:
         "space_delimited_data": r"(\'[^\']*\'|\"[^\"]*\"]|[^\'\" \t]*)[ | \t]*",
     }
 
-    def __getitem__(self, key: str):
-        """Return an item from the dictionary of key-value pairs."""
+    def __getitem__(self, key: str | list[str]):
+        """Return an item from the dictionary of key-value pairs.
+
+        Indexing with a string returns the value from the :meth:`~.pairs` dict. Indexing
+        with an Iterable of strings returns a list of values, with `None` as a
+        placeholder for keys that did not match any data.
+        """
+        if isinstance(key, Iterable) and not isinstance(key, str):
+            return [self.pairs.get(k, None) for k in key]
+
         return self.pairs[key]
+        # {key: data[key] for key in keys_to_include if key in data}
 
     def _parse(self):
         """Parse the cif file into python objects."""
@@ -159,12 +177,13 @@ class CifFile:
 
             # Extract key-value pairs and save to the internal state ===================
             pair = self._cpat["key_value_general"].match(line)
+            print(pair)
             if pair is not None:
                 self._pairs.update(
                     {
                         pair.groups()[0]: _try_cast_to_numeric(
                             _strip_quotes(pair.groups()[1])
-                        )
+                        ) if self.cast_values else pair.groups()[1].strip()
                     }
                 )
 
@@ -220,12 +239,11 @@ class CifFile:
                     self.tables.append((table_keys, table_data))
                     continue
                 if not all(len(key) == len(table_keys[0]) for key in table_keys):
-                    warnings.warn(
-                        f"Data for table {len(self.tables)+1} was parsed into a ragged "
-                        "array. Please verify the columns are aligned as expected!",
-                        category=ParseWarning,
-                        stacklevel=2,
-                    )
+                    # warnings.warn(
+                    #     f"Data for table {len(self.tables)+1} was parsed as a ragged arr",
+                    #     category=ParseWarning,
+                    #     stacklevel=1,
+                    # )
                     table_data = np.array([*flatten(table_data)]).reshape(-1, n_cols)
 
                 print("KEYS:", table_keys, f"N = {len(table_keys)}")

@@ -1,5 +1,6 @@
 import os
 from collections import namedtuple
+import warnings
 
 import numpy as np
 import pytest
@@ -148,37 +149,38 @@ cod_aP16 = CifData(
     file=CifFile(data_file_path + "COD_1540955_aP16.cif"),
 )
 
-pdb_4INS = CifData(
-    filename=data_file_path + "PDB_4INS_head.cif",
-    symop_keys=("_pdbx_struct_oper_list.symmetry_operation",),
-    atom_site_keys=(  # mmCIF stores atom sites differently, so use a different table.
-        "_chem_comp.id",
-        "_chem_comp.type",
-        "_chem_comp.mon_nstd_flag",
-        "_chem_comp.name",
-        "_chem_comp.pdbx_synonyms",
-        "_chem_comp.formula",
-        "_chem_comp.formula_weight",
-    ),
-    single_value_keys=(
-        "_symmetry.entry_id",
-        "_symmetry.space_group_name_H-M",
-        "_symmetry.pdbx_full_space_group_name_H-M",
-        "_symmetry.cell_setting",
-        "_symmetry.Int_Tables_number",
-        "_symmetry.space_group_name_Hall",
-        "_refine_hist.pdbx_refine_id",
-        "_refine_hist.cycle_id",
-        "_refine_hist.pdbx_number_atoms_protein",
-        "_refine_hist.pdbx_number_atoms_nucleic_acid",
-        "_refine_hist.pdbx_number_atoms_ligand",
-        "_refine_hist.number_atoms_solvent",
-        "_refine_hist.number_atoms_total",
-        "_refine_hist.d_res_high",
-        "_refine_hist.d_res_low",
-    ),
-    file=CifFile(data_file_path + "PDB_4INS_head.cif"),
-)
+with warnings.catch_warnings(record=False):
+    pdb_4INS = CifData(
+        filename=data_file_path + "PDB_4INS_head.cif",
+        symop_keys=("_pdbx_struct_oper_list.symmetry_operation",),
+        atom_site_keys=(  # mmCIF stores atom sites differently, so use a different table.
+            "_chem_comp.id",
+            "_chem_comp.type",
+            "_chem_comp.mon_nstd_flag",
+            "_chem_comp.name",
+            "_chem_comp.pdbx_synonyms",
+            "_chem_comp.formula",
+            "_chem_comp.formula_weight",
+        ),
+        single_value_keys=(
+            "_symmetry.entry_id",
+            "_symmetry.space_group_name_H-M",
+            "_symmetry.pdbx_full_space_group_name_H-M",
+            "_symmetry.cell_setting",
+            "_symmetry.Int_Tables_number",
+            "_symmetry.space_group_name_Hall",
+            "_refine_hist.pdbx_refine_id",
+            "_refine_hist.cycle_id",
+            "_refine_hist.pdbx_number_atoms_protein",
+            "_refine_hist.pdbx_number_atoms_nucleic_acid",
+            "_refine_hist.pdbx_number_atoms_ligand",
+            "_refine_hist.number_atoms_solvent",
+            "_refine_hist.number_atoms_total",
+            "_refine_hist.d_res_high",
+            "_refine_hist.d_res_low",
+        ),
+        file=CifFile(data_file_path + "PDB_4INS_head.cif"),
+    )
 
 bad_cif = CifData(
     filename=data_file_path + "INTENTIONALLY_BAD_CIF.cif",
@@ -205,6 +207,7 @@ bad_cif = CifData(
     file=CifFile(data_file_path + "INTENTIONALLY_BAD_CIF.cif"),
 )
 
+# cif_data_array = [aflow_mC24, pdb_4INS]
 cif_data_array = [aflow_mC24, bisd_Ccmm, ccdc_Pm3m, cod_aP16, pdb_4INS]
 cif_files_mark = pytest.mark.parametrize(
     argnames="cif_data",

@@ -17,13 +17,18 @@ def _gemmi_read_keys(filename, keys, as_number=True):
 
 @cif_files_mark
 def test_read_key_value_pairs(cif_data):
-    parsnip_data = read_key_value_pairs(
-        filename=cif_data.filename, keys=cif_data.single_value_keys
-    )
+    cf = cif_data.file
+    # print(cif_data.single_value_keys)
+    # print()
+    # parsnip_data = read_key_value_pairs(
+    #     filename=cif_data.filename, keys=cif_data.single_value_keys
+    # )
+    parsnip_data = cf[cif_data.single_value_keys]
+    # print(parsnip_data)
     gemmi_data = _gemmi_read_keys(
         cif_data.filename, keys=cif_data.single_value_keys, as_number=False
     )
-    np.testing.assert_array_equal([*parsnip_data.values()], gemmi_data)
+    np.testing.assert_array_equal(parsnip_data, gemmi_data)
 
 
 @pytest.mark.filterwarnings("ignore: Keys")
