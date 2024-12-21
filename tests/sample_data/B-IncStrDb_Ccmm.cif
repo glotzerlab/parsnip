@@ -27,6 +27,7 @@ _publ_contact_author_name         'Overeijnder, H.'
 _publ_contact_author_email        ?
 
 loop_
+  _publ_author_name
   'van den Berg, A.J.'
   'Overeijnder, H.'
   'Tuinstra, F.'
