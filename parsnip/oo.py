@@ -6,8 +6,8 @@ from __future__ import annotations
 import re
 import warnings
 
-from more_itertools import peekable
 import numpy as np
+from more_itertools import peekable
 
 from parsnip.parse import _parsed_line_generator
 
@@ -24,6 +24,7 @@ def _is_data(line: str | None):
 
 def _strip_comments(s: str):
     return s.split("#")[0].strip()
+
 
 def _strip_quotes(s: str):
     return s.replace("'", "").replace('"', "")
@@ -45,6 +46,7 @@ def _semicolon_to_string(line: str):
 
 def _line_is_continued(line: str):
     return line.strip()[:1] == ";"
+
 
 def _try_cast_to_numeric(s: str):
     """Attempt to cast a string to a number, returning the original string if invalid.
@@ -132,7 +134,6 @@ class CifFile:
         """Return an item from the dictionary of key-value pairs."""
         return self.pairs[key]
 
-
     def _parse(self):
         """Parse the cif file into python objects."""
         data_iter = peekable(self._data.split("\n"))
@@ -159,8 +160,12 @@ class CifFile:
             pair = self._cpat["key_value_general"].match(line)
             if pair is not None:
                 self._pairs.update(
-                    {pair.groups()[0]: _try_cast_to_numeric(_strip_quotes(pair.groups()[1]))}
-            )
+                    {
+                        pair.groups()[0]: _try_cast_to_numeric(
+                            _strip_quotes(pair.groups()[1])
+                        )
+                    }
+                )
 
             # Build up tables by incrementing through the iterator =====================
             table = re.match(self._cpat["table_delimiter"], line)
