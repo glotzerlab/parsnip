@@ -17,14 +17,7 @@ def _gemmi_read_keys(filename, keys, as_number=True):
 
 @cif_files_mark
 def test_read_key_value_pairs(cif_data):
-    cf = cif_data.file
-    # print(cif_data.single_value_keys)
-    # print()
-    # parsnip_data = read_key_value_pairs(
-    #     filename=cif_data.filename, keys=cif_data.single_value_keys
-    # )
-    parsnip_data = cf[cif_data.single_value_keys]
-    # print(parsnip_data)
+    parsnip_data = cif_data.file[cif_data.single_value_keys]
     gemmi_data = _gemmi_read_keys(
         cif_data.filename, keys=cif_data.single_value_keys, as_number=False
     )
@@ -35,17 +28,13 @@ def test_read_key_value_pairs(cif_data):
 @cif_files_mark
 @random_keys_mark(n_samples=20)
 def test_read_key_value_pairs_random(cif_data, keys):
-    parsnip_data = read_key_value_pairs(filename=cif_data.filename, keys=keys)
+    parsnip_data = cif_data.file[keys]
     gemmi_data = _gemmi_read_keys(cif_data.filename, keys=keys, as_number=False)
-    np.testing.assert_array_equal([*parsnip_data.values()], gemmi_data)
+    np.testing.assert_array_equal(parsnip_data, gemmi_data)
 
 
 def test_read_key_value_pairs_badcif(cif_data=bad_cif):
-    expected_warning = "Keys {'not_a_valid_key'} did not match any data!"
-    with pytest.warns(ParseWarning, match=expected_warning):
-        parsnip_data = read_key_value_pairs(
-            filename=cif_data.filename, keys=cif_data.single_value_keys
-        )
+    parsnip_data = cif_data.file[cif_data.single_value_keys]
     correct_data = [
         "1.000000(x)",
         "4.32343242",
@@ -53,14 +42,9 @@ def test_read_key_value_pairs_badcif(cif_data=bad_cif):
         "90.00000",
         "-10.12345",
         "210.00000",
-        "123",
+        "\\t _1.234-56789",
         r"45.6a/\s",
         None,
     ]
-    np.testing.assert_array_equal([*parsnip_data.values()], correct_data)
+    np.testing.assert_array_equal(parsnip_data, correct_data)
 
-
-@cif_files_mark
-def test_key_value_warnings(cif_data, keys=("_FALSE_KEY")):
-    with pytest.warns(ParseWarning):
-        _ = read_key_value_pairs(filename=cif_data.filename, keys=keys)
