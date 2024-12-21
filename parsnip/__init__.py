@@ -12,6 +12,6 @@ The ``parsnip.patterns`` module includes a few convience features for manipulati
 the read data, and the ``parsnip.unitcells`` module includes functions to reconstruct a
 crystal's unit cell's basis positions from data stored in cif files.
 """
-from . import parse, patterns, unitcells
+from . import oo, parse, patterns, unitcells
 
 __version__ = "0.0.2"
