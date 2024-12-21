@@ -9,8 +9,8 @@ import warnings
 import numpy as np
 from more_itertools import flatten, peekable
 
+from parsnip._errors import ParseWarning
 from parsnip.parse import _parsed_line_generator
-from parsnip._errors import ParseError, ParseWarning
 
 NONTABLE_LINE_PREFIXES = ("_", "#")
 
@@ -56,7 +56,7 @@ def _try_cast_to_numeric(s: str):
     measurements and indicators of significant digits are stripped.
     """
     parsed = re.match(r"(\d+\.?\d*)", s.strip())
-    if parsed is None  or re.search(r"[^0-9\.\(\)]", s):
+    if parsed is None or re.search(r"[^0-9\.\(\)]", s):
         return s
     elif "." in parsed.group(0):
         return float(parsed.group(0))
@@ -129,7 +129,7 @@ class CifFile:
         "block_delimiter": r"([Dd][Aa][Tt][Aa]_)[ |\t]*([^\n]*)",
         "key_list": r"_[\w_\.]+",
         # "space_delimited_data": r"'[^']*'|\"[^\"]*\"|\S+",
-        "space_delimited_data" : r"(\'[^\']*\'|\"[^\"]*\"]|[^\'\" \t]*)[ | \t]*"
+        "space_delimited_data": r"(\'[^\']*\'|\"[^\"]*\"]|[^\'\" \t]*)[ | \t]*",
     }
 
     def __getitem__(self, key: str):
@@ -201,10 +201,13 @@ class CifFile:
                     parsed_line = [_strip_quotes(m) for m in parsed_line if m != ""]
                     table_data.extend([parsed_line] if parsed_line else [])
 
-                n_elements, n_cols = sum(len(row) for row in table_data), len(table_keys)
+                n_elements, n_cols = (
+                    sum(len(row) for row in table_data),
+                    len(table_keys),
+                )
 
                 if n_cols == 0:
-                    continue # Skip empty tables
+                    continue  # Skip empty tables
 
                 if n_elements % n_cols != 0:
                     warnings.warn(
@@ -213,16 +216,16 @@ class CifFile:
                         f"list(got n={n_elements} items, expected c={n_cols} columns: "
                         f"n%c={n_elements % n_cols}).",
                         category=ParseWarning,
-                        stacklevel=2
+                        stacklevel=2,
                     )
                     self.tables.append((table_keys, table_data))
                     continue
-                if not all(len(key)==len(table_keys[0]) for key in table_keys):
+                if not all(len(key) == len(table_keys[0]) for key in table_keys):
                     warnings.warn(
                         f"Data for table {len(self.tables)+1} was parsed into a ragged "
                         "array. Please verify the columns are aligned as expected!",
                         category=ParseWarning,
-                        stacklevel=2
+                        stacklevel=2,
                     )
                     table_data = np.array([*flatten(table_data)]).reshape(-1, n_cols)
 
@@ -240,6 +243,5 @@ if __name__ == "__main__":
 
     cf = CifFile(fn=fn)
     [print(pair) for pair in cf.pairs.items()]
-
 
     # print(cf.tables[0])

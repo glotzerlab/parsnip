@@ -69,7 +69,9 @@ aflow_mC24 = CifData(
         "_aflow_Strukturbericht",
         "_aflow_Pearson",
     ),
-    file=CifFile(data_file_path + "AFLOW_mC24.cif",),
+    file=CifFile(
+        data_file_path + "AFLOW_mC24.cif",
+    ),
 )
 
 bisd_Ccmm = CifData(
@@ -90,7 +92,9 @@ bisd_Ccmm = CifData(
         "_space_group_crystal_system",
         "_refine_ls_wR_factor_gt",
     ),
-    file=CifFile(data_file_path + "B-IncStrDb_Ccmm.cif",),
+    file=CifFile(
+        data_file_path + "B-IncStrDb_Ccmm.cif",
+    ),
 )
 
 ccdc_Pm3m = CifData(
@@ -113,7 +117,9 @@ ccdc_Pm3m = CifData(
         "_refine_diff_density_min",
         "_refine_diff_density_rms",
     ),
-    file=CifFile(data_file_path + "CCDC_1446529_Pm-3m.cif",),
+    file=CifFile(
+        data_file_path + "CCDC_1446529_Pm-3m.cif",
+    ),
 )
 
 cod_aP16 = CifData(
