@@ -3,9 +3,6 @@ import pytest
 from conftest import bad_cif, cif_files_mark, random_keys_mark
 from gemmi import cif
 
-from parsnip._errors import ParseWarning
-from parsnip.parse import read_key_value_pairs
-
 
 def _gemmi_read_keys(filename, keys, as_number=True):
     file_block = cif.read_file(filename).sole_block()
