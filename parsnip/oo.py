@@ -128,7 +128,6 @@ class CifFile:
         "table_delimiter": r"([Ll][Oo][Oo][Pp]_)[ |\t]*([^\n]*)",
         "block_delimiter": r"([Dd][Aa][Tt][Aa]_)[ |\t]*([^\n]*)",
         "key_list": r"_[\w_\.]+",
-        # "space_delimited_data": r"'[^']*'|\"[^\"]*\"|\S+",
         "space_delimited_data": r"(\'[^\']*\'|\"[^\"]*\"]|[^\'\" \t]*)[ | \t]*",
     }
 
@@ -213,7 +212,7 @@ class CifFile:
                     warnings.warn(
                         f"Parsed data for table {len(self.tables)+1} cannot be resolved"
                         f" into a table of the expected size and will be returned as a "
-                        f"list(got n={n_elements} items, expected c={n_cols} columns: "
+                        f"list (got n={n_elements} items, expected c={n_cols} columns: "
                         f"n%c={n_elements % n_cols}).",
                         category=ParseWarning,
                         stacklevel=2,
