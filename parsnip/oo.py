@@ -19,7 +19,7 @@ def _is_key(line: str | None):
 
 
 def _is_data(line: str | None):
-    return line is not None and line.strip()[:1] != "_"
+    return line is not None and line.strip()[:1] != "_" and line.strip()[:5] != "loop_"
 
 
 def _strip_comments(s: str):
@@ -54,8 +54,8 @@ def _try_cast_to_numeric(s: str):
     This method attempts to convert to a float first, followed by an int. Precision
     measurements and indicators of significant digits are stripped.
     """
-    parsed = re.match(r"\d+.?\d+", s)
-    if parsed is None:
+    parsed = re.match(r"(\d+\.?\d*)", s.strip())
+    if parsed is None  or re.search(r"[^0-9\.\(\)]", s):
         return s
     elif "." in parsed.group(0):
         return float(parsed.group(0))
@@ -126,7 +126,7 @@ class CifFile:
         "key_value_general": r"^(_[\w\.-]+)[ |\t]+([^#^\n]+)",
         "table_delimiter": r"([Ll][Oo][Oo][Pp]_)[ |\t]*([^\n]*)",
         "block_delimiter": r"([Dd][Aa][Tt][Aa]_)[ |\t]*([^\n]*)",
-        "key_list": r"_[\w_]+",
+        "key_list": r"_[\w_\.]+",
         "space_delimited_data": r"'[^']*'|\"[^\"]*\"|\S+",
     }
 
@@ -190,23 +190,27 @@ class CifFile:
                 while _is_data(data_iter.peek(None)):
                     line = _strip_comments(next(data_iter))
                     parsed_line = self._cpat["space_delimited_data"].findall(line)
+                    print(parsed_line)
                     table_data.extend([parsed_line] if parsed_line else [])
+                print("KEYS:", table_keys)
+                print("DATA:", table_data)
 
-                # print("KEYS:", table_keys)
-                # print("VALS:", table_data)
-
+                print([len(l) for l in table_data])
+                print(sum(len(l) for l in table_data))
+                print(len(table_keys))
+                # try:
                 self.tables.append((table_keys, np.atleast_2d(table_data)))
 
             if data_iter.peek(None) is None:
                 break
-        # [print(pair) for pair in self._pairs.items()]
 
 
-fn = "tests/sample_data/B-IncStrDb_Ccmm.cif"
-gen = _parsed_line_generator(fn, regexp=".*")
+if __name__ == "__main__":
+    fn = "tests/sample_data/B-IncStrDb_Ccmm.cif"
+    gen = _parsed_line_generator(fn, regexp=".*")
 
-cf = CifFile(fn=fn)
-[print(pair) for pair in cf.pairs.items()]
+    cf = CifFile(fn=fn)
+    [print(pair) for pair in cf.pairs.items()]
 
 
-# print(cf.tables[0])
+    # print(cf.tables[0])
