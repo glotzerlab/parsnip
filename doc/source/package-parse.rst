@@ -1,8 +1,8 @@
-Parse Module
-==============================
+parsnip
+=======
 
 .. rubric:: Overview
 
-.. automodule:: parsnip.parse
+.. automodule:: parsnip.oo
    :members:
    :show-inheritance:

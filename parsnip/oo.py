@@ -71,7 +71,7 @@ def _try_cast_to_numeric(s: str):
 
 
 class CifFile:
-    """Parsed CIF file."""
+    """Parser for CIF files."""
 
     def __init__(self, fn: str, cast_values: bool = False):
         """Create a CifFile object from a filename.
@@ -163,13 +163,12 @@ class CifFile:
                 return table[index]
 
     def get_from_tables(self, index: str | list[str]):
-        """Return a column or columns from the matching table in :prop:`~.self.tables`.
+        """Return a column or columns from the matching table in :meth:`~.self.tables`.
 
         If index is a single string, a single column will be returned from the matching
         table. If index is an Iterable of strings, the corresponding table slices will
         be returned. Slices from the same table will be grouped in the output array, but
         slices from different arrays will be returned seperately.
-
 
         .. tip::
 
@@ -193,19 +192,19 @@ class CifFile:
             *indices correspond to a single table.* Indices that match multiple tables
             will return all possible matches, in the order of the input tables. Lists of
             input that correspond with multiple tables will return data from those
-            tables *in the order of the tablables in the :prop:`~.tables` property.*
+            tables *in the order of the tablables in the :meth:`~.tables` property.*
 
         Parameters
         ----------
-        index: str | Iterable[str]
-            A column name or list of column names.
+            index: str | Iterable[str]
+                A column name or list of column names.
 
         Returns:
         --------
-        list[:class:`numpy.ndarray`:] | :class:`numpy.ndarray`:
-            A list of *unstructured* arrays corresponding with matches from the input
-            keys. If the resulting list would have length 1, the data is returned
-            directly instead. See the note above for data ordering.
+            list[:class:`numpy.ndarray`:] | :class:`numpy.ndarray`:
+                A list of *unstructured* arrays corresponding with matches from the
+                input keys. If the resulting list would have length 1, the data is
+                returned directly instead. See the note above for data ordering.
         """
         index = np.asarray(index)
         result = []
