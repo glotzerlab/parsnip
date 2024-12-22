@@ -79,7 +79,7 @@ bisd_Ccmm = CifData(
     filename=data_file_path + "B-IncStrDb_Ccmm.cif",
     symop_keys=("_space_group_symop_operation_xyz",),
     # Our code works with extra keys, but gemmi does not!
-    atom_site_keys=(atom_site_keys[0], *atom_site_keys[2:]),
+    atom_site_keys=(atom_site_keys[0], atom_site_keys[-1], *atom_site_keys[2:-1]),
     single_value_keys=(
         "_journal_name_full",
         "_journal_volume",

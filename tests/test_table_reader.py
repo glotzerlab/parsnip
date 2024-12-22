@@ -6,6 +6,10 @@ from gemmi import cif
 from parsnip._errors import ParseWarning
 from parsnip.parse import read_table
 
+STR_WIDTH_MAX = 128
+"""Maximum width for valid fields in the test suite.
+Used to simplify processing of structured arrays.
+"""
 
 def _gemmi_read_table(filename, keys):
     return np.array(cif.read_file(filename).sole_block().find(keys))
@@ -13,31 +17,24 @@ def _gemmi_read_table(filename, keys):
 
 @cif_files_mark
 def test_read_symop(cif_data):
-    cf = cif_data.file
-    print(cf)
-    if "PDB_4INS_head.cif" in cif_data.filename:
-        return
-    parsnip_data = read_table(filename=cif_data.filename, keys=cif_data.symop_keys)
+    parsnip_data = cif_data.file.get_from_tables(
+        cif_data.symop_keys
+    ).astype(f"<U{STR_WIDTH_MAX}")
     gemmi_data = _gemmi_read_table(cif_data.filename, cif_data.symop_keys)
-
-    # We replace ", " strings with "," to ensure data is collected properly
-    # We have to apply this same transformation to the gemmi data to check correctness.
-    if "CCDC_1446529_Pm-3m.cif" in cif_data.filename:
-        gemmi_data = np.array(
-            [[item.replace(", ", ",_") for item in row] for row in gemmi_data]
-        )
 
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
 
 
 @cif_files_mark
 def test_read_atom_sites(cif_data):
-    if "PDB_4INS_head.cif" in cif_data.filename:
-        return
-    parsnip_data = read_table(
-        filename=cif_data.filename,
-        keys=cif_data.atom_site_keys,
+    parsnip_data = cif_data.file.get_from_tables(
+        cif_data.atom_site_keys
     )
+    print([parsnip_data])
+    # cast_dtype = [v[0] for v in parsnip_data.dtype.fields.values()][0]
+    # print(f"cast_dtype: {cast_dtype}")
+    # parsnip_data = parsnip_data.view("<U8")
+    print(cif_data.atom_site_keys)
     gemmi_data = _gemmi_read_table(cif_data.filename, cif_data.atom_site_keys)
 
     np.testing.assert_array_equal(parsnip_data, gemmi_data)

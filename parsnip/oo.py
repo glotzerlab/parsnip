@@ -7,6 +7,7 @@ from collections.abc import Iterable
 import re
 import warnings
 
+from _pytest.reports import _report_unserialization_failure
 import numpy as np
 from more_itertools import flatten, peekable
 
@@ -135,7 +136,7 @@ class CifFile:
         [the docs](https://numpy.org/doc/stable/reference/generated/numpy.recarray.html)
         for more information), which can be indexed by column labels.
 
-        .. TODO: add Examples block
+        .. TODO: add Examples block, and VERIFY THIS IS REALLY A RECARRAY: NOT, actually strutured arr
 
         Returns:
         --------
@@ -152,15 +153,58 @@ class CifFile:
         """
         return [arr.dtype.names for arr in self.tables]
 
-    # def _find_column_for_()
+    def _find_slice_in_tables(self, index: str):
+        # TODO: only returns first match
+        for table in self.tables:
+            if index in table.dtype.names:
+                return table[index]
 
+
+    def get_from_tables(self, index: str | list[str]):
+        """Return a column or columns from the matching table in :prop:`~.self.tables`.
+
+        If index is a single string, a single column will be returned from the matching
+        table. If index is an Iterable of strings, the corresponding table slices will
+        be returned. Slices from the same table will be grouped in the output array, but
+        slices from different arrays will be returned seperately.
+
+        .. note::
+
+            Keys that match data in multiple tables will return all possible matches.
+
+        Parameters
+        ----------
+        index: str | Iterable[str]
+            A column name or list of column names.
+
+        Returns:
+        --------
+        list[:class:`numpy.ndarray`:] | :class:`numpy.ndarray`: 
+            A list of structured arrays corresponding with matches from the input keys.
+            If the resulting list would have length 1, the data is returned directly
+            instead.
+        """
+        result = []
+        for table in self.tables:
+            cols = np.array(table.dtype.names)
+            matches = cols[np.any(cols[:,None]==index, axis=1)]
+            if len(matches) == 0:
+                continue
+            # print(table[matches].dtype, table.dtype[0])
+            # print([np.any(cols[:,None]==index, axis=1)])
+            # print(table.view(table.dtype[0]).shape)
+            result.append(
+                table.view(table.dtype[0])[:, np.any(cols[:,None]==index, axis=1)]
+            )
+            # result.append(table[matches].copy().view(table.dtype[0]))
+        return result if len(result) != 1 else result[0]
 
     PATTERNS = {
         "key_value_numeric": r"^(_[\w\.]+)[ |\t]+(-?\d+\.?\d*)",
         "key_value_general": r"^(_[\w\.-]+)[ |\t]+([^#^\n]+)",
         "table_delimiter": r"([Ll][Oo][Oo][Pp]_)[ |\t]*([^\n]*)",
         "block_delimiter": r"([Dd][Aa][Tt][Aa]_)[ |\t]*([^\n]*)",
-        "key_list": r"_[\w_\.]+",
+        "key_list": r"_[\w_\.*]+[\[\d\]]*",
         "space_delimited_data": r"(\'[^\']*\'|\"[^\"]*\"]|[^\'\" \t]*)[ | \t]*",
     }
 
@@ -175,7 +219,6 @@ class CifFile:
             return [self.pairs.get(k, None) for k in key]
 
         return self.pairs[key]
-        # {key: data[key] for key in keys_to_include if key in data}
 
     def _parse(self):
         """Parse the cif file into python objects."""
@@ -239,7 +282,7 @@ class CifFile:
                         line += _strip_comments(next(data_iter))
                     line = _semicolon_to_string(line)
                     parsed_line = self._cpat["space_delimited_data"].findall(line)
-                    parsed_line = [_strip_quotes(m) for m in parsed_line if m != ""]
+                    parsed_line = [m for m in parsed_line if m != ""]
                     table_data.extend([parsed_line] if parsed_line else [])
 
                 n_elements, n_cols = (
@@ -253,29 +296,36 @@ class CifFile:
                 if n_elements % n_cols != 0:
                     warnings.warn(
                         f"Parsed data for table {len(self.tables)+1} cannot be resolved"
-                        f" into a table of the expected size and will be returned as a "
-                        f"list (got n={n_elements} items, expected c={n_cols} columns: "
+                        f" into a table of the expected size and will be ignored. "
+                        f"Got n={n_elements} items, expected c={n_cols} columns: "
                         f"n%c={n_elements % n_cols}).",
                         category=ParseWarning,
                         stacklevel=2,
                     )
-                    self.tables.append((table_keys, table_data))
+                    # self.tables.append((table_keys, table_data))
+                    # self.tables.append(table_data)
                     continue
                 if not all(len(key) == len(table_keys[0]) for key in table_keys):
                     table_data = np.array([*flatten(table_data)]).reshape(-1, n_cols)
                 dt = _dtype_from_int(max(max(len(s) for s in l) for l in table_data))
 
-                print("KEYS:", table_keys, f"N = {len(table_keys)}")
-                print("DATA:", table_data)
-                # print(max(max(len(s) for s in l) for l in table_data))
-                print(dt)
+                # print("KEYS:", table_keys, f"N = {len(table_keys)}")
+                # print("DATA:", table_data)
+                # print()
+                # print([*zip([k.replace(".","_") for k in table_keys], [dt]*n_cols)])
+                if len(set(table_keys)) < len(table_keys):
+                    warnings.warn(
+                        "Duplicate keys detected - table will not be processed.",
+                        category=ParseWarning,
+                        stacklevel=2,
+                    )
+                    continue
+
                 rectable = np.atleast_2d(table_data)
                 rectable.dtype = [*zip(table_keys, [dt]*n_cols)]
-                print(rectable)
-                print(rectable.dtype)
-                # print(rectable["_publ_author_name"])
-                # self.tables.append((table_keys, np.atleast_2d(table_data)))
+                # rectable = rectable.view(np.recarray)
                 self.tables.append(rectable)
+                # print([rectable], rectable.shape)
 
             if data_iter.peek(None) is None:
                 break
@@ -289,3 +339,4 @@ if __name__ == "__main__":
     # [print(pair) for pair in cf.pairs.items()]
 
     # print(cf.tables[0])
+    # cf._find_slice_positions("_publ_author_name")
