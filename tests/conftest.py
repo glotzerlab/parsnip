@@ -207,7 +207,6 @@ bad_cif = CifData(
     file=CifFile(data_file_path + "INTENTIONALLY_BAD_CIF.cif"),
 )
 
-# cif_data_array = [aflow_mC24, pdb_4INS]
 cif_data_array = [aflow_mC24, bisd_Ccmm, ccdc_Pm3m, cod_aP16, pdb_4INS]
 cif_files_mark = pytest.mark.parametrize(
     argnames="cif_data",

@@ -23,23 +23,25 @@ def _gemmi_read_keys(filename, keys, as_number=True):
         return np.array([file_block.find_value(key) for key in keys])
 
 
-@cif_files_mark
+@cif_files_mark # TODO: test with conversions to numeric as well
 def test_read_wyckoff_positions(cif_data):
     if "PDB_4INS_head.cif" in cif_data.filename:
         return
     keys = ("_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z")
-    parsnip_data = read_wyckoff_positions(filename=cif_data.filename)
+    parsnip_data = cif_data.file.get_from_tables(keys)
+    # parsnip_data = read_wyckoff_positions(filename=cif_data.filename)
     gemmi_data = _gemmi_read_table(cif_data.filename, keys)
-    gemmi_data = [[cif.as_number(val) for val in row] for row in gemmi_data]
-    np.testing.assert_allclose(parsnip_data, gemmi_data)
+    # gemmi_data = [[cif.as_number(val) for val in row] for row in gemmi_data]
+    np.testing.assert_array_equal(parsnip_data, gemmi_data)
 
 
 @cif_files_mark
 def test_read_cell_params(cif_data, keys=box_keys):
     mmcif = "PDB_4INS_head.cif" in cif_data.filename
-    parsnip_data = read_cell_params(filename=cif_data.filename, mmcif=mmcif)
+    # parsnip_data = read_cell_params(filename=cif_data.filename, mmcif=mmcif)
     if mmcif:
         keys = (key[0] + key[1:].replace("_", ".", 1) for key in keys)
+    parsnip_data = cif_data.file[keys]
     gemmi_data = _gemmi_read_keys(cif_data.filename, keys)
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
 
