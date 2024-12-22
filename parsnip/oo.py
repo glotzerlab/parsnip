@@ -3,14 +3,13 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable
 import re
 import warnings
+from collections.abc import Iterable
 
-from _pytest.reports import _report_unserialization_failure
 import numpy as np
-from numpy.lib.recfunctions import structured_to_unstructured
 from more_itertools import flatten, peekable
+from numpy.lib.recfunctions import structured_to_unstructured
 
 from parsnip._errors import ParseWarning
 from parsnip.parse import _parsed_line_generator
@@ -32,6 +31,8 @@ def _strip_comments(s: str):
 
 def _strip_quotes(s: str):
     return s.replace("'", "").replace('"', "")
+
+
 def _dtype_from_int(i: int):
     return f"<U{i}"
 
@@ -92,27 +93,28 @@ class CifFile:
             self._data = file.read()
         self._parse()
 
-
     @property
     def cast_values(self):
         """Whether to cast "number-like" values to ints & floats.
 
-        When set to `True` after construction, the values are modified in-place. This
-        action cannot be reversed
+        .. note::
+
+            When set to `True` after construction, the values are modified in-place. This
+            action cannot be reversed.
         """
         return self._cast_values
 
     @cast_values.setter
-    def cast_values(self, cast:bool):
+    def cast_values(self, cast: bool):
         if cast:
             self._pairs = {
-                k: _try_cast_to_numeric(_strip_quotes(v)) for (k,v) in self.pairs
+                k: _try_cast_to_numeric(_strip_quotes(v)) for (k, v) in self.pairs
             }
         else:
             warnings.warn(
                 "Setting cast_values True->False has no effect on stored data.",
-                category=ParseWarning, 
-                stacklevel=2
+                category=ParseWarning,
+                stacklevel=2,
             )
         self._cast_values = cast
 
@@ -133,11 +135,11 @@ class CifFile:
     def tables(self):
         """A list of data tables extracted from the file.
 
-        These are stored as :obj:`np.recarray` objects (see
-        [the docs](https://numpy.org/doc/stable/reference/generated/numpy.recarray.html)
+        These are stored as numpy structured arrays (see [the docs](https://numpy.org/doc/stable/user/basics.rec.html)
         for more information), which can be indexed by column labels.
 
-        .. TODO: add Examples block, and VERIFY THIS IS REALLY A RECARRAY: NOT, actually strutured arr
+        .. TODO helper function for converting to unstructured array
+
 
         Returns:
         --------
@@ -159,7 +161,6 @@ class CifFile:
         for table in self.tables:
             if index in table.dtype.names:
                 return table[index]
-
 
     def get_from_tables(self, index: str | list[str]):
         """Return a column or columns from the matching table in :prop:`~.self.tables`.
@@ -201,7 +202,7 @@ class CifFile:
 
         Returns:
         --------
-        list[:class:`numpy.ndarray`:] | :class:`numpy.ndarray`: 
+        list[:class:`numpy.ndarray`:] | :class:`numpy.ndarray`:
             A list of *unstructured* arrays corresponding with matches from the input
             keys. If the resulting list would have length 1, the data is returned
             directly instead. See the note above for data ordering.
@@ -270,7 +271,9 @@ class CifFile:
                     {
                         pair.groups()[0]: _try_cast_to_numeric(
                             _strip_quotes(pair.groups()[1])
-                        ) if self.cast_values else pair.groups()[1].strip()
+                        )
+                        if self.cast_values
+                        else pair.groups()[1].strip()
                     }
                 )
 
@@ -339,7 +342,7 @@ class CifFile:
                     continue
 
                 rectable = np.atleast_2d(table_data)
-                rectable.dtype = [*zip(table_keys, [dt]*n_cols)]
+                rectable.dtype = [*zip(table_keys, [dt] * n_cols)]
                 rectable = rectable.reshape(rectable.shape, order="F")
                 self.tables.append(rectable)
 

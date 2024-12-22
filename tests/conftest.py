@@ -1,6 +1,6 @@
 import os
-from collections import namedtuple
 import warnings
+from collections import namedtuple
 
 import numpy as np
 import pytest

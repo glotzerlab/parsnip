@@ -78,7 +78,7 @@ known-first-party = ["parsnip"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["D", "B018", "F811"]
-"parsnip/*" = ["E701"]
+"parsnip/*" = ["E741"]
 "__init__.py" = ["F401"] # Do not remove "unused" imports in __init__.py files
 
 [tool.ruff.format]

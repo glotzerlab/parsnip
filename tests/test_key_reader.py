@@ -44,4 +44,3 @@ def test_read_key_value_pairs_badcif(cif_data=bad_cif):
         None,
     ]
     np.testing.assert_array_equal(parsnip_data, correct_data)
-

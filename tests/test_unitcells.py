@@ -5,9 +5,7 @@ from gemmi import cif
 
 from parsnip.unitcells import (
     extract_atomic_positions,
-    read_cell_params,
     read_symmetry_operations,
-    read_wyckoff_positions,
 )
 
 
@@ -23,7 +21,7 @@ def _gemmi_read_keys(filename, keys, as_number=True):
         return np.array([file_block.find_value(key) for key in keys])
 
 
-@cif_files_mark # TODO: test with conversions to numeric as well
+@cif_files_mark  # TODO: test with conversions to numeric as well
 def test_read_wyckoff_positions(cif_data):
     if "PDB_4INS_head.cif" in cif_data.filename:
         return
