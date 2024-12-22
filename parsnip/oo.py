@@ -9,6 +9,7 @@ import warnings
 
 from _pytest.reports import _report_unserialization_failure
 import numpy as np
+from numpy.lib.recfunctions import structured_to_unstructured
 from more_itertools import flatten, peekable
 
 from parsnip._errors import ParseWarning
@@ -168,9 +169,30 @@ class CifFile:
         be returned. Slices from the same table will be grouped in the output array, but
         slices from different arrays will be returned seperately.
 
+
+        .. tip::
+
+            It is highly recommended to provide indices to seperate tables in seperate
+            calls to this function.
+
+            .. code:: python
+
+                cf = CifFile(fn="my_file.cif")
+
+                recommended_output = [
+                    cf.get_from_tables(i) for i in [table_1_indices, table_2_indices]
+                ]
+
+                also_works = cf.get_from_tables([*table_1_indices, *table_2_indices])
+
+
         .. note::
 
-            Keys that match data in multiple tables will return all possible matches.
+            Returned arrays will match the ordering of input `index` keys *if all*
+            *indices correspond to a single table.* Indices that match multiple tables
+            will return all possible matches, in the order of the input tables. Lists of
+            input that correspond with multiple tables will return data from those
+            tables *in the order of the tablables in the :prop:`~.tables` property.*
 
         Parameters
         ----------
@@ -180,23 +202,22 @@ class CifFile:
         Returns:
         --------
         list[:class:`numpy.ndarray`:] | :class:`numpy.ndarray`: 
-            A list of structured arrays corresponding with matches from the input keys.
-            If the resulting list would have length 1, the data is returned directly
-            instead.
+            A list of *unstructured* arrays corresponding with matches from the input
+            keys. If the resulting list would have length 1, the data is returned
+            directly instead. See the note above for data ordering.
         """
+        index = np.asarray(index)
         result = []
         for table in self.tables:
-            cols = np.array(table.dtype.names)
-            matches = cols[np.any(cols[:,None]==index, axis=1)]
+            matches = index[np.any(index[:, None] == table.dtype.names, axis=1)]
             if len(matches) == 0:
                 continue
-            # print(table[matches].dtype, table.dtype[0])
-            # print([np.any(cols[:,None]==index, axis=1)])
-            # print(table.view(table.dtype[0]).shape)
+
             result.append(
-                table.view(table.dtype[0])[:, np.any(cols[:,None]==index, axis=1)]
+                structured_to_unstructured(
+                    table[matches], copy=False, casting="safe"
+                ).squeeze(axis=1)
             )
-            # result.append(table[matches].copy().view(table.dtype[0]))
         return result if len(result) != 1 else result[0]
 
     PATTERNS = {
@@ -309,10 +330,6 @@ class CifFile:
                     table_data = np.array([*flatten(table_data)]).reshape(-1, n_cols)
                 dt = _dtype_from_int(max(max(len(s) for s in l) for l in table_data))
 
-                # print("KEYS:", table_keys, f"N = {len(table_keys)}")
-                # print("DATA:", table_data)
-                # print()
-                # print([*zip([k.replace(".","_") for k in table_keys], [dt]*n_cols)])
                 if len(set(table_keys)) < len(table_keys):
                     warnings.warn(
                         "Duplicate keys detected - table will not be processed.",
@@ -323,9 +340,8 @@ class CifFile:
 
                 rectable = np.atleast_2d(table_data)
                 rectable.dtype = [*zip(table_keys, [dt]*n_cols)]
-                # rectable = rectable.view(np.recarray)
+                rectable = rectable.reshape(rectable.shape, order="F")
                 self.tables.append(rectable)
-                # print([rectable], rectable.shape)
 
             if data_iter.peek(None) is None:
                 break
