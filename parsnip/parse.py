@@ -321,7 +321,6 @@ def read_key_value_pairs(
     return data
 
 
-
 def _safe_eval(str_input: str, x: int | float, y: int | float, z: int | float):
     """Attempt to safely evaluate a string of symmetry equivalent positions.
 
@@ -368,6 +367,7 @@ def _safe_eval(str_input: str, x: int | float, y: int | float, z: int | float):
         "accordingly."
     )
     return eval(safe_string, {"__builtins__": {}}, {})  # noqa: S307
+
 
 def _write_debug_output(unique_indices, unique_counts, pos, check="Initial"):
     print(f"{check} uniqueness check:")

@@ -3,11 +3,6 @@ import pytest
 from conftest import box_keys, cif_files_mark
 from gemmi import cif
 
-from parsnip.unitcells import (
-    extract_atomic_positions,
-    read_symmetry_operations,
-)
-
 
 def _gemmi_read_table(filename, keys):
     return np.array(cif.read_file(filename).sole_block().find(keys))

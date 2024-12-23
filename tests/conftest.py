@@ -1,12 +1,11 @@
 import os
-import warnings
 from collections import namedtuple
 
 import numpy as np
 import pytest
 
-from parsnip.oo import CifFile
 from parsnip._errors import ParseWarning
+from parsnip.oo import CifFile
 
 # ruff: noqa: N816. Allow mixed-case global variables
 
@@ -154,7 +153,8 @@ with pytest.warns(ParseWarning, match="cannot be resolved into a table"):
     pdb_4INS = CifData(
         filename=data_file_path + "PDB_4INS_head.cif",
         symop_keys=("_pdbx_struct_oper_list.symmetry_operation",),
-        atom_site_keys=(  # mmCIF stores atom sites differently, so use a different table.
+        atom_site_keys=(
+            # mmCIF stores atom sites differently, so use a different table.
             "_chem_comp.id",
             "_chem_comp.type",
             "_chem_comp.mon_nstd_flag",

@@ -17,7 +17,7 @@ release = "0.1.0"
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-add_module_names = False # Simplify paths to parsnip.oo
+add_module_names = False  # Simplify paths to parsnip.oo
 
 extensions = [
     "sphinx.ext.autodoc",

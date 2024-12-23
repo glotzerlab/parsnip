@@ -12,8 +12,14 @@ from more_itertools import flatten, peekable
 from numpy.lib.recfunctions import structured_to_unstructured
 
 from parsnip._errors import ParseWarning
+from parsnip.parse import (
+    _parsed_line_generator,
+    _safe_eval,
+    _write_debug_output,
+    cast_array_to_float,
+)
 from parsnip.unitcells import _matrix_from_lengths_and_angles
-from parsnip.parse import cast_array_to_float, _safe_eval, _write_debug_output
+
 NONTABLE_LINE_PREFIXES = ("_", "#")
 
 
@@ -99,8 +105,8 @@ class CifFile:
 
         .. note::
 
-            When set to `True` after construction, the values are modified in-place. This
-            action cannot be reversed.
+            When set to `True` after construction, the values are modified in-place.
+            This action cannot be reversed.
         """
         return self._cast_values
 
@@ -300,10 +306,18 @@ class CifFile:
         """
         if mmcif:
             angle_keys = ("_cell.angle_alpha", "_cell.angle_beta", "_cell.angle_gamma")
-            box_keys = ("_cell.length_a", "_cell.length_b", "_cell.length_c") + angle_keys
+            box_keys = (
+                "_cell.length_a",
+                "_cell.length_b",
+                "_cell.length_c",
+            ) + angle_keys
         else:
             angle_keys = ("_cell_angle_alpha", "_cell_angle_beta", "_cell_angle_gamma")
-            box_keys = ("_cell_length_a", "_cell_length_b", "_cell_length_c") + angle_keys
+            box_keys = (
+                "_cell_length_a",
+                "_cell_length_b",
+                "_cell_length_c",
+            ) + angle_keys
         cell_data = cast_array_to_float(arr=self[box_keys], dtype=np.float64)
 
         assert all(value is not None for value in cell_data)
@@ -361,7 +375,9 @@ class CifFile:
             floatmode="unique",  # Ensures strings can uniquely represent each float number
         )
 
-        all_frac_positions = [_safe_eval(symops_str, *xyz) for xyz in fractional_positions]
+        all_frac_positions = [
+            _safe_eval(symops_str, *xyz) for xyz in fractional_positions
+        ]
 
         pos = np.vstack(all_frac_positions)
         pos %= 1  # Wrap particles into the box
@@ -388,9 +404,9 @@ class CifFile:
         if verbose:
             _write_debug_output(unique_indices, unique_counts, pos, check="Secondary")
 
-        return pos[unique_indices] if fractional else real_space_positions[unique_indices]
-
-
+        return (
+            pos[unique_indices] if fractional else real_space_positions[unique_indices]
+        )
 
     def _parse(self):
         """Parse the cif file into python objects."""
