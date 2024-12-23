@@ -6,6 +6,7 @@ import numpy as np
 import pytest
 
 from parsnip.oo import CifFile
+from parsnip._errors import ParseWarning
 
 # ruff: noqa: N816. Allow mixed-case global variables
 
@@ -149,7 +150,7 @@ cod_aP16 = CifData(
     file=CifFile(data_file_path + "COD_1540955_aP16.cif"),
 )
 
-with warnings.catch_warnings(record=False):
+with pytest.warns(ParseWarning, match="cannot be resolved into a table"):
     pdb_4INS = CifData(
         filename=data_file_path + "PDB_4INS_head.cif",
         symop_keys=("_pdbx_struct_oper_list.symmetry_operation",),

@@ -38,7 +38,8 @@ optional-dependencies = {tests = { file = ["tests/requirements.in"] }, doc = { f
 # Add percentage progress bar to the pytest console output
 console_output_style = "progress"
 # Specify the tests folder to speed up collection.
-testpaths = ["tests"]
+testpaths = ["parsnip", "tests"]
+addopts = "--doctest-modules"
 
 [tool.ruff]
 include = ["*.py", "*.ipynb"]

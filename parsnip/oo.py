@@ -12,8 +12,8 @@ from more_itertools import flatten, peekable
 from numpy.lib.recfunctions import structured_to_unstructured
 
 from parsnip._errors import ParseWarning
-from parsnip.parse import _parsed_line_generator
-
+from parsnip.unitcells import _matrix_from_lengths_and_angles
+from parsnip.parse import cast_array_to_float, _safe_eval, _write_debug_output
 NONTABLE_LINE_PREFIXES = ("_", "#")
 
 
@@ -162,7 +162,7 @@ class CifFile:
             if index in table.dtype.names:
                 return table[index]
 
-    def get_from_tables(self, index: str | list[str]):
+    def get_from_tables(self, index: str | Iterable[str]):
         """Return a column or columns from the matching table in :meth:`~.self.tables`.
 
         If index is a single string, a single column will be returned from the matching
@@ -229,7 +229,7 @@ class CifFile:
         "space_delimited_data": r"(\'[^\']*\'|\"[^\"]*\"]|[^\'\" \t]*)[ | \t]*",
     }
 
-    def __getitem__(self, key: str | list[str]):
+    def __getitem__(self, key: str | Iterable[str]):
         """Return an item from the dictionary of key-value pairs.
 
         Indexing with a string returns the value from the :meth:`~.pairs` dict. Indexing
@@ -240,6 +240,157 @@ class CifFile:
             return [self.pairs.get(k, None) for k in key]
 
         return self.pairs[key]
+
+    def read_symmetry_operations(self):
+        r"""Extract the symmetry operations from a CIF file.
+
+        Args:
+            filename (str): The name of the .cif file to be parsed.
+
+        Returns:
+            :math:`(N,)` :class:`numpy.ndarray[str]`:
+                Symmetry operations as strings.
+        """
+        symmetry_keys = (
+            "_symmetry_equiv_pos_as_xyz",
+            "_space_group_symop_operation_xyz",
+        )
+
+        # Only one of the two keys will be matched. We can safely ignore that warning.
+        warnings.filterwarnings("ignore", "Keys {'_", category=ParseWarning)
+        return self.get_from_tables(symmetry_keys)
+
+    def read_wyckoff_positions(self):
+        r"""Extract symmetry-irreducible, fractional X,Y,Z coordinates from a CIF file.
+
+        Parameters:
+        -----------
+            filename (str): The name of the .cif file to be parsed.
+
+        Returns:
+        --------
+            :math:`(N, 3)` :class:`numpy.ndarray[np.float32]`:
+                Fractional X,Y,Z coordinates of the unit cell.
+        """
+        xyz_keys = ("_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z")
+        xyz_data = self.get_from_tables(xyz_keys)
+        xyz_data = cast_array_to_float(arr=xyz_data, dtype=np.float64)
+
+        return xyz_data
+
+    def read_cell_params(self, degrees: bool = True, mmcif: bool = False):
+        r"""Read the cell lengths and angles from a CIF file.
+
+        Paramters:
+        ----------
+            degrees (bool, optional):
+                When True, angles are returned in degrees (as per the cif spec). When False,
+                angles are converted to radians.
+                Default value = ``True``
+            mmcif (bool, optional):
+                When False, the standard CIF key naming is used (e.g. _cell_angle_alpha).
+                When True, the mmCIF standard is used instead (e.g. cell.angle_alpha).
+                Default value = ``False``
+
+        Returns:
+        --------
+            tuple:
+                The box vector lengths and angles in degrees or radians
+                :math:`(L_1, L_2, L_3, \alpha, \beta, \gamma)`.
+        """
+        if mmcif:
+            angle_keys = ("_cell.angle_alpha", "_cell.angle_beta", "_cell.angle_gamma")
+            box_keys = ("_cell.length_a", "_cell.length_b", "_cell.length_c") + angle_keys
+        else:
+            angle_keys = ("_cell_angle_alpha", "_cell_angle_beta", "_cell_angle_gamma")
+            box_keys = ("_cell_length_a", "_cell_length_b", "_cell_length_c") + angle_keys
+        cell_data = cast_array_to_float(arr=self[box_keys], dtype=np.float64)
+
+        assert all(value is not None for value in cell_data)
+        assert all(
+            0 < key < 180 for key in cell_data[3:]
+        ), "Read cell params were not in the expected range (0 < angle < 180 degrees)."
+
+        if not degrees:
+            cell_data[3:] = np.deg2rad(cell_data[3:])
+
+        return tuple(cell_data)
+
+    def extract_atomic_positions(
+        self,
+        fractional: bool = True,
+        n_decimal_places: int = 4,
+        verbose: bool = False,
+    ):
+        """Reconstruct atomic positions from Wyckoff sites and symmetry operations.
+
+        .. warning::
+
+            Reconstructing positions requires several floating point calculations that can
+            be impacted by low-precision data in CIF files. Typically, at least four decimal
+            places are required to accurately reconstruct complicated unit cells: less
+            precision than this can yield cells with duplicate or missing positions.
+
+        Args:
+            fractional (bool, optional):
+                Whether to return fractional or absolute coordinates.
+                Default value = ``True``
+            n_decimal_places (int, optional):
+                The number of decimal places to round each position to for the uniqueness
+                comparison. Values higher than 4 may not work for all CIF files.
+                Default value = ``4``
+            verbose (bool, optional):
+                Whether to print debug information about the uniqueness checks.
+                Default value = ``False``
+
+        Returns:
+            :math:`(N, 3)` :class:`numpy.ndarray[np.float32]`:
+                The full unit cell of the crystal structure.
+        """
+        fractional_positions = self.read_wyckoff_positions()
+
+        # Read the cell params and conver to a matrix of basis vectors
+        cell = self.read_cell_params(degrees=False, mmcif=False)
+        cell_matrix = _matrix_from_lengths_and_angles(*cell)
+
+        symops = self.read_symmetry_operations()
+        symops_str = np.array2string(
+            symops,
+            separator=",",  # Place a comma after each line in the array. Required for eval
+            threshold=np.inf,  # Ensure that every line is included in the string
+            floatmode="unique",  # Ensures strings can uniquely represent each float number
+        )
+
+        all_frac_positions = [_safe_eval(symops_str, *xyz) for xyz in fractional_positions]
+
+        pos = np.vstack(all_frac_positions)
+        pos %= 1  # Wrap particles into the box
+
+        # Filter unique points. This takese some time, but makes the method faster overall
+        _, unique_indices, unique_counts = np.unique(
+            pos.round(n_decimal_places), return_index=True, return_counts=True, axis=0
+        )
+
+        if verbose:
+            _write_debug_output(unique_indices, unique_counts, pos, check="Initial")
+
+        # Remove initial duplicates, then map to real space for a second check
+        pos = pos[unique_indices]
+        real_space_positions = pos @ cell_matrix
+
+        _, unique_indices, unique_counts = np.unique(
+            real_space_positions.round(n_decimal_places),
+            return_index=True,
+            return_counts=True,
+            axis=0,
+        )
+
+        if verbose:
+            _write_debug_output(unique_indices, unique_counts, pos, check="Secondary")
+
+        return pos[unique_indices] if fractional else real_space_positions[unique_indices]
+
+
 
     def _parse(self):
         """Parse the cif file into python objects."""

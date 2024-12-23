@@ -46,6 +46,8 @@ r"""Functions for parsing CIF files in Python.
 
 """
 
+from __future__ import annotations
+
 import re
 import warnings
 
@@ -317,3 +319,66 @@ def read_key_value_pairs(
         )
 
     return data
+
+
+
+def _safe_eval(str_input: str, x: int | float, y: int | float, z: int | float):
+    """Attempt to safely evaluate a string of symmetry equivalent positions.
+
+    Python's ``eval`` is notoriously unsafe. While we could evaluate the entire list at
+    once, doing so carries some risk. The typical alternative, ``ast.literal_eval``,
+    doesnot work because we need to evaluate mathematical operations.
+
+    We first replace the x,y,z values with ordered fstring inputs, to simplify the input
+    of fractional coordinate data. This is done for convenience more than security.
+
+    Once we substitute in the x,y,z values, we should have a string version of a list
+    containing only numerics and math operators. We apply a substitution to ensure this
+    is the case, then perform one final check. If it passes, we evaluate the list. Note
+    that __builtins__ is set to {}, meaning importing functions is not possible. The
+    __locals__ dict is also set to {}, so no variables are accessible in the evaluation.
+
+    I cannot guarantee this is fully safe, but it at the very least makes it extremely
+    difficult to do any funny business.
+
+    Args:
+        str_input (str): String to be evaluated.
+        x (int|float): Fractional coordinate in :math:`x`.
+        y (int|float): Fractional coordinate in :math:`y`.
+        z (int|float): Fractional coordinate in :math:`z`.
+
+    Returns:
+        list[list[int|float,int|float,int|float]]:
+            :math:`(N,3)` list of fractional coordinates.
+
+    """
+    ordered_inputs = {"x": "{0:.20f}", "y": "{1:.20f}", "z": "{2:.20f}"}
+    # Replace any x, y, or z with the same character surrounded by curly braces. Then,
+    # perform substitutions to insert the actual values.
+    substituted_string = (
+        re.sub(r"([xyz])", r"{\1}", str_input).format(**ordered_inputs).format(x, y, z)
+    )
+
+    # Remove any unexpected characters from the string.
+    safe_string = re.sub(r"[^\d\[\]\,\+\-\/\*\.]", "", substituted_string)
+    # Double check to be sure:
+    assert all(char in ",.0123456789+-/*[]" for char in safe_string), (
+        "Evaluation aborted. Check that symmetry operation string only contains "
+        "numerics or characters in { [],.+-/ } and adjust `regex_filter` param "
+        "accordingly."
+    )
+    return eval(safe_string, {"__builtins__": {}}, {})  # noqa: S307
+
+def _write_debug_output(unique_indices, unique_counts, pos, check="Initial"):
+    print(f"{check} uniqueness check:")
+    if len(unique_indices) == len(pos):
+        print("... all points are unique (within tolerance).")
+    else:
+        print("(duplicate point, number of occurences)")
+        [
+            print(pt, count)
+            for pt, count in zip(pos[unique_indices], unique_counts)
+            if count > 1
+        ]
+
+    print()
