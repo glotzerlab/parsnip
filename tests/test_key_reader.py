@@ -1,8 +1,6 @@
 import numpy as np
-import pytest
 from conftest import bad_cif, cif_files_mark, random_keys_mark
 from gemmi import cif
-from ase.io import cif as asecif
 
 
 def _gemmi_read_keys(filename, keys, as_number=True):

@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
+from ase.io import cif as asecif
 from conftest import bad_cif, cif_files_mark
 from gemmi import cif
-from ase.io import cif as asecif
 
 from parsnip._errors import ParseWarning
 from parsnip.parse import read_table
@@ -36,8 +36,10 @@ def test_read_atom_sites(cif_data):
             occ for site in atoms.info["occupancy"].values() for occ in site.values()
         ]
         np.testing.assert_array_equal(
-            cif_data.file.get_from_tables("_atom_site_occupancy").squeeze().astype(float),
-            ase_data
+            cif_data.file.get_from_tables("_atom_site_occupancy")
+            .squeeze()
+            .astype(float),
+            ase_data,
         )
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
 
