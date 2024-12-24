@@ -12,14 +12,16 @@ Reading Keys
 ^^^^^^^^^^^^
 
 
-Now, let's read extract the key-value pairs:
+Now, let's read extract the key-value pairs from our cif file. This subset of data
+usually contains information to reconstruct the system's unit cell, and provides
+information regarding the origin of the data.
 
 .. code-block:: python
 
-    from parsnip import parse
+    from parsnip import CifFile
     filename = "my_file.cif"
-    pairs = parse.read_key_value_pairs(filename)
-    print(pairs)
+    cif = CifFile(filename)
+    print(cif.pairs)
     ...    {
     ...      '_journal_year': '1999',
     ...      '_journal_page_first': '0',
@@ -35,85 +37,122 @@ Now, let's read extract the key-value pairs:
     ...      '_symmetry_space_group_name_H-M':  'Fm-3m'
     ...    }
 
-By default, read_key_value_pairs reads every key. To read only numeric data values, set
-``only_read_numerics`` to ``True``.To take a subset, provide a tuple of strings to the ``keys`` argument.
+A `dict`-like getter syntax is provided to key-value pairs. Single keys function exactly
+as a python dict, while lists of keys return lists of values. Keys not present in the
+:attr:`~.pairs` dict instead return :code:`None`.
 
 .. code-block:: python
 
-    # Only read the numeric data values
-    pairs = parse.read_key_value_pairs(filename,only_read_numerics=True)
-    print(pairs)
-    ...    {
-    ...      '_journal_year': 1999,
-    ...      '_journal_page_first': 0,
-    ...      '_journal_page_last': 123,
-    ...      '_cell_length_a': 3.6,
-    ...      '_cell_length_b': 3.6,
-    ...      '_cell_length_c': 3.6,
-    ...      '_cell_angle_alpha': 90.0,
-    ...      '_cell_angle_beta': 90.0,
-    ...      '_cell_angle_gamma': 90.0
-    ...    }
+    cif["_journal_year"]
+    ... "1999"
+    
+    cif["_not_in_pairs"]
+    ... None
 
-    # Read only these keys
-    keys = (
-      "_journal_year"
-      "_journal_page_first"
-      "_journal_page_last"
-    )
-    pairs = parse.read_key_value_pairs(filename,keys=keys)
-    print(pairs)
-    ...    {
-    ...      '_journal_year': '1999',
-    ...      '_journal_page_first': '0',
-    ...      '_journal_page_last': '123',
-    ...    }
+    # Multiple keys can be accessed simultaneously!
+    cif[["_cell_length_a", "_cell_length_b", "_cell_length_c"]]
+
+    ... ["3.6", "3.6", "3.6"]
+
+Note that all data is stored and returned as strings by default. It is not generally
+feasible to determine whether a piece of data should be processed, as conversions may
+be lossy. Setting the :attr:`~.cast_values` property to :code:`True` reprocesses the
+data, converting to float or int where possible. Note that once data is reprocessed,
+a new CifFile object must be created to restore the original string data
+
+.. code-block:: python
+
+    cf.cast_values = True # Reprocesses our `pairs` dict
+
+    cif["_journal_year"]
+    ... 1999
+
+    cif[["_cell_length_a", "_cell_length_b", "_cell_length_c"]]
+
+    ... [3.6, 3.6, 3.6]
+
 
 Reading Tables
 ^^^^^^^^^^^^^^
 
-Now, let's read a table. To do this, we need a list of keys:
+CIF files store tables in `loop\_` delimited blocks. These structures begin with a list
+of column labels (in a similar format to keys like above), followed by space-delimited
+data. 
 
-.. code-block:: python
+This segment of the table shown above contains the table data, with 6 columns and 1 row:
 
-    keys = (
-      "_atom_site_label",
-      "_atom_site_fract_x",
-      "_atom_site_fract_y",
-      "_atom_site_fract_z",
-      "_atom_site_type_symbol",
-      "_atom_site_Wyckoff_label"
-    )
-    table = parse.read_table(filename,keys=keys)
-    print(table)
-    ...    array([['Cu1',
-    ...            '0.0000000000(0)',
-    ...            '0.0000000000(0)',
-    ...            '0.0000000000(0)',
-    ...            'Cu'
-    ...            'a']],
-    ...            dtype='<U12')
+.. literalinclude:: example_file.cif
+    :emphasize-lines: 1
+    :lines: 18-25
 
+.. _structured arrays: https://numpy.org/doc/stable/user/basics.rec.html
 
-Now, maybe don't need the atom site or Wyckoff labels - let's select just the numeric values, and export them as floats:
+Now, let's read the table. `parsnip` stores data as Numpy `structured arrays`_, which
+allow for a dict-like access of data columns. The :attr:`~.tables` property returns a
+list of such arrays, although the :attr:`~.get_from_tables` method is often more
+convenient.
 
-.. code-block:: python
-
-    keys = (
-      "_atom_site_fract_x",
-      "_atom_site_fract_y",
-      "_atom_site_fract_z",
-    )
-    table = parse.read_table(filename,keys=keys,cast_to_float=True)
-    print(table)
-    ...    array([[0., 0., 0.]], dtype=float32)
-
-The cast_to_float argument automatically converts numeric data types, and removes tolerance and precision markers for us.
-Extracting the fractional coordinates of a unit cell is a pretty common operation, so we have a convenience function that does this as well.
 
 .. code-block:: python
 
 
-    table = parse.read_fractional_positions(filename)
-    print(table)
-    ...    array([[0., 0., 0.]], dtype=float32)
+    len(cif.tables)
+    ... 2
+
+    cif.tables[0]
+    ...  array(
+    ...       [[('Cu1', '0.0000000000', '0.0000000000', '0.0000000000', 'Cu', 'a')]],
+    ...       dtype=[
+    ...           ('_atom_site_label', '<U12'),
+    ...           ('_atom_site_fract_x', '<U12'),
+    ...           ('_atom_site_fract_y', '<U12'),
+    ...           ('_atom_site_fract_z', '<U12'),
+    ...           ('_atom_site_type_symbol', '<U12'),
+    ...           ('_atom_site_Wyckoff_label', '<U12')
+    ...       ]
+    ...  )
+    
+    cif.tables[0]["_atom_site_label"]
+    ... array([['Cu1']], dtype='<U12')
+
+
+    # (Unstructured) slices of tables can be easily accessed!
+    xyz = cif.get_from_tables(["_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z"])
+
+    print(xyz)
+    ... array([['0.0000000000', '0.0000000000', '0.0000000000']], dtype='<U12')
+    
+    print(xyz.astype(float))
+    ... array([[0.0, 0.0, 0.0]], dtype=np.float64)
+
+
+
+
+Building Unit Cells
+^^^^^^^^^^^^^^^^^^^
+
+CIF files are commonly used to reconstruct atomic positions for a particular crystal. 
+While the example file shown throughout this tutorial corresponds to FCC copper, it only
+contains a single atomic position, in constrast to the 4 expected for FCC's
+primitive cell. `parsnip` can reconstruct tilable unit cells from symmetry operations
+and symmetry-irreducible (Wyckoff) positions contained in the file. 
+
+.. literalinclude:: example_file.cif
+    :lines: 25
+.. literalinclude:: example_file.cif
+    :lines: 29-37
+
+Only one line is required to build a tilable unit cell! The positions returned here
+are in fractional coordinates, and can be imported into tools like `freud`_ to rapidly
+build out supercells. For absolute coordinates (based on cell parameters stored in the
+file), set :code:`fractional=False`
+
+.. _`freud`: https://freud.readthedocs.io/en/latest/modules/data.html#freud.data.UnitCell
+
+.. code-block:: python
+
+    pos = cif.build_unit_cell(fractional=True)
+    ...  array([[0. , 0. , 0. ],
+    ...         [0. , 0.5, 0.5],
+    ...         [0.5, 0. , 0.5],
+    ...         [0.5, 0.5, 0. ]])
