@@ -45,7 +45,7 @@ as a python dict, while lists of keys return lists of values. Keys not present i
 
     cif["_journal_year"]
     ... "1999"
-    
+
     cif["_not_in_pairs"]
     ... None
 
@@ -77,7 +77,7 @@ Reading Tables
 
 CIF files store tables in `loop\_` delimited blocks. These structures begin with a list
 of column labels (in a similar format to keys like above), followed by space-delimited
-data. 
+data.
 
 This segment of the table shown above contains the table data, with 6 columns and 1 row:
 
@@ -111,7 +111,7 @@ convenient.
     ...           ('_atom_site_Wyckoff_label', '<U12')
     ...       ]
     ...  )
-    
+
     cif.tables[0]["_atom_site_label"]
     ... array([['Cu1']], dtype='<U12')
 
@@ -121,7 +121,7 @@ convenient.
 
     print(xyz)
     ... array([['0.0000000000', '0.0000000000', '0.0000000000']], dtype='<U12')
-    
+
     print(xyz.astype(float))
     ... array([[0.0, 0.0, 0.0]], dtype=np.float64)
 
@@ -131,11 +131,11 @@ convenient.
 Building Unit Cells
 ^^^^^^^^^^^^^^^^^^^
 
-CIF files are commonly used to reconstruct atomic positions for a particular crystal. 
+CIF files are commonly used to reconstruct atomic positions for a particular crystal.
 While the example file shown throughout this tutorial corresponds to FCC copper, it only
 contains a single atomic position, in constrast to the 4 expected for FCC's
 primitive cell. `parsnip` can reconstruct tilable unit cells from symmetry operations
-and symmetry-irreducible (Wyckoff) positions contained in the file. 
+and symmetry-irreducible (Wyckoff) positions contained in the file.
 
 .. literalinclude:: example_file.cif
     :lines: 25

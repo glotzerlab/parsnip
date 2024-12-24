@@ -115,7 +115,8 @@ class CifFile:
     def cast_values(self, cast: bool):
         if cast:
             self._pairs = {
-                k: _try_cast_to_numeric(_strip_quotes(v)) for (k, v) in self.pairs.items()
+                k: _try_cast_to_numeric(_strip_quotes(v))
+                for (k, v) in self.pairs.items()
             }
         else:
             warnings.warn(

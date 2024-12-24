@@ -4,8 +4,8 @@ from collections import namedtuple
 import numpy as np
 import pytest
 
-from parsnip._errors import ParseWarning
 from parsnip import CifFile
+from parsnip._errors import ParseWarning
 
 # ruff: noqa: N816. Allow mixed-case global variables
 
