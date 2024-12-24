@@ -1,5 +1,6 @@
 # Copyright (c) 2024, Glotzer Group
 # This file is from the parsnip project, released under the BSD 3-Clause License.
+
 r"""An interface for reading CIF files in Python.
 
 .. include:: ../../README.rst
@@ -64,14 +65,16 @@ from parsnip.patterns import (
     _safe_eval,
     _semicolon_to_string,
     _strip_comments,
+    _strip_quotes,
+    _try_cast_to_numeric,
     _write_debug_output,
     cast_array_to_float,
 )
 from parsnip.unitcells import _matrix_from_lengths_and_angles
-# from parsnip.patterns import 
+
+# from parsnip.patterns import
 
 NONTABLE_LINE_PREFIXES = ("_", "#")
-
 
 
 class CifFile:
@@ -516,10 +519,6 @@ class CifFile:
 
 if __name__ == "__main__":
     fn = "tests/sample_data/B-IncStrDb_Ccmm.cif"
-    gen = _parsed_line_generator(fn, regexp=".*")
-
     cf = CifFile(fn=fn)
     # [print(pair) for pair in cf.pairs.items()]
-
     # print(cf.tables[0])
-    # cf._find_slice_positions("_publ_author_name")

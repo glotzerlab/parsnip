@@ -214,4 +214,3 @@ cif_files_mark = pytest.mark.parametrize(
     argvalues=cif_data_array,
     ids=[cif.filename.split("/")[-1] for cif in cif_data_array],
 )
-

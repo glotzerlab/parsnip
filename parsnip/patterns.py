@@ -17,6 +17,7 @@ import numpy as np
 
 from parsnip._errors import ParseWarning
 
+
 def _safe_eval(str_input: str, x: int | float, y: int | float, z: int | float):
     """Attempt to safely evaluate a string of symmetry equivalent positions.
 
@@ -78,6 +79,7 @@ def _write_debug_output(unique_indices, unique_counts, pos, check="Initial"):
         ]
 
     print()
+
 
 def cast_array_to_float(arr: np.ndarray, dtype: type = np.float32):
     """Cast a Numpy array to a dtype, pruning significant digits from numerical values.
@@ -166,6 +168,7 @@ class LineCleaner:
         for pattern, replacement in zip(self.patterns, self.replacements):
             line = pattern.sub(replacement, line)
         return line
+
 
 def _is_key(line: str | None):
     return line is not None and line.strip()[:1] == "_"
