@@ -290,12 +290,11 @@ class CifFile:
         Paramters:
         ----------
             degrees (bool, optional):
-                When True, angles are returned in degrees (as per the cif spec). When False,
-                angles are converted to radians.
-                Default value = ``True``
+                When True, angles are returned in degrees (as per the cif spec). When
+                False, angles are converted to radians. Default value = ``True``
             mmcif (bool, optional):
-                When False, the standard CIF key naming is used (e.g. _cell_angle_alpha).
-                When True, the mmCIF standard is used instead (e.g. cell.angle_alpha).
+                When False, the standard CIF key naming is used (e.g. _cell_angle_alpha)
+                . When True, the mmCIF standard is used instead (e.g. cell.angle_alpha).
                 Default value = ``False``
 
         Returns:
@@ -340,19 +339,20 @@ class CifFile:
 
         .. warning::
 
-            Reconstructing positions requires several floating point calculations that can
-            be impacted by low-precision data in CIF files. Typically, at least four decimal
-            places are required to accurately reconstruct complicated unit cells: less
-            precision than this can yield cells with duplicate or missing positions.
+            Reconstructing positions requires several floating point calculations that
+            can be impacted by low-precision data in CIF files. Typically, at least four
+            decimal places are required to accurately reconstruct complicated unit
+            cells: less precision than this can yield cells with duplicate or missing
+            positions.
 
         Args:
             fractional (bool, optional):
                 Whether to return fractional or absolute coordinates.
                 Default value = ``True``
             n_decimal_places (int, optional):
-                The number of decimal places to round each position to for the uniqueness
-                comparison. Values higher than 4 may not work for all CIF files.
-                Default value = ``4``
+                The number of decimal places to round each position to for the
+                uniqueness comparison. Values higher than 4 may not work for all CIF
+                files. Default value = ``4``
             verbose (bool, optional):
                 Whether to print debug information about the uniqueness checks.
                 Default value = ``False``
@@ -370,9 +370,9 @@ class CifFile:
         symops = self.read_symmetry_operations()
         symops_str = np.array2string(
             symops,
-            separator=",",  # Place a comma after each line in the array. Required for eval
+            separator=",",  # Place a comma after each line in the array for eval
             threshold=np.inf,  # Ensure that every line is included in the string
-            floatmode="unique",  # Ensures strings can uniquely represent each float number
+            floatmode="unique",  # Ensures strings can uniquely represent each float
         )
 
         all_frac_positions = [
@@ -382,7 +382,7 @@ class CifFile:
         pos = np.vstack(all_frac_positions)
         pos %= 1  # Wrap particles into the box
 
-        # Filter unique points. This takese some time, but makes the method faster overall
+        # Filter unique points. This takes some time but makes the method faster overall
         _, unique_indices, unique_counts = np.unique(
             pos.round(n_decimal_places), return_index=True, return_counts=True, axis=0
         )
