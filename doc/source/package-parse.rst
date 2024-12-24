@@ -3,6 +3,6 @@ parsnip
 
 .. rubric:: Overview
 
-.. automodule:: parsnip.oo
+.. automodule:: parsnip.parsnip
    :members:
    :show-inheritance:
