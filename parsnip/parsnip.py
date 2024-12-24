@@ -115,7 +115,7 @@ class CifFile:
     def cast_values(self, cast: bool):
         if cast:
             self._pairs = {
-                k: _try_cast_to_numeric(_strip_quotes(v)) for (k, v) in self.pairs
+                k: _try_cast_to_numeric(_strip_quotes(v)) for (k, v) in self.pairs.items()
             }
         else:
             warnings.warn(
@@ -145,15 +145,36 @@ class CifFile:
         These are stored as numpy structured arrays (see [the docs](https://numpy.org/doc/stable/user/basics.rec.html)
         for more information), which can be indexed by column labels.
 
-        .. TODO helper function for converting to unstructured array
-
-
         Returns:
         --------
         list[(list[str], :math:`(N, N_{keys})` :class:`numpy.ndarray[str]`)]:
             A list of tuples corresponding with the keys and data of the system.
         """
         return self._tables
+
+    @classmethod
+    def structured_to_unstructured(cls, arr: np.ndarray):
+        """Convenience function to convert structured arrays to unstructured.
+
+        This is useful when extracting entire tables from :attr:`~.tables` for use in
+        other programs. This classmethod simply calls
+        :code:`np.lib.recfunctions.structured_to_unstructured` on the input data to
+        ensure the resulting array is properly laid out in memory. See
+        `this page in the structured array docs`_ for more information.
+
+        .. _`this page in the structured array docs`: https://numpy.org/doc/stable/user/basics.rec.html
+
+        Parameters
+        ----------
+            arr : :class:`numpy.ndarray`: | :class:`numpy.recarray`:
+                The structured array to convert.
+
+        Returns:
+        --------
+            :class:`numpy.ndarray`:
+                An *unstructured* array containing a copy of the data from the input.
+        """
+        return structured_to_unstructured(arr, copy=True)
 
     @property
     def table_labels(self):
@@ -162,12 +183,6 @@ class CifFile:
         This property is equivalent to `[arr.dtype.names for arr in self.tables]`.
         """
         return [arr.dtype.names for arr in self.tables]
-
-    def _find_slice_in_tables(self, index: str):
-        # TODO: only returns first match
-        for table in self.tables:
-            if index in table.dtype.names:
-                return table[index]
 
     def get_from_tables(self, index: str | Iterable[str]):
         """Return a column or columns from the matching table in :meth:`~.self.tables`.
@@ -222,7 +237,7 @@ class CifFile:
 
             result.append(
                 structured_to_unstructured(
-                    table[matches], copy=False, casting="safe"
+                    table[matches], copy=True, casting="safe"
                 ).squeeze(axis=1)
             )
         return result if len(result) != 1 else result[0]
@@ -330,13 +345,20 @@ class CifFile:
 
         return tuple(cell_data)
 
-    def extract_atomic_positions(
+    def build_unit_cell(
         self,
         fractional: bool = True,
         n_decimal_places: int = 4,
         verbose: bool = False,
     ):
         """Reconstruct atomic positions from Wyckoff sites and symmetry operations.
+
+        Rather than storing an entire unit cell's atomic positions, CIF files instead
+        include the data required to recreate those positions based on symmetry rules.
+        Symmetry operations (stored as strings of x,y,z position permutations) are
+        applied to the Wyckoff (symmetry irreducible) positions to create a list of
+        possible atomic sites. These are then wrapped into the unit cell and filtered
+        for uniqueness to yield the final crystal.
 
         .. warning::
 
