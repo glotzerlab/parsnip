@@ -5,7 +5,6 @@ from conftest import bad_cif, cif_files_mark
 from gemmi import cif
 
 from parsnip._errors import ParseWarning
-from parsnip.parse import read_table
 
 STR_WIDTH_MAX = 128
 """Maximum width for valid fields in the test suite.

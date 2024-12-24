@@ -62,6 +62,7 @@ from parsnip.patterns import (
     _is_data,
     _is_key,
     _line_is_continued,
+    _matrix_from_lengths_and_angles,
     _safe_eval,
     _semicolon_to_string,
     _strip_comments,
@@ -70,7 +71,6 @@ from parsnip.patterns import (
     _write_debug_output,
     cast_array_to_float,
 )
-from parsnip.unitcells import _matrix_from_lengths_and_angles
 
 # from parsnip.patterns import
 

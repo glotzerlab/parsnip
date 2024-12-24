@@ -222,3 +222,17 @@ def _try_cast_to_numeric(s: str):
         return float(parsed.group(0))
     else:
         return int(parsed.group(0))
+
+
+def _matrix_from_lengths_and_angles(l1, l2, l3, alpha, beta, gamma):
+    a1 = np.array([l1, 0, 0])
+    a2 = np.array([l2 * np.cos(gamma), l2 * np.sin(gamma), 0])
+    a3x = np.cos(beta)
+    a3y = (np.cos(alpha) - np.cos(beta) * np.cos(gamma)) / np.sin(gamma)
+    under_sqrt = 1 - a3x**2 - a3y**2
+    if under_sqrt < 0:
+        raise ValueError("The provided angles can not form a valid box.")
+    a3z = np.sqrt(under_sqrt)
+    a3 = np.array([l3 * a3x, l3 * a3y, l3 * a3z])
+    return np.array([a1, a2, a3])
+
