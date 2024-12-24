@@ -2,6 +2,7 @@ import numpy as np
 import pytest
 from conftest import bad_cif, cif_files_mark
 from gemmi import cif
+from ase.io import cif as asecif
 
 from parsnip._errors import ParseWarning
 from parsnip.parse import read_table
@@ -28,7 +29,16 @@ def test_read_symop(cif_data):
 def test_read_atom_sites(cif_data):
     parsnip_data = cif_data.file.get_from_tables(cif_data.atom_site_keys)
     gemmi_data = _gemmi_read_table(cif_data.filename, cif_data.atom_site_keys)
-
+    if "CCDC" not in cif_data.filename and "PDB" not in cif_data.filename:
+        # These CCDC and PDB files cannot be read by ASE
+        atoms = asecif.read_cif(cif_data.filename)
+        ase_data = [
+            occ for site in atoms.info["occupancy"].values() for occ in site.values()
+        ]
+        np.testing.assert_array_equal(
+            cif_data.file.get_from_tables("_atom_site_occupancy").squeeze().astype(float),
+            ase_data
+        )
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
 
 
