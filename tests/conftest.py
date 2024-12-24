@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 
 from parsnip._errors import ParseWarning
-from parsnip.oo import CifFile
+from parsnip import CifFile
 
 # ruff: noqa: N816. Allow mixed-case global variables
 
