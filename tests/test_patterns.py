@@ -126,10 +126,7 @@ def test_strip_quotes(line):
     assert len(stripped) < len(line)
 
 
-@pytest.mark.parametrize(
-    "line",
-    TEST_CASES,
-)
+@pytest.mark.parametrize("line", TEST_CASES)
 def test_semicolon_to_string(line):
     if line is None:
         return
