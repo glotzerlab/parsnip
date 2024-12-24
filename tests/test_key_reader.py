@@ -2,6 +2,7 @@ import numpy as np
 import pytest
 from conftest import bad_cif, cif_files_mark, random_keys_mark
 from gemmi import cif
+from ase.io import cif as asecif
 
 
 def _gemmi_read_keys(filename, keys, as_number=True):
@@ -21,7 +22,6 @@ def test_read_key_value_pairs(cif_data):
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
 
 
-@pytest.mark.filterwarnings("ignore: Keys")
 @cif_files_mark
 @random_keys_mark(n_samples=20)
 def test_read_key_value_pairs_random(cif_data, keys):
