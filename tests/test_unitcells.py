@@ -1,7 +1,11 @@
 import numpy as np
+import warnings
 import pytest
 from conftest import box_keys, cif_files_mark
 from gemmi import cif
+
+from ase import io
+from ase.build import supercells
 
 
 def _gemmi_read_table(filename, keys):
@@ -40,7 +44,7 @@ def test_read_cell_params(cif_data, keys=box_keys):
 @cif_files_mark
 def test_read_symmetry_operations(cif_data):
     if "PDB_4INS_head.cif" in cif_data.filename:
-        return
+        return # Excerpt of PDB file does not contain symmetry information
 
     parsnip_data = cif_data.file.read_symmetry_operations()
     gemmi_data = _gemmi_read_table(filename=cif_data.filename, keys=cif_data.symop_keys)
@@ -48,13 +52,8 @@ def test_read_symmetry_operations(cif_data):
 
 
 @cif_files_mark
-@pytest.mark.parametrize("n_decimal_places", [3, 4, 5])
+@pytest.mark.parametrize("n_decimal_places", [3, 4, 5, 6, 9])
 def test_extract_atomic_positions(cif_data, n_decimal_places):
-    import warnings
-
-    from ase import io
-    from ase.build import supercells
-
     warnings.filterwarnings("ignore", "crystal system", category=UserWarning)
 
     if "PDB_4INS_head.cif" in cif_data.filename:
