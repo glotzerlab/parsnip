@@ -212,7 +212,7 @@ class CifFile:
                 input keys. If the resulting list would have length 1, the data is
                 returned directly instead. See the note above for data ordering.
         """
-        index = np.asarray(index)
+        index = np.atleast_1d(index)
         result = []
         for table in self.tables:
             matches = index[np.any(index[:, None] == table.dtype.names, axis=1)]
