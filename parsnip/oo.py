@@ -1,5 +1,49 @@
 # Copyright (c) 2024, Glotzer Group
 # This file is from the parsnip project, released under the BSD 3-Clause License.
+r"""An interface for reading CIF files in Python.
+
+.. include:: ../../README.rst
+    :start-after: .. _parse:
+    :end-before: .. _installing:
+
+.. admonition:: The CIF Format
+
+    This is an example of a simple CIF file. A `key`_ (data name or tag) must start with
+    an underscore, and is seperated from the data value with whitespace characters.
+    A `table`_ begins with the ``loop_`` keyword, and contain a header block and a data
+    block. The vertical position of a tag in the table headings corresponds with the
+    horizontal position of the associated column in the table values.
+
+    .. code-block:: text
+
+        # Key-value pairs describing the unit cell:
+        _cell_length_a  5.40
+        _cell_length_b  3.43
+        _cell_length_c  5.08
+        _cell_angle_alpha  90.0
+        _cell_angle_beta  132.3
+        _cell_angle_gamma  90.0
+
+        # A table with two columns and eight rows:
+        loop_
+        _symmetry_equiv_pos_site_id
+        _symmetry_equiv_pos_as_xyz
+        1  x,y,z
+        2  -x,y,-z
+        3  -x,-y,-z
+        4  x,-y,z
+        5  x+1/2,y+1/2,z
+        6  -x+1/2,y+1/2,-z
+        7  -x+1/2,-y+1/2,-z
+        8  x+1/2,-y+1/2,z
+
+        _symmetry_space_group_name_H-M  'C2 / m' # One more key-value pair
+
+
+.. _key: https://www.iucr.org/resources/cif/spec/version1.1/cifsyntax#definitions
+.. _table: https://www.iucr.org/resources/cif/spec/version1.1/cifsyntax#onelevel
+
+"""
 
 from __future__ import annotations
 
@@ -12,68 +56,22 @@ from more_itertools import flatten, peekable
 from numpy.lib.recfunctions import structured_to_unstructured
 
 from parsnip._errors import ParseWarning
-from parsnip.parse import (
-    _parsed_line_generator,
+from parsnip.patterns import (
+    _dtype_from_int,
+    _is_data,
+    _is_key,
+    _line_is_continued,
     _safe_eval,
+    _semicolon_to_string,
+    _strip_comments,
     _write_debug_output,
     cast_array_to_float,
 )
 from parsnip.unitcells import _matrix_from_lengths_and_angles
+# from parsnip.patterns import 
 
 NONTABLE_LINE_PREFIXES = ("_", "#")
 
-
-def _is_key(line: str | None):
-    return line is not None and line.strip()[:1] == "_"
-
-
-def _is_data(line: str | None):
-    return line is not None and line.strip()[:1] != "_" and line.strip()[:5] != "loop_"
-
-
-def _strip_comments(s: str):
-    return s.split("#")[0].strip()
-
-
-def _strip_quotes(s: str):
-    return s.replace("'", "").replace('"', "")
-
-
-def _dtype_from_int(i: int):
-    return f"<U{i}"
-
-
-def _semicolon_to_string(line: str):
-    if "'" in line and '"' in line:
-        warnings.warn(
-            (
-                "String contains single and double quotes - "
-                "line may be parsed incorrectly"
-            ),
-            stacklevel=2,
-        )
-    # WARNING: because we split our string, we strip "\n" implicitly
-    # This is technically against spec, but is almost never meaningful
-    return line.replace(";", "'" if "'" not in line else '"')
-
-
-def _line_is_continued(line: str | None):
-    return line is not None and line.strip()[:1] == ";"
-
-
-def _try_cast_to_numeric(s: str):
-    """Attempt to cast a string to a number, returning the original string if invalid.
-
-    This method attempts to convert to a float first, followed by an int. Precision
-    measurements and indicators of significant digits are stripped.
-    """
-    parsed = re.match(r"(\d+\.?\d*)", s.strip())
-    if parsed is None or re.search(r"[^0-9\.\(\)]", s):
-        return s
-    elif "." in parsed.group(0):
-        return float(parsed.group(0))
-    else:
-        return int(parsed.group(0))
 
 
 class CifFile:
