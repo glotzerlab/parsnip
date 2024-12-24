@@ -97,8 +97,7 @@ class CifFile:
         self._cast_values = cast_values
 
         with open(fn) as file:
-            self._data = file.read()
-        self._parse()
+            self._parse(peekable(file))
 
     @property
     def cast_values(self):
@@ -432,9 +431,9 @@ class CifFile:
             pos[unique_indices] if fractional else real_space_positions[unique_indices]
         )
 
-    def _parse(self):
+    def _parse(self, data_iter: Iterable):
         """Parse the cif file into python objects."""
-        data_iter = peekable(self._data.split("\n"))
+        # data_iter = peekable(self._data.split("\n"))
 
         for line in data_iter:
             if data_iter.peek(None) is None:
