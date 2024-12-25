@@ -161,4 +161,3 @@ def _matrix_from_lengths_and_angles(l1, l2, l3, alpha, beta, gamma):
     a3z = np.sqrt(under_sqrt)
     a3 = np.array([l3 * a3x, l3 * a3y, l3 * a3z])
     return np.array([a1, a2, a3])
-

@@ -6,8 +6,6 @@ from ase.io import cif as asecif
 from conftest import bad_cif, cif_files_mark
 from gemmi import cif
 
-from parsnip._errors import ParseWarning
-
 STR_WIDTH_MAX = 128
 """Maximum width for valid fields in the test suite.
 Used to simplify processing of structured arrays.

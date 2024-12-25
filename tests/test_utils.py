@@ -1,4 +1,3 @@
-import numpy as np
 import pytest
 
 from parsnip._errors import ParseError, ParseWarning
@@ -15,5 +14,3 @@ def test_parse_warning():
         raise ParseWarning("TEST_WARNING_RAISED")
 
     assert "TEST_WARNING_RAISED" in str(warning.value)
-
-

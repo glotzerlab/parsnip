@@ -1,24 +1,17 @@
-import pytest
-
 import numpy as np
+import pytest
 
 from parsnip._errors import ParseWarning
 from parsnip.patterns import (
+    _dtype_from_int,
     _is_data,
     _is_key,
-    _dtype_from_int,
     _semicolon_to_string,
     _strip_comments,
     _strip_quotes,
     _try_cast_to_numeric,
     _write_debug_output,
 )
-
-from conftest import pos
-
-from hypothesis import given, settings
-from hypothesis.extra.numpy import arrays
-from hypothesis.strategies import floats
 
 TEST_CASES = [
     None,
@@ -155,26 +148,32 @@ def test_semicolon_to_string(line):
     assert ";" not in fixed
     assert "'" in fixed if "'" not in line else '"' in fixed
 
+
 @pytest.mark.parametrize("nchars", range(1, 15))
 def test_dtype_from_int(nchars):
     assert _dtype_from_int(nchars) == "<U" + str(nchars)
+
 
 def has_duplicates(pos):
     pos = np.array(pos)
     distances = np.linalg.norm(pos[:, None] - pos, axis=-1)
     np.fill_diagonal(distances, np.inf)  # Ignore self-comparison
-    unique_indices = np.arange(len(pos))[distances[:,0] != 0]
-    unique_counts = np.sum(distances==0, axis=1)[unique_indices] + 1
+    unique_indices = np.arange(len(pos))[distances[:, 0] != 0]
+    unique_counts = np.sum(distances == 0, axis=1)[unique_indices] + 1
 
     return unique_indices, unique_counts
 
-@pytest.mark.parametrize("pos", [
-    [[1, 2, 3], [3, 4, 5], [6, 7, 8], [9, 10, 11]],
-    [[0, 1, 2], [0, 1, 2], [3, 4, 5], [6, 7, 8]],
-    [[0, 1, 2], [0, 1, 2], [3, 4, 5], [3, 4, 5]],
-    [[0, 1, 2], [0, 1, 2], [0, 1, 2], [6, 7, 8]],
-    [[0, 1, 2], [0, 1, 2], [0, 1, 2], [0, 1, 2]],
-])
+
+@pytest.mark.parametrize(
+    "pos",
+    [
+        [[1, 2, 3], [3, 4, 5], [6, 7, 8], [9, 10, 11]],
+        [[0, 1, 2], [0, 1, 2], [3, 4, 5], [6, 7, 8]],
+        [[0, 1, 2], [0, 1, 2], [3, 4, 5], [3, 4, 5]],
+        [[0, 1, 2], [0, 1, 2], [0, 1, 2], [6, 7, 8]],
+        [[0, 1, 2], [0, 1, 2], [0, 1, 2], [0, 1, 2]],
+    ],
+)
 def test_write_debug_output(pos, capfd):
     computed_indices, computed_counts = has_duplicates(pos)
     _write_debug_output(computed_indices, computed_counts, pos)
@@ -187,8 +186,7 @@ def test_write_debug_output(pos, capfd):
 
 
 @pytest.mark.parametrize(
-    "s",
-    ["1.234", "abcd", "1999", "33(45)", "01.2", "8.9(1)", "9.87a"]
+    "s", ["1.234", "abcd", "1999", "33(45)", "01.2", "8.9(1)", "9.87a"]
 )
 def test_try_cast_to_numeric(s):
     result = _try_cast_to_numeric(s)

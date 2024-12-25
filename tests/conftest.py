@@ -11,11 +11,13 @@ from parsnip._errors import ParseWarning
 
 rng = np.random.default_rng(seed=161181914916)
 
-point_choices = rng.integers(-10,10,size=(32, 3))
+point_choices = rng.integers(-10, 10, size=(32, 3))
+
 
 @pytest.fixture
 def pos():
     return rng.choice(point_choices, size=(64, 12))
+
 
 data_file_path = os.path.dirname(__file__) + "/sample_data/"
 
