@@ -1,3 +1,5 @@
+import warnings
+
 import numpy as np
 import pytest
 from ase.io import cif as asecif
@@ -30,6 +32,7 @@ def test_read_atom_sites(cif_data):
     gemmi_data = _gemmi_read_table(cif_data.filename, cif_data.atom_site_keys)
     if "CCDC" not in cif_data.filename and "PDB" not in cif_data.filename:
         # These CCDC and PDB files cannot be read by ASE
+        warnings.filterwarnings("ignore", category=UserWarning)
         atoms = asecif.read_cif(cif_data.filename)
         ase_data = [
             occ for site in atoms.info["occupancy"].values() for occ in site.values()

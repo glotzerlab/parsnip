@@ -1,13 +1,24 @@
 import pytest
 
+import numpy as np
+
 from parsnip._errors import ParseWarning
 from parsnip.patterns import (
     _is_data,
     _is_key,
+    _dtype_from_int,
     _semicolon_to_string,
     _strip_comments,
     _strip_quotes,
+    _try_cast_to_numeric,
+    _write_debug_output,
 )
+
+from conftest import pos
+
+from hypothesis import given, settings
+from hypothesis.extra.numpy import arrays
+from hypothesis.strategies import floats
 
 TEST_CASES = [
     None,
@@ -143,3 +154,48 @@ def test_semicolon_to_string(line):
     fixed = _semicolon_to_string(line)
     assert ";" not in fixed
     assert "'" in fixed if "'" not in line else '"' in fixed
+
+@pytest.mark.parametrize("nchars", range(1, 15))
+def test_dtype_from_int(nchars):
+    assert _dtype_from_int(nchars) == "<U" + str(nchars)
+
+def has_duplicates(pos):
+    pos = np.array(pos)
+    distances = np.linalg.norm(pos[:, None] - pos, axis=-1)
+    np.fill_diagonal(distances, np.inf)  # Ignore self-comparison
+    unique_indices = np.arange(len(pos))[distances[:,0] != 0]
+    unique_counts = np.sum(distances==0, axis=1)[unique_indices] + 1
+
+    return unique_indices, unique_counts
+
+@pytest.mark.parametrize("pos", [
+    [[1, 2, 3], [3, 4, 5], [6, 7, 8], [9, 10, 11]],
+    [[0, 1, 2], [0, 1, 2], [3, 4, 5], [6, 7, 8]],
+    [[0, 1, 2], [0, 1, 2], [3, 4, 5], [3, 4, 5]],
+    [[0, 1, 2], [0, 1, 2], [0, 1, 2], [6, 7, 8]],
+    [[0, 1, 2], [0, 1, 2], [0, 1, 2], [0, 1, 2]],
+])
+def test_write_debug_output(pos, capfd):
+    computed_indices, computed_counts = has_duplicates(pos)
+    _write_debug_output(computed_indices, computed_counts, pos)
+
+    duplicates_exist = any(count > 1 for count in computed_counts)
+    if duplicates_exist:
+        assert "(duplicate point, number of occurences)" in capfd.readouterr().out
+    else:
+        assert "... all points are unique (within tolerance)." in capfd.readouterr().out
+
+
+@pytest.mark.parametrize(
+    "s",
+    ["1.234", "abcd", "1999", "33(45)", "01.2", "8.9(1)", "9.87a"]
+)
+def test_try_cast_to_numeric(s):
+    result = _try_cast_to_numeric(s)
+
+    if "a" in s:
+        assert isinstance(result, str)
+    elif "." in s:
+        assert isinstance(result, float)
+    else:
+        assert isinstance(result, int)
