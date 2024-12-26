@@ -478,7 +478,7 @@ class CifFile:
                     fragment = _strip_comments(line_groups[-1].strip())
                     if fragment[:1] == "_":
                         keys = self._cpat["key_list"].findall(fragment)
-                        table_keys.extend([] if keys is None else keys)
+                        table_keys.extend(keys if keys is not None else [])
                     else:
                         continue
 
@@ -537,10 +537,3 @@ class CifFile:
 
             if data_iter.peek(None) is None:
                 break
-
-
-if __name__ == "__main__":
-    fn = "tests/sample_data/B-IncStrDb_Ccmm.cif"
-    cf = CifFile(fn=fn)
-    # [print(pair) for pair in cf.pairs.items()]
-    # print(cf.tables[0])

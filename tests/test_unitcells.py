@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 from ase import io
 from ase.build import supercells
-from conftest import box_keys, cif_files_mark
+from conftest import bad_cif, box_keys, cif_files_mark
 from gemmi import cif
 
 
@@ -80,3 +80,15 @@ def test_build_unit_cell(cif_data, n_decimal_places):
     np.testing.assert_allclose(parsnip_minmax, ase_minmax, atol=1e-12)
 
     np.testing.assert_allclose(parsnip_positions, ase_positions, atol=1e-12)
+
+@cif_files_mark
+def test_invalid_unit_cell(cif_data):
+    if "PDB" in cif_data.filename:
+        return
+
+    previous_alpha = cif_data.file.pairs["_cell_angle_alpha"]
+    cif_data.file._pairs["_cell_angle_alpha"] = "180"
+
+    with pytest.raises(AssertionError, match="not in the expected range"):
+        cif_data.file.build_unit_cell()
+    cif_data.file._pairs["_cell_angle_alpha"] = previous_alpha

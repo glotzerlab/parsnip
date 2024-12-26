@@ -35,11 +35,8 @@ Issues = "https://github.com/glotzerlab/parsnip/issues"
 optional-dependencies = {tests = { file = ["tests/requirements.in"] }, doc = { file = ["doc/requirements.txt"] }}
 
 [tool.pytest.ini_options]
-# Add percentage progress bar to the pytest console output
 console_output_style = "progress"
-# Specify the tests folder to speed up collection.
-testpaths = ["parsnip", "tests"]
-addopts = "--doctest-modules"
+addopts = ["--doctest-modules", "--doctest-glob='*.rst'"]
 
 [tool.ruff]
 include = ["*.py", "*.ipynb"]
