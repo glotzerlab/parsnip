@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 from ase import io
 from ase.build import supercells
-from conftest import bad_cif, box_keys, cif_files_mark
+from conftest import box_keys, cif_files_mark
 from gemmi import cif
 
 
@@ -80,6 +80,7 @@ def test_build_unit_cell(cif_data, n_decimal_places):
     np.testing.assert_allclose(parsnip_minmax, ase_minmax, atol=1e-12)
 
     np.testing.assert_allclose(parsnip_positions, ase_positions, atol=1e-12)
+
 
 @cif_files_mark
 def test_invalid_unit_cell(cif_data):

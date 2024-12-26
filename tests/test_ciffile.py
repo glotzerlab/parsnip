@@ -1,12 +1,10 @@
 import re
 
-import numpy as np
-
-from parsnip import CifFile
-from parsnip._errors import ParseWarning
+import pytest
 from conftest import cif_files_mark
 
-import pytest
+from parsnip._errors import ParseWarning
+
 
 @cif_files_mark
 def test_cast_values(cif_data):
@@ -28,5 +26,5 @@ def test_cast_values(cif_data):
         else:
             assert isinstance(value, (int, float))
 
-    cif_data.file._pairs = uncast_pairs # Need to reset the data
+    cif_data.file._pairs = uncast_pairs  # Need to reset the data
     assert cif_data.file.pairs == uncast_pairs

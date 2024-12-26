@@ -8,14 +8,15 @@ import pytest
 from parsnip import CifFile
 from parsnip._errors import ParseWarning
 
+
 # Set up doctests
 @pytest.fixture(autouse=True)
 def add_np(doctest_namespace):
     doctest_namespace["np"] = np
     doctest_namespace["cif"] = CifFile("doc/source/example_file.cif")
 
-rng = np.random.default_rng(seed=161181914916)
 
+rng = np.random.default_rng(seed=161181914916)
 
 
 data_file_path = os.path.dirname(__file__) + "/sample_data/"
