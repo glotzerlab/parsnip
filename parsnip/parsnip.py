@@ -99,31 +99,15 @@ class CifFile:
         with open(fn) as file:
             self._parse(peekable(file))
 
-    @property
-    def cast_values(self):
-        """Whether to cast "number-like" values to ints & floats.
+    PATTERNS = {
+        "key_value_numeric": r"^(_[\w\.]+)[ |\t]+(-?\d+\.?\d*)",
+        "key_value_general": r"^(_[\w\.-]+)[ |\t]+([^#^\n]+)",
+        "table_delimiter": r"([Ll][Oo][Oo][Pp]_)[ |\t]*([^\n]*)",
+        "block_delimiter": r"([Dd][Aa][Tt][Aa]_)[ |\t]*([^\n]*)",
+        "key_list": r"_[\w_\.*]+[\[\d\]]*",
+        "space_delimited_data": r"(\'[^\']*\'|\"[^\"]*\"]|[^\'\" \t]*)[ | \t]*",
+    }
 
-        .. note::
-
-            When set to `True` after construction, the values are modified in-place.
-            This action cannot be reversed.
-        """
-        return self._cast_values
-
-    @cast_values.setter
-    def cast_values(self, cast: bool):
-        if cast:
-            self._pairs = {
-                k: _try_cast_to_numeric(_strip_quotes(v))
-                for (k, v) in self.pairs.items()
-            }
-        else:
-            warnings.warn(
-                "Setting cast_values True->False has no effect on stored data.",
-                category=ParseWarning,
-                stacklevel=2,
-            )
-        self._cast_values = cast
 
     @property
     def pairs(self):
@@ -132,8 +116,8 @@ class CifFile:
         Numeric values will be parsed to int or float if possible. In these cases,
         precision specifiers will be stripped.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict[str : str | float | int]
         """
         return self._pairs
@@ -145,42 +129,23 @@ class CifFile:
         These are stored as numpy structured arrays (see [the docs](https://numpy.org/doc/stable/user/basics.rec.html)
         for more information), which can be indexed by column labels.
 
-        Returns:
-        --------
-        list[(list[str], :math:`(N, N_{keys})` :class:`numpy.ndarray[str]`)]:
-            A list of tuples corresponding with the keys and data of the system.
+        Returns
+        -------
+        list[(:math:`(N, N_{keys})` :class:`numpy.ndarray[str]`)]:
+            A list of structured arrays containing table data from the file.
         """
         return self._tables
-
-    @classmethod
-    def structured_to_unstructured(cls, arr: np.ndarray):
-        """Convenience function to convert structured arrays to unstructured.
-
-        This is useful when extracting entire tables from :attr:`~.tables` for use in
-        other programs. This classmethod simply calls
-        :code:`np.lib.recfunctions.structured_to_unstructured` on the input data to
-        ensure the resulting array is properly laid out in memory. See
-        `this page in the structured array docs`_ for more information.
-
-        .. _`this page in the structured array docs`: https://numpy.org/doc/stable/user/basics.rec.html
-
-        Parameters
-        ----------
-            arr : :class:`numpy.ndarray`: | :class:`numpy.recarray`:
-                The structured array to convert.
-
-        Returns:
-        --------
-            :class:`numpy.ndarray`:
-                An *unstructured* array containing a copy of the data from the input.
-        """
-        return structured_to_unstructured(arr, copy=True)
 
     @property
     def table_labels(self):
         """A list of column labels for each data array.
 
         This property is equivalent to `[arr.dtype.names for arr in self.tables]`.
+
+        Returns
+        -------
+        list[list[str]]:
+            Column labels for :attr:`~.tables`, stored as a nested list of strings.
         """
         return [arr.dtype.names for arr in self.tables]
 
@@ -221,9 +186,9 @@ class CifFile:
             index: str | Iterable[str]
                 A column name or list of column names.
 
-        Returns:
-        --------
-            list[:class:`numpy.ndarray`:] | :class:`numpy.ndarray`:
+        Returns
+        -------
+            list[:class:`numpy.ndarray`] | :class:`numpy.ndarray`:
                 A list of *unstructured* arrays corresponding with matches from the
                 input keys. If the resulting list would have length 1, the data is
                 returned directly instead. See the note above for data ordering.
@@ -242,83 +207,50 @@ class CifFile:
             )
         return result if len(result) != 1 else result[0]
 
-    PATTERNS = {
-        "key_value_numeric": r"^(_[\w\.]+)[ |\t]+(-?\d+\.?\d*)",
-        "key_value_general": r"^(_[\w\.-]+)[ |\t]+([^#^\n]+)",
-        "table_delimiter": r"([Ll][Oo][Oo][Pp]_)[ |\t]*([^\n]*)",
-        "block_delimiter": r"([Dd][Aa][Tt][Aa]_)[ |\t]*([^\n]*)",
-        "key_list": r"_[\w_\.*]+[\[\d\]]*",
-        "space_delimited_data": r"(\'[^\']*\'|\"[^\"]*\"]|[^\'\" \t]*)[ | \t]*",
-    }
-
-    def __getitem__(self, key: str | Iterable[str]):
+    def __getitem__(self, index: str | Iterable[str]):
         """Return an item from the dictionary of key-value pairs.
 
         Indexing with a string returns the value from the :meth:`~.pairs` dict. Indexing
         with an Iterable of strings returns a list of values, with `None` as a
         placeholder for keys that did not match any data.
+
+        Parameters
+        ----------
+            index: str | Iterable[str]
+                An item key or list of keys.
+
+        Returns
+        -------
+            list[str|int|float] :
+                A list of data elements corresponding to the input key or keys. If the
+                resulting list would have length 1, the item is returned directly
+                instead.
         """
         if isinstance(key, Iterable) and not isinstance(key, str):
             return [self.pairs.get(k, None) for k in key]
 
         return self.pairs[key]
-
-    def read_symmetry_operations(self):
-        r"""Extract the symmetry operations from a CIF file.
-
-        Args:
-            filename (str): The name of the .cif file to be parsed.
-
-        Returns:
-            :math:`(N,)` :class:`numpy.ndarray[str]`:
-                Symmetry operations as strings.
-        """
-        symmetry_keys = (
-            "_symmetry_equiv_pos_as_xyz",
-            "_space_group_symop_operation_xyz",
-        )
-
-        # Only one of the two keys will be matched. We can safely ignore that warning.
-        warnings.filterwarnings("ignore", "Keys {'_", category=ParseWarning)
-        return self.get_from_tables(symmetry_keys)
-
-    def read_wyckoff_positions(self):
-        r"""Extract symmetry-irreducible, fractional X,Y,Z coordinates from a CIF file.
-
-        Parameters:
-        -----------
-            filename (str): The name of the .cif file to be parsed.
-
-        Returns:
-        --------
-            :math:`(N, 3)` :class:`numpy.ndarray[np.float32]`:
-                Fractional X,Y,Z coordinates of the unit cell.
-        """
-        xyz_keys = ("_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z")
-        xyz_data = self.get_from_tables(xyz_keys)
-        xyz_data = cast_array_to_float(arr=xyz_data, dtype=np.float64)
-
-        return xyz_data
-
     def read_cell_params(self, degrees: bool = True, mmcif: bool = False):
-        r"""Read the cell lengths and angles from a CIF file.
+        r"""Read the `unit cell parameters`_ (lengths and angles) from a CIF file.
 
-        Paramters:
+        .. _`unit cell parameters`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Ccell.html
+
+        Parameters
         ----------
-            degrees (bool, optional):
-                When True, angles are returned in degrees (as per the cif spec). When
+            degrees : (bool, optional)
+                When True, angles are returned in degrees (as per the CIF spec). When
                 False, angles are converted to radians. Default value = ``True``
-            mmcif (bool, optional):
+            mmcif : (bool, optional)
                 When False, the standard CIF key naming is used (e.g. _cell_angle_alpha)
                 . When True, the mmCIF standard is used instead (e.g. cell.angle_alpha).
                 Default value = ``False``
 
-        Returns:
-        --------
+        Returns
+        -------
             tuple:
-                The box vector lengths and angles in degrees or radians
+                The box vector lengths in angstroms, and angles in degrees or radians
                 :math:`(L_1, L_2, L_3, \alpha, \beta, \gamma)`.
-        """
+        """ # TODO: give tutorial for converting to freud box
         if mmcif:
             angle_keys = ("_cell.angle_alpha", "_cell.angle_beta", "_cell.angle_gamma")
             box_keys = (
@@ -343,7 +275,46 @@ class CifFile:
         if not degrees:
             cell_data[3:] = np.deg2rad(cell_data[3:])
 
-        return tuple(cell_data)
+        return tuple(cell_data) # TODO: document Raises for assertionerror
+
+    def read_symmetry_operations(self):
+        r"""Extract the symmetry operations from a CIF file.
+
+        Returns
+        -------
+            :math:`(N,)` :class:`numpy.ndarray[str]`:
+                An array of strings containing the symmetry operations in a 
+                `parsable algebraic form`.
+
+        .. _`parsable algebraic form`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Ispace_group_symop_operation_xyz.html
+        """
+        symmetry_keys = (
+            "_symmetry_equiv_pos_as_xyz",
+            "_space_group_symop_operation_xyz",
+        )
+
+        # Only one of the two keys will be matched. We can safely ignore that warning.
+        # TODO: verify this behavior is still correct
+        warnings.filterwarnings("ignore", "Keys {'_", category=ParseWarning)
+        return self.get_from_tables(symmetry_keys)
+
+    def read_wyckoff_positions(self):
+        r"""Extract symmetry-irreducible, fractional X,Y,Z coordinates from a CIF file.
+
+        Returns
+        -------
+            :math:`(N, 3)` :class:`numpy.ndarray[float]`:
+                Symmetry-irreducible X,Y,Z positions of atoms in
+                `fractional coordinates`_. 
+
+        .. _`fractional coordinates`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html
+        """
+        xyz_keys = ("_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z")
+        xyz_data = self.get_from_tables(xyz_keys)
+        xyz_data = cast_array_to_float(arr=xyz_data, dtype=np.float64)
+
+        return xyz_data
+
 
     def build_unit_cell(
         self,
@@ -369,19 +340,19 @@ class CifFile:
             positions.
 
         Args:
-            fractional (bool, optional):
+            fractional : (bool, optional)
                 Whether to return fractional or absolute coordinates.
                 Default value = ``True``
-            n_decimal_places (int, optional):
+            n_decimal_places : (int, optional)
                 The number of decimal places to round each position to for the
                 uniqueness comparison. Values higher than 4 may not work for all CIF
                 files. Default value = ``4``
-            verbose (bool, optional):
+            verbose : (bool, optional)
                 Whether to print debug information about the uniqueness checks.
                 Default value = ``False``
 
         Returns:
-            :math:`(N, 3)` :class:`numpy.ndarray[np.float32]`:
+            :math:`(N, 3)` :class:`numpy.ndarray[float]`:
                 The full unit cell of the crystal structure.
         """
         fractional_positions = self.read_wyckoff_positions()
@@ -431,9 +402,60 @@ class CifFile:
             pos[unique_indices] if fractional else real_space_positions[unique_indices]
         )
 
+
+    @property
+    def cast_values(self):
+        """Whether to cast "number-like" values to ints & floats.
+
+        .. note::
+
+            When set to `True` after construction, the values are modified in-place.
+            This action cannot be reversed.
+        """
+        return self._cast_values
+
+    @cast_values.setter
+    def cast_values(self, cast: bool):
+        if cast:
+            self._pairs = {
+                k: _try_cast_to_numeric(_strip_quotes(v))
+                for (k, v) in self.pairs.items()
+            }
+        else:
+            warnings.warn(
+                "Setting cast_values True->False has no effect on stored data.",
+                category=ParseWarning,
+                stacklevel=2,
+            )
+        self._cast_values = cast
+
+
+    @classmethod
+    def structured_to_unstructured(cls, arr: np.ndarray):
+        """Convenience function to convert structured arrays to unstructured.
+
+        This is useful when extracting entire tables from :attr:`~.tables` for use in
+        other programs. This classmethod simply calls
+        :code:`np.lib.recfunctions.structured_to_unstructured` on the input data to
+        ensure the resulting array is properly laid out in memory. See
+        `this page in the structured array docs`_ for more information.
+
+        .. _`this page in the structured array docs`: https://numpy.org/doc/stable/user/basics.rec.html
+
+        Parameters
+        ----------
+            arr : :class:`numpy.ndarray`: | :class:`numpy.recarray`
+                The structured array to convert.
+
+        Returns
+        -------
+            :class:`numpy.ndarray`:
+                An *unstructured* array containing a copy of the data from the input.
+        """
+        return structured_to_unstructured(arr, copy=True)
+
     def _parse(self, data_iter: Iterable):
         """Parse the cif file into python objects."""
-        # data_iter = peekable(self._data.split("\n"))
 
         for line in data_iter:
             if data_iter.peek(None) is None:
@@ -515,8 +537,6 @@ class CifFile:
                         category=ParseWarning,
                         stacklevel=2,
                     )
-                    # self.tables.append((table_keys, table_data))
-                    # self.tables.append(table_data)
                     continue
                 if not all(len(key) == len(table_keys[0]) for key in table_keys):
                     table_data = np.array([*flatten(table_data)]).reshape(-1, n_cols)
