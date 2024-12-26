@@ -42,6 +42,7 @@ def test_read_atom_sites(cif_data):
             ase_data,
         )
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
+    assert (key in cif_data.file.table_labels for key in cif_data.atom_site_keys)
 
 
 @cif_files_mark
