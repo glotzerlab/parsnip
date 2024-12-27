@@ -353,7 +353,8 @@ class CifFile:
 
         Raises
         ------
-        AssertionError
+        ParseError
+            If the stored data cannot form a valid box.
 
         """  # TODO: give tutorial for converting to freud box
         if mmcif:
@@ -375,10 +376,11 @@ class CifFile:
         def angle_is_invalid(x: float):
             return x <= 0.0 or x >= 180.0
 
-        if any(value is None for value in cell_data):
-            missing = [k for k, v in zip(box_keys, cell_data) if v is None]
-            msg = f"Keys {missing} did not return any data!"
-            raise ParseError(msg)
+        # if any(value is None for value in cell_data):
+        #     missing = [k for k, v in zip(box_keys, cell_data) if v is None]
+        #     msg = f"Keys {missing} did not return any data!"
+        #     raise ParseError(msg) # TODO: reincorporate
+
         if any(angle_is_invalid(value) for value in cell_data[3:]):
             invalid = [
                 k for k, v in zip(angle_keys, cell_data[3:]) if angle_is_invalid(v)

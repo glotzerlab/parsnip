@@ -9,7 +9,6 @@ from gemmi import cif
 
 from parsnip._errors import ParseError
 
-
 def _gemmi_read_table(filename, keys):
     return np.array(cif.read_file(filename).sole_block().find(keys))
 
@@ -95,3 +94,8 @@ def test_invalid_unit_cell(cif_data):
     with pytest.raises(ParseError, match="outside the valid range"):
         cif_data.file.build_unit_cell()
     cif_data.file._pairs["_cell_angle_alpha"] = previous_alpha
+
+    # cif_data.file._pairs.pop("_cell_angle_alpha")
+    # with pytest.raises(ParseError, match="did not return any data"):
+    #     cif_data.file.build_unit_cell()
+    # cif_data.file._pairs["_cell_angle_alpha"] = previous_alpha
