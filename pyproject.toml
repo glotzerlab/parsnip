@@ -37,7 +37,7 @@ optional-dependencies = {tests = { file = ["tests/requirements.in"] }, doc = { f
 [tool.pytest.ini_options]
 console_output_style = "progress"
 addopts = ["--doctest-modules", "--doctest-glob='*.rst'"]
-doctest_optionflags = ["NORMALIZE_WHITESPACE", "ELLIPSIS"]
+doctest_optionflags = ["NORMALIZE_WHITESPACE", "ELLIPSIS", "NUMBER"]
 
 [tool.ruff]
 include = ["*.py", "*.ipynb"]

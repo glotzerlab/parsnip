@@ -7,6 +7,7 @@ from ase.build import supercells
 from conftest import box_keys, cif_files_mark
 from gemmi import cif
 
+from parsnip._errors import ParseError
 
 def _gemmi_read_table(filename, keys):
     return np.array(cif.read_file(filename).sole_block().find(keys))
@@ -90,6 +91,6 @@ def test_invalid_unit_cell(cif_data):
     previous_alpha = cif_data.file.pairs["_cell_angle_alpha"]
     cif_data.file._pairs["_cell_angle_alpha"] = "180"
 
-    with pytest.raises(AssertionError, match="not in the expected range"):
+    with pytest.raises(ParseError, match="outside the valid range"):
         cif_data.file.build_unit_cell()
     cif_data.file._pairs["_cell_angle_alpha"] = previous_alpha

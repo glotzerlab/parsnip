@@ -59,7 +59,7 @@ from more_itertools import flatten, peekable
 from numpy.lib.recfunctions import structured_to_unstructured
 from numpy.typing import ArrayLike
 
-from parsnip._errors import ParseWarning
+from parsnip._errors import ParseWarning, ParseError
 from parsnip.patterns import (
     _dtype_from_int,
     _is_data,
@@ -320,6 +320,21 @@ class CifFile:
 
         .. _`unit cell parameters`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Ccell.html
 
+
+        Example
+        -------
+        The data returned from this function can be used to create a `freud Box`_.
+
+        .. _`freud Box`: https://freud.readthedocs.io/en/latest/gettingstarted/examples/module_intros/box.Box.html
+
+        >>> cell = cif.read_cell_params(degrees=False)
+        >>> print(cell)
+        (3.6, 3.6, 3.6, 1.5707963, 1.5707963, 1.5707963)
+        >>> import freud # doctest: +SKIP
+        >>> box = freud.box.Box.from_box_lengths_and_angles(cell) # doctest: +SKIP
+        freud.box.Box(Lx=3.6, Ly=3.6, Lz=3.6, xy=0, xz=0, yz=0, ...) # doctest: +SKIP
+
+
         Parameters
         ----------
             degrees : bool, optional
@@ -335,6 +350,11 @@ class CifFile:
             tuple[float]:
                 The box vector lengths in angstroms, and angles in degrees or radians
                 :math:`(L_1, L_2, L_3, \alpha, \beta, \gamma)`.
+        
+        Raises
+        ------
+        AssertionError
+            
         """  # TODO: give tutorial for converting to freud box
         if mmcif:
             angle_keys = ("_cell.angle_alpha", "_cell.angle_beta", "_cell.angle_gamma")
@@ -352,15 +372,25 @@ class CifFile:
             ) + angle_keys
         cell_data = cast_array_to_float(arr=self[box_keys], dtype=np.float64)
 
-        assert all(value is not None for value in cell_data)
-        assert all(
-            0 < key < 180 for key in cell_data[3:]
-        ), "Read cell params were not in the expected range (0 < angle < 180 degrees)."
+        def angle_is_invalid(x: float):
+            return x <= 0.0 or x >= 180.0
+
+        if any(value is None for value in cell_data):
+            missing = [k for k, v in zip(box_keys, cell_data) if v is None]
+            msg = f"Keys {missing} did not return any data!"
+            raise ParseError(msg)
+        if any(angle_is_invalid(value) for value in cell_data[3:]):
+            invalid = [
+                k for k, v in zip(angle_keys, cell_data[3:]) if angle_is_invalid(v)
+            ]
+            msg = f"Keys {invalid} are outside the valid range (0 <= θ <= 180)."
+            raise ParseError(msg)
 
         if not degrees:
             cell_data[3:] = np.deg2rad(cell_data[3:])
 
-        return tuple(cell_data)  # TODO: document Raises for assertionerror
+        return tuple(float(v) for v in cell_data) # Return as base python types
+        # TODO: document Raises for assertionerror
 
     def read_symmetry_operations(self):
         r"""Extract the symmetry operations from a CIF file.
