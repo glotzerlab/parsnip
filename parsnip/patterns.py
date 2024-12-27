@@ -14,6 +14,7 @@ import re
 import warnings
 
 import numpy as np
+from numpy.typing import ArrayLike
 
 from parsnip._errors import ParseWarning
 
@@ -43,7 +44,8 @@ def _safe_eval(str_input: str, x: int | float, y: int | float, z: int | float):
         y (int|float): Fractional coordinate in :math:`y`.
         z (int|float): Fractional coordinate in :math:`z`.
 
-    Returns:
+    Returns
+    -------
         list[list[int|float,int|float,int|float]]:
             :math:`(N,3)` list of fractional coordinates.
 
@@ -81,7 +83,7 @@ def _write_debug_output(unique_indices, unique_counts, pos, check="Initial"):
     print()
 
 
-def cast_array_to_float(arr: np.ndarray, dtype: type = np.float32):
+def cast_array_to_float(arr: ArrayLike, dtype: type = np.float32):
     """Cast a Numpy array to a dtype, pruning significant digits from numerical values.
 
     Args:
@@ -90,7 +92,8 @@ def cast_array_to_float(arr: np.ndarray, dtype: type = np.float32):
             dtype to cast array to.
             Default value = ``np.float32``
 
-    Returns:
+    Returns
+    -------
         np.array[float]: Array with new dtype and no significant digit information.
     """
     return np.char.partition(arr, "(")[..., 0].astype(dtype)
