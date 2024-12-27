@@ -12,7 +12,7 @@ r"""An interface for reading `CIF`_ files in Python.
 .. admonition:: The CIF Format
 
     This is an example of a simple CIF file. A `key`_ (data name or tag) must start with
-    an underscore, and is seperated from the data value with whitespace characters.
+    an underscore, and is separated from the data value with whitespace characters.
     A `table`_ begins with the ``loop_`` keyword, and contain a header block and a data
     block. The vertical position of a tag in the table headings corresponds with the
     horizontal position of the associated column in the table values.
@@ -195,12 +195,12 @@ class CifFile:
         If index is a single string, a single column will be returned from the matching
         table. If index is an Iterable of strings, the corresponding table slices will
         be returned. Slices from the same table will be grouped in the output array, but
-        slices from different arrays will be returned seperately.
+        slices from different arrays will be returned separately.
 
         .. tip::
 
             It is highly recommended that queries across multiple tables are provided in
-            seperated calls to this function. This helps ensure output data is ordered
+            separated calls to this function. This helps ensure output data is ordered
             as expected and allows for easier handling of cases where non-matching keys
             are provided.
 
@@ -440,7 +440,7 @@ class CifFile:
         """
         fractional_positions = self.read_wyckoff_positions()
 
-        # Read the cell params and conver to a matrix of basis vectors
+        # Read the cell params and convert to a matrix of basis vectors
         cell = self.read_cell_params(degrees=False, mmcif=False)
         cell_matrix = _matrix_from_lengths_and_angles(*cell)
 

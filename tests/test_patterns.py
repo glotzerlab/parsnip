@@ -180,7 +180,7 @@ def test_write_debug_output(pos, capfd):
 
     duplicates_exist = any(count > 1 for count in computed_counts)
     if duplicates_exist:
-        assert "(duplicate point, number of occurences)" in capfd.readouterr().out
+        assert "(duplicate point, number of occurrences)" in capfd.readouterr().out
     else:
         assert "... all points are unique (within tolerance)." in capfd.readouterr().out
 

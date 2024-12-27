@@ -24,7 +24,7 @@ def _safe_eval(str_input: str, x: int | float, y: int | float, z: int | float):
 
     Python's ``eval`` is notoriously unsafe. While we could evaluate the entire list at
     once, doing so carries some risk. The typical alternative, ``ast.literal_eval``,
-    doesnot work because we need to evaluate mathematical operations.
+    does not work because we need to evaluate mathematical operations.
 
     We first replace the x,y,z values with ordered fstring inputs, to simplify the input
     of fractional coordinate data. This is done for convenience more than security.
@@ -73,7 +73,7 @@ def _write_debug_output(unique_indices, unique_counts, pos, check="Initial"):
     if len(unique_indices) == len(pos):
         print("... all points are unique (within tolerance).")
     else:
-        print("(duplicate point, number of occurences)")
+        print("(duplicate point, number of occurrences)")
         [
             print(pt, count)
             for pt, count in zip(np.asarray(pos)[unique_indices], unique_counts)
