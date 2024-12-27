@@ -83,6 +83,34 @@ NONTABLE_LINE_PREFIXES = ("_", "#")
 class CifFile:
     """Lightweight, performant parser for CIF files.
 
+    Example
+    -------
+    To get started, simply provide a filename:
+
+    >>> from parsnip import CifFile
+    >>> cif = CifFile("doc/source/example_file.cif")
+    >>> print(cif)
+    CifFile(fn=doc/source/example_file.cif) : 12 data entries, 2 data tables
+
+    Data entries are accessible via the :attr:`~.pairs` and :attr:`~.tables` attributes:
+
+    >>> cif.pairs
+    {'_journal_year': '1999', '_journal_page_first': '0', ...}
+    >>> cif.tables[0]
+    array([[('Cu1', '0.0000000000', '0.0000000000', '0.0000000000', 'Cu', 'a')]],
+          dtype=...)
+    >>> cif.tables[1]
+    array([[('1', 'x,y,z')],
+           [('96', 'z,y+1/2,x+1/2')],
+           [('118', 'z+1/2,-y,x+1/2')],
+           [('192', 'z+1/2,y+1/2,x')]],
+          dtype=...)
+
+    .. tip::
+
+        See the docs for :attr:`__getitem__` and :attr:`get_from_tables` to query
+        for data by key or column label!
+
     Parameters
     ----------
         fn : str
@@ -102,8 +130,6 @@ class CifFile:
         self._fn = fn
         self._pairs = {}
         self._tables = []
-        # self._table_keys = []
-        # self._table_data = []
 
         self._cpat = {k: re.compile(pattern) for (k, pattern) in self.PATTERNS.items()}
         self._cast_values = cast_values
@@ -173,8 +199,10 @@ class CifFile:
 
         .. tip::
 
-            It is highly recommended to provide indices to seperate tables in seperate
-            calls to this function. This ensures output tables are ordered as expected.
+            It is highly recommended that queries across multiple tables are provided in
+            seperated calls to this function. This helps ensure output data is ordered
+            as expected and allows for easier handling of cases where non-matching keys
+            are provided.
 
 
         Example
@@ -220,10 +248,10 @@ class CifFile:
 
         >>> cif.get_from_tables([*table_1_cols, *table_2_cols])
         [array([['Cu', 'a']], dtype='<U12'),
-        array([['1', 'x,y,z'],
-               ['96', 'z,y+1/2,x+1/2'],
-               ['118', 'z+1/2,-y,x+1/2'],
-               ['192', 'z+1/2,y+1/2,x']], dtype='<U14')]
+         array([['1', 'x,y,z'],
+                ['96', 'z,y+1/2,x+1/2'],
+                ['118', 'z+1/2,-y,x+1/2'],
+                ['192', 'z+1/2,y+1/2,x']], dtype='<U14')]
 
         Parameters
         ----------
@@ -609,3 +637,8 @@ class CifFile:
 
             if data_iter.peek(None) is None:
                 break
+
+    def __repr__(self):
+        n_pairs = len(self.pairs)
+        n_tabs = len(self.tables)
+        return f"CifFile(fn={self._fn}) : {n_pairs} data entries, {n_tabs} data tables"
