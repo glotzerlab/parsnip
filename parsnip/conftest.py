@@ -1,9 +1,8 @@
 # Copyright (c) 2024, Glotzer Group
 # This file is from the parsnip project, released under the BSD 3-Clause License.
-# ruff: noqa: D103
+
 """Configure doctest namespace."""
 
-import sys
 
 import numpy as np
 import pytest

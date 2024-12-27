@@ -59,7 +59,7 @@ from more_itertools import flatten, peekable
 from numpy.lib.recfunctions import structured_to_unstructured
 from numpy.typing import ArrayLike
 
-from parsnip._errors import ParseWarning, ParseError
+from parsnip._errors import ParseError, ParseWarning
 from parsnip.patterns import (
     _dtype_from_int,
     _is_data,
@@ -350,11 +350,11 @@ class CifFile:
             tuple[float]:
                 The box vector lengths in angstroms, and angles in degrees or radians
                 :math:`(L_1, L_2, L_3, \alpha, \beta, \gamma)`.
-        
+
         Raises
         ------
         AssertionError
-            
+
         """  # TODO: give tutorial for converting to freud box
         if mmcif:
             angle_keys = ("_cell.angle_alpha", "_cell.angle_beta", "_cell.angle_gamma")
@@ -389,7 +389,7 @@ class CifFile:
         if not degrees:
             cell_data[3:] = np.deg2rad(cell_data[3:])
 
-        return tuple(float(v) for v in cell_data) # Return as base python types
+        return tuple(float(v) for v in cell_data)  # Return as base python types
         # TODO: document Raises for assertionerror
 
     def read_symmetry_operations(self):
