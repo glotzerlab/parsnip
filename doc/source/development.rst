@@ -21,7 +21,7 @@ All code contributed to **parsnip** must adhere to the following guidelines:
     - Most new features and bug fixes should be developed in branches based on ``main``.
     - API incompatible changes and those that significantly change existing functionality should be based on ``breaking``
   * Hard dependencies (those that end users must install to use **parsnip**) are *strongly* discouraged, and should be avoided where possible.
-  * Additional dependencies required by developers (those used to run tests or build docs) are undesirable but allowed.
+  * Additional dependencies required by developers (those used to run tests or build docs) are allowed where necessary.
   * All code should adhere to the source code conventions and satisfy the documentation and testing requirements discussed below.
 
 As portability is a primary feature of **parsnip**, tests are run run on Python versions 3.7 and later. However, first class support should only be expected for versions covered by `NEP 29`_.
