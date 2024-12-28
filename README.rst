@@ -80,5 +80,6 @@ Dependencies
 .. code:: text
 
    numpy>=1.19
+   more-itertools>=1.0
 
 .. _contributing:
