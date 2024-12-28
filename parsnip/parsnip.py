@@ -137,20 +137,6 @@ class CifFile:
         with open(fn) as file:
             self._parse(peekable(file))
 
-    PATTERNS: ClassVar = {
-        "key_value_numeric": r"^(_[\w\.]+)[ |\t]+(-?\d+\.?\d*)",
-        "key_value_general": r"^(_[\w\.-]+)[ |\t]+([^#^\n]+)",
-        "table_delimiter": r"([Ll][Oo][Oo][Pp]_)[ |\t]*([^\n]*)",
-        "block_delimiter": r"([Dd][Aa][Tt][Aa]_)[ |\t]*([^\n]*)",
-        "key_list": r"_[\w_\.*]+[\[\d\]]*",
-        "space_delimited_data": r"(\'[^\']*\'|\"[^\"]*\"]|[^\'\" \t]*)[ | \t]*",
-    }
-    """Regex patterns used when parsing files.
-
-    This dictionary can be modified to change parsing behavior, although doing is not
-    recommended. Changes to this variable are shared across all instances of the class.
-    """
-
     @property
     def pairs(self):
         """A dict containing key-value pairs extracted from the file.
@@ -685,3 +671,17 @@ class CifFile:
         n_pairs = len(self.pairs)
         n_tabs = len(self.tables)
         return f"CifFile(fn={self._fn}) : {n_pairs} data entries, {n_tabs} data tables"
+
+    PATTERNS: ClassVar = {
+        "key_value_numeric": r"^(_[\w\.]+)[ |\t]+(-?\d+\.?\d*)",
+        "key_value_general": r"^(_[\w\.-]+)[ |\t]+([^#^\n]+)",
+        "table_delimiter": r"([Ll][Oo][Oo][Pp]_)[ |\t]*([^\n]*)",
+        "block_delimiter": r"([Dd][Aa][Tt][Aa]_)[ |\t]*([^\n]*)",
+        "key_list": r"_[\w_\.*]+[\[\d\]]*",
+        "space_delimited_data": r"(\'[^\']*\'|\"[^\"]*\"]|[^\'\" \t]*)[ | \t]*",
+    }
+    """Regex patterns used when parsing files.
+
+    This dictionary can be modified to change parsing behavior, although doing is not
+    recommended. Changes to this variable are shared across all instances of the class.
+    """
