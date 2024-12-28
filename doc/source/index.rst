@@ -31,7 +31,6 @@
    :caption: Reference
 
    genindex
-   modindex
    development
    changelog
    credits
