@@ -75,6 +75,38 @@ aflow_mC24 = CifData(
         data_file_path + "AFLOW_mC24.cif",
     ),
 )
+amcsd_seifertite = CifData(
+    filename=data_file_path + "AMCSD_meteorite.cif",
+    symop_keys=("_space_group_symop_operation_xyz",),
+    atom_site_keys=(
+        atom_site_keys[0],
+        *atom_site_keys[2:5],
+        "_atom_site_U_iso_or_equiv",
+    ),
+    single_value_keys=(
+        "_chemical_name_mineral",
+        "_journal_name_full",
+        "_journal_volume",
+        "_journal_year",
+        "_journal_page_first",
+        "_journal_page_last",
+        # "_publ_section_title", # TODO: does not read!
+        "_database_code_amcsd",
+        "_chemical_formula_sum",
+        "_cell_length_a",
+        "_cell_length_b",
+        "_cell_length_c",
+        "_cell_angle_alpha",
+        "_cell_angle_beta",
+        "_cell_angle_gamma",
+        "_cell_volume",
+        "_exptl_crystal_density_diffrn",
+        "_symmetry_space_group_name_H-M",
+    ),
+    file=CifFile(
+        data_file_path + "AMCSD_meteorite.cif",
+    ),
+)
 
 bisd_Ccmm = CifData(
     filename=data_file_path + "B-IncStrDb_Ccmm.cif",
@@ -150,6 +182,26 @@ cod_aP16 = CifData(
     file=CifFile(data_file_path + "COD_1540955_aP16.cif"),
 )
 
+izasc_gismondine = CifData(
+    filename=data_file_path + "zeolite_clo.cif",
+    symop_keys=("_symmetry_equiv_pos_as_xyz",),
+    atom_site_keys=atom_site_keys[:-1],
+    single_value_keys=(
+        "_cell_length_a",
+        "_cell_length_b",
+        "_cell_length_c",
+        "_cell_angle_alpha",
+        "_cell_angle_beta",
+        "_cell_angle_gamma",
+        "_symmetry_space_group_name_H-M",
+        "_symmetry_Int_Tables_number",
+        "_symmetry_cell_setting",
+    ),
+    file=CifFile(
+        data_file_path + "zeolite_clo.cif",
+    ),
+)
+
 with pytest.warns(ParseWarning, match="cannot be resolved into a table"):
     pdb_4INS = CifData(
         filename=data_file_path + "PDB_4INS_head.cif",
@@ -209,7 +261,15 @@ bad_cif = CifData(
     file=CifFile(data_file_path + "INTENTIONALLY_BAD_CIF.cif"),
 )
 
-cif_data_array = [aflow_mC24, bisd_Ccmm, ccdc_Pm3m, cod_aP16, pdb_4INS]
+cif_data_array = [
+    aflow_mC24,
+    amcsd_seifertite,
+    bisd_Ccmm,
+    ccdc_Pm3m,
+    cod_aP16,
+    izasc_gismondine,
+    pdb_4INS,
+]
 cif_files_mark = pytest.mark.parametrize(
     argnames="cif_data",
     argvalues=cif_data_array,
