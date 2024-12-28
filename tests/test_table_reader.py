@@ -34,7 +34,7 @@ def test_read_atom_sites(cif_data):
     if "CCDC" not in cif_data.filename and "PDB" not in cif_data.filename:
         import sys
 
-        if sys.version_info <= (3, 7):
+        if sys.version_info < (3, 8):
             return
 
         warnings.filterwarnings("ignore", category=UserWarning)
