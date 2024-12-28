@@ -330,10 +330,10 @@ class CifFile:
         >>> cell = cif.read_cell_params(degrees=False)
         >>> print(cell)
         (3.6, 3.6, 3.6, 1.5707963, 1.5707963, 1.5707963)
+        >>> assert cell==cif.cell
         >>> import freud # doctest: +SKIP
         >>> box = freud.box.Box.from_box_lengths_and_angles(cell) # doctest: +SKIP
         freud.box.Box(Lx=3.6, Ly=3.6, Lz=3.6, xy=0, xz=0, yz=0, ...) # doctest: +SKIP
-
 
         Parameters
         ----------
@@ -353,10 +353,9 @@ class CifFile:
 
         Raises
         ------
-        ParseError
+        ValueError
             If the stored data cannot form a valid box.
-
-        """  # TODO: give tutorial for converting to freud box
+        """
         if mmcif:
             angle_keys = ("_cell.angle_alpha", "_cell.angle_beta", "_cell.angle_gamma")
             box_keys = (
@@ -379,20 +378,19 @@ class CifFile:
         # if any(value is None for value in cell_data):
         #     missing = [k for k, v in zip(box_keys, cell_data) if v is None]
         #     msg = f"Keys {missing} did not return any data!"
-        #     raise ParseError(msg) # TODO: reincorporate
+        #     raise ValueError(msg) # TODO: reincorporate
 
         if any(angle_is_invalid(value) for value in cell_data[3:]):
             invalid = [
                 k for k, v in zip(angle_keys, cell_data[3:]) if angle_is_invalid(v)
             ]
             msg = f"Keys {invalid} are outside the valid range (0 <= θ <= 180)."
-            raise ParseError(msg)
+            raise ValueError(msg)
 
         if not degrees:
             cell_data[3:] = np.deg2rad(cell_data[3:])
 
         return tuple(float(v) for v in cell_data)  # Return as base python types
-        # TODO: document Raises for assertionerror
 
     def read_symmetry_operations(self):
         r"""Extract the symmetry operations from a CIF file.
@@ -412,7 +410,6 @@ class CifFile:
 
         # Only one of the two keys will be matched. We can safely ignore that warning.
         # TODO: verify this behavior is still correct
-        warnings.filterwarnings("ignore", "Keys {'_", category=ParseWarning)
         return self.get_from_tables(symmetry_keys)
 
     def read_wyckoff_positions(self):
@@ -469,6 +466,11 @@ class CifFile:
         -------
             :math:`(N, 3)` :class:`numpy.ndarray[float]`:
                 The full unit cell of the crystal structure.
+
+        Raises
+        ------
+        ValueError
+            If the stored data cannot form a valid box.
         """
         fractional_positions = self.read_wyckoff_positions()
 
@@ -542,6 +544,14 @@ class CifFile:
                 stacklevel=2,
             )
         self._cast_values = cast
+
+    @property
+    def cell(self):
+        """Read the unit cell lengths in Angstroms and angles in radians.
+
+        Alias for :code:`read_cell_params(degrees=False, mmcif=False)`
+        """
+        return self.read_cell_params(degrees=False, mmcif=False)
 
     @classmethod
     def structured_to_unstructured(cls, arr: np.ndarray):
