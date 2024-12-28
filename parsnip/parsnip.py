@@ -378,7 +378,7 @@ class CifFile:
         # if any(value is None for value in cell_data):
         #     missing = [k for k, v in zip(box_keys, cell_data) if v is None]
         #     msg = f"Keys {missing} did not return any data!"
-        #     raise ValueError(msg) # TODO: reincorporate
+        #     raise ValueError(msg) # TODO: reincorporate this error
 
         if any(angle_is_invalid(value) for value in cell_data[3:]):
             invalid = [
@@ -408,8 +408,7 @@ class CifFile:
             "_space_group_symop_operation_xyz",
         )
 
-        # Only one of the two keys will be matched. We can safely ignore that warning.
-        # TODO: verify this behavior is still correct
+        # Only one key is valid in each standard, so we only ever get one match.
         return self.get_from_tables(symmetry_keys)
 
     def read_wyckoff_positions(self):
