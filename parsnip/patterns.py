@@ -154,10 +154,10 @@ def _try_cast_to_numeric(s: str):
     parsed = re.match(r"(\d+\.?\d*)", s.strip())
     if parsed is None or re.search(r"[^0-9\.\(\)]", s):
         return s
-    elif "." in parsed.group(0):
+
+    if "." in parsed.group(0):
         return float(parsed.group(0))
-    else:
-        return int(parsed.group(0))
+    return int(parsed.group(0))
 
 
 def _matrix_from_lengths_and_angles(l1, l2, l3, alpha, beta, gamma):

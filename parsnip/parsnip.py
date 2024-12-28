@@ -53,6 +53,7 @@ from __future__ import annotations
 import re
 import warnings
 from collections.abc import Iterable
+from typing import ClassVar
 
 import numpy as np
 from more_itertools import flatten, peekable
@@ -136,7 +137,7 @@ class CifFile:
         with open(fn) as file:
             self._parse(peekable(file))
 
-    PATTERNS = {
+    PATTERNS: ClassVar = {
         "key_value_numeric": r"^(_[\w\.]+)[ |\t]+(-?\d+\.?\d*)",
         "key_value_general": r"^(_[\w\.-]+)[ |\t]+([^#^\n]+)",
         "table_delimiter": r"([Ll][Oo][Oo][Pp]_)[ |\t]*([^\n]*)",
@@ -144,6 +145,11 @@ class CifFile:
         "key_list": r"_[\w_\.*]+[\[\d\]]*",
         "space_delimited_data": r"(\'[^\']*\'|\"[^\"]*\"]|[^\'\" \t]*)[ | \t]*",
     }
+    """Regex patterns used when parsing files.
+
+    This dictionary can be modified to change parsing behavior, although doing is not
+    recommended. Changes to this variable are shared across all instances of the class.
+    """
 
     @property
     def pairs(self):
@@ -361,14 +367,16 @@ class CifFile:
                 "_cell.length_a",
                 "_cell.length_b",
                 "_cell.length_c",
-            ) + angle_keys
+                *angle_keys,
+            )
         else:
             angle_keys = ("_cell_angle_alpha", "_cell_angle_beta", "_cell_angle_gamma")
             box_keys = (
                 "_cell_length_a",
                 "_cell_length_b",
                 "_cell_length_c",
-            ) + angle_keys
+                *angle_keys,
+            )
         cell_data = cast_array_to_float(arr=self[box_keys], dtype=np.float64)
 
         def angle_is_invalid(x: float):
@@ -421,9 +429,8 @@ class CifFile:
         .. _`fractional coordinates`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html
         """
         xyz_keys = ("_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z")
-        xyz_data = cast_array_to_float(arr=self.get_from_tables(xyz_keys), dtype=float)
 
-        return xyz_data
+        return cast_array_to_float(arr=self.get_from_tables(xyz_keys), dtype=float)
 
     def build_unit_cell(
         self,

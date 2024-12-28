@@ -59,6 +59,11 @@ select = [
     "UP", # pyupgrade
     "NPY",# check for use of deprecated numpy functions
     "SIM",# check for duplicate/needlessly verbose code
+    "ICN",
+    "ISC",
+    "PT",
+    "RET",
+    "RUF",
     "PIE790", # remove unnecessary pass statements
     "PIE794", # enable c-style single definition of variables
 ]

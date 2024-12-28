@@ -105,10 +105,10 @@ def test_is_data(line):
 def test_strip_comments(line):
     if line is None:
         return
-    elif all(c == " " for c in line):
+    if all(c == " " for c in line):
         assert _strip_comments(line) == ""
         return
-    elif "#" not in line and not all(c == " " for c in line):
+    if "#" not in line and not all(c == " " for c in line):
         assert _strip_comments(line) == line.strip()
         return
 
@@ -121,12 +121,13 @@ def test_strip_comments(line):
 def test_strip_quotes(line):
     if line is None:
         return
-    elif "'" not in line and '"' not in line:
+    if "'" not in line and '"' not in line:
         assert _strip_quotes(line) == line
         return
 
     stripped = _strip_quotes(line)
-    assert "'" not in stripped and '"' not in stripped
+    assert "'" not in stripped
+    assert '"' not in stripped
     assert len(stripped) < len(line)
 
 
@@ -134,7 +135,7 @@ def test_strip_quotes(line):
 def test_semicolon_to_string(line):
     if line is None:
         return
-    elif "'" in line and '"' in line:
+    if "'" in line and '"' in line:
         with pytest.warns(
             ParseWarning, match="String contains single and double quotes"
         ):
