@@ -40,6 +40,11 @@ def test_read_cell_params(cif_data, keys=box_keys):
     gemmi_data = _gemmi_read_keys(cif_data.filename, keys)
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
 
+    if not mmcif:
+        np.testing.assert_array_equal(
+            cif_data.file.cell[3:], np.deg2rad(gemmi_data[3:])
+        )
+
 
 @cif_files_mark
 def test_read_symmetry_operations(cif_data):
