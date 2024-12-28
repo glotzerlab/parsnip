@@ -94,7 +94,7 @@ def cast_array_to_float(arr: ArrayLike, dtype: type = np.float32):
 
     Returns
     -------
-        np.array[float]: Array with new dtype and no significant digit information.
+        np.array[dtype]: Array with new dtype and no significant digit information.
     """
     return np.char.partition(arr, "(")[..., 0].astype(dtype)
 
