@@ -47,23 +47,22 @@ line-length = 88
 
 [tool.ruff.lint]
 select = [
-    "B",  # flake8-bugbear
-    "D",  # pydocstyle
-    "E",  # pycodestyle-error
-    "F",  # pyflakes
-    "I",  # isort
-    "N",  # pep8-naming
-    "S",  # flake8-bandit
-    "W",  # pycodestyle-warning
-    "C4", # check list comprehensions and generators
-    "UP", # pyupgrade
-    "NPY",# check for use of deprecated numpy functions
-    "SIM",# check for duplicate/needlessly verbose code
-    "ICN",
-    "ISC",
-    "PT",
-    "RET",
-    "RUF",
+    "B",   # flake8-bugbear
+    "D",   # pydocstyle
+    "E",   # pycodestyle-error
+    "F",   # pyflakes
+    "I",   # isort
+    "N",   # pep8-naming
+    "S",   # flake8-bandit
+    "W",   # pycodestyle-warning
+    "C4",  # check list comprehensions and generators
+    "PT",  # pytest style checks
+    "UP",  # pyupgrade
+    "NPY", # check for use of deprecated numpy functions
+    "SIM", # check for duplicate/needlessly verbose code
+    "ISC", # checks for implicit string concatenation
+    "RET", # check for unnecessary branches surround returned values
+    "RUF", # reduce ambiguity in string concatenation and iterable combination
     "PIE790", # remove unnecessary pass statements
     "PIE794", # enable c-style single definition of variables
 ]
