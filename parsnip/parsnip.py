@@ -61,14 +61,12 @@ from numpy.typing import ArrayLike
 
 from parsnip._errors import ParseWarning
 from parsnip.patterns import (
+    _accumulate_nonsimple_data,
     _dtype_from_int,
     _is_data,
     _is_key,
-    _line_is_continued,
     _matrix_from_lengths_and_angles,
-    _accumulate_nonsimple_data,
     _safe_eval,
-    _semicolon_to_string,
     _strip_comments,
     _strip_quotes,
     _try_cast_to_numeric,
