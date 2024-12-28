@@ -98,6 +98,12 @@ def cast_array_to_float(arr: ArrayLike, dtype: type = np.float32):
     """
     return np.char.partition(arr, "(")[..., 0].astype(dtype)
 
+def _accumulate_nonsimple_data(data_iter, initial_line=""):
+    """Accumulate nonsimmple (multi-line) data entries into a single string."""
+    line = initial_line
+    while _line_is_continued(data_iter.peek(None)):
+        line += _strip_comments(next(data_iter))
+    return _semicolon_to_string(line)
 
 def _is_key(line: str | None):
     return line is not None and line.strip()[:1] == "_"

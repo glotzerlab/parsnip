@@ -66,6 +66,7 @@ from parsnip.patterns import (
     _is_key,
     _line_is_continued,
     _matrix_from_lengths_and_angles,
+    _accumulate_nonsimple_data,
     _safe_eval,
     _semicolon_to_string,
     _strip_comments,
@@ -583,9 +584,7 @@ class CifFile:
                 break  # Exit without StopIteration
 
             # Combine nonsimple data values into a single, parseable line ==============
-            while _line_is_continued(data_iter.peek()):
-                line += _strip_comments(next(data_iter))
-            line = _semicolon_to_string(line)
+            line = _accumulate_nonsimple_data(data_iter, line)
 
             # Skip processing if the line contains no data =============================
             if line == "" or _strip_comments(line) == "":
@@ -626,17 +625,15 @@ class CifFile:
                         continue
 
                 while _is_key(data_iter.peek(None)):
-                    line = _strip_comments(next(data_iter))
-                    while _line_is_continued(data_iter.peek(None)):
-                        line += _strip_comments(next(data_iter))
-                    line = _semicolon_to_string(line)
+                    line = _accumulate_nonsimple_data(
+                        data_iter, _strip_comments(next(data_iter))
+                    )
                     table_keys.extend(self._cpat["key_list"].findall(line))
 
                 while _is_data(data_iter.peek(None)):
-                    line = _strip_comments(next(data_iter))
-                    while _line_is_continued(data_iter.peek(None)):
-                        line += _strip_comments(next(data_iter))
-                    line = _semicolon_to_string(line)
+                    line = _accumulate_nonsimple_data(
+                        data_iter, _strip_comments(next(data_iter))
+                    )
                     parsed_line = self._cpat["space_delimited_data"].findall(line)
                     parsed_line = [m for m in parsed_line if m != ""]
                     table_data.extend([parsed_line] if parsed_line else [])
