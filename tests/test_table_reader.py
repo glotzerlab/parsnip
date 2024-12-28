@@ -28,10 +28,17 @@ def test_read_symop(cif_data):
 def test_read_atom_sites(cif_data):
     parsnip_data = cif_data.file.get_from_tables(cif_data.atom_site_keys)
     gemmi_data = _gemmi_read_table(cif_data.filename, cif_data.atom_site_keys)
+    np.testing.assert_array_equal(parsnip_data, gemmi_data)
+    assert (key in cif_data.file.table_labels for key in cif_data.atom_site_keys)
+
     if "CCDC" not in cif_data.filename and "PDB" not in cif_data.filename:
-        # These CCDC and PDB files cannot be read by ASE
+        # import sys
+
+        # if sys.version_info <= (3, 7):
+        #     return
+
         warnings.filterwarnings("ignore", category=UserWarning)
-        atoms = asecif.read_cif(cif_data.filename, index=0)
+        atoms = asecif.read_cif(cif_data.filename, index=":")
         ase_data = [
             occ for site in atoms.info["occupancy"].values() for occ in site.values()
         ]
@@ -41,8 +48,6 @@ def test_read_atom_sites(cif_data):
             .astype(float),
             ase_data,
         )
-    np.testing.assert_array_equal(parsnip_data, gemmi_data)
-    assert (key in cif_data.file.table_labels for key in cif_data.atom_site_keys)
 
 
 @cif_files_mark
