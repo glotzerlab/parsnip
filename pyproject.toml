@@ -70,6 +70,7 @@ ignore = [
   "S101", # Assertions are a good thing
   "D105", # Magic methods don't require documentation.
   "D107", # __init__ methods don't require documentation.
+  "ISC001", # Raises warning in ruff formatter
   "SIM116", # Allow certain branched if statements
 ]
 
