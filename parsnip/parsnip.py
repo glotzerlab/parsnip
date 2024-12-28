@@ -59,7 +59,7 @@ from more_itertools import flatten, peekable
 from numpy.lib.recfunctions import structured_to_unstructured
 from numpy.typing import ArrayLike
 
-from parsnip._errors import ParseError, ParseWarning
+from parsnip._errors import ParseWarning
 from parsnip.patterns import (
     _dtype_from_int,
     _is_data,

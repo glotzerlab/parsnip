@@ -7,7 +7,6 @@ from ase.build import supercells
 from conftest import box_keys, cif_files_mark
 from gemmi import cif
 
-from parsnip._errors import ParseError
 
 def _gemmi_read_table(filename, keys):
     return np.array(cif.read_file(filename).sole_block().find(keys))
