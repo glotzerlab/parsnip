@@ -69,6 +69,7 @@ from parsnip.patterns import (
     _line_is_continued,
     _matrix_from_lengths_and_angles,
     _safe_eval,
+    _semicolon_to_string,
     _strip_comments,
     _strip_quotes,
     _try_cast_to_numeric,
@@ -576,16 +577,14 @@ class CifFile:
                 break  # Exit without StopIteration
 
             # Combine nonsimple data values into a single, parseable line ==============
-            semicolon_count = 0
+            semicolon_count= 0
             while _line_is_continued(data_iter.peek(None)):
                 while data_iter.peek(None) and semicolon_count < 2:
-                    if (
-                        ";\n" in data_iter.peek().split("#")[0].replace(" ", "")
-                        or _strip_comments(data_iter.peek())[:1] == ";"
-                    ):
-                        semicolon_count += 1
-                    print("added", [data_iter.peek()], semicolon_count)
-                    line += next(data_iter).strip("\n")
+                    buffer = data_iter.peek().split("#")[0].replace(" ", "")
+                    if ";\n" in buffer or buffer[:1]==";":
+                        semicolon_count+=1
+                    print("added",[data_iter.peek()], semicolon_count)
+                    line += next(data_iter)
 
             # Skip processing if the line contains no data =============================
             if line == "" or _strip_comments(line) == "":
@@ -599,14 +598,13 @@ class CifFile:
             # Extract key-value pairs and save to the internal state ===================
             pair = self._cpat["key_value_general"].match(line)
             if pair is not None:
-                # print(pair.groups())
                 self._pairs.update(
                     {
                         pair.groups()[0]: _try_cast_to_numeric(
                             _strip_quotes(pair.groups()[1])
                         )
                         if self.cast_values
-                        else pair.groups()[1].strip()
+                        else pair.groups()[1].rstrip() # Skip trailing newlines
                     }
                 )
 
@@ -685,7 +683,7 @@ class CifFile:
 
     PATTERNS: ClassVar = {
         "key_value_numeric": r"^(_[\w\.]+)[ |\t]+(-?\d+\.?\d*)",
-        "key_value_general": r"^(_[\w\.-]+)\s+([^#^\n]+)",
+        "key_value_general": r"^(_[\w\.-]+)\s+([^#]+)",
         "table_delimiter": r"([Ll][Oo][Oo][Pp]_)[ |\t]*([^\n]*)",
         "block_delimiter": r"([Dd][Aa][Tt][Aa]_)[ |\t]*([^\n]*)",
         "key_list": r"_[\w_\.*]+[\[\d\]]*",

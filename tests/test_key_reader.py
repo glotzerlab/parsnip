@@ -9,7 +9,7 @@ def remove_invalid(s):
     """
     if s is None:
         return None
-    return s.replace("\r", "").replace("\n", "")
+    return s.replace("\r", "")
 
 
 def _gemmi_read_keys(filename, keys, as_number=True):
@@ -22,13 +22,12 @@ def _gemmi_read_keys(filename, keys, as_number=True):
 @cif_files_mark
 def test_read_key_value_pairs(cif_data):
     parsnip_data = cif_data.file[cif_data.single_value_keys]
-    # print(cif_data.file.pairs)
     for i, value in enumerate(parsnip_data):
         assert cif_data.file[cif_data.single_value_keys[i]] == value
     gemmi_data = _gemmi_read_keys(
         cif_data.filename, keys=cif_data.single_value_keys, as_number=False
     )
-    np.testing.assert_array_equal(parsnip_data, gemmi_data)
+    np.testing.assert_equal(parsnip_data, gemmi_data, verbose=True)
 
 
 @cif_files_mark
@@ -38,7 +37,7 @@ def test_read_key_value_pairs_random(cif_data, keys):
     for i, value in enumerate(parsnip_data):
         assert cif_data.file.pairs.get(keys[i], None) == value
     gemmi_data = _gemmi_read_keys(cif_data.filename, keys=keys, as_number=False)
-    np.testing.assert_array_equal(parsnip_data, gemmi_data)
+    np.testing.assert_equal(parsnip_data, gemmi_data, verbose=True)
 
 
 def test_read_key_value_pairs_badcif(cif_data=bad_cif):
