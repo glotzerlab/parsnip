@@ -99,11 +99,6 @@ def cast_array_to_float(arr: ArrayLike, dtype: type = np.float32):
     return np.char.partition(arr, "(")[..., 0].astype(dtype)
 
 
-# def _accumulate_nonsimple_data(data_iter, line=""):
-#     """Accumulate nonsimmple (multi-line) data entries into a single string."""
-#     while _line_is_continued(data_iter.peek(None)):
-#         line += _strip_comments(next(data_iter))
-#     return _semicolon_to_string(line)
 def _accumulate_nonsimple_data(data_iter, line=""):
     """Accumulate nonsimmple (multi-line) data entries into a single string."""
     semicolon_count = 0
@@ -153,10 +148,6 @@ def _semicolon_to_string(line: str):
 
 def _line_is_continued(line: str | None):
     return line is not None and line.strip()[:1] == ";"
-
-
-# def _line_is_continued(line: str | None, line_so_far: str):
-#     return line is not None and line.strip()[:1] == ";" and line_so_far.count(";") < 2
 
 
 def _try_cast_to_numeric(s: str):

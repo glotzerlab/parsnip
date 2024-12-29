@@ -75,8 +75,6 @@ from parsnip.patterns import (
     cast_array_to_float,
 )
 
-# from parsnip.patterns import
-
 NONTABLE_LINE_PREFIXES = ("_", "#")
 
 
@@ -576,7 +574,6 @@ class CifFile:
 
             # Combine nonsimple data entries into a single, parseable line =============
             line = _accumulate_nonsimple_data(data_iter, line)
-            # TODO: wrap into function and test in table reader
 
             # Skip processing if the line contains no data =============================
             if line == "" or _strip_comments(line) == "":
