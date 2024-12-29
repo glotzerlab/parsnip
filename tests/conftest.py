@@ -117,6 +117,7 @@ bisd_Ccmm = CifData(
     atom_site_keys=(atom_site_keys[0], atom_site_keys[-1], *atom_site_keys[2:-1]),
     single_value_keys=(
         "_journal_name_full",
+        "_publ_section_title",
         "_journal_volume",
         "_journal_year",
         "_journal_page_first",

@@ -3,18 +3,28 @@ from conftest import bad_cif, cif_files_mark, random_keys_mark
 from gemmi import cif
 
 
+def remove_invalid(s):
+    """Our parser strips newlines and carriage returns.
+    TODO: newlines should be retained
+    """
+    if s is None:
+        return None
+    return s.replace("\r", "").replace("\n", "")
+
 def _gemmi_read_keys(filename, keys, as_number=True):
     file_block = cif.read_file(filename).sole_block()
     if as_number:
         return np.array([cif.as_number(file_block.find_value(key)) for key in keys])
     return np.array(
-        [file_block.find_value(key).replace("\r", "").replace("\n","") for key in keys]
+        # [file_block.find_value(key).replace("\r", "").replace("\n","") for key in keys]
+        [remove_invalid(file_block.find_value(key)) for key in keys]
     )
 
 
 @cif_files_mark
 def test_read_key_value_pairs(cif_data):
     parsnip_data = cif_data.file[cif_data.single_value_keys]
+    # print(cif_data.file.pairs)
     for i, value in enumerate(parsnip_data):
         assert cif_data.file[cif_data.single_value_keys[i]] == value
     gemmi_data = _gemmi_read_keys(
@@ -27,6 +37,8 @@ def test_read_key_value_pairs(cif_data):
 @random_keys_mark(n_samples=20)
 def test_read_key_value_pairs_random(cif_data, keys):
     parsnip_data = cif_data.file[keys]
+    for i, value in enumerate(parsnip_data):
+        assert cif_data.file.pairs.get(keys[i], None) == value
     gemmi_data = _gemmi_read_keys(cif_data.filename, keys=keys, as_number=False)
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
 

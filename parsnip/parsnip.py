@@ -588,16 +588,27 @@ class CifFile:
             def __line_is_continued(line: str | None, line_so_far: str):
                 return (line is not None and line.strip()[:1] == ";") and line_so_far.count(";") < 2
 
+            # This works unless the contained string contains a semicolon - we need a
+            # more stringent check than the count for this to work properly
+            semicolon_count = 0
             while _line_is_continued(data_iter.peek(None)):
                 # while data_iter.peek(None) and line.count(";") < 2:
-                while data_iter.peek(None) and line.count(";") < 2:
+                while data_iter.peek(None) and semicolon_count < 2:
+                    # if ";\n" in data_iter.peek().split("#")[0].replace(" ", "") or line.strip()[:1]==";":
+                    if ";\n" in data_iter.peek().split("#")[0].replace(" ", "") or _strip_comments(data_iter.peek())[:1]==";":
+                        # print([data_iter.peek()]
+                        semicolon_count+=1
+                    print("added",[data_iter.peek()], semicolon_count)
                 # while data_iter.peek(None) and re.sub("\s", "", data_iter.peek()) != ";":
                     # print(line)
                     # line += _strip_comments(next(data_iter))
-                    if re.sub("\s", "", data_iter.peek()) == ";":
-                        print(data_iter.peek())
+                    # if re.sub("\s", "", data_iter.peek()) == ";":
+                    #     print(data_iter.peek())
+                    # if ";" in line:
+                    #     print("conts", [line])
                     line += next(data_iter).strip("\n")
                 print("line=", [line])
+            # line = _semicolon_to_string(line)
 
             # Skip processing if the line contains no data =============================
             if line == "" or _strip_comments(line) == "":
