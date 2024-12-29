@@ -69,7 +69,6 @@ from parsnip.patterns import (
     _line_is_continued,
     _matrix_from_lengths_and_angles,
     _safe_eval,
-    _semicolon_to_string,
     _strip_comments,
     _strip_quotes,
     _try_cast_to_numeric,
@@ -577,13 +576,13 @@ class CifFile:
                 break  # Exit without StopIteration
 
             # Combine nonsimple data values into a single, parseable line ==============
-            semicolon_count= 0
+            semicolon_count = 0
             while _line_is_continued(data_iter.peek(None)):
                 while data_iter.peek(None) and semicolon_count < 2:
                     buffer = data_iter.peek().split("#")[0].replace(" ", "")
-                    if ";\n" in buffer or buffer[:1]==";":
-                        semicolon_count+=1
-                    print("added",[data_iter.peek()], semicolon_count)
+                    if ";\n" in buffer or buffer[:1] == ";":
+                        semicolon_count += 1
+                    print("added", [data_iter.peek()], semicolon_count)
                     line += next(data_iter)
 
             # Skip processing if the line contains no data =============================
@@ -604,7 +603,7 @@ class CifFile:
                             _strip_quotes(pair.groups()[1])
                         )
                         if self.cast_values
-                        else pair.groups()[1].rstrip() # Skip trailing newlines
+                        else pair.groups()[1].rstrip()  # Skip trailing newlines
                     }
                 )
 
