@@ -6,9 +6,9 @@ from gemmi import cif
 def _gemmi_read_keys(filename, keys, as_number=True):
     file_block = cif.read_file(filename).sole_block()
     if as_number:
-        return np.array([cif.as_number(file_block.find_value(k)) for k in keys])
+        return np.array([cif.as_number(file_block.find_value(key)) for key in keys])
     return np.array(
-        [file_block.find_value(k).replace(r"\r", "").replace(r"\n","") for k in keys]
+        [file_block.find_value(key).replace("\r", "").replace("\n","") for key in keys]
     )
 
 

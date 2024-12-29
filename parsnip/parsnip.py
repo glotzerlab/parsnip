@@ -597,10 +597,10 @@ class CifFile:
             #             line += _strip_comments(next(data_iter))
             #         print(line)
             # line = _accumulate_nonsimple_data(data_iter, line)
-            if _line_is_continued(data_iter.peek(None)):
+            while _line_is_continued(data_iter.peek(None)):
                 while data_iter.peek(None) and line.count(";") < 2:
                     # line += _strip_comments(next(data_iter))
-                    line += next(data_iter)
+                    line += next(data_iter).strip("\n")
                 print("line=", [line])
             # line = _semicolon_to_string(line)
             # print([line])
@@ -618,7 +618,7 @@ class CifFile:
             # Extract key-value pairs and save to the internal state ===================
             pair = self._cpat["key_value_general"].match(line)
             if pair is not None:
-                print(pair.groups())
+                # print(pair.groups())
                 self._pairs.update(
                     {
                         pair.groups()[0]: _try_cast_to_numeric(
