@@ -588,23 +588,16 @@ class CifFile:
             def __line_is_continued(line: str | None, line_so_far: str):
                 return (line is not None and line.strip()[:1] == ";") and line_so_far.count(";") < 2
 
-            # while __line_is_continued(data_iter.peek(None), line):
-            #     line += _strip_comments(next(data_iter))
-            #     print([line])
-            # def _accumulate_nonsimple_data(data_iter, line):
-            #     if _line_is_continued(data_iter.peek(None)):
-            #         while data_iter.peek(None) and line.count(";") < 2:
-            #             line += _strip_comments(next(data_iter))
-            #         print(line)
-            # line = _accumulate_nonsimple_data(data_iter, line)
             while _line_is_continued(data_iter.peek(None)):
+                # while data_iter.peek(None) and line.count(";") < 2:
                 while data_iter.peek(None) and line.count(";") < 2:
+                # while data_iter.peek(None) and re.sub("\s", "", data_iter.peek()) != ";":
+                    # print(line)
                     # line += _strip_comments(next(data_iter))
+                    if re.sub("\s", "", data_iter.peek()) == ";":
+                        print(data_iter.peek())
                     line += next(data_iter).strip("\n")
                 print("line=", [line])
-            # line = _semicolon_to_string(line)
-            # print([line])
-            # line = _accumulate_nonsimple_data(data_iter, line)
 
             # Skip processing if the line contains no data =============================
             if line == "" or _strip_comments(line) == "":
