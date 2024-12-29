@@ -66,8 +66,10 @@ from parsnip.patterns import (
     _dtype_from_int,
     _is_data,
     _is_key,
+    _line_is_continued,
     _matrix_from_lengths_and_angles,
     _safe_eval,
+    _semicolon_to_string,
     _strip_comments,
     _strip_quotes,
     _try_cast_to_numeric,
@@ -575,7 +577,26 @@ class CifFile:
                 break  # Exit without StopIteration
 
             # Combine nonsimple data values into a single, parseable line ==============
-            line = _accumulate_nonsimple_data(data_iter, line)
+            # TODO: does not seem to work in all cases?
+            # print(line)
+            # line = _accumulate_nonsimple_data(data_iter, line)
+
+            # def _linecont(data_iter, line):
+            #     p = data_iter.peek(None)
+            #     print(line)
+            #     return line is not None and p is not None and p.strip()[:1] == ";"
+            def __line_is_continued(line: str | None, line_so_far: str):
+                return line is not None and line.strip()[:1] == ";" and line_so_far.count(";") < 2
+
+            while __line_is_continued(data_iter.peek(None), line):
+                line += _strip_comments(next(data_iter))
+            # while _line_is_continued(data_iter.peek(None)):
+            #     while data_iter.peek(None) and line.count(";") < 2:
+            #         line += _strip_comments(next(data_iter))
+                # print("line=", [line])
+            # line = _semicolon_to_string(line)
+            # print([line])
+            # line = _accumulate_nonsimple_data(data_iter, line)
 
             # Skip processing if the line contains no data =============================
             if line == "" or _strip_comments(line) == "":
@@ -589,6 +610,7 @@ class CifFile:
             # Extract key-value pairs and save to the internal state ===================
             pair = self._cpat["key_value_general"].match(line)
             if pair is not None:
+                # print(pair.groups())
                 self._pairs.update(
                     {
                         pair.groups()[0]: _try_cast_to_numeric(

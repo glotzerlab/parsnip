@@ -13,6 +13,7 @@ def _gemmi_read_keys(filename, keys, as_number=True):
 @cif_files_mark
 def test_read_key_value_pairs(cif_data):
     parsnip_data = cif_data.file[cif_data.single_value_keys]
+    # print(parsnip_data)
     for i, value in enumerate(parsnip_data):
         assert cif_data.file[cif_data.single_value_keys[i]] == value
     gemmi_data = _gemmi_read_keys(
