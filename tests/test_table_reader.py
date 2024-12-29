@@ -11,6 +11,8 @@ STR_WIDTH_MAX = 128
 Used to simplify processing of structured arrays.
 """
 
+# TODO: update to verify the number and shape of tables is correct
+
 
 def _gemmi_read_table(filename, keys):
     return np.array(cif.read_file(filename).sole_block().find(keys))
