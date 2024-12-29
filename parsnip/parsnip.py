@@ -62,11 +62,10 @@ from numpy.typing import ArrayLike
 
 from parsnip._errors import ParseWarning
 from parsnip.patterns import (
-    # _accumulate_nonsimple_data,
+    _accumulate_nonsimple_data,
     _dtype_from_int,
     _is_data,
     _is_key,
-    _line_is_continued,
     _matrix_from_lengths_and_angles,
     _safe_eval,
     _strip_comments,
@@ -575,17 +574,7 @@ class CifFile:
             if data_iter.peek(None) is None:
                 break  # Exit without StopIteration
 
-            # Combine nonsimple data values into a single, parseable line ==============
-            def _accumulate_nonsimple_data(data_iter, line=""):
-                semicolon_count = 0
-                while _line_is_continued(data_iter.peek(None)):
-                    while data_iter.peek(None) and semicolon_count < 2:
-                        buffer = data_iter.peek().split("#")[0].replace(" ", "")
-                        if ";\n" in buffer or buffer[:1] == ";":
-                            semicolon_count += 1
-                        line += next(data_iter)
-                return line
-
+            # Combine nonsimple data entries into a single, parseable line =============
             line = _accumulate_nonsimple_data(data_iter, line)
             # TODO: wrap into function and test in table reader
 

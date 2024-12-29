@@ -99,11 +99,21 @@ def cast_array_to_float(arr: ArrayLike, dtype: type = np.float32):
     return np.char.partition(arr, "(")[..., 0].astype(dtype)
 
 
+# def _accumulate_nonsimple_data(data_iter, line=""):
+#     """Accumulate nonsimmple (multi-line) data entries into a single string."""
+#     while _line_is_continued(data_iter.peek(None)):
+#         line += _strip_comments(next(data_iter))
+#     return _semicolon_to_string(line)
 def _accumulate_nonsimple_data(data_iter, line=""):
     """Accumulate nonsimmple (multi-line) data entries into a single string."""
+    semicolon_count = 0
     while _line_is_continued(data_iter.peek(None)):
-        line += _strip_comments(next(data_iter))
-    return _semicolon_to_string(line)
+        while data_iter.peek(None) and semicolon_count < 2:
+            buffer = data_iter.peek().split("#")[0].replace(" ", "")
+            if ";\n" in buffer or buffer[:1] == ";":
+                semicolon_count += 1
+            line += next(data_iter)
+    return line
 
 
 def _is_key(line: str | None):
