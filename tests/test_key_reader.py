@@ -11,14 +11,12 @@ def remove_invalid(s):
         return None
     return s.replace("\r", "").replace("\n", "")
 
+
 def _gemmi_read_keys(filename, keys, as_number=True):
     file_block = cif.read_file(filename).sole_block()
     if as_number:
         return np.array([cif.as_number(file_block.find_value(key)) for key in keys])
-    return np.array(
-        # [file_block.find_value(key).replace("\r", "").replace("\n","") for key in keys]
-        [remove_invalid(file_block.find_value(key)) for key in keys]
-    )
+    return np.array([remove_invalid(file_block.find_value(key)) for key in keys])
 
 
 @cif_files_mark

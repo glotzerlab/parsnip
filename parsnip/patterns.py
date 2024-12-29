@@ -143,6 +143,8 @@ def _semicolon_to_string(line: str):
 
 def _line_is_continued(line: str | None):
     return line is not None and line.strip()[:1] == ";"
+
+
 # def _line_is_continued(line: str | None, line_so_far: str):
 #     return line is not None and line.strip()[:1] == ";" and line_so_far.count(";") < 2
 
