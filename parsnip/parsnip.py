@@ -586,14 +586,22 @@ class CifFile:
             #     print(line)
             #     return line is not None and p is not None and p.strip()[:1] == ";"
             def __line_is_continued(line: str | None, line_so_far: str):
-                return line is not None and line.strip()[:1] == ";" and line_so_far.count(";") < 2
+                return (line is not None and line.strip()[:1] == ";") and line_so_far.count(";") < 2
 
-            while __line_is_continued(data_iter.peek(None), line):
-                line += _strip_comments(next(data_iter))
-            # while _line_is_continued(data_iter.peek(None)):
-            #     while data_iter.peek(None) and line.count(";") < 2:
-            #         line += _strip_comments(next(data_iter))
-                # print("line=", [line])
+            # while __line_is_continued(data_iter.peek(None), line):
+            #     line += _strip_comments(next(data_iter))
+            #     print([line])
+            # def _accumulate_nonsimple_data(data_iter, line):
+            #     if _line_is_continued(data_iter.peek(None)):
+            #         while data_iter.peek(None) and line.count(";") < 2:
+            #             line += _strip_comments(next(data_iter))
+            #         print(line)
+            # line = _accumulate_nonsimple_data(data_iter, line)
+            if _line_is_continued(data_iter.peek(None)):
+                while data_iter.peek(None) and line.count(";") < 2:
+                    # line += _strip_comments(next(data_iter))
+                    line += next(data_iter)
+                print("line=", [line])
             # line = _semicolon_to_string(line)
             # print([line])
             # line = _accumulate_nonsimple_data(data_iter, line)
@@ -610,7 +618,7 @@ class CifFile:
             # Extract key-value pairs and save to the internal state ===================
             pair = self._cpat["key_value_general"].match(line)
             if pair is not None:
-                # print(pair.groups())
+                print(pair.groups())
                 self._pairs.update(
                     {
                         pair.groups()[0]: _try_cast_to_numeric(
@@ -696,7 +704,7 @@ class CifFile:
 
     PATTERNS: ClassVar = {
         "key_value_numeric": r"^(_[\w\.]+)[ |\t]+(-?\d+\.?\d*)",
-        "key_value_general": r"^(_[\w\.-]+)[ |\t]+([^#^\n]+)",
+        "key_value_general": r"^(_[\w\.-]+)\s+([^#^\n]+)",
         "table_delimiter": r"([Ll][Oo][Oo][Pp]_)[ |\t]*([^\n]*)",
         "block_delimiter": r"([Dd][Aa][Tt][Aa]_)[ |\t]*([^\n]*)",
         "key_list": r"_[\w_\.*]+[\[\d\]]*",

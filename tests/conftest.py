@@ -92,7 +92,7 @@ amcsd_seifertite = CifData(
         "_journal_year",
         "_journal_page_first",
         "_journal_page_last",
-        # "_publ_section_title", # TODO: does not read!
+        "_publ_section_title", # TODO: does not read!
         "_database_code_amcsd",
         "_chemical_formula_sum",
         "_cell_length_a",

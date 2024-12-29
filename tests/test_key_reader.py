@@ -6,14 +6,15 @@ from gemmi import cif
 def _gemmi_read_keys(filename, keys, as_number=True):
     file_block = cif.read_file(filename).sole_block()
     if as_number:
-        return np.array([cif.as_number(file_block.find_value(key)) for key in keys])
-    return np.array([file_block.find_value(key) for key in keys])
+        return np.array([cif.as_number(file_block.find_value(k)) for k in keys])
+    return np.array(
+        [file_block.find_value(k).replace(r"\r", "").replace(r"\n","") for k in keys]
+    )
 
 
 @cif_files_mark
 def test_read_key_value_pairs(cif_data):
     parsnip_data = cif_data.file[cif_data.single_value_keys]
-    # print(parsnip_data)
     for i, value in enumerate(parsnip_data):
         assert cif_data.file[cif_data.single_value_keys[i]] == value
     gemmi_data = _gemmi_read_keys(
