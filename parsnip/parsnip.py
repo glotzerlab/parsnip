@@ -582,8 +582,8 @@ class CifFile:
                     buffer = data_iter.peek().split("#")[0].replace(" ", "")
                     if ";\n" in buffer or buffer[:1] == ";":
                         semicolon_count += 1
-                    print("added", [data_iter.peek()], semicolon_count)
                     line += next(data_iter)
+            # TODO: wrap into function and test in table reader
 
             # Skip processing if the line contains no data =============================
             if line == "" or _strip_comments(line) == "":
