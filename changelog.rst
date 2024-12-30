@@ -5,6 +5,7 @@ The format is based on `Keep a Changelog <http://keepachangelog.com/en/1.1.0/>`_
 This project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`__.
 
 v1.0.0 - 20xx-xx-xx
+-------------------
 
 Added
 ~~~~~
@@ -25,6 +26,7 @@ Dependencies
 
 
 v0.1.0 - 2024-12-20
+-------------------
 
 Added
 ~~~~~
