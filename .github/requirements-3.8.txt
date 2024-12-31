@@ -20,12 +20,15 @@ kiwisolver==1.4.7
     # via matplotlib
 matplotlib==3.7.5
     # via ase
+more-itertools==10.5.0
+    # via parsnip (pyproject.toml)
 numpy==1.24.4
     # via
     #   parsnip (pyproject.toml)
     #   ase
     #   contourpy
     #   matplotlib
+    #   pycifrw
     #   scipy
 packaging==24.2
     # via
@@ -35,6 +38,10 @@ pillow==10.4.0
     # via matplotlib
 pluggy==1.5.0
     # via pytest
+ply==3.11
+    # via pycifrw
+pycifrw==4.4.6
+    # via -r tests/requirements.in
 pyparsing==3.1.4
     # via matplotlib
 pytest==8.3.4
