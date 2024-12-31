@@ -29,6 +29,8 @@ __pycache__/
 .coverage*
 .hypothesis/
 .pytest_cache/
+tests/sample_data/CIFTEST*
+
 
 # Development tooling
 .ipynb_checkpoints/
