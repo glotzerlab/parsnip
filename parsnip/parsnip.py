@@ -676,7 +676,7 @@ class CifFile:
         "table_delimiter": r"([Ll][Oo][Oo][Pp]_)[ |\t]*([^\n]*)",
         "block_delimiter": r"([Dd][Aa][Tt][Aa]_)[ |\t]*([^\n]*)",
         "key_list": r"_[\w_\.*]+[\[\d\]]*",
-        "space_delimited_data": r"(\'[^\']*\'|\"[^\"]*\"]|[^\'\" \t]*)[ | \t]*",
+        "space_delimited_data": r"(\;[^\;]*\;|\'[^\']*\'|\"[^\"]*\"]|[^\'\"\;\s]*)\s*",
     }
     """Regex patterns used when parsing files.
 

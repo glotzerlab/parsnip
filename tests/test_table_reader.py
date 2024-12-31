@@ -5,6 +5,9 @@ import pytest
 from ase.io import cif as asecif
 from conftest import bad_cif, cif_files_mark
 from gemmi import cif
+from CifFile import CifFile as pycifRW
+
+from more_itertools import flatten
 
 STR_WIDTH_MAX = 128
 """Maximum width for valid fields in the test suite.
@@ -17,6 +20,16 @@ Used to simplify processing of structured arrays.
 def _gemmi_read_table(filename, keys):
     return np.array(cif.read_file(filename).sole_block().find(keys))
 
+
+@cif_files_mark
+def test_reads_all_keys(cif_data):
+    pycif = pycifRW(cif_data.filename).first_block()
+    loop_keys = [*flatten(pycif.loops.values())]
+    all_keys = [key for key in pycif.true_case.values() if key.lower() in loop_keys]
+
+    found_labels = [*flatten(cif_data.file.table_labels)]
+    for key in all_keys:
+        assert key in found_labels, f"{found_labels}"
 
 @cif_files_mark
 def test_read_symop(cif_data):

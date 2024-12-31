@@ -20,6 +20,7 @@ class CifData:
     atom_site_keys: tuple[str, ...]
     file: CifFile
     failing: tuple[str, ...] = ()
+    """Test cases that DO NOT read properly."""
     manual_keys: tuple[str, ...] = ()
 
 
@@ -109,45 +110,45 @@ izasc_gismondine = CifData(
     file=CifFile(data_file_path + "zeolite_clo.cif"),
 )
 
-with pytest.warns(ParseWarning, match="cannot be resolved into a table"):
-    pdb_4INS = CifData(
-        filename=data_file_path + "PDB_4INS_head.cif",
-        symop_keys=("_pdbx_struct_oper_list.symmetry_operation",),
-        atom_site_keys=(
-            "_chem_comp.id",
-            "_chem_comp.type",
-            "_chem_comp.mon_nstd_flag",
-            "_chem_comp.name",
-            "_chem_comp.pdbx_synonyms",
-            "_chem_comp.formula",
-            "_chem_comp.formula_weight",
-        ),
-        file=CifFile(data_file_path + "PDB_4INS_head.cif"),
-    )
+# with pytest.warns(ParseWarning, match="cannot be resolved into a table"):
+pdb_4INS = CifData(
+    filename=data_file_path + "PDB_4INS_head.cif",
+    symop_keys=("_pdbx_struct_oper_list.symmetry_operation",),
+    atom_site_keys=(
+        "_chem_comp.id",
+        "_chem_comp.type",
+        "_chem_comp.mon_nstd_flag",
+        "_chem_comp.name",
+        "_chem_comp.pdbx_synonyms",
+        "_chem_comp.formula",
+        "_chem_comp.formula_weight",
+    ),
+    file=CifFile(data_file_path + "PDB_4INS_head.cif"),
+)
 
 bad_cif = CifData(
-    filename=data_file_path + "INTENTIONALLY_BAD_CIF.cif",
-    symop_keys=("_space_group_symop_id", "_space_group_symop_operation_xyz"),
-    atom_site_keys=(
-        "_atom_site",
-        "_atom_site_type_symbol",
-        "_atom_site_symmetry_multiplicity",
-        "_atom_si te",
-        "_atom_site_fract_z",
-        "_this_key_does_not_exist",
-    ),
-    file=CifFile(data_file_path + "INTENTIONALLY_BAD_CIF.cif"),
-    manual_keys=(
-        "_cell_length_a",
-        "_cell_length_b",
-        "_cell_length_c",
-        "_cell_angle_alpha",
-        "_cell_angle_beta",
-        "_cell_angle_gamma",
-        "__________asdf",
-        "_-wasd",
-        "not_a_valid_key",
-    ),
+filename=data_file_path + "INTENTIONALLY_BAD_CIF.cif",
+symop_keys=("_space_group_symop_id", "_space_group_symop_operation_xyz"),
+atom_site_keys=(
+    "_atom_site",
+    "_atom_site_type_symbol",
+    "_atom_site_symmetry_multiplicity",
+    "_atom_si te",
+    "_atom_site_fract_z",
+    "_this_key_does_not_exist",
+),
+file=CifFile(data_file_path + "INTENTIONALLY_BAD_CIF.cif"),
+manual_keys=(
+    "_cell_length_a",
+    "_cell_length_b",
+    "_cell_length_c",
+    "_cell_angle_alpha",
+    "_cell_angle_beta",
+    "_cell_angle_gamma",
+    "__________asdf",
+    "_-wasd",
+    "not_a_valid_key",
+),
 )
 
 cif_data_array = [
