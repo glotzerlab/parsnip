@@ -27,7 +27,7 @@
 
 .. _parse:
 
-Importing ``parsnip`` allows users to read standard CIF files (including those under the `CIF 1.1 <https://www.iucr.org/resources/cif/spec/version1.1>`_ and `CIF 2.0 <https://www.iucr.org/resources/cif/cif2>`_ standards), as well as many features from the `mmCIF <https://pdb101.rcsb.org/learn/guide-to-understanding-pdb-data/beginner’s-guide-to-pdb-structures-and-the-pdbx-mmcif-format>`_ format.
+Importing ``parsnip`` allows users to read `CIF 1.1 <https://www.iucr.org/resources/cif/spec/version1.1>`_ files, as well as many features from the `CIF 2.0 <https://www.iucr.org/resources/cif/cif2>`_ and `mmCIF <https://pdb101.rcsb.org/learn/guide-to-understanding-pdb-data/beginner’s-guide-to-pdb-structures-and-the-pdbx-mmcif-format>`_ formats.
 Creating a :class:`~.CifFile` object provides easy access to name-value :attr:`~.CifFile.pairs`, as well
 as `loop\_`-delimited :attr:`~.CifFile.tables`. Data entries can be extracted as python primitives or
 numpy arrays for further use.
