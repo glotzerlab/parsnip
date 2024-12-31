@@ -3,10 +3,9 @@ import warnings
 import numpy as np
 import pytest
 from ase.io import cif as asecif
+from CifFile import CifFile as pycifRW
 from conftest import bad_cif, cif_files_mark
 from gemmi import cif
-from CifFile import CifFile as pycifRW
-
 from more_itertools import flatten
 
 STR_WIDTH_MAX = 128
@@ -30,6 +29,7 @@ def test_reads_all_keys(cif_data):
     found_labels = [*flatten(cif_data.file.table_labels)]
     for key in all_keys:
         assert key in found_labels, f"{found_labels}"
+
 
 @cif_files_mark
 def test_read_symop(cif_data):
