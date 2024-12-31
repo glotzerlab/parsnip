@@ -672,7 +672,7 @@ class CifFile:
 
     PATTERNS: ClassVar = {
         "key_value_numeric": r"^(_[\w\.]+)[ |\t]+(-?\d+\.?\d*)",
-        "key_value_general": r"^(_[\w\.\-/]+)\s+([^#]+)",
+        "key_value_general": r"^(_[\w\.\-/|\[\d\]]+)\s+([^#]+)",
         "table_delimiter": r"([Ll][Oo][Oo][Pp]_)[ |\t]*([^\n]*)",
         "block_delimiter": r"([Dd][Aa][Tt][Aa]_)[ |\t]*([^\n]*)",
         "key_list": r"_[\w_\.*]+[\[\d\]]*",
