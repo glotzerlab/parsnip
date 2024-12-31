@@ -18,6 +18,9 @@ from numpy.typing import ArrayLike
 
 from parsnip._errors import ParseWarning
 
+ALLOWED_DELIMITERS = [";\n", "'''", '"""']
+"""Delimiters allowed for nonsimple (multi-line) data entries."""
+
 
 def _safe_eval(str_input: str, x: int | float, y: int | float, z: int | float):
     """Attempt to safely evaluate a string of symmetry equivalent positions.
@@ -101,12 +104,12 @@ def cast_array_to_float(arr: ArrayLike, dtype: type = np.float32):
 
 def _accumulate_nonsimple_data(data_iter, line=""):
     """Accumulate nonsimmple (multi-line) data entries into a single string."""
-    semicolon_count = 0
+    delimiter_count = 0
     while _line_is_continued(data_iter.peek(None)):
-        while data_iter.peek(None) and semicolon_count < 2:
+        while data_iter.peek(None) and delimiter_count < 2:
             buffer = data_iter.peek().split("#")[0].replace(" ", "")
-            if ";\n" in buffer or buffer[:1] == ";":
-                semicolon_count += 1
+            if buffer[:1] == ";" or any(s in buffer for s in ALLOWED_DELIMITERS):
+                delimiter_count += 1
             line += next(data_iter)
     return line
 
