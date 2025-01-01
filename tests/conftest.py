@@ -1,4 +1,6 @@
 # ruff: noqa: N816. Allow mixed-case global variables
+from __future__ import annotations
+
 import os
 from dataclasses import dataclass
 
