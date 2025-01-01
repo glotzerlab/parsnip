@@ -17,9 +17,9 @@ data_file_path = os.path.dirname(__file__) + "/sample_data/"
 @dataclass
 class CifData:
     filename: str
-    symop_keys: tuple[str, ...]
-    atom_site_keys: tuple[str, ...]
     file: CifFile
+    symop_keys: tuple[str, ...] = ()
+    atom_site_keys: tuple[str, ...] = ()
     failing: tuple[str, ...] = ()
     """Test cases that DO NOT read properly."""
     manual_keys: tuple[str, ...] = ()

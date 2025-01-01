@@ -88,18 +88,18 @@ This segment of the table shown above contains the table data, with 6 columns an
 .. _structured arrays: https://numpy.org/doc/stable/user/basics.rec.html
 
 Now, let's read the table. `parsnip` stores data as Numpy `structured arrays`_, which
-allow for a dict-like access of data columns. The :attr:`~.tables` property returns a
-list of such arrays, although the :attr:`~.get_from_tables` method is often more
+allow for a dict-like access of data columns. The :attr:`~.loops` property returns a
+list of such arrays, although the :attr:`~.get_from_loops` method is often more
 convenient.
 
 
 .. code-block:: python
 
 
-    len(cif.tables)
+    len(cif.loops)
     ... 2
 
-    cif.tables[0]
+    cif.loops[0]
     ...  array(
     ...       [[('Cu1', '0.0000000000', '0.0000000000', '0.0000000000', 'Cu', 'a')]],
     ...       dtype=[
@@ -112,12 +112,12 @@ convenient.
     ...       ]
     ...  )
 
-    cif.tables[0]["_atom_site_label"]
+    cif.loops[0]["_atom_site_label"]
     ... array([['Cu1']], dtype='<U12')
 
 
     # (Unstructured) slices of tables can be easily accessed!
-    xyz = cif.get_from_tables(["_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z"])
+    xyz = cif.get_from_loops(["_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z"])
 
     print(xyz)
     ... array([['0.0000000000', '0.0000000000', '0.0000000000']], dtype='<U12')

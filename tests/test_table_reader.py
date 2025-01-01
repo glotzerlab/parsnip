@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 from ase.io import cif as asecif
 from CifFile import CifFile as pycifRW
-from conftest import bad_cif, cif_files_mark
+from conftest import bad_cif, cif_files_mark, ciftest6
 from gemmi import cif
 from more_itertools import flatten
 
@@ -32,14 +32,31 @@ def test_reads_all_keys(cif_data):
 
     for loop in pycif.loops.values():
         loop = [pycif.true_case[key] for key in loop]
-        parsnip_data = cif_data.file.get_from_tables(loop)
+        parsnip_data = cif_data.file.get_from_loops(loop)
+        gemmi_data = _gemmi_read_table(cif_data.filename, loop)
+        np.testing.assert_array_equal(parsnip_data, gemmi_data)
+
+
+def test_reads_all_keys_extra(cif_data=ciftest6):
+    return  # Not yet implemented!
+    pycif = pycifRW(cif_data.filename).first_block()
+    loop_keys = [*flatten(pycif.loops.values())]
+    all_keys = [key for key in pycif.true_case.values() if key.lower() in loop_keys]
+
+    found_labels = [*flatten(cif_data.file.table_labels)]
+    for key in all_keys:
+        assert key in found_labels, f"Missing label: {found_labels}"
+
+    for loop in pycif.loops.values():
+        loop = [pycif.true_case[key] for key in loop]
+        parsnip_data = cif_data.file.get_from_loops(loop)
         gemmi_data = _gemmi_read_table(cif_data.filename, loop)
         np.testing.assert_array_equal(parsnip_data, gemmi_data)
 
 
 @cif_files_mark
 def test_read_symop(cif_data):
-    parsnip_data = cif_data.file.get_from_tables(cif_data.symop_keys)
+    parsnip_data = cif_data.file.get_from_loops(cif_data.symop_keys)
     gemmi_data = _gemmi_read_table(cif_data.filename, cif_data.symop_keys)
 
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
@@ -47,7 +64,7 @@ def test_read_symop(cif_data):
 
 @cif_files_mark
 def test_read_atom_sites(cif_data):
-    parsnip_data = cif_data.file.get_from_tables(cif_data.atom_site_keys)
+    parsnip_data = cif_data.file.get_from_loops(cif_data.atom_site_keys)
     gemmi_data = _gemmi_read_table(cif_data.filename, cif_data.atom_site_keys)
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
     assert (key in cif_data.file.table_labels for key in cif_data.atom_site_keys)
@@ -64,7 +81,7 @@ def test_read_atom_sites(cif_data):
             occ for site in atoms.info["occupancy"].values() for occ in site.values()
         ]
         np.testing.assert_array_equal(
-            cif_data.file.get_from_tables("_atom_site_occupancy")
+            cif_data.file.get_from_loops("_atom_site_occupancy")
             .squeeze()
             .astype(float),
             ase_data,
@@ -77,7 +94,7 @@ def test_read_atom_sites(cif_data):
 )
 def test_partial_table_read(cif_data, subset):
     subset_of_keys = tuple(np.array(cif_data.atom_site_keys)[subset])
-    parsnip_data = cif_data.file.get_from_tables(subset_of_keys)
+    parsnip_data = cif_data.file.get_from_loops(subset_of_keys)
     gemmi_data = _gemmi_read_table(cif_data.filename, subset_of_keys)
 
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
@@ -86,7 +103,7 @@ def test_partial_table_read(cif_data, subset):
 @pytest.mark.skip("Would be nice to pass, but we are at least as good as gemmi here.")
 def test_bad_cif_symop(cif_data=bad_cif):
     # This file is thouroughly cooked - gemmi will not even read it.
-    parsnip_data = cif_data.file.get_from_tables(cif_data.symop_keys)
+    parsnip_data = cif_data.file.get_from_loops(cif_data.symop_keys)
     correct_data = [
         ["1", "x,y,z"],
         ["2", "-x,y,-z*1/2"],

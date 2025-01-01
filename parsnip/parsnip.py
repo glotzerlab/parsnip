@@ -88,16 +88,16 @@ class CifFile:
     >>> from parsnip import CifFile
     >>> cif = CifFile("doc/source/example_file.cif")
     >>> print(cif)
-    CifFile(fn=doc/source/example_file.cif) : 12 data entries, 2 data tables
+    CifFile(fn=doc/source/example_file.cif) : 12 data entries, 2 data loops
 
-    Data entries are accessible via the :attr:`~.pairs` and :attr:`~.tables` attributes:
+    Data entries are accessible via the :attr:`~.pairs` and :attr:`~.loops` attributes:
 
     >>> cif.pairs
     {'_journal_year': '1999', '_journal_page_first': '0', ...}
-    >>> cif.tables[0]
+    >>> cif.loops[0]
     array([[('Cu1', '0.0000000000', '0.0000000000', '0.0000000000', 'Cu', 'a')]],
           dtype=...)
-    >>> cif.tables[1]
+    >>> cif.loops[1]
     array([[('1', 'x,y,z')],
            [('96', 'z,y+1/2,x+1/2')],
            [('118', 'z+1/2,-y,x+1/2')],
@@ -106,7 +106,7 @@ class CifFile:
 
     .. tip::
 
-        See the docs for :attr:`__getitem__` and :attr:`get_from_tables` to query
+        See the docs for :attr:`__getitem__` and :attr:`get_from_loops` to query
         for data by key or column label!
 
     Parameters
@@ -121,13 +121,13 @@ class CifFile:
     def __init__(self, fn: str, cast_values: bool = False):
         """Create a CifFile object from a filename.
 
-        On construction, the entire file is parsed into key-value pairs and data tables.
+        On construction, the entire file is parsed into key-value pairs and data loops.
         Comment lines are ignored.
 
         """
         self._fn = fn
         self._pairs = {}
-        self._tables = []
+        self._loops = []
 
         self._cpat = {k: re.compile(pattern) for (k, pattern) in self.PATTERNS.items()}
         self._cast_values = cast_values
@@ -149,8 +149,8 @@ class CifFile:
         return self._pairs
 
     @property
-    def tables(self):
-        """A list of data tables extracted from the file.
+    def loops(self):
+        """A list of data tables (:code:``loop_``'s) extracted from the file.
 
         These are stored as `numpy structured arrays`_, which can be indexed by column
         labels. See the :attr:`~.structured_to_unstructured` helper function below for
@@ -163,23 +163,23 @@ class CifFile:
         list[:class:`numpy.ndarray[str]`]:
             A list of structured arrays containing table data from the file.
         """
-        return self._tables
+        return self._loops
 
     @property
     def table_labels(self):
         """A list of column labels for each data array.
 
-        This property is equivalent to :code:`[arr.dtype.names for arr in self.tables]`.
+        This property is equivalent to :code:`[arr.dtype.names for arr in self.loops]`.
 
         Returns
         -------
         list[list[str]]:
-            Column labels for :attr:`~.tables`, stored as a nested list of strings.
+            Column labels for :attr:`~.loops`, stored as a nested list of strings.
         """
-        return [arr.dtype.names for arr in self.tables]
+        return [arr.dtype.names for arr in self.loops]
 
-    def get_from_tables(self, index: ArrayLike):
-        """Return a column or columns from the matching table in :meth:`~.self.tables`.
+    def get_from_loops(self, index: ArrayLike):
+        """Return a column or columns from the matching table in :attr:`~.loops`.
 
         If index is a single string, a single column will be returned from the matching
         table. If index is an Iterable of strings, the corresponding table slices will
@@ -188,7 +188,7 @@ class CifFile:
 
         .. tip::
 
-            It is highly recommended that queries across multiple tables are provided in
+            It is highly recommended that queries across multiple loops are provided in
             separated calls to this function. This helps ensure output data is ordered
             as expected and allows for easier handling of cases where non-matching keys
             are provided.
@@ -198,7 +198,7 @@ class CifFile:
         -------
         Extract a single column from a single table:
 
-        >>> cif.get_from_tables("_symmetry_equiv_pos_as_xyz")
+        >>> cif.get_from_loops("_symmetry_equiv_pos_as_xyz")
         array([['x,y,z'],
                ['z,y+1/2,x+1/2'],
                ['z+1/2,-y,x+1/2'],
@@ -207,17 +207,17 @@ class CifFile:
         Extract multiple columns from a single table:
 
         >>> table_1_cols = ["_symmetry_equiv_pos_site_id", "_symmetry_equiv_pos_as_xyz"]
-        >>> cif.get_from_tables(table_1_cols)
+        >>> cif.get_from_loops(table_1_cols)
         array([['1', 'x,y,z'],
                ['96', 'z,y+1/2,x+1/2'],
                ['118', 'z+1/2,-y,x+1/2'],
                ['192', 'z+1/2,y+1/2,x']], dtype='<U14')
 
-        Extract multiple columns from multiple tables:
+        Extract multiple columns from multiple loops:
 
         >>> table_1_cols = ["_symmetry_equiv_pos_site_id", "_symmetry_equiv_pos_as_xyz"]
         >>> table_2_cols = ["_atom_site_type_symbol", "_atom_site_Wyckoff_label"]
-        >>> [cif.get_from_tables(cols) for cols in (table_1_cols, table_2_cols)]
+        >>> [cif.get_from_loops(cols) for cols in (table_1_cols, table_2_cols)]
         [array([['1', 'x,y,z'],
                ['96', 'z,y+1/2,x+1/2'],
                ['118', 'z+1/2,-y,x+1/2'],
@@ -228,14 +228,14 @@ class CifFile:
         .. caution::
 
             Returned arrays will match the ordering of input ``index`` keys if all
-            indices correspond to a single table. Indices that match multiple tables
-            will return all possible matches, in the order of the input tables. Lists of
-            input that correspond with multiple tables will return data from those
-            tables *in the order they were read from the file.*
+            indices correspond to a single table. Indices that match multiple loops
+            will return all possible matches, in the order of the input loops. Lists of
+            input that correspond with multiple loops will return data from those
+            loops *in the order they were read from the file.*
 
         Case where ordering of output matches the input file, not the provided keys:
 
-        >>> cif.get_from_tables([*table_1_cols, *table_2_cols])
+        >>> cif.get_from_loops([*table_1_cols, *table_2_cols])
         [array([['Cu', 'a']], dtype='<U12'),
          array([['1', 'x,y,z'],
                 ['96', 'z,y+1/2,x+1/2'],
@@ -256,7 +256,7 @@ class CifFile:
         """
         index = np.atleast_1d(index)
         result = []
-        for table in self.tables:
+        for table in self.loops:
             matches = index[np.any(index[:, None] == table.dtype.names, axis=1)]
             if len(matches) == 0:
                 continue
@@ -400,7 +400,7 @@ class CifFile:
         )
 
         # Only one key is valid in each standard, so we only ever get one match.
-        return self.get_from_tables(symmetry_keys)
+        return self.get_from_loops(symmetry_keys)
 
     def read_wyckoff_positions(self):
         r"""Extract symmetry-irreducible, fractional x,y,z coordinates from a CIF file.
@@ -414,12 +414,13 @@ class CifFile:
         """
         xyz_keys = ("_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z")
 
-        return cast_array_to_float(arr=self.get_from_tables(xyz_keys), dtype=float)
+        return cast_array_to_float(arr=self.get_from_loops(xyz_keys), dtype=float)
 
     def build_unit_cell(
         self,
         fractional: bool = True,
         n_decimal_places: int = 4,
+        wrap_coords: bool = True,  # TODO: docs
         verbose: bool = False,
     ):
         """Reconstruct atomic positions from Wyckoff sites and symmetry operations.
@@ -480,7 +481,8 @@ class CifFile:
         ]
 
         pos = np.vstack(all_frac_positions)
-        pos %= 1  # Wrap particles into the box
+        if wrap_coords:
+            pos %= 1  # Wrap particles into the box
 
         # Filter unique points. This takes some time but makes the method faster overall
         _, unique_indices, unique_counts = np.unique(
@@ -546,7 +548,7 @@ class CifFile:
     def structured_to_unstructured(cls, arr: np.ndarray):
         """Convert a structured (column-labeled) array to a standard unstructured array.
 
-        This is useful when extracting entire tables from :attr:`~.tables` for use in
+        This is useful when extracting entire loops from :attr:`~.loops` for use in
         other programs. This classmethod simply calls
         :code:`np.lib.recfunctions.structured_to_unstructured` on the input data to
         ensure the resulting array is properly laid out in memory. See
@@ -598,18 +600,18 @@ class CifFile:
                 )
 
             # Build up tables by incrementing through the iterator =====================
-            table = re.match(self._cpat["table_delimiter"], line)
+            loop = re.match(self._cpat["loop_delimiter"], line)
 
-            if table is not None:
-                table_keys, table_data = [], []
+            if loop is not None:
+                loop_keys, loop_data = [], []
 
                 # First, extract table headers. Must be prefixed with underscore
-                line_groups = table.groups()
-                if line_groups[-1] != "":  # Extract table keys from the _loop line
+                line_groups = loop.groups()
+                if line_groups[-1] != "":  # Extract loop keys from the _loop line
                     fragment = _strip_comments(line_groups[-1].strip())
                     if fragment[:1] == "_":
                         keys = self._cpat["key_list"].findall(fragment)
-                        table_keys.extend(keys if keys is not None else [])
+                        loop_keys.extend(keys if keys is not None else [])
                     else:
                         continue
 
@@ -617,7 +619,7 @@ class CifFile:
                     line = _accumulate_nonsimple_data(
                         data_iter, _strip_comments(next(data_iter))
                     )
-                    table_keys.extend(self._cpat["key_list"].findall(line))
+                    loop_keys.extend(self._cpat["key_list"].findall(line))
 
                 while _is_data(data_iter.peek(None)):
                     line = _accumulate_nonsimple_data(
@@ -625,11 +627,11 @@ class CifFile:
                     )
                     parsed_line = self._cpat["space_delimited_data"].findall(line)
                     parsed_line = [m for m in parsed_line if m != ""]
-                    table_data.extend([parsed_line] if parsed_line else [])
+                    loop_data.extend([parsed_line] if parsed_line else [])
 
                 n_elements, n_cols = (
-                    sum(len(row) for row in table_data),
-                    len(table_keys),
+                    sum(len(row) for row in loop_data),
+                    len(loop_keys),
                 )
 
                 if n_cols == 0:
@@ -637,7 +639,7 @@ class CifFile:
 
                 if n_elements % n_cols != 0:
                     warnings.warn(
-                        f"Parsed data for table {len(self.tables)+1} cannot be resolved"
+                        f"Parsed data for table {len(self.loops)+1} cannot be resolved"
                         f" into a table of the expected size and will be ignored. "
                         f"Got n={n_elements} items, expected c={n_cols} columns: "
                         f"n%c={n_elements % n_cols}).",
@@ -645,11 +647,11 @@ class CifFile:
                         stacklevel=2,
                     )
                     continue
-                if not all(len(key) == len(table_keys[0]) for key in table_keys):
-                    table_data = np.array([*flatten(table_data)]).reshape(-1, n_cols)
-                dt = _dtype_from_int(max(max(len(s) for s in l) for l in table_data))
+                if not all(len(key) == len(loop_keys[0]) for key in loop_keys):
+                    loop_data = np.array([*flatten(loop_data)]).reshape(-1, n_cols)
+                dt = _dtype_from_int(max(max(len(s) for s in l) for l in loop_data))
 
-                if len(set(table_keys)) < len(table_keys):
+                if len(set(loop_keys)) < len(loop_keys):
                     warnings.warn(
                         "Duplicate keys detected - table will not be processed.",
                         category=ParseWarning,
@@ -657,22 +659,22 @@ class CifFile:
                     )
                     continue
 
-                rectable = np.atleast_2d(table_data)
-                rectable.dtype = [*zip(table_keys, [dt] * n_cols)]
+                rectable = np.atleast_2d(loop_data)
+                rectable.dtype = [*zip(loop_keys, [dt] * n_cols)]
                 rectable = rectable.reshape(rectable.shape, order="F")
-                self.tables.append(rectable)
+                self.loops.append(rectable)
 
             if data_iter.peek(None) is None:
                 break
 
     def __repr__(self):
         n_pairs = len(self.pairs)
-        n_tabs = len(self.tables)
-        return f"CifFile(fn={self._fn}) : {n_pairs} data entries, {n_tabs} data tables"
+        n_tabs = len(self.loops)
+        return f"CifFile(fn={self._fn}) : {n_pairs} data entries, {n_tabs} data loops"
 
     PATTERNS: ClassVar = {
         "key_value_general": r"^(_[\w\.\-/|\[\d\]]+)\s+([^#]+)",
-        "table_delimiter": r"([Ll][Oo][Oo][Pp]_)[ |\t]*([^\n]*)",
+        "loop_delimiter": r"([Ll][Oo][Oo][Pp]_)[ |\t]*([^\n]*)",
         "block_delimiter": r"([Dd][Aa][Tt][Aa]_)[ |\t]*([^\n]*)",
         "key_list": r"_[\w_\.*]+[\[\d\]]*",
         "space_delimited_data": r"(\;[^\;]*\;|\'[^\']*\'|\"[^\"]*\"]|[^\'\"\;\s]*)\s*",
