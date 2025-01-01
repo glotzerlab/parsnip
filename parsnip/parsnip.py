@@ -673,7 +673,7 @@ class CifFile:
         return f"CifFile(fn={self._fn}) : {n_pairs} data entries, {n_tabs} data loops"
 
     PATTERNS: ClassVar = {
-        "key_value_general": r"^(_[\w\.\-/|\[\d\]]+)\s+([^#]+)",
+        "key_value_general": r"^(_[\w\.\-/\[\d\]]+)\s+([^#]+)",
         "loop_delimiter": r"([Ll][Oo][Oo][Pp]_)[ |\t]*([^\n]*)",
         "block_delimiter": r"([Dd][Aa][Tt][Aa]_)[ |\t]*([^\n]*)",
         "key_list": r"_[\w_\.*]+[\[\d\]]*",
