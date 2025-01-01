@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 from ase.io import cif as asecif
 from CifFile import CifFile as pycifRW
-from conftest import bad_cif, cif_files_mark, ciftest6
+from conftest import bad_cif, cif_files_mark
 from gemmi import cif
 from more_itertools import flatten
 
@@ -22,23 +22,6 @@ def _gemmi_read_table(filename, keys):
 
 @cif_files_mark
 def test_reads_all_keys(cif_data):
-    pycif = pycifRW(cif_data.filename).first_block()
-    loop_keys = [*flatten(pycif.loops.values())]
-    all_keys = [key for key in pycif.true_case.values() if key.lower() in loop_keys]
-
-    found_labels = [*flatten(cif_data.file.table_labels)]
-    for key in all_keys:
-        assert key in found_labels, f"Missing label: {found_labels}"
-
-    for loop in pycif.loops.values():
-        loop = [pycif.true_case[key] for key in loop]
-        parsnip_data = cif_data.file.get_from_loops(loop)
-        gemmi_data = _gemmi_read_table(cif_data.filename, loop)
-        np.testing.assert_array_equal(parsnip_data, gemmi_data)
-
-
-def test_reads_all_keys_extra(cif_data=ciftest6):
-    return  # Not yet implemented!
     pycif = pycifRW(cif_data.filename).first_block()
     loop_keys = [*flatten(pycif.loops.values())]
     all_keys = [key for key in pycif.true_case.values() if key.lower() in loop_keys]
