@@ -1,17 +1,29 @@
+# ruff: noqa: N816. Allow mixed-case global variables
+from __future__ import annotations
+
 import os
-from collections import namedtuple
+from dataclasses import dataclass
 
 import numpy as np
 import pytest
 
-# ruff: noqa: N816. Allow mixed-case global variables
+from parsnip import CifFile
+
+rng = np.random.default_rng(seed=161181914916)
 
 data_file_path = os.path.dirname(__file__) + "/sample_data/"
 
 
-CifData = namedtuple(
-    "CifData", ["filename", "symop_keys", "atom_site_keys", "single_value_keys"]
-)
+@dataclass
+class CifData:
+    filename: str
+    file: CifFile
+    symop_keys: tuple[str, ...] = ()
+    atom_site_keys: tuple[str, ...] = ()
+    failing: tuple[str, ...] = ()
+    """Test cases that DO NOT read properly."""
+    manual_keys: tuple[str, ...] = ()
+
 
 # Assorted keys to select from
 assorted_keys = np.loadtxt(data_file_path + "cif_file_keys.txt", dtype=str)
@@ -51,95 +63,59 @@ atom_site_keys = (
     "_atom_site_occupancy",
 )
 
-
 aflow_mC24 = CifData(
     filename=data_file_path + "AFLOW_mC24.cif",
     symop_keys=("_space_group_symop_operation_xyz",),
     atom_site_keys=atom_site_keys,
-    single_value_keys=(
-        "_audit_creation_method",
-        "_chemical_name_mineral",
-        "_chemical_formula_sum",
-        "_symmetry_space_group_name_H-M",
-        "_aflow_title",
-        "_aflow_params",
-        "_aflow_params_values",
-        "_aflow_Strukturbericht",
-        "_aflow_Pearson",
+    file=CifFile(data_file_path + "AFLOW_mC24.cif"),
+)
+
+amcsd_seifertite = CifData(
+    filename=data_file_path + "AMCSD_meteorite.cif",
+    symop_keys=("_space_group_symop_operation_xyz",),
+    atom_site_keys=(
+        atom_site_keys[0],
+        *atom_site_keys[2:5],
+        "_atom_site_U_iso_or_equiv",
     ),
+    file=CifFile(data_file_path + "AMCSD_meteorite.cif"),
 )
 
 bisd_Ccmm = CifData(
     filename=data_file_path + "B-IncStrDb_Ccmm.cif",
     symop_keys=("_space_group_symop_operation_xyz",),
-    # Our code works with extra keys, but gemmi does not!
-    atom_site_keys=(atom_site_keys[0], *atom_site_keys[2:]),
-    single_value_keys=(
-        "_journal_name_full",
-        "_journal_volume",
-        "_journal_year",
-        "_journal_page_first",
-        "_journal_page_last",
-        "_journal_paper_doi",
-        "_publ_contact_author_name",
-        "_publ_contact_author_email",
-        "_chemical_formula_sum",
-        "_space_group_crystal_system",
-        "_refine_ls_wR_factor_gt",
-    ),
+    atom_site_keys=(atom_site_keys[0], atom_site_keys[-1], *atom_site_keys[2:-1]),
+    file=CifFile(data_file_path + "B-IncStrDb_Ccmm.cif"),
 )
 
 ccdc_Pm3m = CifData(
     filename=data_file_path + "CCDC_1446529_Pm-3m.cif",
     symop_keys=("_space_group_symop_operation_xyz",),
-    atom_site_keys=sorted(atom_site_keys),
-    single_value_keys=(
-        "_audit_block_doi",
-        "_database_code_depnum_ccdc_archive",
-        "_computing_publication_material",
-        "_chemical_formula_sum",
-        "_cell_formula_units_Z",
-        "_space_group_crystal_system",
-        "_space_group_name_H-M_alt",
-        "_diffrn_ambient_temperature",
-        "_reflns_number_gt",
-        "_refine_ls_R_factor_gt",
-        "_refine_ls_wR_factor_gt",
-        "_refine_diff_density_max",
-        "_refine_diff_density_min",
-        "_refine_diff_density_rms",
-    ),
+    atom_site_keys=(*sorted(atom_site_keys),),
+    file=CifFile(data_file_path + "CCDC_1446529_Pm-3m.cif"),
+    failing=("_refine_ls_weighting_details",),
 )
 
 cod_aP16 = CifData(
     filename=data_file_path + "COD_1540955_aP16.cif",
     symop_keys=("_symmetry_equiv_pos_as_xyz",),
     atom_site_keys=atom_site_keys,
-    single_value_keys=(
-        "_journal_page_first",
-        "_journal_page_last",
-        "_journal_volume",
-        "_journal_year",
-        "_chemical_formula_sum",
-        "_chemical_name_systematic",
-        "_space_group_IT_number",
-        "_symmetry_space_group_name_Hall",
-        "_symmetry_space_group_name_H-M",
-        "_cell_formula_units_Z",
-        "_cell_volume",
-        "_citation_journal_id_ASTM",
-        "_cod_data_source_file",
-        "_cod_data_source_block",
-        "_cod_original_cell_volume",
-        "_cod_original_formula_sum",
-        "_cod_database_code",
-    ),
+    file=CifFile(data_file_path + "COD_1540955_aP16.cif"),
+    failing=("_journal_name_full",),
 )
 
+izasc_gismondine = CifData(
+    filename=data_file_path + "zeolite_clo.cif",
+    symop_keys=("_symmetry_equiv_pos_as_xyz",),
+    atom_site_keys=atom_site_keys[:-1],
+    file=CifFile(data_file_path + "zeolite_clo.cif"),
+)
+
+# with pytest.warns(ParseWarning, match="cannot be resolved into a table"):
 pdb_4INS = CifData(
     filename=data_file_path + "PDB_4INS_head.cif",
     symop_keys=("_pdbx_struct_oper_list.symmetry_operation",),
-    atom_site_keys=(  # mmCIF stores atom sites differently, so use a different table.
+    atom_site_keys=(
         "_chem_comp.id",
         "_chem_comp.type",
         "_chem_comp.mon_nstd_flag",
@@ -148,23 +124,7 @@ pdb_4INS = CifData(
         "_chem_comp.formula",
         "_chem_comp.formula_weight",
     ),
-    single_value_keys=(
-        "_symmetry.entry_id",
-        "_symmetry.space_group_name_H-M",
-        "_symmetry.pdbx_full_space_group_name_H-M",
-        "_symmetry.cell_setting",
-        "_symmetry.Int_Tables_number",
-        "_symmetry.space_group_name_Hall",
-        "_refine_hist.pdbx_refine_id",
-        "_refine_hist.cycle_id",
-        "_refine_hist.pdbx_number_atoms_protein",
-        "_refine_hist.pdbx_number_atoms_nucleic_acid",
-        "_refine_hist.pdbx_number_atoms_ligand",
-        "_refine_hist.number_atoms_solvent",
-        "_refine_hist.number_atoms_total",
-        "_refine_hist.d_res_high",
-        "_refine_hist.d_res_low",
-    ),
+    file=CifFile(data_file_path + "PDB_4INS_head.cif"),
 )
 
 bad_cif = CifData(
@@ -178,7 +138,8 @@ bad_cif = CifData(
         "_atom_site_fract_z",
         "_this_key_does_not_exist",
     ),
-    single_value_keys=(
+    file=CifFile(data_file_path + "INTENTIONALLY_BAD_CIF.cif"),
+    manual_keys=(
         "_cell_length_a",
         "_cell_length_b",
         "_cell_length_c",
@@ -191,9 +152,85 @@ bad_cif = CifData(
     ),
 )
 
-cif_data_array = [aflow_mC24, bisd_Ccmm, ccdc_Pm3m, cod_aP16, pdb_4INS]
+cif_data_array = [
+    aflow_mC24,
+    amcsd_seifertite,
+    bisd_Ccmm,
+    ccdc_Pm3m,
+    cod_aP16,
+    izasc_gismondine,
+    pdb_4INS,
+]
 cif_files_mark = pytest.mark.parametrize(
     argnames="cif_data",
     argvalues=cif_data_array,
     ids=[cif.filename.split("/")[-1] for cif in cif_data_array],
 )
+LINE_TEST_CASES = [
+    None,
+    "_key",
+    "__key",
+    "_key.loop_",
+    "asdf        ",
+    "loop_",
+    "",
+    " ",
+    "# comment",
+    "_key#comment_ # 2",
+    "loop_##com",
+    "'my quote' # abc",
+    "\"malformed ''#",
+    ";oddness\"'\n;asdf",
+    "_key.loop.inner_",
+    "normal_case",
+    "multi.periods....",
+    "__underscore__",
+    "_key_with_numbers123",
+    "test#hash",
+    "#standalone",
+    "'quote_in_single'",
+    '"quote_in_double"',
+    " \"mismatched_quotes' ",
+    ";semicolon_in_text",
+    ";;double_semicolon",
+    "trailing_space ",
+    " leading_space",
+    "_key.with#hash.loop",
+    "__double#hash#inside__",
+    "single'; quote",
+    'double;"quote',
+    "#comment;inside",
+    "_tricky'combination;#",
+    ";'#another#combo;'",
+    '"#edge_case"',
+    'loop;"#complex"case',
+    "_'_weird_key'_",
+    "semi;;colon_and_hash#",
+    "_odd.key_with#hash",
+    "__leading_double_underscore__",
+    "middle;;semicolon",
+    "#just_a_comment",
+    '"escaped "quote"',
+    "'single_quote_with_hash#'",
+    "_period_end.",
+    "loop_.trailing_",
+    "escaped\\nnewline",
+    "#escaped\\twith_tab ",
+    "only;semicolon",
+    "trailing_semicolon;",
+    "leading_semicolon;",
+    "_key;.semicolon",
+    "semicolon;hash#",
+    "complex\"';hash#loop",
+    "just_text",
+    'loop#weird"text;',
+    "nested'quotes\"here   ",
+    "normal_case2",
+    "__underscored_case__",
+    'escaped\\"quotes#',
+    ";semicolon#hash;",
+    "double#hash_inside##key",
+    "__double..periods__",
+    "key#comment ; and_more",
+    "_weird_;;#combo    ",
+]

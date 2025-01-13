@@ -1,10 +1,14 @@
 # Notes on the data
 
-All files for this test suite have been drawn from databases across the web. Citations are included in the files themselves.
+All files for this test suite have been drawn from databases across the web that do not require institutional logins or paid access. Citations are included in the files themselves.
 
 ## AFLOW:
 
 [mC24](https://aflow.org/prototype-encyclopedia/A_mC24_15_2e2f.html)
+
+## AMCSD:
+
+[Seifertite](https://rruff.geo.arizona.edu/AMS/minerals/Seifertite)
 
 ## Bilbao Incommensurate Structures Database (BISD):
 
@@ -17,6 +21,10 @@ All files for this test suite have been drawn from databases across the web. Cit
 ## Crystallographic Open Database (COD):
 
 [aP16](http://www.crystallography.net/cod/1540955.html)
+
+## IZA-SC Database of Zeolite structures
+
+[Gismondine](https://www.iza-structure.org/databases/)
 
 ## Protein Data Bank (PDB):
 

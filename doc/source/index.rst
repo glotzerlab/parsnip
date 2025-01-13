@@ -24,7 +24,6 @@
 
    package-parse
    package-patterns
-   package-unitcells
 
 
 .. toctree::
@@ -32,7 +31,6 @@
    :caption: Reference
 
    genindex
-   modindex
    development
    changelog
    credits

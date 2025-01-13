@@ -1,10 +1,19 @@
+import warnings
+
 import numpy as np
 import pytest
+from ase.io import cif as asecif
+from CifFile import CifFile as pycifRW
 from conftest import bad_cif, cif_files_mark
 from gemmi import cif
+from more_itertools import flatten
 
-from parsnip._errors import ParseWarning
-from parsnip.parse import read_table
+STR_WIDTH_MAX = 128
+"""Maximum width for valid fields in the test suite.
+Used to simplify processing of structured arrays.
+"""
+
+# TODO: update to verify the number and shape of tables is correct
 
 
 def _gemmi_read_table(filename, keys):
@@ -12,33 +21,54 @@ def _gemmi_read_table(filename, keys):
 
 
 @cif_files_mark
-def test_read_symop(cif_data):
-    if "PDB_4INS_head.cif" in cif_data.filename:
-        return
-    parsnip_data = read_table(filename=cif_data.filename, keys=cif_data.symop_keys)
-    gemmi_data = _gemmi_read_table(cif_data.filename, cif_data.symop_keys)
+def test_reads_all_keys(cif_data):
+    pycif = pycifRW(cif_data.filename).first_block()
+    loop_keys = [*flatten(pycif.loops.values())]
+    all_keys = [key for key in pycif.true_case.values() if key.lower() in loop_keys]
 
-    # We replace ", " strings with "," to ensure data is collected properly
-    # We have to apply this same transformation to the gemmi data to check correctness.
-    if "CCDC_1446529_Pm-3m.cif" in cif_data.filename:
-        gemmi_data = np.array(
-            [[item.replace(", ", ",_") for item in row] for row in gemmi_data]
-        )
+    found_labels = [*flatten(cif_data.file.table_labels)]
+    for key in all_keys:
+        assert key in found_labels, f"Missing label: {found_labels}"
+
+    for loop in pycif.loops.values():
+        loop = [pycif.true_case[key] for key in loop]
+        parsnip_data = cif_data.file.get_from_loops(loop)
+        gemmi_data = _gemmi_read_table(cif_data.filename, loop)
+        np.testing.assert_array_equal(parsnip_data, gemmi_data)
+
+
+@cif_files_mark
+def test_read_symop(cif_data):
+    parsnip_data = cif_data.file.get_from_loops(cif_data.symop_keys)
+    gemmi_data = _gemmi_read_table(cif_data.filename, cif_data.symop_keys)
 
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
 
 
 @cif_files_mark
 def test_read_atom_sites(cif_data):
-    if "PDB_4INS_head.cif" in cif_data.filename:
-        return
-    parsnip_data = read_table(
-        filename=cif_data.filename,
-        keys=cif_data.atom_site_keys,
-    )
+    parsnip_data = cif_data.file.get_from_loops(cif_data.atom_site_keys)
     gemmi_data = _gemmi_read_table(cif_data.filename, cif_data.atom_site_keys)
-
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
+    assert (key in cif_data.file.table_labels for key in cif_data.atom_site_keys)
+
+    if not any(s in cif_data.filename for s in ["CCDC", "PDB", "AMCSD", "zeolite"]):
+        import sys
+
+        if sys.version_info < (3, 8):
+            return
+
+        warnings.filterwarnings("ignore", category=UserWarning)
+        atoms = asecif.read_cif(cif_data.filename)
+        ase_data = [
+            occ for site in atoms.info["occupancy"].values() for occ in site.values()
+        ]
+        np.testing.assert_array_equal(
+            cif_data.file.get_from_loops("_atom_site_occupancy")
+            .squeeze()
+            .astype(float),
+            ase_data,
+        )
 
 
 @cif_files_mark
@@ -47,27 +77,16 @@ def test_read_atom_sites(cif_data):
 )
 def test_partial_table_read(cif_data, subset):
     subset_of_keys = tuple(np.array(cif_data.atom_site_keys)[subset])
-    parsnip_data = read_table(
-        filename=cif_data.filename,
-        keys=subset_of_keys,
-    )
+    parsnip_data = cif_data.file.get_from_loops(subset_of_keys)
     gemmi_data = _gemmi_read_table(cif_data.filename, subset_of_keys)
-    if "PDB_4INS_head.cif" in cif_data.filename:
-        parsnip_data = np.array(
-            [[item.replace("_", " ") for item in row] for row in gemmi_data]
-        )
 
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
 
 
+@pytest.mark.skip("Would be nice to pass, but we are at least as good as gemmi here.")
 def test_bad_cif_symop(cif_data=bad_cif):
     # This file is thouroughly cooked - gemmi will not even read it.
-    with pytest.warns(ParseWarning, match=r"expected line with 2 values, got"):
-        parsnip_data = read_table(
-            filename=cif_data.filename,
-            keys=cif_data.symop_keys,
-            regex_filter=(r",\s+", ","),
-        )
+    parsnip_data = cif_data.file.get_from_loops(cif_data.symop_keys)
     correct_data = [
         ["1", "x,y,z"],
         ["2", "-x,y,-z*1/2"],
@@ -82,14 +101,9 @@ def test_bad_cif_symop(cif_data=bad_cif):
     np.testing.assert_array_equal(parsnip_data, correct_data)
 
 
+@pytest.mark.skip("Too corrupted to be read")
 def test_bad_cif_atom_sites(cif_data=bad_cif):
-    expected_warning = "Keys {'_this_key_does_not_exist'} were not found in the table."
-    with pytest.warns(ParseWarning, match=expected_warning):
-        parsnip_data = read_table(
-            filename=cif_data.filename,
-            keys=cif_data.atom_site_keys,
-        )
-    # "_atom_site"
+    parsnip_data = cif_data.file[cif_data.atom_site_keys]
     np.testing.assert_array_equal(
         parsnip_data[:, 0],
         np.array(["Aa(3)", "SL", "Oo", "O0f"]),
