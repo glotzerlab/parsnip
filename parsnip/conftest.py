@@ -13,5 +13,9 @@ from . import CifFile
 # Set up doctests
 @pytest.fixture(autouse=True)
 def _setup_doctest(doctest_namespace):
+    import os
+
+    if "doc/source" not in os.getcwd():
+        os.chdir("doc/source")
     doctest_namespace["np"] = np
-    doctest_namespace["cif"] = CifFile("doc/source/example_file.cif")
+    doctest_namespace["cif"] = CifFile("example_file.cif")

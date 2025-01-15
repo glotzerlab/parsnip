@@ -86,9 +86,9 @@ class CifFile:
     To get started, simply provide a filename:
 
     >>> from parsnip import CifFile
-    >>> cif = CifFile("doc/source/example_file.cif")
+    >>> cif = CifFile("example_file.cif")
     >>> print(cif)
-    CifFile(fn=doc/source/example_file.cif) : 12 data entries, 2 data loops
+    CifFile(fn=example_file.cif) : 12 data entries, 2 data loops
 
     Data entries are accessible via the :attr:`~.pairs` and :attr:`~.loops` attributes:
 
