@@ -361,7 +361,10 @@ class CifFile:
                 "_cell_length_c",
                 *angle_keys,
             )
-        cell_data = cast_array_to_float(arr=self[box_keys], dtype=np.float64)
+        if self.cast_values:
+            cell_data = [float(x) for x in self[box_keys]]
+        else:
+            cell_data = cast_array_to_float(arr=self[box_keys], dtype=np.float64)
 
         def angle_is_invalid(x: float):
             return x <= 0.0 or x >= 180.0
