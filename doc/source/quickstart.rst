@@ -16,15 +16,14 @@ Now, let's read extract the key-value pairs from our cif file. This subset of da
 usually contains information to reconstruct the system's unit cell, and provides
 information regarding the origin of the data.
 
-.. invisible-code-block: python
+.. invisible-code-block:
 
    from parsnip import CifFile
-   filename = "doc/source/example_file.cif"
-
+   filename = "example_file.cif"
    cif = CifFile(filename)
 
 
-.. doctest:: python
+.. doctest::
 
     >>> from parsnip import CifFile
     >>> filename = "doc/source/example_file.cif" # TODO: fix filename
