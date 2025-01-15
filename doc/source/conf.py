@@ -1,5 +1,4 @@
 """Configuration file for the Sphinx documentation builder."""
-
 import datetime
 
 CURRENT_YEAR = datetime.date.today().year
@@ -34,13 +33,6 @@ extensions = [
 copybutton_prompt_text = ">>> "
 copybutton_remove_prompts = True
 copybutton_line_continuation_character = "\\"
-
-
-# Configure sphinx-build doctest
-# doctest_default_flags = (
-#     doctest.NORMALIZE_WHITESPACE | doctest.IGNORE_EXCEPTION_DETAIL | doctest.ELLIPSIS
-# )
-
 
 templates_path = ["_templates"]
 exclude_patterns = ["build", "Thumbs.db", ".DS_Store"]
