@@ -47,6 +47,8 @@ pytest==7.4.4
     # via -r tests/requirements.in
 python-dateutil==2.9.0.post0
     # via matplotlib
+pytest-doctestplus==1.3.0
+    # via -r tests/requirements.in
 scipy==1.7.3
     # via ase
 six==1.17.0
