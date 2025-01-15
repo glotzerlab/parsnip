@@ -42,7 +42,7 @@ console_output_style = "progress"
 addopts = ["-p no:doctest"]
 # doctest_rst = true
 # doctest_optionflags = ["NORMALIZE_WHITESPACE", "ELLIPSIS", "FLOAT_CMP", "REPORT_CDIFF"]
-doctest_optionflags = ["NORMALIZE_WHITESPACE", "ELLIPSIS"]
+# doctest_optionflags = ["NORMALIZE_WHITESPACE", "ELLIPSIS"]
 
 [tool.ruff]
 include = ["*.py", "*.ipynb"]

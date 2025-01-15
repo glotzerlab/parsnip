@@ -3,20 +3,31 @@
 
 import doctest
 
+import pytest
 from sybil import Sybil
 from sybil.parsers.doctest import DocTestParser
+from sybil.parsers.rest import DocTestDirectiveParser
 
 DOCTEST_OPTIONFLAGS = (
     doctest.NORMALIZE_WHITESPACE | doctest.IGNORE_EXCEPTION_DETAIL | doctest.ELLIPSIS
 )
 
+@pytest.fixture(scope="module")
+def changedir():
+    import os
+    cwd = os.getcwd()
+    try:
+        os.chdir("doc/source")
+    finally:
+        os.chdir(cwd)
 
 pytest_collect_file = Sybil(
     parsers=[
-        # DocTestDirectiveParser(optionflags=DOCTEST_OPTIONFLAGS)
-        DocTestParser(optionflags=doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS)
+         DocTestParser(optionflags=DOCTEST_OPTIONFLAGS),
+         # DocTestDirectiveParser(optionflags=DOCTEST_OPTIONFLAGS)
+        # DocTestParser(optionflags=doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS)
     ],
     pattern="*.rst",
     path="doc/source",
-    # fixtures=['tempdir']
+    fixtures=['changedir']
 ).pytest()
