@@ -27,7 +27,7 @@ extensions = [
     "sphinx_copybutton",
     "pytest_doctestplus.sphinx.doctestplus",
     "autodocsumm",
-    "notfound.extension"
+    "notfound.extension",
 ]
 
 copybutton_prompt_text = ">>> "
