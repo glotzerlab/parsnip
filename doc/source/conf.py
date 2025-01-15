@@ -1,6 +1,7 @@
 """Configuration file for the Sphinx documentation builder."""
 
 import datetime
+import doctest
 
 CURRENT_YEAR = datetime.date.today().year
 # For the full list of built-in configuration values, see the documentation:
@@ -22,10 +23,18 @@ add_module_names = False
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
+    "sphinx.ext.doctest",
     "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
+    # "pytest_doctestplus.sphinx.doctestplus",
     "autodocsumm",
 ]
+
+# Configure sphinx-build doctest
+# doctest_default_flags = (
+#     doctest.NORMALIZE_WHITESPACE | doctest.IGNORE_EXCEPTION_DETAIL | doctest.ELLIPSIS
+# )
+
 
 templates_path = ["_templates"]
 exclude_patterns = ["build", "Thumbs.db", ".DS_Store"]

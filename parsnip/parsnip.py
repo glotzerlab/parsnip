@@ -302,7 +302,7 @@ class CifFile:
         if isinstance(index, Iterable) and not isinstance(index, str):
             return [self.pairs.get(k, None) for k in index]
 
-        return self.pairs[index]
+        return self.pairs.get(index, None)
 
     def read_cell_params(self, degrees: bool = True, mmcif: bool = False):
         r"""Read the `unit cell parameters`_ (lengths and angles) from a CIF file.

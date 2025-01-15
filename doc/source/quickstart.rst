@@ -16,13 +16,22 @@ Now, let's read extract the key-value pairs from our cif file. This subset of da
 usually contains information to reconstruct the system's unit cell, and provides
 information regarding the origin of the data.
 
-.. code-block:: python
+.. invisible-code-block: python
 
-    from parsnip import CifFile
-    filename = "my_file.cif"
-    cif = CifFile(filename)
-    print(cif.pairs)
-    ...    {
+   from parsnip import CifFile
+   filename = "doc/source/example_file.cif"
+
+   cif = CifFile(filename)
+
+
+.. doctest:: python
+
+    >>> from parsnip import CifFile
+    >>> filename = "doc/source/example_file.cif" # TODO: fix filename
+    >>> cif = CifFile(filename)
+
+    >>> cif.pairs
+    {
     ...      '_journal_year': '1999',
     ...      '_journal_page_first': '0',
     ...      '_journal_page_last': '123',
@@ -41,18 +50,17 @@ A `dict`-like getter syntax is provided to key-value pairs. Single keys function
 as a python dict, while lists of keys return lists of values. Keys not present in the
 :attr:`~.pairs` dict instead return :code:`None`.
 
-.. code-block:: python
+.. doctest:: python
 
-    cif["_journal_year"]
-    ... "1999"
+    >>> cif["_journal_year"]
+    '1999'
 
-    cif["_not_in_pairs"]
+    >>> cif["_not_in_pairs"]
     ... None
 
-    # Multiple keys can be accessed simultaneously!
-    cif[["_cell_length_a", "_cell_length_b", "_cell_length_c"]]
-
-    ... ["3.6", "3.6", "3.6"]
+    >>> # Multiple keys can be accessed simultaneously!
+    >>> cif[["_cell_length_a", "_cell_length_b", "_cell_length_c"]]
+    ['3.6', '3.6', '3.6']
 
 Note that all data is stored and returned as strings by default. It is not generally
 feasible to determine whether a piece of data should be processed, as conversions may
@@ -60,16 +68,15 @@ be lossy. Setting the :attr:`~.cast_values` property to :code:`True` reprocesses
 data, converting to float or int where possible. Note that once data is reprocessed,
 a new CifFile object must be created to restore the original string data
 
-.. code-block:: python
+.. doctest:: python
 
-    cf.cast_values = True # Reprocesses our `pairs` dict
+    >>> cif.cast_values = True # Reprocess our `pairs` dict
 
-    cif["_journal_year"]
-    ... 1999
+    >>> cif["_journal_year"]
+    1999
 
-    cif[["_cell_length_a", "_cell_length_b", "_cell_length_c"]]
-
-    ... [3.6, 3.6, 3.6]
+    >>> cif[["_cell_length_a", "_cell_length_b", "_cell_length_c"]]
+    [3.6, 3.6, 3.6]
 
 
 Reading Tables
@@ -93,14 +100,14 @@ list of such arrays, although the :attr:`~.get_from_loops` method is often more
 convenient.
 
 
-.. code-block:: python
+.. doctest:: python
 
 
-    len(cif.loops)
-    ... 2
+    >>> len(cif.loops)
+    2
 
-    cif.loops[0]
-    ...  array(
+    >>> cif.loops[0]
+        array(
     ...       [[('Cu1', '0.0000000000', '0.0000000000', '0.0000000000', 'Cu', 'a')]],
     ...       dtype=[
     ...           ('_atom_site_label', '<U12'),
@@ -112,18 +119,18 @@ convenient.
     ...       ]
     ...  )
 
-    cif.loops[0]["_atom_site_label"]
-    ... array([['Cu1']], dtype='<U12')
+    >>> cif.loops[0]["_atom_site_label"]
+        array([['Cu1']], dtype='<U12')
 
 
-    # (Unstructured) slices of tables can be easily accessed!
-    xyz = cif.get_from_loops(["_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z"])
+    >>> # (Unstructured) slices of tables can be easily accessed!
+    >>> xyz = cif.get_from_loops(["_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z"])
 
-    print(xyz)
-    ... array([['0.0000000000', '0.0000000000', '0.0000000000']], dtype='<U12')
+    >>> xyz
+        array([['0.0000000000', '0.0000000000', '0.0000000000']], dtype='<U12')
 
-    print(xyz.astype(float))
-    ... array([[0.0, 0.0, 0.0]], dtype=np.float64)
+    >>> xyz.astype(float)
+        array([[0.0, 0.0, 0.0]], dtype=np.float64)
 
 
 
@@ -149,10 +156,10 @@ file), set :code:`fractional=False`
 
 .. _`freud`: https://freud.readthedocs.io/en/latest/modules/data.html#freud.data.UnitCell
 
-.. code-block:: python
+.. doctest:: python
 
-    pos = cif.build_unit_cell(fractional=True)
-    ...  array([[0. , 0. , 0. ],
+    >>> pos = cif.build_unit_cell(fractional=True)
+        array([[0. , 0. , 0. ],
     ...         [0. , 0.5, 0.5],
     ...         [0.5, 0. , 0.5],
     ...         [0.5, 0.5, 0. ]])

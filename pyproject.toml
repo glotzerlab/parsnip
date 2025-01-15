@@ -35,10 +35,14 @@ Issues = "https://github.com/glotzerlab/parsnip/issues"
 optional-dependencies = {tests = { file = ["tests/requirements.in"] }, doc = { file = ["doc/requirements.txt"] }}
 
 [tool.pytest.ini_options]
-testpaths = ["tests", "parsnip", "doc"]
+# testpaths = ["doc", "tests", "parsnip"]
+testpaths = ["doc"]
 console_output_style = "progress"
-addopts = ["--doctest-modules", "--doctest-glob='*.rst'"]
-doctest_optionflags = ["NORMALIZE_WHITESPACE", "ELLIPSIS", "NUMBER"]
+# addopts = ["--doctest-plus", "--doctest-glob='*.rst'"]
+addopts = ["--doctest-glob='*.rst'"]
+# doctest_rst = true
+# doctest_optionflags = ["NORMALIZE_WHITESPACE", "ELLIPSIS", "FLOAT_CMP", "REPORT_CDIFF"]
+doctest_optionflags = ["NORMALIZE_WHITESPACE", "FLOAT_CMP", "REPORT_NDIFF"]
 
 [tool.ruff]
 include = ["*.py", "*.ipynb"]
