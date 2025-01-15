@@ -11,15 +11,15 @@ Let's assume we have the file my_file.cif in the current directory, and these ar
 Reading Keys
 ^^^^^^^^^^^^
 
-
 Now, let's read extract the key-value pairs from our cif file. This subset of data
 usually contains information to reconstruct the system's unit cell, and provides
 information regarding the origin of the data.
 
+
 .. testsetup::
 
     >>> import os
-    >>> os.chdir("doc/source")
+    >>> if "doc/source" not in os.getcwd(): os.chdir("doc/source")
 
 .. doctest::
 
@@ -28,26 +28,25 @@ information regarding the origin of the data.
     >>> cif = CifFile(filename)
 
     >>> cif.pairs
-    {
-    ...      '_journal_year': '1999',
-    ...      '_journal_page_first': '0',
-    ...      '_journal_page_last': '123',
-    ...      '_chemical_name_mineral': "'Copper FCC'",
-    ...      '_chemical_formula_sum': "'Cu'",
-    ...      '_cell_length_a': '3.6',
-    ...      '_cell_length_b': '3.6',
-    ...      '_cell_length_c': '3.6',
-    ...      '_cell_angle_alpha': '90.0',
-    ...      '_cell_angle_beta': '90.0',
-    ...      '_cell_angle_gamma': '90.0'
-    ...      '_symmetry_space_group_name_H-M':  'Fm-3m'
-    ...    }
+    {'_journal_year': '1999',
+    '_journal_page_first': '0',
+    '_journal_page_last': '123',
+    '_chemical_name_mineral': "'Copper FCC'",
+    '_chemical_formula_sum': "'Cu'",
+    '_cell_length_a': '3.6',
+    '_cell_length_b': '3.6',
+    '_cell_length_c': '3.6',
+    '_cell_angle_alpha': '90.0',
+    '_cell_angle_beta': '90.0',
+    '_cell_angle_gamma': '90.0',
+    '_symmetry_space_group_name_H-M': "'Fm-3m'"}
+
 
 A `dict`-like getter syntax is provided to key-value pairs. Single keys function exactly
 as a python dict, while lists of keys return lists of values. Keys not present in the
 :attr:`~.pairs` dict instead return :code:`None`.
 
-.. doctest:: python
+.. doctest::
 
     >>> cif["_journal_year"]
     '1999'
@@ -55,7 +54,7 @@ as a python dict, while lists of keys return lists of values. Keys not present i
     >>> cif["_not_in_pairs"]
     ... None
 
-    >>> # Multiple keys can be accessed simultaneously!
+    # Multiple keys can be accessed simultaneously!
     >>> cif[["_cell_length_a", "_cell_length_b", "_cell_length_c"]]
     ['3.6', '3.6', '3.6']
 
@@ -65,7 +64,7 @@ be lossy. Setting the :attr:`~.cast_values` property to :code:`True` reprocesses
 data, converting to float or int where possible. Note that once data is reprocessed,
 a new CifFile object must be created to restore the original string data
 
-.. doctest:: python
+.. doctest::
 
     >>> cif.cast_values = True # Reprocess our `pairs` dict
 
@@ -97,30 +96,25 @@ list of such arrays, although the :attr:`~.get_from_loops` method is often more
 convenient.
 
 
-.. doctest:: python
-
+.. doctest::
 
     >>> len(cif.loops)
     2
 
     >>> cif.loops[0]
-        array(
-    ...       [[('Cu1', '0.0000000000', '0.0000000000', '0.0000000000', 'Cu', 'a')]],
-    ...       dtype=[
-    ...           ('_atom_site_label', '<U12'),
-    ...           ('_atom_site_fract_x', '<U12'),
-    ...           ('_atom_site_fract_y', '<U12'),
-    ...           ('_atom_site_fract_z', '<U12'),
-    ...           ('_atom_site_type_symbol', '<U12'),
-    ...           ('_atom_site_Wyckoff_label', '<U12')
-    ...       ]
-    ...  )
+    array([[('Cu1', '0.0000000000', '0.0000000000', '0.0000000000', 'Cu', 'a')]],
+    dtype=[
+        ('_atom_site_label', '<U12'),
+        ('_atom_site_fract_x', '<U12'),
+        ('_atom_site_fract_y', '<U12'),
+        ('_atom_site_fract_z', '<U12'),
+        ('_atom_site_type_symbol', '<U12'),
+        ('_atom_site_Wyckoff_label', '<U12')])
 
     >>> cif.loops[0]["_atom_site_label"]
         array([['Cu1']], dtype='<U12')
 
-
-    >>> # (Unstructured) slices of tables can be easily accessed!
+    # (Unstructured) slices of tables can be easily accessed!
     >>> xyz = cif.get_from_loops(["_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z"])
 
     >>> xyz
@@ -153,10 +147,16 @@ file), set :code:`fractional=False`
 
 .. _`freud`: https://freud.readthedocs.io/en/latest/modules/data.html#freud.data.UnitCell
 
-.. doctest:: python
+.. doctest::
 
-    >>> pos = cif.build_unit_cell(fractional=True)
-        array([[0. , 0. , 0. ],
-    ...         [0. , 0.5, 0.5],
-    ...         [0.5, 0. , 0.5],
-    ...         [0.5, 0.5, 0. ]])
+    >>> cif.build_unit_cell(fractional=True)
+    array([[0. , 0. , 0. ],
+         [0. , 0.5, 0.5],
+         [0.5, 0. , 0.5],
+         [0.5, 0.5, 0. ]])
+
+
+.. doctest-requires:: freud
+
+    >>> import freud
+    >>> raise ValueError
