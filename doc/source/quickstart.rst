@@ -51,8 +51,7 @@ as a python dict, while lists of keys return lists of values. Keys not present i
     >>> cif["_journal_year"]
     '1999'
 
-    >>> cif["_not_in_pairs"]
-    ... None
+    >>> assert cif["_not_in_pairs"] is None
 
     # Multiple keys can be accessed simultaneously!
     >>> cif[["_cell_length_a", "_cell_length_b", "_cell_length_c"]]
