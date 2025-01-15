@@ -103,13 +103,12 @@ convenient.
 
     >>> cif.loops[0]
     array([[('Cu1', '0.0000000000', '0.0000000000', '0.0000000000', 'Cu', 'a')]],
-    dtype=[
-        ('_atom_site_label', '<U12'),
-        ('_atom_site_fract_x', '<U12'),
-        ('_atom_site_fract_y', '<U12'),
-        ('_atom_site_fract_z', '<U12'),
-        ('_atom_site_type_symbol', '<U12'),
-        ('_atom_site_Wyckoff_label', '<U12')])
+    dtype=[('_atom_site_label', '<U12'),
+    ('_atom_site_fract_x', '<U12'),
+    ('_atom_site_fract_y', '<U12'),
+    ('_atom_site_fract_z', '<U12'),
+    ('_atom_site_type_symbol', '<U12'),
+    ('_atom_site_Wyckoff_label', '<U12')])
 
     >>> cif.loops[0]["_atom_site_label"]
         array([['Cu1']], dtype='<U12')
