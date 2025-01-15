@@ -2,4 +2,4 @@ ase
 gemmi
 pycifrw
 pytest
-sybil[pytest]
+pytest-doctestplus
