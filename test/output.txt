@@ -1,0 +1,26 @@
+Results of doctest builder run on 2025-01-14 12:57:15
+=====================================================
+
+Document: package-parse
+-----------------------
+**********************************************************************
+File "../../parsnip/parsnip.py", line ?, in default
+Failed example:
+    print(cell)
+Expected:
+    (3.6, 3.6, 3.6, 1.5707963, 1.5707963, 1.5707963)
+Got:
+    (3.6, 3.6, 3.6, 1.5707963267948966, 1.5707963267948966, 1.5707963267948966)
+**********************************************************************
+1 items had failures:
+   1 of  18 in default
+18 tests in 1 items.
+17 passed and 1 failed.
+***Test Failed*** 1 failures.
+
+Doctest summary
+===============
+   18 tests
+    1 failure in tests
+    0 failures in setup code
+    0 failures in cleanup code

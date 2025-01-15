@@ -1,7 +1,6 @@
 """Configuration file for the Sphinx documentation builder."""
 
 import datetime
-import doctest
 
 CURRENT_YEAR = datetime.date.today().year
 # For the full list of built-in configuration values, see the documentation:
@@ -26,9 +25,16 @@ extensions = [
     "sphinx.ext.doctest",
     "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
+    "sphinx_copybutton",
     # "pytest_doctestplus.sphinx.doctestplus",
     "autodocsumm",
+    "notfound.extension"
 ]
+
+copybutton_prompt_text = ">>> "
+copybutton_remove_prompts = True
+copybutton_line_continuation_character = "\\"
+
 
 # Configure sphinx-build doctest
 # doctest_default_flags = (
