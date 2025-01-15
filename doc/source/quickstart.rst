@@ -16,17 +16,15 @@ Now, let's read extract the key-value pairs from our cif file. This subset of da
 usually contains information to reconstruct the system's unit cell, and provides
 information regarding the origin of the data.
 
-.. invisible-code-block:
+.. testsetup::
 
-   from parsnip import CifFile
-   filename = "example_file.cif"
-   cif = CifFile(filename)
-
+    >>> import os
+    >>> os.chdir("doc/source")
 
 .. doctest::
 
     >>> from parsnip import CifFile
-    >>> filename = "doc/source/example_file.cif" # TODO: fix filename
+    >>> filename = "example_file.cif"
     >>> cif = CifFile(filename)
 
     >>> cif.pairs
@@ -129,7 +127,7 @@ convenient.
         array([['0.0000000000', '0.0000000000', '0.0000000000']], dtype='<U12')
 
     >>> xyz.astype(float)
-        array([[0.0, 0.0, 0.0]], dtype=np.float64)
+        array([[0., 0., 0.]])
 
 
 
