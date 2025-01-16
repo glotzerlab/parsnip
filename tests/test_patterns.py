@@ -204,7 +204,7 @@ def test_try_cast_to_numeric(s):
 
 @cif_files_mark
 def test_box(cif_data):
-    import freud
+    freud = pytest.importorskip("freud")
 
     cif_box = cif_data.file.read_cell_params(
         degrees=False, mmcif="PDB" in cif_data.filename
