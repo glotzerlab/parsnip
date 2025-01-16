@@ -323,7 +323,7 @@ class CifFile:
         Returns
         -------
             tuple[float]:
-                The box vector lengths in angstroms, and angles in degrees or radians
+                The box vector lengths (in angstroms) and angles (in degrees or radians)
                 :math:`(L_1, L_2, L_3, \alpha, \beta, \gamma)`.
 
         Raises
@@ -555,7 +555,7 @@ class CifFile:
         Returns
         -------
         tuple[float]:
-            The box vector lengths (in Ångströms) and unitless tilt factors.
+            The box vector lengths (in angstroms) and unitless tilt factors.
             :math:`(L_1, L_2, L_3, xy, xz, yz)`.
         """
         return _box_from_lengths_and_angles(
