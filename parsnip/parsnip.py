@@ -532,6 +532,12 @@ class CifFile:
         .. _`box-like`: https://hoomd-blue.readthedocs.io/en/v5.0.0/hoomd/module-box.html#hoomd.box.box_like
         .. _`freud`: https://freud.readthedocs.io/en/latest/gettingstarted/examples/module_intros/box.Box.html
 
+        .. important::
+
+            ``cif.cell`` returns box extents and tilt factors, while
+            ``CifFile.read_cell_params`` returns unit cell vector lengths and angles.
+            See the `box-like`_ documentation linked above for more details.
+
         Example
         -------
         This method provides a convinient interface to create box objects.
@@ -548,8 +554,8 @@ class CifFile:
 
         Returns
         -------
-        tuple:
-            The box vector lengths (in Ångströms) and tilt factors (unitless).
+        tuple[float]:
+            The box vector lengths (in Ångströms) and unitless tilt factors.
             :math:`(L_1, L_2, L_3, xy, xz, yz)`.
         """
         return _box_from_lengths_and_angles(
