@@ -526,7 +526,7 @@ class CifFile:
         self._cast_values = cast
 
     @property
-    def cell(self):
+    def box(self):
         """Read the unit cell as a `freud`_ or HOOMD `box-like`_ object.
 
         .. _`box-like`: https://hoomd-blue.readthedocs.io/en/v5.0.0/hoomd/module-box.html#hoomd.box.box_like
@@ -534,7 +534,7 @@ class CifFile:
 
         .. important::
 
-            ``cif.cell`` returns box extents and tilt factors, while
+            ``cif.box`` returns box extents and tilt factors, while
             ``CifFile.read_cell_params`` returns unit cell vector lengths and angles.
             See the `box-like`_ documentation linked above for more details.
 
@@ -542,13 +542,13 @@ class CifFile:
         -------
         This method provides a convinient interface to create box objects.
 
-        >>> cell = cif.cell
-        >>> print(cell)
+        >>> box = cif.box
+        >>> print(box)
         (3.6, 3.6, 3.6, 0.0, 0.0, 0.0)
         >>> import freud, hoomd # doctest: +SKIP
-        >>> freud.Box(*cell) # doctest: +SKIP
+        >>> freud.Box(*box) # doctest: +SKIP
         freud.box.Box(Lx=3.6, Ly=3.6, Lz=3.6, xy=0, xz=0, yz=0, ...)
-        >>> hoomd.Box(*cell) # doctest: +SKIP
+        >>> hoomd.Box(*box) # doctest: +SKIP
         hoomd.box.Box(Lx=3.6, Ly=3.6, Lz=3.6, xy=0.0, xz=0.0, yz=0.0)
 
 

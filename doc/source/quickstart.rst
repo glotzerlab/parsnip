@@ -159,8 +159,8 @@ Once `freud`_ is installed, crystal structures can be easily replicated!
 .. doctest-requires:: freud
 
     >>> import freud
-    >>> box = freud.Box(*cif.cell)
+    >>> box = freud.Box(*cif.box)
     >>> uc = freud.data.UnitCell(box, basis_positions=pos)
     >>> box, pos = uc.generate_system(num_replicas=2)
     >>> assert len(pos) == 4 * 2**3
-    >>> np.testing.assert_allclose(box.L / 2, cif.cell[:3], atol=1e-15)
+    >>> np.testing.assert_allclose(box.L / 2, 3.6, atol=1e-15)
