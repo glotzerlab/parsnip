@@ -162,6 +162,5 @@ Once `freud`_ is installed, crystal structures can be easily replicated!
     >>> box = freud.Box(*cif.cell)
     >>> uc = freud.data.UnitCell(box, basis_positions=pos)
     >>> box, pos = uc.generate_system(num_replicas=2)
-
     >>> assert len(pos) == 4 * 2**3
     >>> np.testing.assert_allclose(box.L / 2, cif.cell[:3], atol=1e-15)
