@@ -63,6 +63,7 @@ from numpy.typing import ArrayLike
 from parsnip._errors import ParseWarning
 from parsnip.patterns import (
     _accumulate_nonsimple_data,
+    _box_from_lengths_and_angles,
     _dtype_from_int,
     _is_data,
     _is_key,
@@ -309,21 +310,6 @@ class CifFile:
 
         .. _`unit cell parameters`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Ccell.html
 
-
-        Example
-        -------
-        The data returned from this function can be used to create a `freud Box`_.
-
-        .. _`freud Box`: https://freud.readthedocs.io/en/latest/gettingstarted/examples/module_intros/box.Box.html
-
-        >>> cell = cif.read_cell_params(degrees=False)
-        >>> print(cell)
-        (3.6, 3.6, 3.6, 1.5707963, 1.5707963, 1.5707963)
-        >>> assert cell==cif.cell
-        >>> import freud # doctest: +SKIP
-        >>> box = freud.box.Box.from_box_lengths_and_angles(cell) # doctest: +SKIP
-        freud.box.Box(Lx=3.6, Ly=3.6, Lz=3.6, xy=0, xz=0, yz=0, ...) # doctest: +SKIP
-
         Parameters
         ----------
             degrees : bool, optional
@@ -541,11 +527,34 @@ class CifFile:
 
     @property
     def cell(self):
-        """Read the unit cell lengths in Angstroms and angles in radians.
+        """Read the unit cell as a `freud`_ or HOOMD `box-like`_ object.
 
-        Alias for :code:`read_cell_params(degrees=False, mmcif=False)`
+        .. _`box-like`: https://hoomd-blue.readthedocs.io/en/v5.0.0/hoomd/module-box.html#hoomd.box.box_like
+        .. _`freud`: https://freud.readthedocs.io/en/latest/gettingstarted/examples/module_intros/box.Box.html
+
+        Example
+        -------
+        This method provides a convinient interface to create box objects.
+
+        >>> import freud
+        >>> cell = cif.cell
+        >>> print(cell)
+        (3.6, 3.6, 3.6, 0.0, 0.0, 0.0)
+        >>> freud.Box(*cell) # doctest: +SKIP
+        freud.box.Box(Lx=3.6, Ly=3.6, Lz=3.6, xy=0, xz=0, yz=0, ...)
+        >>> hoomd.Box(*cell) # doctest: +SKIP
+        hoomd.box.Box(Lx=3.6, Ly=3.6, Lz=3.6, xy=0.0, xz=0.0, yz=0.0)
+
+
+        Returns
+        -------
+        tuple:
+            The box vector lengths (in Ångströms) and tilt factors (unitless).
+            :math:`(L_1, L_2, L_3, xy, xz, yz)`.
         """
-        return self.read_cell_params(degrees=False, mmcif=False)
+        return _box_from_lengths_and_angles(
+            *self.read_cell_params(degrees=False, mmcif=False)
+        )
 
     @classmethod
     def structured_to_unstructured(cls, arr: np.ndarray):
