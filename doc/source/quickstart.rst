@@ -141,20 +141,27 @@ and symmetry-irreducible (Wyckoff) positions contained in the file.
 Only one line is required to build a tilable unit cell! The positions returned here
 are in fractional coordinates, and can be imported into tools like `freud`_ to rapidly
 build out supercells. For absolute coordinates (based on cell parameters stored in the
-file), set :code:`fractional=False`
+file), set :code:`fractional=False`.
 
 .. _`freud`: https://freud.readthedocs.io/en/latest/modules/data.html#freud.data.UnitCell
 
 .. doctest::
 
-    >>> cif.build_unit_cell(fractional=True)
-    array([[0. , 0. , 0. ],
-         [0. , 0.5, 0.5],
-         [0.5, 0. , 0.5],
-         [0.5, 0.5, 0. ]])
+    >>> pos = cif.build_unit_cell(fractional=True)
+    >>> print(pos)
+    [[0.  0.  0. ]
+     [0.  0.5 0.5]
+     [0.5 0.  0.5]
+     [0.5 0.5 0. ]]
 
+Once `freud`_ is installed, crystal structures can be easily replicated!
 
 .. doctest-requires:: freud
 
     >>> import freud
-    >>> raise ValueError
+    >>> box = freud.Box(*cif.cell)
+    >>> uc = freud.data.UnitCell(box, basis_positions=pos)
+    >>> box, pos = uc.generate_system(num_replicas=2)
+
+    >>> assert len(pos) == 4 * 2**3
+    >>> np.testing.assert_allclose(box.L / 2, cif.cell[:3], atol=1e-15)
