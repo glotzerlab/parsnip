@@ -542,10 +542,10 @@ class CifFile:
         -------
         This method provides a convinient interface to create box objects.
 
-        >>> import freud
         >>> cell = cif.cell
         >>> print(cell)
         (3.6, 3.6, 3.6, 0.0, 0.0, 0.0)
+        >>> import freud, hoomd # doctest: +SKIP
         >>> freud.Box(*cell) # doctest: +SKIP
         freud.box.Box(Lx=3.6, Ly=3.6, Lz=3.6, xy=0, xz=0, yz=0, ...)
         >>> hoomd.Box(*cell) # doctest: +SKIP
