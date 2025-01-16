@@ -2,3 +2,6 @@ autodocsumm
 furo
 numpy>=1.26.4
 sphinx>=7.3.7
+sphinx-copybutton
+sphinx-notfound-page
+pytest-doctestplus

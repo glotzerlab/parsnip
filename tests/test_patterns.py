@@ -1,8 +1,10 @@
 import numpy as np
 import pytest
+from conftest import cif_files_mark
 
 from parsnip._errors import ParseWarning
 from parsnip.patterns import (
+    _box_from_lengths_and_angles,
     _dtype_from_int,
     _is_data,
     _is_key,
@@ -198,3 +200,27 @@ def test_try_cast_to_numeric(s):
         assert isinstance(result, float)
     else:
         assert isinstance(result, int)
+
+
+@cif_files_mark
+def test_box(cif_data):
+    freud = pytest.importorskip("freud")
+
+    cif_box = cif_data.file.read_cell_params(
+        degrees=False, mmcif="PDB" in cif_data.filename
+    )
+
+    freud_box = freud.Box.from_box_lengths_and_angles(*cif_box)
+    freud_box_2 = freud.Box(*cif_data.file.box)
+    parsnip_box = _box_from_lengths_and_angles(*cif_box)
+
+    np.testing.assert_allclose(parsnip_box[:3], freud_box.L, atol=1e-15)
+    np.testing.assert_allclose(
+        parsnip_box[3:], [freud_box.xy, freud_box.xz, freud_box.yz], atol=1e-15
+    )
+    if "PDB" not in cif_data.filename:
+        np.testing.assert_allclose(
+            [*freud_box.L, freud_box.xy, freud_box.xz, freud_box.yz],
+            [*freud_box_2.L, freud_box_2.xy, freud_box_2.xz, freud_box_2.yz],
+            atol=1e-8,
+        )

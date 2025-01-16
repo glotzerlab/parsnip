@@ -2,3 +2,4 @@ ase
 gemmi
 pycifrw
 pytest
+pytest-doctestplus

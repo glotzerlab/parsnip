@@ -99,6 +99,9 @@ def cast_array_to_float(arr: ArrayLike, dtype: type = np.float32):
     -------
         np.array[dtype]: Array with new dtype and no significant digit information.
     """
+    arr = [(el if el is not None else "nan") for el in arr]
+    # if any(el is None for el in arr):
+    #     raise TypeError("Input array contains `None` and cannot be cast!")
     return np.char.partition(arr, "(")[..., 0].astype(dtype)
 
 
@@ -177,5 +180,26 @@ def _matrix_from_lengths_and_angles(l1, l2, l3, alpha, beta, gamma):
     if under_sqrt < 0:
         raise ValueError("The provided angles can not form a valid box.")
     a3z = np.sqrt(under_sqrt)
+    a2 = np.array([l2 * np.cos(gamma), l2 * np.sin(gamma), 0])
     a3 = np.array([l3 * a3x, l3 * a3y, l3 * a3z])
+
     return np.array([a1, a2, a3])
+
+
+def _box_from_lengths_and_angles(l1, l2, l3, alpha, beta, gamma):
+    lx = l1
+    ly = l2 * np.sin(gamma)
+
+    a3y = (np.cos(alpha) - np.cos(beta) * np.cos(gamma)) / np.sin(gamma)
+
+    lz = l3 * np.sqrt(1 - np.cos(beta) ** 2 - a3y**2)
+
+    a2x = (l3 * l1 * np.cos(beta)) / lx
+    b = l2 * np.cos(gamma)
+    c = b * a2x + ly * l3 * a3y
+
+    xy = np.cos(gamma) / np.sin(gamma)
+    xz = a2x / lz
+    yz = (c - b * a2x) / (ly * lz)
+
+    return tuple(float(x) for x in [lx, ly, lz, xy, xz, yz])

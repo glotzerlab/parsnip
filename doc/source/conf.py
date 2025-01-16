@@ -1,5 +1,4 @@
 """Configuration file for the Sphinx documentation builder."""
-
 import datetime
 
 CURRENT_YEAR = datetime.date.today().year
@@ -22,10 +21,18 @@ add_module_names = False
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
+    "sphinx.ext.doctest",
     "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
+    "sphinx_copybutton",
+    "pytest_doctestplus.sphinx.doctestplus",
     "autodocsumm",
+    "notfound.extension",
 ]
+
+copybutton_prompt_text = ">>> "
+copybutton_remove_prompts = True
+copybutton_line_continuation_character = "\\"
 
 templates_path = ["_templates"]
 exclude_patterns = ["build", "Thumbs.db", ".DS_Store"]

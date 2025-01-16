@@ -63,6 +63,7 @@ from numpy.typing import ArrayLike
 from parsnip._errors import ParseWarning
 from parsnip.patterns import (
     _accumulate_nonsimple_data,
+    _box_from_lengths_and_angles,
     _dtype_from_int,
     _is_data,
     _is_key,
@@ -86,9 +87,9 @@ class CifFile:
     To get started, simply provide a filename:
 
     >>> from parsnip import CifFile
-    >>> cif = CifFile("doc/source/example_file.cif")
+    >>> cif = CifFile("example_file.cif")
     >>> print(cif)
-    CifFile(fn=doc/source/example_file.cif) : 12 data entries, 2 data loops
+    CifFile(fn=example_file.cif) : 12 data entries, 2 data loops
 
     Data entries are accessible via the :attr:`~.pairs` and :attr:`~.loops` attributes:
 
@@ -302,27 +303,12 @@ class CifFile:
         if isinstance(index, Iterable) and not isinstance(index, str):
             return [self.pairs.get(k, None) for k in index]
 
-        return self.pairs[index]
+        return self.pairs.get(index, None)
 
     def read_cell_params(self, degrees: bool = True, mmcif: bool = False):
         r"""Read the `unit cell parameters`_ (lengths and angles) from a CIF file.
 
         .. _`unit cell parameters`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Ccell.html
-
-
-        Example
-        -------
-        The data returned from this function can be used to create a `freud Box`_.
-
-        .. _`freud Box`: https://freud.readthedocs.io/en/latest/gettingstarted/examples/module_intros/box.Box.html
-
-        >>> cell = cif.read_cell_params(degrees=False)
-        >>> print(cell)
-        (3.6, 3.6, 3.6, 1.5707963, 1.5707963, 1.5707963)
-        >>> assert cell==cif.cell
-        >>> import freud # doctest: +SKIP
-        >>> box = freud.box.Box.from_box_lengths_and_angles(cell) # doctest: +SKIP
-        freud.box.Box(Lx=3.6, Ly=3.6, Lz=3.6, xy=0, xz=0, yz=0, ...) # doctest: +SKIP
 
         Parameters
         ----------
@@ -337,7 +323,7 @@ class CifFile:
         Returns
         -------
             tuple[float]:
-                The box vector lengths in angstroms, and angles in degrees or radians
+                The box vector lengths (in angstroms) and angles (in degrees or radians)
                 :math:`(L_1, L_2, L_3, \alpha, \beta, \gamma)`.
 
         Raises
@@ -361,7 +347,10 @@ class CifFile:
                 "_cell_length_c",
                 *angle_keys,
             )
-        cell_data = cast_array_to_float(arr=self[box_keys], dtype=np.float64)
+        if self.cast_values:
+            cell_data = [float(x) for x in self[box_keys]]
+        else:
+            cell_data = cast_array_to_float(arr=self[box_keys], dtype=np.float64)
 
         def angle_is_invalid(x: float):
             return x <= 0.0 or x >= 180.0
@@ -537,12 +526,41 @@ class CifFile:
         self._cast_values = cast
 
     @property
-    def cell(self):
-        """Read the unit cell lengths in Angstroms and angles in radians.
+    def box(self):
+        """Read the unit cell as a `freud`_ or HOOMD `box-like`_ object.
 
-        Alias for :code:`read_cell_params(degrees=False, mmcif=False)`
+        .. _`box-like`: https://hoomd-blue.readthedocs.io/en/v5.0.0/hoomd/module-box.html#hoomd.box.box_like
+        .. _`freud`: https://freud.readthedocs.io/en/latest/gettingstarted/examples/module_intros/box.Box.html
+
+        .. important::
+
+            ``cif.box`` returns box extents and tilt factors, while
+            ``CifFile.read_cell_params`` returns unit cell vector lengths and angles.
+            See the `box-like`_ documentation linked above for more details.
+
+        Example
+        -------
+        This method provides a convinient interface to create box objects.
+
+        >>> box = cif.box
+        >>> print(box)
+        (3.6, 3.6, 3.6, 0.0, 0.0, 0.0)
+        >>> import freud, hoomd # doctest: +SKIP
+        >>> freud.Box(*box) # doctest: +SKIP
+        freud.box.Box(Lx=3.6, Ly=3.6, Lz=3.6, xy=0, xz=0, yz=0, ...)
+        >>> hoomd.Box(*box) # doctest: +SKIP
+        hoomd.box.Box(Lx=3.6, Ly=3.6, Lz=3.6, xy=0.0, xz=0.0, yz=0.0)
+
+
+        Returns
+        -------
+        tuple[float]:
+            The box vector lengths (in angstroms) and unitless tilt factors.
+            :math:`(L_1, L_2, L_3, xy, xz, yz)`.
         """
-        return self.read_cell_params(degrees=False, mmcif=False)
+        return _box_from_lengths_and_angles(
+            *self.read_cell_params(degrees=False, mmcif=False)
+        )
 
     @classmethod
     def structured_to_unstructured(cls, arr: np.ndarray):
