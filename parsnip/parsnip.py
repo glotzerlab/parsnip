@@ -168,7 +168,7 @@ class CifFile:
 
     @property
     def loops(self):
-        """A list of data tables (:code:``loop_``'s) extracted from the file.
+        r"""A list of data tables (`loop_`'s) extracted from the file.
 
         These are stored as `numpy structured arrays`_, which can be indexed by column
         labels. See the :attr:`~.structured_to_unstructured` helper function below for
@@ -284,9 +284,48 @@ class CifFile:
                     table[matches], copy=True, casting="safe"
                 ).squeeze(axis=1)
             )
-        return result if len(result) != 1 else result[0]
+        return (result or None) if len(result) != 1 else result[0]
 
     def __getitem__(self, index: str | Iterable[str]):
+        """Return an item or list of items from :meth:`~.pairs` and :meth:`~.loops`.
+
+        This getter searches the entire CIF state to identify the input keys, returning
+        `None` if the key does not match any data. Matching columns from `loop` tables
+        are returned as 1D arrays.
+
+        .. tip::
+
+            This method of accessing data is recommended for most uses, as it best
+            ensures data is returned where possible.
+
+        Example
+        -------
+        Indexing the class with a single key:
+
+        >>> cif["_journal_year"]
+        '1999'
+        >>> cif["_atom_site_label"]
+        array([['Cu1']], dtype='<U12')
+
+        Indexing with a list of keys:
+
+        >>> cif[["_journal_year", "_chemical_name_mineral", "_symmetry_equiv_pos_as_xyz"]]
+        ['1999',
+        "'Copper FCC'",
+        array([['x,y,z'],
+            ['z,y+1/2,x+1/2'],
+            ['z+1/2,-y,x+1/2'],
+            ['z+1/2,y+1/2,x']], dtype='<U14')]
+        """
+        output = []
+        for key in np.atleast_1d(index):
+            pairs_match = self.get_from_pairs(key)
+            loops_match = self.get_from_loops(key)
+            output.append(pairs_match if pairs_match is not None else loops_match)
+        return output[0] if len(output) == 1 else output
+
+
+    def get_from_pairs(self, index: str | Iterable[str]):
         """Return an item from the dictionary of key-value pairs.
 
         Indexing with a string returns the value from the :meth:`~.pairs` dict. Indexing
@@ -297,13 +336,13 @@ class CifFile:
         -------
         Indexing the class with a single key:
 
-        >>> cif["_journal_year"]
+        >>> cif.get_from_pairs("_journal_year")
         '1999'
 
         Indexing with a list of keys:
 
-        >>> cif[["_journal_year", "_journal_page_first", "_journal_page_last"]]
-        ['1999', '0', '123']
+        >>> cif.get_from_pairs(["_journal_year", "_journal_page_first"])
+        ['1999', '0']
 
         Parameters
         ----------
