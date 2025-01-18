@@ -295,8 +295,9 @@ class CifFile:
 
         .. tip::
 
-            This method of accessing data is recommended for most uses, as it best
-            ensures data is returned where possible.
+            This method of accessing data is recommended for most uses, as it ensures
+            data is returned wherever possible. :meth:`~.get_from_loops` may be useful
+            when multi-column slices of an array are needed.
 
         Example
         -------
