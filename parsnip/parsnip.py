@@ -389,39 +389,6 @@ class CifFile:
 
         return tuple(float(v) for v in cell_data)  # Return as base python types
 
-    def read_symmetry_operations(self):
-        r"""Extract the symmetry operations from a CIF file.
-
-        Returns
-        -------
-            :math:`(N,)` :class:`numpy.ndarray[str]`:
-                An array of strings containing the symmetry operations in a
-                `parsable algebraic form`_.
-
-        .. _`parsable algebraic form`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Ispace_group_symop_operation_xyz.html
-        """
-        symmetry_keys = (
-            "_symmetry_equiv_pos_as_xyz",
-            "_space_group_symop_operation_xyz",
-        )
-
-        # Only one key is valid in each standard, so we only ever get one match.
-        return self.get_from_loops(symmetry_keys)
-
-    def read_wyckoff_positions(self):
-        r"""Extract symmetry-irreducible, fractional x,y,z coordinates from a CIF file.
-
-        Returns
-        -------
-            :math:`(N, 3)` :class:`numpy.ndarray[float]`:
-                Symmetry-irreducible positions of atoms in `fractional coordinates`_.
-
-        .. _`fractional coordinates`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html
-        """
-        xyz_keys = ("_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z")
-
-        return cast_array_to_float(arr=self.get_from_loops(xyz_keys), dtype=float)
-
     def build_unit_cell(
         self,
         fractional: bool = True,
@@ -468,15 +435,14 @@ class CifFile:
         ValueError
             If the stored data cannot form a valid box.
         """
-        fractional_positions = self.read_wyckoff_positions()
+        fractional_positions = self.wyckoff_positions
 
         # Read the cell params and convert to a matrix of basis vectors
         cell = self.read_cell_params(degrees=False, mmcif=False)
         cell_matrix = _matrix_from_lengths_and_angles(*cell)
 
-        symops = self.read_symmetry_operations()
         symops_str = np.array2string(
-            symops,
+            self.symops,
             separator=",",  # Place a comma after each line in the array for eval
             threshold=np.inf,  # Ensure that every line is included in the string
             floatmode="unique",  # Ensures strings can uniquely represent each float
@@ -516,31 +482,6 @@ class CifFile:
             pos[unique_indices] if fractional else real_space_positions[unique_indices]
         )
 
-    @property
-    def cast_values(self):
-        """Bool : Whether to cast "number-like" values to ints & floats.
-
-        .. note::
-
-            When set to `True` after construction, the values are modified in-place.
-            This action cannot be reversed.
-        """
-        return self._cast_values
-
-    @cast_values.setter
-    def cast_values(self, cast: bool):
-        if cast:
-            self._pairs = {
-                k: _try_cast_to_numeric(_strip_quotes(v))
-                for (k, v) in self.pairs.items()
-            }
-        else:
-            warnings.warn(
-                "Setting cast_values True->False has no effect on stored data.",
-                category=ParseWarning,
-                stacklevel=2,
-            )
-        self._cast_values = cast
 
     @property
     def box(self):
@@ -578,6 +519,68 @@ class CifFile:
         return _box_from_lengths_and_angles(
             *self.read_cell_params(degrees=False, mmcif=False)
         )
+
+    @property
+    def symops(self):
+        r"""Extract the symmetry operations from a CIF file.
+
+        Returns
+        -------
+            :math:`(N,)` :class:`numpy.ndarray[str]`:
+                An array of strings containing the symmetry operations in a
+                `parsable algebraic form`_.
+
+        .. _`parsable algebraic form`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Ispace_group_symop_operation_xyz.html
+        """
+        symmetry_keys = (
+            "_symmetry_equiv_pos_as_xyz",
+            "_space_group_symop_operation_xyz",
+        )
+
+        # Only one key is valid in each standard, so we only ever get one match.
+        return self.get_from_loops(symmetry_keys)
+
+    @property
+    def wyckoff_positions(self):
+        r"""Extract symmetry-irreducible, fractional x,y,z coordinates from a CIF file.
+
+        Returns
+        -------
+            :math:`(N, 3)` :class:`numpy.ndarray[float]`:
+                Symmetry-irreducible positions of atoms in `fractional coordinates`_.
+
+        .. _`fractional coordinates`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html
+        """
+        xyz_keys = ("_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z")
+
+        return cast_array_to_float(arr=self.get_from_loops(xyz_keys), dtype=float)
+
+
+    @property
+    def cast_values(self):
+        """Bool : Whether to cast "number-like" values to ints & floats.
+
+        .. note::
+
+            When set to `True` after construction, the values are modified in-place.
+            This action cannot be reversed.
+        """
+        return self._cast_values
+
+    @cast_values.setter
+    def cast_values(self, cast: bool):
+        if cast:
+            self._pairs = {
+                k: _try_cast_to_numeric(_strip_quotes(v))
+                for (k, v) in self.pairs.items()
+            }
+        else:
+            warnings.warn(
+                "Setting cast_values True->False has no effect on stored data.",
+                category=ParseWarning,
+                stacklevel=2,
+            )
+        self._cast_values = cast
 
     @classmethod
     def structured_to_unstructured(cls, arr: np.ndarray):
