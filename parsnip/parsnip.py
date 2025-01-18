@@ -184,19 +184,6 @@ class CifFile:
         """
         return self._loops
 
-    @property
-    def loop_labels(self):
-        """A list of column labels for each data array.
-
-        This property is equivalent to :code:`[arr.dtype.names for arr in self.loops]`.
-
-        Returns
-        -------
-        list[list[str]]:
-            Column labels for :attr:`~.loops`, stored as a nested list of strings.
-        """
-        return [arr.dtype.names for arr in self.loops]
-
     def get_from_loops(self, index: ArrayLike):
         """Return a column or columns from the matching table in :attr:`~.loops`.
 
@@ -557,6 +544,19 @@ class CifFile:
         return _box_from_lengths_and_angles(
             *self.read_cell_params(degrees=False, mmcif=False)
         )
+
+    @property
+    def loop_labels(self):
+        """A list of column labels for each data array.
+
+        This property is equivalent to :code:`[arr.dtype.names for arr in self.loops]`.
+
+        Returns
+        -------
+        list[list[str]]:
+            Column labels for :attr:`~.loops`, stored as a nested list of strings.
+        """
+        return [arr.dtype.names for arr in self.loops]
 
     @property
     def symops(self):
