@@ -70,6 +70,7 @@ from __future__ import annotations
 import re
 import warnings
 from collections.abc import Iterable
+from pathlib import Path
 from typing import ClassVar
 
 import numpy as np
@@ -129,14 +130,14 @@ class CifFile:
 
     Parameters
     ----------
-        fn : str
-            Name of the file to be opened.
+        fn : str | Path
+            Path to the file to be opened.
         cast_values : bool, optional
             Whether to convert string numerics to integers and float.
             Default value = ``False``
     """
 
-    def __init__(self, fn: str, cast_values: bool = False):
+    def __init__(self, fn: str | Path, cast_values: bool = False):
         """Create a CifFile object from a filename.
 
         On construction, the entire file is parsed into key-value pairs and data loops.
