@@ -19,28 +19,45 @@ r"""An interface for reading `CIF`_ files in Python.
 
     .. code-block:: text
 
-        # Key-value pairs describing the unit cell:
-        _cell_length_a  5.40
-        _cell_length_b  3.43
-        _cell_length_c  5.08
+        # A header describing this portion of the file
+        data_cif_Cu-FCC
+
+        # Several key-value pairs
+        _journal_year 1999
+        _journal_page_first 0
+        _journal_page_last 123
+
+        _chemical_name_mineral 'Copper FCC'
+        _chemical_formula_sum 'Cu'
+
+        # Key-value pairs describing the unit cell (Å and °)
+        _cell_length_a     3.6
+        _cell_length_b     3.6
+        _cell_length_c     3.6
         _cell_angle_alpha  90.0
-        _cell_angle_beta  132.3
+        _cell_angle_beta   90.0
         _cell_angle_gamma  90.0
 
-        # A table with two columns and eight rows:
+        # A table with 6 columns and one row
+        loop_
+        _atom_site_label
+        _atom_site_fract_x
+        _atom_site_fract_y
+        _atom_site_fract_z
+        _atom_site_type_symbol
+        _atom_site_Wyckoff_label
+        Cu1 0.0000000000 0.0000000000 0.0000000000  Cu a
+
+        _symmetry_space_group_name_H-M  'Fm-3m' # One more key-value pair
+
+        # A table with two columns and four rows:
         loop_
         _symmetry_equiv_pos_site_id
         _symmetry_equiv_pos_as_xyz
         1  x,y,z
-        2  -x,y,-z
-        3  -x,-y,-z
-        4  x,-y,z
-        5  x+1/2,y+1/2,z
-        6  -x+1/2,y+1/2,-z
-        7  -x+1/2,-y+1/2,-z
-        8  x+1/2,-y+1/2,z
-
-        _symmetry_space_group_name_H-M  'C2 / m' # One more key-value pair
+        96  z,y+1/2,x+1/2
+        118  z+1/2,-y,x+1/2
+        192  z+1/2,y+1/2,x
 
 
 .. _key: https://www.iucr.org/resources/cif/spec/version1.1/cifsyntax#definitions
