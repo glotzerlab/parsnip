@@ -310,9 +310,8 @@ class CifFile:
 
         Indexing with a list of keys:
 
-        >>> cif[["_journal_year", "_chemical_name_mineral", "_symmetry_equiv_pos_as_xyz"]]
-        ['1999',
-        "'Copper FCC'",
+        >>> cif[["_chemical_name_mineral", "_symmetry_equiv_pos_as_xyz"]]
+        ["'Copper FCC'",
         array([['x,y,z'],
             ['z,y+1/2,x+1/2'],
             ['z+1/2,-y,x+1/2'],
@@ -324,7 +323,6 @@ class CifFile:
             loops_match = self.get_from_loops(key)
             output.append(pairs_match if pairs_match is not None else loops_match)
         return output[0] if len(output) == 1 else output
-
 
     def get_from_pairs(self, index: str | Iterable[str]):
         """Return an item from the dictionary of key-value pairs.
@@ -522,7 +520,6 @@ class CifFile:
             pos[unique_indices] if fractional else real_space_positions[unique_indices]
         )
 
-
     @property
     def box(self):
         """Read the unit cell as a `freud`_ or HOOMD `box-like`_ object.
@@ -594,7 +591,6 @@ class CifFile:
         xyz_keys = ("_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z")
 
         return cast_array_to_float(arr=self.get_from_loops(xyz_keys), dtype=float)
-
 
     @property
     def cast_values(self):
