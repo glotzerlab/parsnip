@@ -419,7 +419,6 @@ class CifFile:
         self,
         fractional: bool = True,
         n_decimal_places: int = 4,
-        wrap_coords: bool = True,  # TODO: docs
         verbose: bool = False,
     ):
         """Reconstruct atomic positions from Wyckoff sites and symmetry operations.
@@ -479,8 +478,7 @@ class CifFile:
         ]
 
         pos = np.vstack(all_frac_positions)
-        if wrap_coords:
-            pos %= 1  # Wrap particles into the box
+        pos %= 1  # Wrap particles into the box
 
         # Filter unique points. This takes some time but makes the method faster overall
         _, unique_indices, unique_counts = np.unique(
@@ -561,6 +559,14 @@ class CifFile:
     @property
     def symops(self):
         r"""Extract the symmetry operations from a CIF file.
+
+        Example
+        -------
+        >>> cif.symops
+        array([['x,y,z'],
+               ['z,y+1/2,x+1/2'],
+               ['z+1/2,-y,x+1/2'],
+               ['z+1/2,y+1/2,x']], dtype='<U14')
 
         Returns
         -------
