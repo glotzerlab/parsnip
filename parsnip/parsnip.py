@@ -184,6 +184,44 @@ class CifFile:
         """
         return self._loops
 
+    def __getitem__(self, index: str | Iterable[str]):
+        """Return an item or list of items from :meth:`~.pairs` and :meth:`~.loops`.
+
+        This getter searches the entire CIF state to identify the input keys, returning
+        `None` if the key does not match any data. Matching columns from `loop` tables
+        are returned as 1D arrays.
+
+        .. tip::
+
+            This method of accessing data is recommended for most uses, as it ensures
+            data is returned wherever possible. :meth:`~.get_from_loops` may be useful
+            when multi-column slices of an array are needed.
+
+        Example
+        -------
+        Indexing the class with a single key:
+
+        >>> cif["_journal_year"]
+        '1999'
+        >>> cif["_atom_site_label"]
+        array([['Cu1']], dtype='<U12')
+
+        Indexing with a list of keys:
+
+        >>> cif[["_chemical_name_mineral", "_symmetry_equiv_pos_as_xyz"]]
+        ["'Copper FCC'",
+        array([['x,y,z'],
+            ['z,y+1/2,x+1/2'],
+            ['z+1/2,-y,x+1/2'],
+            ['z+1/2,y+1/2,x']], dtype='<U14')]
+        """
+        output = []
+        for key in np.atleast_1d(index):
+            pairs_match = self.get_from_pairs(key)
+            loops_match = self.get_from_loops(key)
+            output.append(pairs_match if pairs_match is not None else loops_match)
+        return output[0] if len(output) == 1 else output
+
     def get_from_loops(self, index: ArrayLike):
         """Return a column or columns from the matching table in :attr:`~.loops`.
 
@@ -273,44 +311,6 @@ class CifFile:
                 ).squeeze(axis=1)
             )
         return (result or None) if len(result) != 1 else result[0]
-
-    def __getitem__(self, index: str | Iterable[str]):
-        """Return an item or list of items from :meth:`~.pairs` and :meth:`~.loops`.
-
-        This getter searches the entire CIF state to identify the input keys, returning
-        `None` if the key does not match any data. Matching columns from `loop` tables
-        are returned as 1D arrays.
-
-        .. tip::
-
-            This method of accessing data is recommended for most uses, as it ensures
-            data is returned wherever possible. :meth:`~.get_from_loops` may be useful
-            when multi-column slices of an array are needed.
-
-        Example
-        -------
-        Indexing the class with a single key:
-
-        >>> cif["_journal_year"]
-        '1999'
-        >>> cif["_atom_site_label"]
-        array([['Cu1']], dtype='<U12')
-
-        Indexing with a list of keys:
-
-        >>> cif[["_chemical_name_mineral", "_symmetry_equiv_pos_as_xyz"]]
-        ["'Copper FCC'",
-        array([['x,y,z'],
-            ['z,y+1/2,x+1/2'],
-            ['z+1/2,-y,x+1/2'],
-            ['z+1/2,y+1/2,x']], dtype='<U14')]
-        """
-        output = []
-        for key in np.atleast_1d(index):
-            pairs_match = self.get_from_pairs(key)
-            loops_match = self.get_from_loops(key)
-            output.append(pairs_match if pairs_match is not None else loops_match)
-        return output[0] if len(output) == 1 else output
 
     def get_from_pairs(self, index: str | Iterable[str]):
         """Return an item from the dictionary of key-value pairs.
