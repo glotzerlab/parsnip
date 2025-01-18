@@ -184,7 +184,7 @@ class CifFile:
         return self._loops
 
     @property
-    def table_labels(self):
+    def loop_labels(self):
         """A list of column labels for each data array.
 
         This property is equivalent to :code:`[arr.dtype.names for arr in self.loops]`.

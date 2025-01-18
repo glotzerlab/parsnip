@@ -26,7 +26,7 @@ def test_reads_all_keys(cif_data):
     loop_keys = [*flatten(pycif.loops.values())]
     all_keys = [key for key in pycif.true_case.values() if key.lower() in loop_keys]
 
-    found_labels = [*flatten(cif_data.file.table_labels)]
+    found_labels = [*flatten(cif_data.file.loop_labels)]
     for key in all_keys:
         assert key in found_labels, f"Missing label: {found_labels}"
 
@@ -50,7 +50,7 @@ def test_read_atom_sites(cif_data):
     parsnip_data = cif_data.file.get_from_loops(cif_data.atom_site_keys)
     gemmi_data = _gemmi_read_table(cif_data.filename, cif_data.atom_site_keys)
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
-    assert (key in cif_data.file.table_labels for key in cif_data.atom_site_keys)
+    assert (key in cif_data.file.loop_labels for key in cif_data.atom_site_keys)
 
     if not any(s in cif_data.filename for s in ["CCDC", "PDB", "AMCSD", "zeolite"]):
         import sys
