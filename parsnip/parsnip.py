@@ -19,28 +19,45 @@ r"""An interface for reading `CIF`_ files in Python.
 
     .. code-block:: text
 
-        # Key-value pairs describing the unit cell:
-        _cell_length_a  5.40
-        _cell_length_b  3.43
-        _cell_length_c  5.08
+        # A header describing this portion of the file
+        data_cif_Cu-FCC
+
+        # Several key-value pairs
+        _journal_year 1999
+        _journal_page_first 0
+        _journal_page_last 123
+
+        _chemical_name_mineral 'Copper FCC'
+        _chemical_formula_sum 'Cu'
+
+        # Key-value pairs describing the unit cell (Å and °)
+        _cell_length_a     3.6
+        _cell_length_b     3.6
+        _cell_length_c     3.6
         _cell_angle_alpha  90.0
-        _cell_angle_beta  132.3
+        _cell_angle_beta   90.0
         _cell_angle_gamma  90.0
 
-        # A table with two columns and eight rows:
+        # A table with 6 columns and one row
+        loop_
+        _atom_site_label
+        _atom_site_fract_x
+        _atom_site_fract_y
+        _atom_site_fract_z
+        _atom_site_type_symbol
+        _atom_site_Wyckoff_label
+        Cu1 0.0000000000 0.0000000000 0.0000000000  Cu a
+
+        _symmetry_space_group_name_H-M  'Fm-3m' # One more key-value pair
+
+        # A table with two columns and four rows:
         loop_
         _symmetry_equiv_pos_site_id
         _symmetry_equiv_pos_as_xyz
         1  x,y,z
-        2  -x,y,-z
-        3  -x,-y,-z
-        4  x,-y,z
-        5  x+1/2,y+1/2,z
-        6  -x+1/2,y+1/2,-z
-        7  -x+1/2,-y+1/2,-z
-        8  x+1/2,-y+1/2,z
-
-        _symmetry_space_group_name_H-M  'C2 / m' # One more key-value pair
+        96  z,y+1/2,x+1/2
+        118  z+1/2,-y,x+1/2
+        192  z+1/2,y+1/2,x
 
 
 .. _key: https://www.iucr.org/resources/cif/spec/version1.1/cifsyntax#definitions
@@ -53,6 +70,7 @@ from __future__ import annotations
 import re
 import warnings
 from collections.abc import Iterable
+from pathlib import Path
 from typing import ClassVar
 
 import numpy as np
@@ -112,14 +130,14 @@ class CifFile:
 
     Parameters
     ----------
-        fn : str
-            Name of the file to be opened.
+        fn : str | Path
+            Path to the file to be opened.
         cast_values : bool, optional
             Whether to convert string numerics to integers and float.
             Default value = ``False``
     """
 
-    def __init__(self, fn: str, cast_values: bool = False):
+    def __init__(self, fn: str | Path, cast_values: bool = False):
         """Create a CifFile object from a filename.
 
         On construction, the entire file is parsed into key-value pairs and data loops.
@@ -151,7 +169,7 @@ class CifFile:
 
     @property
     def loops(self):
-        """A list of data tables (:code:``loop_``'s) extracted from the file.
+        r"""A list of data tables (`loop_`'s) extracted from the file.
 
         These are stored as `numpy structured arrays`_, which can be indexed by column
         labels. See the :attr:`~.structured_to_unstructured` helper function below for
@@ -166,18 +184,79 @@ class CifFile:
         """
         return self._loops
 
-    @property
-    def table_labels(self):
-        """A list of column labels for each data array.
+    def __getitem__(self, index: str | Iterable[str]):
+        """Return an item or list of items from :meth:`~.pairs` and :meth:`~.loops`.
 
-        This property is equivalent to :code:`[arr.dtype.names for arr in self.loops]`.
+        This getter searches the entire CIF state to identify the input keys, returning
+        `None` if the key does not match any data. Matching columns from `loop` tables
+        are returned as 1D arrays.
+
+        .. tip::
+
+            This method of accessing data is recommended for most uses, as it ensures
+            data is returned wherever possible. :meth:`~.get_from_loops` may be useful
+            when multi-column slices of an array are needed.
+
+        Example
+        -------
+        Indexing the class with a single key:
+
+        >>> cif["_journal_year"]
+        '1999'
+        >>> cif["_atom_site_label"]
+        array([['Cu1']], dtype='<U12')
+
+        Indexing with a list of keys:
+
+        >>> cif[["_chemical_name_mineral", "_symmetry_equiv_pos_as_xyz"]]
+        ["'Copper FCC'",
+        array([['x,y,z'],
+            ['z,y+1/2,x+1/2'],
+            ['z+1/2,-y,x+1/2'],
+            ['z+1/2,y+1/2,x']], dtype='<U14')]
+        """
+        output = []
+        for key in np.atleast_1d(index):
+            pairs_match = self.get_from_pairs(key)
+            loops_match = self.get_from_loops(key)
+            output.append(pairs_match if pairs_match is not None else loops_match)
+        return output[0] if len(output) == 1 else output
+
+    def get_from_pairs(self, index: str | Iterable[str]):
+        """Return an item from the dictionary of key-value pairs.
+
+        Indexing with a string returns the value from the :meth:`~.pairs` dict. Indexing
+        with an Iterable of strings returns a list of values, with `None` as a
+        placeholder for keys that did not match any data.
+
+        Example
+        -------
+        Indexing the class with a single key:
+
+        >>> cif.get_from_pairs("_journal_year")
+        '1999'
+
+        Indexing with a list of keys:
+
+        >>> cif.get_from_pairs(["_journal_year", "_journal_page_first"])
+        ['1999', '0']
+
+        Parameters
+        ----------
+            index: str | Iterable[str]
+                An item key or list of keys.
 
         Returns
         -------
-        list[list[str]]:
-            Column labels for :attr:`~.loops`, stored as a nested list of strings.
+            list[str|int|float] :
+                A list of data elements corresponding to the input key or keys. If the
+                resulting list would have length 1, the item is returned directly
+                instead.
         """
-        return [arr.dtype.names for arr in self.loops]
+        if isinstance(index, Iterable) and not isinstance(index, str):
+            return [self.pairs.get(k, None) for k in index]
+
+        return self.pairs.get(index, None)
 
     def get_from_loops(self, index: ArrayLike):
         """Return a column or columns from the matching table in :attr:`~.loops`.
@@ -267,43 +346,7 @@ class CifFile:
                     table[matches], copy=True, casting="safe"
                 ).squeeze(axis=1)
             )
-        return result if len(result) != 1 else result[0]
-
-    def __getitem__(self, index: str | Iterable[str]):
-        """Return an item from the dictionary of key-value pairs.
-
-        Indexing with a string returns the value from the :meth:`~.pairs` dict. Indexing
-        with an Iterable of strings returns a list of values, with `None` as a
-        placeholder for keys that did not match any data.
-
-        Example
-        -------
-        Indexing the class with a single key:
-
-        >>> cif["_journal_year"]
-        '1999'
-
-        Indexing with a list of keys:
-
-        >>> cif[["_journal_year", "_journal_page_first", "_journal_page_last"]]
-        ['1999', '0', '123']
-
-        Parameters
-        ----------
-            index: str | Iterable[str]
-                An item key or list of keys.
-
-        Returns
-        -------
-            list[str|int|float] :
-                A list of data elements corresponding to the input key or keys. If the
-                resulting list would have length 1, the item is returned directly
-                instead.
-        """
-        if isinstance(index, Iterable) and not isinstance(index, str):
-            return [self.pairs.get(k, None) for k in index]
-
-        return self.pairs.get(index, None)
+        return (result or None) if len(result) != 1 else result[0]
 
     def read_cell_params(self, degrees: bool = True, mmcif: bool = False):
         r"""Read the `unit cell parameters`_ (lengths and angles) from a CIF file.
@@ -372,44 +415,10 @@ class CifFile:
 
         return tuple(float(v) for v in cell_data)  # Return as base python types
 
-    def read_symmetry_operations(self):
-        r"""Extract the symmetry operations from a CIF file.
-
-        Returns
-        -------
-            :math:`(N,)` :class:`numpy.ndarray[str]`:
-                An array of strings containing the symmetry operations in a
-                `parsable algebraic form`_.
-
-        .. _`parsable algebraic form`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Ispace_group_symop_operation_xyz.html
-        """
-        symmetry_keys = (
-            "_symmetry_equiv_pos_as_xyz",
-            "_space_group_symop_operation_xyz",
-        )
-
-        # Only one key is valid in each standard, so we only ever get one match.
-        return self.get_from_loops(symmetry_keys)
-
-    def read_wyckoff_positions(self):
-        r"""Extract symmetry-irreducible, fractional x,y,z coordinates from a CIF file.
-
-        Returns
-        -------
-            :math:`(N, 3)` :class:`numpy.ndarray[float]`:
-                Symmetry-irreducible positions of atoms in `fractional coordinates`_.
-
-        .. _`fractional coordinates`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html
-        """
-        xyz_keys = ("_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z")
-
-        return cast_array_to_float(arr=self.get_from_loops(xyz_keys), dtype=float)
-
     def build_unit_cell(
         self,
         fractional: bool = True,
         n_decimal_places: int = 4,
-        wrap_coords: bool = True,  # TODO: docs
         verbose: bool = False,
     ):
         """Reconstruct atomic positions from Wyckoff sites and symmetry operations.
@@ -451,15 +460,14 @@ class CifFile:
         ValueError
             If the stored data cannot form a valid box.
         """
-        fractional_positions = self.read_wyckoff_positions()
+        fractional_positions = self.wyckoff_positions
 
         # Read the cell params and convert to a matrix of basis vectors
         cell = self.read_cell_params(degrees=False, mmcif=False)
         cell_matrix = _matrix_from_lengths_and_angles(*cell)
 
-        symops = self.read_symmetry_operations()
         symops_str = np.array2string(
-            symops,
+            self.symops,
             separator=",",  # Place a comma after each line in the array for eval
             threshold=np.inf,  # Ensure that every line is included in the string
             floatmode="unique",  # Ensures strings can uniquely represent each float
@@ -470,8 +478,7 @@ class CifFile:
         ]
 
         pos = np.vstack(all_frac_positions)
-        if wrap_coords:
-            pos %= 1  # Wrap particles into the box
+        pos %= 1  # Wrap particles into the box
 
         # Filter unique points. This takes some time but makes the method faster overall
         _, unique_indices, unique_counts = np.unique(
@@ -498,32 +505,6 @@ class CifFile:
         return (
             pos[unique_indices] if fractional else real_space_positions[unique_indices]
         )
-
-    @property
-    def cast_values(self):
-        """Bool : Whether to cast "number-like" values to ints & floats.
-
-        .. note::
-
-            When set to `True` after construction, the values are modified in-place.
-            This action cannot be reversed.
-        """
-        return self._cast_values
-
-    @cast_values.setter
-    def cast_values(self, cast: bool):
-        if cast:
-            self._pairs = {
-                k: _try_cast_to_numeric(_strip_quotes(v))
-                for (k, v) in self.pairs.items()
-            }
-        else:
-            warnings.warn(
-                "Setting cast_values True->False has no effect on stored data.",
-                category=ParseWarning,
-                stacklevel=2,
-            )
-        self._cast_values = cast
 
     @property
     def box(self):
@@ -561,6 +542,88 @@ class CifFile:
         return _box_from_lengths_and_angles(
             *self.read_cell_params(degrees=False, mmcif=False)
         )
+
+    @property
+    def loop_labels(self):
+        """A list of column labels for each data array.
+
+        This property is equivalent to :code:`[arr.dtype.names for arr in self.loops]`.
+
+        Returns
+        -------
+        list[list[str]]:
+            Column labels for :attr:`~.loops`, stored as a nested list of strings.
+        """
+        return [arr.dtype.names for arr in self.loops]
+
+    @property
+    def symops(self):
+        r"""Extract the symmetry operations from a CIF file.
+
+        Example
+        -------
+        >>> cif.symops
+        array([['x,y,z'],
+               ['z,y+1/2,x+1/2'],
+               ['z+1/2,-y,x+1/2'],
+               ['z+1/2,y+1/2,x']], dtype='<U14')
+
+        Returns
+        -------
+            :math:`(N,)` :class:`numpy.ndarray[str]`:
+                An array of strings containing the symmetry operations in a
+                `parsable algebraic form`_.
+
+        .. _`parsable algebraic form`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Ispace_group_symop_operation_xyz.html
+        """
+        symmetry_keys = (
+            "_symmetry_equiv_pos_as_xyz",
+            "_space_group_symop_operation_xyz",
+        )
+
+        # Only one key is valid in each standard, so we only ever get one match.
+        return self.get_from_loops(symmetry_keys)
+
+    @property
+    def wyckoff_positions(self):
+        r"""Extract symmetry-irreducible, fractional x,y,z coordinates from a CIF file.
+
+        Returns
+        -------
+            :math:`(N, 3)` :class:`numpy.ndarray[float]`:
+                Symmetry-irreducible positions of atoms in `fractional coordinates`_.
+
+        .. _`fractional coordinates`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html
+        """
+        xyz_keys = ("_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z")
+
+        return cast_array_to_float(arr=self.get_from_loops(xyz_keys), dtype=float)
+
+    @property
+    def cast_values(self):
+        """Bool : Whether to cast "number-like" values to ints & floats.
+
+        .. note::
+
+            When set to `True` after construction, the values are modified in-place.
+            This action cannot be reversed.
+        """
+        return self._cast_values
+
+    @cast_values.setter
+    def cast_values(self, cast: bool):
+        if cast:
+            self._pairs = {
+                k: _try_cast_to_numeric(_strip_quotes(v))
+                for (k, v) in self.pairs.items()
+            }
+        else:
+            warnings.warn(
+                "Setting cast_values True->False has no effect on stored data.",
+                category=ParseWarning,
+                stacklevel=2,
+            )
+        self._cast_values = cast
 
     @classmethod
     def structured_to_unstructured(cls, arr: np.ndarray):

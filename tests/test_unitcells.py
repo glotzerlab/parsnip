@@ -24,7 +24,7 @@ def test_read_wyckoff_positions(cif_data):
     if "PDB_4INS_head.cif" in cif_data.filename:
         return
     keys = ("_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z")
-    parsnip_data = cif_data.file.read_wyckoff_positions()
+    parsnip_data = cif_data.file.wyckoff_positions
     gemmi_data = _gemmi_read_table(cif_data.filename, keys)
     gemmi_data = [[cif.as_number(val) for val in row] for row in gemmi_data]
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
@@ -45,7 +45,7 @@ def test_read_symmetry_operations(cif_data):
     if "PDB_4INS_head.cif" in cif_data.filename:
         return  # Excerpt of PDB file does not contain symmetry information
 
-    parsnip_data = cif_data.file.read_symmetry_operations()
+    parsnip_data = cif_data.file.symops
     gemmi_data = _gemmi_read_table(filename=cif_data.filename, keys=cif_data.symop_keys)
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
 
