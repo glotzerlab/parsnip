@@ -30,6 +30,7 @@ def test_read_key_value_pairs(cif_data):
     parsnip_data = cif_data.file[all_keys]
     for i, value in enumerate(parsnip_data):
         assert cif_data.file[all_keys[i]] == value
+        assert cif_data.file[all_keys[i]] == cif_data.file.get_from_pairs(all_keys[i])
     gemmi_data = _gemmi_read_keys(cif_data.filename, keys=all_keys, as_number=False)
     np.testing.assert_equal(parsnip_data, gemmi_data, verbose=True)
 
@@ -38,6 +39,7 @@ def test_read_key_value_pairs(cif_data):
 @random_keys_mark(n_samples=20)
 def test_read_key_value_pairs_random(cif_data, keys):
     parsnip_data = cif_data.file[keys]
+    np.testing.assert_equal(parsnip_data, cif_data.file.get_from_pairs(keys))
     for i, value in enumerate(parsnip_data):
         assert cif_data.file.pairs.get(keys[i], None) == value
     gemmi_data = _gemmi_read_keys(cif_data.filename, keys=keys, as_number=False)
