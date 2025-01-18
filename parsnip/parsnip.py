@@ -222,6 +222,42 @@ class CifFile:
             output.append(pairs_match if pairs_match is not None else loops_match)
         return output[0] if len(output) == 1 else output
 
+    def get_from_pairs(self, index: str | Iterable[str]):
+        """Return an item from the dictionary of key-value pairs.
+
+        Indexing with a string returns the value from the :meth:`~.pairs` dict. Indexing
+        with an Iterable of strings returns a list of values, with `None` as a
+        placeholder for keys that did not match any data.
+
+        Example
+        -------
+        Indexing the class with a single key:
+
+        >>> cif.get_from_pairs("_journal_year")
+        '1999'
+
+        Indexing with a list of keys:
+
+        >>> cif.get_from_pairs(["_journal_year", "_journal_page_first"])
+        ['1999', '0']
+
+        Parameters
+        ----------
+            index: str | Iterable[str]
+                An item key or list of keys.
+
+        Returns
+        -------
+            list[str|int|float] :
+                A list of data elements corresponding to the input key or keys. If the
+                resulting list would have length 1, the item is returned directly
+                instead.
+        """
+        if isinstance(index, Iterable) and not isinstance(index, str):
+            return [self.pairs.get(k, None) for k in index]
+
+        return self.pairs.get(index, None)
+
     def get_from_loops(self, index: ArrayLike):
         """Return a column or columns from the matching table in :attr:`~.loops`.
 
@@ -311,42 +347,6 @@ class CifFile:
                 ).squeeze(axis=1)
             )
         return (result or None) if len(result) != 1 else result[0]
-
-    def get_from_pairs(self, index: str | Iterable[str]):
-        """Return an item from the dictionary of key-value pairs.
-
-        Indexing with a string returns the value from the :meth:`~.pairs` dict. Indexing
-        with an Iterable of strings returns a list of values, with `None` as a
-        placeholder for keys that did not match any data.
-
-        Example
-        -------
-        Indexing the class with a single key:
-
-        >>> cif.get_from_pairs("_journal_year")
-        '1999'
-
-        Indexing with a list of keys:
-
-        >>> cif.get_from_pairs(["_journal_year", "_journal_page_first"])
-        ['1999', '0']
-
-        Parameters
-        ----------
-            index: str | Iterable[str]
-                An item key or list of keys.
-
-        Returns
-        -------
-            list[str|int|float] :
-                A list of data elements corresponding to the input key or keys. If the
-                resulting list would have length 1, the item is returned directly
-                instead.
-        """
-        if isinstance(index, Iterable) and not isinstance(index, str):
-            return [self.pairs.get(k, None) for k in index]
-
-        return self.pairs.get(index, None)
 
     def read_cell_params(self, degrees: bool = True, mmcif: bool = False):
         r"""Read the `unit cell parameters`_ (lengths and angles) from a CIF file.
