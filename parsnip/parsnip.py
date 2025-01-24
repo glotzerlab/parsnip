@@ -348,7 +348,9 @@ class CifFile:
             )
         return (result or None) if len(result) != 1 else result[0]
 
-    def read_cell_params(self, degrees: bool = True, mmcif: bool = False):
+    def read_cell_params(
+        self, degrees: bool = True, mmcif: bool = False, normalize: bool = False
+    ):
         r"""Read the `unit cell parameters`_ (lengths and angles) from a CIF file.
 
         .. _`unit cell parameters`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Ccell.html
@@ -361,6 +363,10 @@ class CifFile:
             mmcif : bool, optional
                 When False, the standard CIF key naming is used (e.g. _cell_angle_alpha)
                 . When True, the mmCIF standard is used instead (e.g. cell.angle_alpha).
+                Default value = ``False``
+            normalize: (bool, optional)
+                Whether to scale the unit cell such that the smallest lattice parameter
+                is `1.0`.
                 Default value = ``False``
 
         Returns
@@ -391,7 +397,7 @@ class CifFile:
                 *angle_keys,
             )
         if self.cast_values:
-            cell_data = [float(x) for x in self[box_keys]]
+            cell_data = np.asarray([float(x) for x in self[box_keys]])
         else:
             cell_data = cast_array_to_float(arr=self[box_keys], dtype=np.float64)
 
@@ -412,16 +418,17 @@ class CifFile:
 
         if not degrees:
             cell_data[3:] = np.deg2rad(cell_data[3:])
+        if normalize:
+            cell_data[:3] /= cell_data[:3].min()
 
         return tuple(float(v) for v in cell_data)  # Return as base python types
 
     def build_unit_cell(
         self,
-        fractional: bool = True,
         n_decimal_places: int = 4,
         verbose: bool = False,
     ):
-        """Reconstruct atomic positions from Wyckoff sites and symmetry operations.
+        """Reconstruct fractional atomic positions from Wyckoff sites and symops.
 
         Rather than storing an entire unit cell's atomic positions, CIF files instead
         include the data required to recreate those positions based on symmetry rules.
@@ -439,9 +446,6 @@ class CifFile:
             positions.
 
         Args:
-            fractional : (bool, optional)
-                Whether to return fractional or absolute coordinates.
-                Default value = ``True``
             n_decimal_places : (int, optional)
                 The number of decimal places to round each position to for the
                 uniqueness comparison. Values higher than 4 may not work for all CIF
@@ -490,6 +494,7 @@ class CifFile:
 
         # Remove initial duplicates, then map to real space for a second check
         pos = pos[unique_indices]
+
         real_space_positions = pos @ cell_matrix
 
         _, unique_indices, unique_counts = np.unique(
@@ -502,9 +507,7 @@ class CifFile:
         if verbose:
             _write_debug_output(unique_indices, unique_counts, pos, check="Secondary")
 
-        return (
-            pos[unique_indices] if fractional else real_space_positions[unique_indices]
-        )
+        return pos[unique_indices]
 
     @property
     def box(self):
@@ -542,6 +545,42 @@ class CifFile:
         return _box_from_lengths_and_angles(
             *self.read_cell_params(degrees=False, mmcif=False)
         )
+
+    @property
+    def lattice_vectors(self):
+        r"""The lattice vectors of the unit cell, with :math:`\vec{a_1}\perp[100]`.
+
+        .. important::
+
+            The lattice vectors are stored as *columns* of the returned matrix, similar
+            to `freud to_matrix()`_. Creating boxes using :attr:`box` is highly
+            recommended.
+
+        .. _`freud to_matrix()`: https://freud.readthedocs.io/en/latest/gettingstarted/examples/module_intros/box.Box.html
+
+        Example
+        -------
+        The box matrix can be used to transform fractional coordinates to absolute
+        coordinates *after transposing to row-major form.*
+
+        >>> lattice_vectors = cif.lattice_vectors
+        >>> print(lattice_vectors)
+        [[3.6 0.0 0.0]
+         [0.0 3.6 0.0]
+         [0.0 0.0 3.6]]
+        >>> cif.build_unit_cell() @ lattice_vectors.T # Calculate absolute positions
+        array([[0.0, 0.0, 0.0],
+               [0.0, 1.8, 1.8],
+               [1.8, 0.0, 1.8],
+               [1.8, 1.8, 0.0]])
+
+        Returns
+        -------
+        :math:`(3, 3)` :class:`numpy.ndarray`:
+            The lattice vectors of the unit cell :math:`\vec{a_1}, \vec{a_2},\vec{a_3}`.
+        """
+        lx, ly, lz, xy, xz, yz = self.box
+        return np.asarray([[lx, xy * ly, xz * lz], [0, ly, lz * yz], [0, 0, lz]])
 
     @property
     def loop_labels(self):
@@ -720,7 +759,7 @@ class CifFile:
 
                 if n_elements % n_cols != 0:
                     warnings.warn(
-                        f"Parsed data for table {len(self.loops)+1} cannot be resolved"
+                        f"Parsed data for table {len(self.loops) + 1} cannot be resolved"
                         f" into a table of the expected size and will be ignored. "
                         f"Got n={n_elements} items, expected c={n_cols} columns: "
                         f"n%c={n_elements % n_cols}).",

@@ -3,7 +3,6 @@
 
 """Configure doctest namespace."""
 
-
 import numpy as np
 import pytest
 
