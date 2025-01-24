@@ -8,6 +8,7 @@ data. The classes and functions in this module provide simple tools for the mani
 of string data extracted from CIF files by methods in ``parsnip.parse``.
 
 """
+
 from __future__ import annotations
 
 import re

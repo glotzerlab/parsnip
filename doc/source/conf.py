@@ -1,4 +1,5 @@
 """Configuration file for the Sphinx documentation builder."""
+
 import datetime
 
 CURRENT_YEAR = datetime.date.today().year
@@ -9,7 +10,7 @@ CURRENT_YEAR = datetime.date.today().year
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "parsnip"
-copyright = f"2024-{ CURRENT_YEAR } The Regents of the University of Michigan"
+copyright = f"2024-{CURRENT_YEAR} The Regents of the University of Michigan"
 author = "Jen Bradley"
 release = "0.1.0"
 

@@ -4,7 +4,7 @@ Quickstart Tutorial
 ===================
 
 Once you have :ref:`installed <installation>` **parsnip**, most workflows involve reading a CIF file.
-Let's assume we have the file my_file.cif in the current directory, and these are its contents:
+Let's assume we have the file `my_file.cif` in the current directory, and these are its contents:
 
 .. literalinclude:: example_file.cif
 
@@ -140,14 +140,14 @@ and symmetry-irreducible (Wyckoff) positions contained in the file.
 
 Only one line is required to build a tilable unit cell! The positions returned here
 are in fractional coordinates, and can be imported into tools like `freud`_ to rapidly
-build out supercells. For absolute coordinates (based on cell parameters stored in the
-file), set :code:`fractional=False`.
+build out supercells. For absolute coordinates, matrix multiply the fractional
+coordinates by transpose of the cell's :attr:`~.lattice_vectors`.
 
 .. _`freud`: https://freud.readthedocs.io/en/latest/modules/data.html#freud.data.UnitCell
 
 .. doctest::
 
-    >>> pos = cif.build_unit_cell(fractional=True)
+    >>> pos = cif.build_unit_cell()
     >>> print(pos)
     [[0.  0.  0. ]
      [0.  0.5 0.5]
