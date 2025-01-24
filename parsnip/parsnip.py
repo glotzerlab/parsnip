@@ -553,10 +553,10 @@ class CifFile:
         .. important::
 
             The lattice vectors are stored as *columns* of the returned matrix, similar
-            to `freud to_matrix()`_. Creating boxes using :attr:`box` is highly
-            recommended.
+            to `freud to_matrix()`_. This matrix must be transposed when creating a
+            Freud box or transforming fractional coordinates to absolute.
 
-        .. _`freud to_matrix()`: https://freud.readthedocs.io/en/latest/gettingstarted/examples/module_intros/box.Box.html
+        .. _`freud to_matrix()`: https://freud.readthedocs.io/en/latest/modules/box.html#freud.box.Box.to_matrix
 
         Example
         -------
