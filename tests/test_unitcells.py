@@ -39,6 +39,10 @@ def test_read_cell_params(cif_data, keys=box_keys):
     gemmi_data = _gemmi_read_keys(cif_data.filename, keys)
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
 
+    normalized = cif_data.file.read_cell_params(mmcif=mmcif, normalize=True)
+    assert normalized[3:] == parsnip_data[3:]  # Should not change the angles
+    assert min(normalized[:3]) == 1
+
 
 @cif_files_mark
 def test_read_symmetry_operations(cif_data):
@@ -58,8 +62,9 @@ def test_build_unit_cell(cif_data, n_decimal_places):
     if "PDB_4INS_head.cif" in cif_data.filename:
         return
 
-    parsnip_positions = cif_data.file.build_unit_cell(
-        n_decimal_places=n_decimal_places, fractional=False
+    parsnip_positions = (
+        cif_data.file.build_unit_cell(n_decimal_places=n_decimal_places)
+        @ cif_data.file.lattice_vectors.T
     )
 
     # Read the structure, then extract to Python builtin types. Then, wrap into the box
