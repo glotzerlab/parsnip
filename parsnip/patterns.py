@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import re
 import warnings
-from functools import cache, lru_cache
+from functools import lru_cache
 
 import numpy as np
 from numpy.typing import ArrayLike
@@ -25,9 +25,12 @@ ALLOWED_DELIMITERS = [";\n", "'''", '"""']
 
 
 _bracket_bracket_pattern = re.compile(r"(\[|\])")
+
+
 def _flatten_or_none(ls: list):
     """Return the sole element from a list of l=1, None if l=0, else l."""
     return None if not ls else ls[0] if len(ls) == 1 else ls
+
 
 def _safe_eval(str_input: str, x: int | float, y: int | float, z: int | float):
     """Attempt to safely evaluate a string of symmetry equivalent positions.
@@ -123,6 +126,7 @@ def _accumulate_nonsimple_data(data_iter, line=""):
             line += next(data_iter)
     return line
 
+
 @lru_cache(maxsize=64)
 def _is_key(line: str | None):
     return line is not None and line.strip()[:1] == "_"
@@ -161,7 +165,8 @@ def _semicolon_to_string(line: str):
     # This is technically against spec, but is almost never meaningful
     return line.replace(";", "'" if "'" not in line else '"')
 
-@lru_cache(maxsize=64) # Small cache
+
+@lru_cache(maxsize=64)  # Small cache
 def _line_is_continued(line: str | None):
     return line is not None and line.strip()[:1] == ";"
 

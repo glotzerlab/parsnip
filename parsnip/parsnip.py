@@ -70,7 +70,7 @@ from __future__ import annotations
 import re
 import warnings
 from collections.abc import Iterable
-from fnmatch import fnmatchcase, fnmatch, filter as fnfilter
+from fnmatch import filter as fnfilter
 from pathlib import Path
 from typing import ClassVar
 
@@ -83,7 +83,6 @@ from parsnip._errors import ParseWarning
 from parsnip.patterns import (
     _accumulate_nonsimple_data,
     _box_from_lengths_and_angles,
-    _bracket_bracket_pattern,
     _dtype_from_int,
     _flatten_or_none,
     _is_data,
@@ -268,7 +267,7 @@ class CifFile:
                 resulting list would have length 1, the item is returned directly
                 instead.
         """
-        if isinstance(index, str): # Escape brackets with []
+        if isinstance(index, str):  # Escape brackets with []
             index = re.sub(r"(\[|\])", r"[\1]", index)
             return _flatten_or_none(
                 [self.pairs.get(k) for k in fnfilter(self.pairs, index)]
@@ -278,9 +277,7 @@ class CifFile:
         index = [re.sub(r"(\[|\])", r"[\1]", i) for i in index]
         matches = [fnfilter(self.pairs, pat) for pat in index]
 
-        return [
-            _flatten_or_none([self.pairs.get(k, None) for k in m]) for m in matches
-        ]
+        return [_flatten_or_none([self.pairs.get(k, None) for k in m]) for m in matches]
 
     def get_from_loops(self, index: ArrayLike):
         """Return a column or columns from the matching table in :attr:`~.loops`.
@@ -373,7 +370,7 @@ class CifFile:
         return (result or None) if len(result) != 1 else result[0]
 
     def read_cell_params(
-        self, degrees: bool = True, mmcif: bool = False, normalize: bool = False
+        self, degrees: bool = True, normalize: bool = False
     ):
         r"""Read the `unit cell parameters`_ (lengths and angles) from a CIF file.
 
@@ -384,10 +381,6 @@ class CifFile:
             degrees : bool, optional
                 When True, angles are returned in degrees (as per the CIF spec). When
                 False, angles are converted to radians. Default value = ``True``
-            mmcif : bool, optional
-                When False, the standard CIF key naming is used (e.g. _cell_angle_alpha)
-                . When True, the mmCIF standard is used instead (e.g. cell.angle_alpha).
-                Default value = ``False``
             normalize: (bool, optional)
                 Whether to scale the unit cell such that the smallest lattice parameter
                 is `1.0`.
@@ -405,12 +398,7 @@ class CifFile:
             If the stored data cannot form a valid box.
         """
         angle_keys = ("_cell?angle_alpha", "_cell?angle_beta", "_cell?angle_gamma")
-        box_keys = (
-            "_cell?length_a",
-            "_cell?length_b",
-            "_cell?length_c",
-            *angle_keys
-        )
+        box_keys = ("_cell?length_a", "_cell?length_b", "_cell?length_c", *angle_keys)
 
         if self.cast_values:
             cell_data = np.asarray([float(x) for x in self[box_keys]])
@@ -483,7 +471,7 @@ class CifFile:
         fractional_positions = self.wyckoff_positions
 
         # Read the cell params and convert to a matrix of basis vectors
-        cell = self.read_cell_params(degrees=False, mmcif=False)
+        cell = self.read_cell_params(degrees=False)
         cell_matrix = _matrix_from_lengths_and_angles(*cell)
 
         symops_str = np.array2string(
@@ -559,7 +547,7 @@ class CifFile:
             :math:`(L_1, L_2, L_3, xy, xz, yz)`.
         """
         return _box_from_lengths_and_angles(
-            *self.read_cell_params(degrees=False, mmcif=False)
+            *self.read_cell_params(degrees=False)
         )
 
     @property
@@ -656,13 +644,10 @@ class CifFile:
             "_atom_site_fract_z",
             "_atom_site_Cartn_x",
             "_atom_site_Cartn_y",
-            "_atom_site_Cartn_z"
-        ) # Only one set should be stored at a time
+            "_atom_site_Cartn_z",
+        )  # Only one set should be stored at a time
 
-        return cast_array_to_float(
-            arr=self.get_from_loops(xyz_keys),
-            dtype=float
-        )
+        return cast_array_to_float(arr=self.get_from_loops(xyz_keys), dtype=float)
 
     @property
     def cast_values(self):
