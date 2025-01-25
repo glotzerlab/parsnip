@@ -23,6 +23,14 @@ ALLOWED_DELIMITERS = [";\n", "'''", '"""']
 """Delimiters allowed for nonsimple (multi-line) data entries."""
 
 
+_bracket_pattern = re.compile(r"(\[|\])")
+
+
+def _flatten_or_none(ls: list):
+    """Return the sole element from a list of l=1, None if l=0, else l."""
+    return None if not ls else ls[0] if len(ls) == 1 else ls
+
+
 def _safe_eval(str_input: str, x: int | float, y: int | float, z: int | float):
     """Attempt to safely evaluate a string of symmetry equivalent positions.
 

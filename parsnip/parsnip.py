@@ -70,6 +70,7 @@ from __future__ import annotations
 import re
 import warnings
 from collections.abc import Iterable
+from fnmatch import filter as fnfilter
 from pathlib import Path
 from typing import ClassVar
 
@@ -82,7 +83,9 @@ from parsnip._errors import ParseWarning
 from parsnip.patterns import (
     _accumulate_nonsimple_data,
     _box_from_lengths_and_angles,
+    _bracket_pattern,
     _dtype_from_int,
+    _flatten_or_none,
     _is_data,
     _is_key,
     _matrix_from_lengths_and_angles,
@@ -214,16 +217,30 @@ class CifFile:
             ['z,y+1/2,x+1/2'],
             ['z+1/2,-y,x+1/2'],
             ['z+1/2,y+1/2,x']], dtype='<U14')]
+
+        Wildcards are supported for lookups with this method:
+
+        >>> cif[["_journal*", "_atom_site_fract_?"]]
+        [['1999', '0', '123'],
+        ...array([['0.0000000000', '0.0000000000', '0.0000000000']], dtype='<U12')]
         """
         output = []
-        for key in np.atleast_1d(index):
+        index = [index] if isinstance(index, str) else index
+        for key in index:
             pairs_match = self.get_from_pairs(key)
             loops_match = self.get_from_loops(key)
+            # print(pairs_match if pairs_match is not None else loops_match)
             output.append(pairs_match if pairs_match is not None else loops_match)
         return output[0] if len(output) == 1 else output
 
     def get_from_pairs(self, index: str | Iterable[str]):
-        """Return an item from the dictionary of key-value pairs.
+        """Return an item or items from the dictionary of key-value pairs.
+
+        .. tip::
+
+            This method supports a few unix-style wildcards. Use `*` to match any number
+            of any character, and `?` to match any single character. If a wildcard
+            matches more than one key, a list is returned for that index.
 
         Indexing with a string returns the value from the :meth:`~.pairs` dict. Indexing
         with an Iterable of strings returns a list of values, with `None` as a
@@ -238,8 +255,18 @@ class CifFile:
 
         Indexing with a list of keys:
 
-        >>> cif.get_from_pairs(["_journal_year", "_journal_page_first"])
-        ['1999', '0']
+        >>> cif.get_from_pairs(["_journal_page_first", "_journal_page_last"])
+        ['0', '123']
+
+        Indexing with wildcards:
+
+        >>> cif.get_from_pairs("_journal*")
+        ['1999', '0', '123']
+
+        Single-character wildcards can generalize keys across CIF and mmCIF files:
+
+        >>> cif.get_from_pairs("_symmetry?space_group_name_H-M")
+        "'Fm-3m'"
 
         Parameters
         ----------
@@ -253,10 +280,17 @@ class CifFile:
                 resulting list would have length 1, the item is returned directly
                 instead.
         """
-        if isinstance(index, Iterable) and not isinstance(index, str):
-            return [self.pairs.get(k, None) for k in index]
+        if isinstance(index, str):  # Escape brackets with []
+            index = re.sub(_bracket_pattern, r"[\1]", index)
+            return _flatten_or_none(
+                [self.pairs.get(k) for k in fnfilter(self.pairs, index)]
+            )
 
-        return self.pairs.get(index, None)
+        # Escape all brackets in all indices
+        index = [re.sub(_bracket_pattern, r"[\1]", i) for i in index]
+        matches = [fnfilter(self.pairs, pat) for pat in index]
+
+        return [_flatten_or_none([self.pairs.get(k, None) for k in m]) for m in matches]
 
     def get_from_loops(self, index: ArrayLike):
         """Return a column or columns from the matching table in :attr:`~.loops`.
@@ -287,11 +321,16 @@ class CifFile:
         Extract multiple columns from a single table:
 
         >>> table_1_cols = ["_symmetry_equiv_pos_site_id", "_symmetry_equiv_pos_as_xyz"]
-        >>> cif.get_from_loops(table_1_cols)
+        >>> table_1 = cif.get_from_loops(table_1_cols)
+        >>> table_1
         array([['1', 'x,y,z'],
                ['96', 'z,y+1/2,x+1/2'],
                ['118', 'z+1/2,-y,x+1/2'],
                ['192', 'z+1/2,y+1/2,x']], dtype='<U14')
+
+        Wildcard patterns are accepted for single input keys:
+
+        >>> assert (cif.get_from_loops("_symmetry_equiv_pos*") == table_1).all()
 
         Extract multiple columns from multiple loops:
 
@@ -334,8 +373,21 @@ class CifFile:
                 input keys. If the resulting list would have length 1, the data is
                 returned directly instead. See the note above for data ordering.
         """
-        index = np.atleast_1d(index)
-        result = []
+        if isinstance(index, str):
+            result, index = [], re.sub(_bracket_pattern, r"[\1]", index)
+            for table, labels in zip(self.loops, self.loop_labels):
+                match = table[fnfilter(labels, index)]
+                if match.size > 0:
+                    result.append(
+                        structured_to_unstructured(
+                            match, copy=True, casting="safe"
+                        ).squeeze(axis=1)
+                    )
+            if result == [] or (len(result) == 1 and len(result[0]) == 0):
+                return None
+            return result[0] if len(result) == 1 else result
+
+        result, index = [], np.atleast_1d(index)
         for table in self.loops:
             matches = index[np.any(index[:, None] == table.dtype.names, axis=1)]
             if len(matches) == 0:
@@ -346,11 +398,9 @@ class CifFile:
                     table[matches], copy=True, casting="safe"
                 ).squeeze(axis=1)
             )
-        return (result or None) if len(result) != 1 else result[0]
+        return _flatten_or_none(result)
 
-    def read_cell_params(
-        self, degrees: bool = True, mmcif: bool = False, normalize: bool = False
-    ):
+    def read_cell_params(self, degrees: bool = True, normalize: bool = False):
         r"""Read the `unit cell parameters`_ (lengths and angles) from a CIF file.
 
         .. _`unit cell parameters`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Ccell.html
@@ -360,10 +410,6 @@ class CifFile:
             degrees : bool, optional
                 When True, angles are returned in degrees (as per the CIF spec). When
                 False, angles are converted to radians. Default value = ``True``
-            mmcif : bool, optional
-                When False, the standard CIF key naming is used (e.g. _cell_angle_alpha)
-                . When True, the mmCIF standard is used instead (e.g. cell.angle_alpha).
-                Default value = ``False``
             normalize: (bool, optional)
                 Whether to scale the unit cell such that the smallest lattice parameter
                 is `1.0`.
@@ -380,22 +426,9 @@ class CifFile:
         ValueError
             If the stored data cannot form a valid box.
         """
-        if mmcif:
-            angle_keys = ("_cell.angle_alpha", "_cell.angle_beta", "_cell.angle_gamma")
-            box_keys = (
-                "_cell.length_a",
-                "_cell.length_b",
-                "_cell.length_c",
-                *angle_keys,
-            )
-        else:
-            angle_keys = ("_cell_angle_alpha", "_cell_angle_beta", "_cell_angle_gamma")
-            box_keys = (
-                "_cell_length_a",
-                "_cell_length_b",
-                "_cell_length_c",
-                *angle_keys,
-            )
+        angle_keys = ("_cell?angle_alpha", "_cell?angle_beta", "_cell?angle_gamma")
+        box_keys = ("_cell?length_a", "_cell?length_b", "_cell?length_c", *angle_keys)
+
         if self.cast_values:
             cell_data = np.asarray([float(x) for x in self[box_keys]])
         else:
@@ -467,7 +500,7 @@ class CifFile:
         fractional_positions = self.wyckoff_positions
 
         # Read the cell params and convert to a matrix of basis vectors
-        cell = self.read_cell_params(degrees=False, mmcif=False)
+        cell = self.read_cell_params(degrees=False)
         cell_matrix = _matrix_from_lengths_and_angles(*cell)
 
         symops_str = np.array2string(
@@ -542,9 +575,7 @@ class CifFile:
             The box vector lengths (in angstroms) and unitless tilt factors.
             :math:`(L_1, L_2, L_3, xy, xz, yz)`.
         """
-        return _box_from_lengths_and_angles(
-            *self.read_cell_params(degrees=False, mmcif=False)
-        )
+        return _box_from_lengths_and_angles(*self.read_cell_params(degrees=False))
 
     @property
     def lattice_vectors(self):
@@ -564,10 +595,10 @@ class CifFile:
         coordinates *after transposing to row-major form.*
 
         >>> lattice_vectors = cif.lattice_vectors
-        >>> print(lattice_vectors)
-        [[3.6 0.0 0.0]
-         [0.0 3.6 0.0]
-         [0.0 0.0 3.6]]
+        >>> lattice_vectors
+        array([[3.6, 0.0, 0.0],
+               [0.0, 3.6, 0.0],
+               [0.0, 0.0, 3.6]])
         >>> cif.build_unit_cell() @ lattice_vectors.T # Calculate absolute positions
         array([[0.0, 0.0, 0.0],
                [0.0, 1.8, 1.8],
@@ -634,7 +665,14 @@ class CifFile:
 
         .. _`fractional coordinates`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html
         """
-        xyz_keys = ("_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z")
+        xyz_keys = (
+            "_atom_site_fract_x",
+            "_atom_site_fract_y",
+            "_atom_site_fract_z",
+            "_atom_site_Cartn_x",
+            "_atom_site_Cartn_y",
+            "_atom_site_Cartn_z",
+        )  # Only one set should be stored at a time
 
         return cast_array_to_float(arr=self.get_from_loops(xyz_keys), dtype=float)
 

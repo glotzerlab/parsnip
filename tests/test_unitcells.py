@@ -32,14 +32,13 @@ def test_read_wyckoff_positions(cif_data):
 
 @cif_files_mark
 def test_read_cell_params(cif_data, keys=box_keys):
-    mmcif = "PDB_4INS_head.cif" in cif_data.filename
-    if mmcif:
+    if "PDB_4INS_head.cif" in cif_data.filename:
         keys = (key[0] + key[1:].replace("_", ".", 1) for key in keys)
-    parsnip_data = cif_data.file.read_cell_params(mmcif=mmcif)
+    parsnip_data = cif_data.file.read_cell_params()
     gemmi_data = _gemmi_read_keys(cif_data.filename, keys)
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
 
-    normalized = cif_data.file.read_cell_params(mmcif=mmcif, normalize=True)
+    normalized = cif_data.file.read_cell_params(normalize=True)
     assert normalized[3:] == parsnip_data[3:]  # Should not change the angles
     assert min(normalized[:3]) == 1
 
