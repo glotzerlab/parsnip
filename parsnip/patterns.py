@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import re
 import warnings
+from functools import cache, lru_cache
 
 import numpy as np
 from numpy.typing import ArrayLike
@@ -22,6 +23,8 @@ from parsnip._errors import ParseWarning
 ALLOWED_DELIMITERS = [";\n", "'''", '"""']
 """Delimiters allowed for nonsimple (multi-line) data entries."""
 
+
+_bracket_bracket_pattern = re.compile(r"(\[|\])")
 
 def _safe_eval(str_input: str, x: int | float, y: int | float, z: int | float):
     """Attempt to safely evaluate a string of symmetry equivalent positions.
@@ -117,19 +120,22 @@ def _accumulate_nonsimple_data(data_iter, line=""):
             line += next(data_iter)
     return line
 
-
+@lru_cache(maxsize=64)
 def _is_key(line: str | None):
     return line is not None and line.strip()[:1] == "_"
 
 
+@lru_cache(maxsize=64)
 def _is_data(line: str | None):
     return line is not None and line.strip()[:1] != "_" and line.strip()[:5] != "loop_"
 
 
+@lru_cache(maxsize=64)
 def _strip_comments(s: str):
     return s.split("#")[0].strip()
 
 
+@lru_cache(maxsize=64)
 def _strip_quotes(s: str):
     return s.replace("'", "").replace('"', "")
 
@@ -152,7 +158,7 @@ def _semicolon_to_string(line: str):
     # This is technically against spec, but is almost never meaningful
     return line.replace(";", "'" if "'" not in line else '"')
 
-
+@lru_cache(maxsize=64) # Small cache
 def _line_is_continued(line: str | None):
     return line is not None and line.strip()[:1] == ";"
 

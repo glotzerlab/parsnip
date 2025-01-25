@@ -70,6 +70,7 @@ from __future__ import annotations
 import re
 import warnings
 from collections.abc import Iterable
+from fnmatch import fnmatchcase
 from pathlib import Path
 from typing import ClassVar
 
@@ -82,6 +83,7 @@ from parsnip._errors import ParseWarning
 from parsnip.patterns import (
     _accumulate_nonsimple_data,
     _box_from_lengths_and_angles,
+    _bracket_bracket_pattern,
     _dtype_from_int,
     _is_data,
     _is_key,
@@ -219,6 +221,7 @@ class CifFile:
         for key in np.atleast_1d(index):
             pairs_match = self.get_from_pairs(key)
             loops_match = self.get_from_loops(key)
+            # print(pairs_match if pairs_match is not None else loops_match)
             output.append(pairs_match if pairs_match is not None else loops_match)
         return output[0] if len(output) == 1 else output
 
@@ -253,10 +256,17 @@ class CifFile:
                 resulting list would have length 1, the item is returned directly
                 instead.
         """
+        matches = []
         if isinstance(index, Iterable) and not isinstance(index, str):
-            return [self.pairs.get(k, None) for k in index]
+            for i in index:
+                matches.append(
+                    [v for (k,v) in self.pairs.items() if fnmatchcase(k, re.sub(_bracket_bracket_pattern, r"[\1]", i))
+                    ] or None
+                )
+            return [None if not m else m[0] if len(m)==1 else m for m in matches]
 
-        return self.pairs.get(index, None)
+        matches.extend(v for (k,v) in self.pairs.items() if fnmatchcase(k, index.replace("[", r"[[~").replace("]", r"[]]").replace("~", "]")))
+        return None if not matches else matches[0] if len(matches)==1 else matches
 
     def get_from_loops(self, index: ArrayLike):
         """Return a column or columns from the matching table in :attr:`~.loops`.
