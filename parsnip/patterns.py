@@ -24,7 +24,7 @@ ALLOWED_DELIMITERS = [";\n", "'''", '"""']
 """Delimiters allowed for nonsimple (multi-line) data entries."""
 
 
-_bracket_bracket_pattern = re.compile(r"(\[|\])")
+_bracket_pattern = re.compile(r"(\[|\])")
 
 
 def _flatten_or_none(ls: list):

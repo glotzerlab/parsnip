@@ -83,6 +83,7 @@ from parsnip._errors import ParseWarning
 from parsnip.patterns import (
     _accumulate_nonsimple_data,
     _box_from_lengths_and_angles,
+    _bracket_pattern,
     _dtype_from_int,
     _flatten_or_none,
     _is_data,
@@ -280,13 +281,13 @@ class CifFile:
                 instead.
         """
         if isinstance(index, str):  # Escape brackets with []
-            index = re.sub(r"(\[|\])", r"[\1]", index)
+            index = re.sub(_bracket_pattern, r"[\1]", index)
             return _flatten_or_none(
                 [self.pairs.get(k) for k in fnfilter(self.pairs, index)]
             )
 
         # Escape all brackets in all indices
-        index = [re.sub(r"(\[|\])", r"[\1]", i) for i in index]
+        index = [re.sub(_bracket_pattern, r"[\1]", i) for i in index]
         matches = [fnfilter(self.pairs, pat) for pat in index]
 
         return [_flatten_or_none([self.pairs.get(k, None) for k in m]) for m in matches]
@@ -373,7 +374,7 @@ class CifFile:
                 returned directly instead. See the note above for data ordering.
         """
         if isinstance(index, str):
-            result, index = [], re.sub(r"(\[|\])", r"[\1]", index)
+            result, index = [], re.sub(_bracket_pattern, r"[\1]", index)
             for table, labels in zip(self.loops, self.loop_labels):
                 match = table[fnfilter(labels, index)]
                 if match.size > 0:
