@@ -216,9 +216,16 @@ class CifFile:
             ['z,y+1/2,x+1/2'],
             ['z+1/2,-y,x+1/2'],
             ['z+1/2,y+1/2,x']], dtype='<U14')]
+
+        Wildcards are supported for lookups with this method:
+
+        >>> cif[["_journal*", "_atom_site_fract_?"]]
+        [['1999', '0', '123'],
+        ...array([['0.0000000000', '0.0000000000', '0.0000000000']], dtype='<U12')]
         """
         output = []
-        for key in np.atleast_1d(index):
+        index = [index] if isinstance(index, str) else index
+        for key in index:
             pairs_match = self.get_from_pairs(key)
             loops_match = self.get_from_loops(key)
             # print(pairs_match if pairs_match is not None else loops_match)
@@ -313,11 +320,16 @@ class CifFile:
         Extract multiple columns from a single table:
 
         >>> table_1_cols = ["_symmetry_equiv_pos_site_id", "_symmetry_equiv_pos_as_xyz"]
-        >>> cif.get_from_loops(table_1_cols)
+        >>> table_1 = cif.get_from_loops(table_1_cols)
+        >>> table_1
         array([['1', 'x,y,z'],
                ['96', 'z,y+1/2,x+1/2'],
                ['118', 'z+1/2,-y,x+1/2'],
                ['192', 'z+1/2,y+1/2,x']], dtype='<U14')
+
+        Wildcard patterns are accepted for single input keys:
+
+        >>> assert (cif.get_from_loops("_symmetry_equiv_pos*") == table_1).all()
 
         Extract multiple columns from multiple loops:
 
@@ -360,8 +372,19 @@ class CifFile:
                 input keys. If the resulting list would have length 1, the data is
                 returned directly instead. See the note above for data ordering.
         """
-        index = np.atleast_1d(index)
-        result = []
+        if isinstance(index, str):
+            result, index = [], re.sub(r"(\[|\])", r"[\1]", index)
+            for table, labels in zip(self.loops, self.loop_labels):
+                match = table[fnfilter(labels, index)]
+                if match.size > 0:
+                    result.append(
+                        structured_to_unstructured(match, copy=True, casting="safe").squeeze(axis=1)
+                    )
+            if result == [] or (len(result) == 1 and len(result[0]) == 0):
+                return None
+            return result[0] if len(result) == 1 else result
+
+        result, index = [], np.atleast_1d(index)
         for table in self.loops:
             matches = index[np.any(index[:, None] == table.dtype.names, axis=1)]
             if len(matches) == 0:
@@ -372,7 +395,7 @@ class CifFile:
                     table[matches], copy=True, casting="safe"
                 ).squeeze(axis=1)
             )
-        return (result or None) if len(result) != 1 else result[0]
+        return _flatten_or_none(result)
 
     def read_cell_params(self, degrees: bool = True, normalize: bool = False):
         r"""Read the `unit cell parameters`_ (lengths and angles) from a CIF file.
@@ -569,10 +592,10 @@ class CifFile:
         coordinates *after transposing to row-major form.*
 
         >>> lattice_vectors = cif.lattice_vectors
-        >>> print(lattice_vectors)
-        [[3.6 0.0 0.0]
-         [0.0 3.6 0.0]
-         [0.0 0.0 3.6]]
+        >>> lattice_vectors
+        array([[3.6, 0.0, 0.0],
+               [0.0, 3.6, 0.0],
+               [0.0, 0.0, 3.6]])
         >>> cif.build_unit_cell() @ lattice_vectors.T # Calculate absolute positions
         array([[0.0, 0.0, 0.0],
                [0.0, 1.8, 1.8],
