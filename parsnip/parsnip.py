@@ -255,6 +255,11 @@ class CifFile:
         >>> cif.get_from_pairs("_journal*")
         ['1999', '0', '123']
 
+        Single-character wildcards can generalize keys across CIF and mmCIF files:
+
+        >>> cif.get_from_pairs("_symmetry?space_group_name_H-M")
+        "'Fm-3m'"
+
         Parameters
         ----------
             index: str | Iterable[str]
