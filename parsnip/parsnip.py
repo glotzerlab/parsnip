@@ -404,29 +404,13 @@ class CifFile:
         ValueError
             If the stored data cannot form a valid box.
         """
-        if mmcif:
-            angle_keys = ("_cell.angle_alpha", "_cell.angle_beta", "_cell.angle_gamma")
-            box_keys = (
-                "_cell.length_a",
-                "_cell.length_b",
-                "_cell.length_c",
-                *angle_keys,
-            )
-        else:
-            angle_keys = ("_cell_angle_alpha", "_cell_angle_beta", "_cell_angle_gamma")
-            box_keys = (
-                "_cell_length_a",
-                "_cell_length_b",
-                "_cell_length_c",
-                *angle_keys,
-            )
-        # angle_keys = ("_cell?angle_alpha", "_cell?angle_beta", "_cell?angle_gamma")
-        # box_keys = (
-        #     "_cell?length_a",
-        #     "_cell?length_b",
-        #     "_cell?length_c",
-        #     *angle_keys
-        # )
+        angle_keys = ("_cell?angle_alpha", "_cell?angle_beta", "_cell?angle_gamma")
+        box_keys = (
+            "_cell?length_a",
+            "_cell?length_b",
+            "_cell?length_c",
+            *angle_keys
+        )
 
         if self.cast_values:
             cell_data = np.asarray([float(x) for x in self[box_keys]])
@@ -666,9 +650,19 @@ class CifFile:
 
         .. _`fractional coordinates`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html
         """
-        xyz_keys = ("_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z")
+        xyz_keys = (
+            "_atom_site_fract_x",
+            "_atom_site_fract_y",
+            "_atom_site_fract_z",
+            "_atom_site_Cartn_x",
+            "_atom_site_Cartn_y",
+            "_atom_site_Cartn_z"
+        ) # Only one set should be stored at a time
 
-        return cast_array_to_float(arr=self.get_from_loops(xyz_keys), dtype=float)
+        return cast_array_to_float(
+            arr=self.get_from_loops(xyz_keys),
+            dtype=float
+        )
 
     @property
     def cast_values(self):
