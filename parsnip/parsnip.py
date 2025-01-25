@@ -70,7 +70,7 @@ from __future__ import annotations
 import re
 import warnings
 from collections.abc import Iterable
-from fnmatch import fnmatchcase
+from fnmatch import fnmatchcase, fnmatch, filter as fnfilter
 from pathlib import Path
 from typing import ClassVar
 
@@ -85,6 +85,7 @@ from parsnip.patterns import (
     _box_from_lengths_and_angles,
     _bracket_bracket_pattern,
     _dtype_from_int,
+    _flatten_or_none,
     _is_data,
     _is_key,
     _matrix_from_lengths_and_angles,
@@ -226,7 +227,13 @@ class CifFile:
         return output[0] if len(output) == 1 else output
 
     def get_from_pairs(self, index: str | Iterable[str]):
-        """Return an item from the dictionary of key-value pairs.
+        """Return an item or items from the dictionary of key-value pairs.
+
+        .. tip::
+
+            This method supports a few unix-style wildcards. Use `*` to match any number
+            of any character, and `?` to match any single character. If a wildcard
+            matches more than one key, a list is returned for that index.
 
         Indexing with a string returns the value from the :meth:`~.pairs` dict. Indexing
         with an Iterable of strings returns a list of values, with `None` as a
@@ -241,8 +248,13 @@ class CifFile:
 
         Indexing with a list of keys:
 
-        >>> cif.get_from_pairs(["_journal_year", "_journal_page_first"])
-        ['1999', '0']
+        >>> cif.get_from_pairs(["_journal_page_first", "_journal_page_last"])
+        ['0', '123']
+
+        Indexing with wildcards:
+
+        >>> cif.get_from_pairs("_journal*")
+        ['1999', '0', '123']
 
         Parameters
         ----------
@@ -256,17 +268,19 @@ class CifFile:
                 resulting list would have length 1, the item is returned directly
                 instead.
         """
-        matches = []
-        if isinstance(index, Iterable) and not isinstance(index, str):
-            for i in index:
-                matches.append(
-                    [v for (k,v) in self.pairs.items() if fnmatchcase(k, re.sub(_bracket_bracket_pattern, r"[\1]", i))
-                    ] or None
-                )
-            return [None if not m else m[0] if len(m)==1 else m for m in matches]
+        if isinstance(index, str): # Escape brackets with []
+            index = re.sub(r"(\[|\])", r"[\1]", index)
+            return _flatten_or_none(
+                [self.pairs.get(k) for k in fnfilter(self.pairs, index)]
+            )
 
-        matches.extend(v for (k,v) in self.pairs.items() if fnmatchcase(k, index.replace("[", r"[[~").replace("]", r"[]]").replace("~", "]")))
-        return None if not matches else matches[0] if len(matches)==1 else matches
+        # Escape all brackets in all indices
+        index = [re.sub(r"(\[|\])", r"[\1]", i) for i in index]
+        matches = [fnfilter(self.pairs, pat) for pat in index]
+
+        return [
+            _flatten_or_none([self.pairs.get(k, None) for k in m]) for m in matches
+        ]
 
     def get_from_loops(self, index: ArrayLike):
         """Return a column or columns from the matching table in :attr:`~.loops`.
@@ -406,6 +420,14 @@ class CifFile:
                 "_cell_length_c",
                 *angle_keys,
             )
+        # angle_keys = ("_cell?angle_alpha", "_cell?angle_beta", "_cell?angle_gamma")
+        # box_keys = (
+        #     "_cell?length_a",
+        #     "_cell?length_b",
+        #     "_cell?length_c",
+        #     *angle_keys
+        # )
+
         if self.cast_values:
             cell_data = np.asarray([float(x) for x in self[box_keys]])
         else:
