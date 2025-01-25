@@ -206,9 +206,7 @@ def test_try_cast_to_numeric(s):
 def test_box(cif_data):
     freud = pytest.importorskip("freud")
 
-    cif_box = cif_data.file.read_cell_params(
-        degrees=False, mmcif="PDB" in cif_data.filename
-    )
+    cif_box = cif_data.file.read_cell_params(degrees=False)
 
     freud_box = freud.Box.from_box_lengths_and_angles(*cif_box)
     freud_box_2 = freud.Box(*cif_data.file.box)

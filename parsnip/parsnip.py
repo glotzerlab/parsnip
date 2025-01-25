@@ -369,9 +369,7 @@ class CifFile:
             )
         return (result or None) if len(result) != 1 else result[0]
 
-    def read_cell_params(
-        self, degrees: bool = True, normalize: bool = False
-    ):
+    def read_cell_params(self, degrees: bool = True, normalize: bool = False):
         r"""Read the `unit cell parameters`_ (lengths and angles) from a CIF file.
 
         .. _`unit cell parameters`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Ccell.html
@@ -546,9 +544,7 @@ class CifFile:
             The box vector lengths (in angstroms) and unitless tilt factors.
             :math:`(L_1, L_2, L_3, xy, xz, yz)`.
         """
-        return _box_from_lengths_and_angles(
-            *self.read_cell_params(degrees=False)
-        )
+        return _box_from_lengths_and_angles(*self.read_cell_params(degrees=False))
 
     @property
     def lattice_vectors(self):
