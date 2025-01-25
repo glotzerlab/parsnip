@@ -378,7 +378,9 @@ class CifFile:
                 match = table[fnfilter(labels, index)]
                 if match.size > 0:
                     result.append(
-                        structured_to_unstructured(match, copy=True, casting="safe").squeeze(axis=1)
+                        structured_to_unstructured(
+                            match, copy=True, casting="safe"
+                        ).squeeze(axis=1)
                     )
             if result == [] or (len(result) == 1 and len(result[0]) == 0):
                 return None
