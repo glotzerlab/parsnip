@@ -2,6 +2,7 @@ name: Publish Python distribution to TestPyPI and/or PyPI
 
 on:
   push:
+  pull_request:
 
 jobs:
   build:
