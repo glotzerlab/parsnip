@@ -1,6 +1,6 @@
 .. _images:
 
-.. image:: doc/source/_static/parsnip_header_dark.svg
+.. image:: https://raw.githubusercontent.com/glotzerlab/parsnip/refs/heads/main/doc/source/_static/parsnip_header_dark.svg
   :width: 600
 
 
