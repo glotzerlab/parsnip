@@ -6,6 +6,8 @@ on:
       - "main"
       - "breaking"
   pull_request:
+  tags:
+    - "v*"  
 
 jobs:
   build:
