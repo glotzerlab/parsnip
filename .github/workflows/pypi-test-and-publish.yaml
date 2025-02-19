@@ -8,6 +8,7 @@ on:
       - "main"
       - "breaking"
   pull_request:
+    types: [labeled, opened, reopened, synchronize]
 
 jobs:
   build:
