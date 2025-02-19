@@ -1,4 +1,4 @@
-# Copyright (c) 2024, Glotzer Group
+# Copyright (c) 2025, The Regents of the University of Michigan
 # This file is from the parsnip project, released under the BSD 3-Clause License.
 
 """Configure doctest namespace."""
