@@ -49,14 +49,14 @@ Installation via pip
 
 .. code:: bash
 
-    python -m pip install parsnip
+    python -m pip install parsnip-cif
 
 Installation via conda-forge
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code:: bash
 
-    conda install -c conda-forge parsnip
+    conda install -c conda-forge parsnip-cif
 
 
 Installation from source
