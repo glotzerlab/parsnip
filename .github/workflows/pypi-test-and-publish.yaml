@@ -2,12 +2,12 @@ name: Build and Publish
 
 on:
   push:
+    tags:
+      - "v*"
     branches:
       - "main"
       - "breaking"
   pull_request:
-    tags:
-      - "v*"
 
 jobs:
   build:
