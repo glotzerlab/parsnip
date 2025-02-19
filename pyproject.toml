@@ -3,7 +3,7 @@ requires = ["setuptools","wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "parsnip"
+name = "parsnip-cif"
 version = "0.1.0"
 requires-python = ">=3.7"
 description = "Minimal library for parsing CIF & mmCIF files in Python."
@@ -30,6 +30,9 @@ dynamic = ["optional-dependencies"]
 [project.urls]
 Source = "https://github.com/glotzerlab/parsnip"
 Issues = "https://github.com/glotzerlab/parsnip/issues"
+
+[tool.setuptools]
+packages=["parsnip"]
 
 [tool.setuptools.dynamic]
 optional-dependencies = {tests = { file = ["tests/requirements.in"] }, doc = { file = ["doc/requirements.txt"] }}
@@ -91,3 +94,8 @@ known-first-party = ["parsnip"]
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
+
+[tool.coverage.run]
+omit = [
+    "parsnip/coverage.py",
+]
