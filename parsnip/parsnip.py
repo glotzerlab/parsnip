@@ -1,4 +1,4 @@
-# Copyright (c) 2024, Glotzer Group
+# Copyright (c) 2025, The Regents of the University of Michigan
 # This file is from the parsnip project, released under the BSD 3-Clause License.
 
 r"""An interface for reading `CIF`_ files in Python.
@@ -557,7 +557,7 @@ class CifFile:
 
         Example
         -------
-        This method provides a convinient interface to create box objects.
+        This method provides a convenient interface to create box objects.
 
         >>> box = cif.box
         >>> print(box)
