@@ -557,7 +557,7 @@ class CifFile:
 
         Example
         -------
-        This method provides a convinient interface to create box objects.
+        This method provides a convenient interface to create box objects.
 
         >>> box = cif.box
         >>> print(box)
