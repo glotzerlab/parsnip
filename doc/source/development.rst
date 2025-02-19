@@ -23,6 +23,7 @@ As portability is a primary feature of **parsnip**, tests are run run on Python 
 
 .. _NEP 29: https://numpy.org/neps/nep-0029-deprecation_policy.html
 
+Please refer to the `Contributor Agreement <https://github.com/glotzerlab/parsnip/blob/main/contributoragreement.md>`_ for further information.
 
 Style Guidelines
 ----------------
