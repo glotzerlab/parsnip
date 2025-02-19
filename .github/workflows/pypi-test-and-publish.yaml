@@ -37,7 +37,7 @@ jobs:
   publish-to-testpypi:
     name: Publish to TestPyPI
     needs: [build]
-    if: ${{ github.event.label.name == 'TestPyPi' }}
+    if: ${{ contains(github.event.pull_request.labels.*.name, 'TestPyPi') }}
     runs-on: ubuntu-latest
     environment:
       name: testpypi
