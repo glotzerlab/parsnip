@@ -7,7 +7,7 @@ name = "parsnip-cif"
 version = "0.1.0"
 requires-python = ">=3.7"
 description = "Minimal library for parsing CIF & mmCIF files in Python."
-readme = "README.md"
+readme = "README.rst"
 license = { file = "LICENSE" }
 authors = [
     {name = "Jen Bradley", email = "jenbrad@umich.edu"},
