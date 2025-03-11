@@ -868,7 +868,6 @@ class CifFile:
         "_symmetry_equiv_pos_as_xyz",
         "_space_group_symop_operation_xyz",
     )
-    # TODO: cannot be set/frozenset: order matters!
     _WYCKOFF_KEYS = (
         "_atom_site_fract_x",
         "_atom_site_fract_y",
