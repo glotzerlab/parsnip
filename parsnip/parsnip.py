@@ -554,19 +554,7 @@ class CifFile:
             self.get_from_loops(additional_columns), len(symops), axis=0
         )
 
-        # return tiled_data[unique_indices], pos[unique_indices]
-        return np.rec.array(
-            list(zip(*tiled_data.T, *pos.T)),
-            dtype=[
-                *[
-                    (label, tiled_data.dtype)
-                    for label in np.atleast_1d(additional_columns)
-                ],
-                ("x", float),
-                ("y", float),
-                ("z", float),
-            ],
-        )
+        return tiled_data[unique_indices], pos[unique_indices]
 
     @property
     def box(self):
