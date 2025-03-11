@@ -88,7 +88,6 @@ from parsnip.patterns import (
     _flatten_or_none,
     _is_data,
     _is_key,
-    _matrix_from_lengths_and_angles,
     _safe_eval,
     _strip_comments,
     _strip_quotes,
@@ -387,6 +386,9 @@ class CifFile:
                 return None
             return result[0] if len(result) == 1 else result
 
+        if isinstance(index, (set, frozenset)):
+            index = list(index)  # TODO: add to changelog
+
         result, index = [], np.atleast_1d(index)
         for table in self.loops:
             matches = index[np.any(index[:, None] == table.dtype.names, axis=1)]
@@ -459,6 +461,8 @@ class CifFile:
     def build_unit_cell(
         self,
         n_decimal_places: int = 4,
+        additional_cols: ArrayLike | None = None,
+        # additional_cols: ArrayLike | None = "_atom_site_label",
         verbose: bool = False,
     ):
         """Reconstruct fractional atomic positions from Wyckoff sites and symops.
@@ -496,51 +500,73 @@ class CifFile:
         ------
         ValueError
             If the stored data cannot form a valid box.
-        """
-        fractional_positions = self.wyckoff_positions
+            If the `additional_cols` is not properly associated with the unit cell.
+        """  # TODO: does this format correctly?
+        symops, fractional_positions = self.symops, self.wyckoff_positions
+
+        if additional_cols is not None:
+            # Find the table of Wyckoff positions and compare to keys in additional_data
+            invalid_keys = next(
+                set(np.atleast_1d(additional_cols)) - set(labels)
+                for labels in self.loop_labels
+                if set(labels) & set(self.__class__._WYCKOFF_KEYS)
+            )
+            print(invalid_keys)
+            if invalid_keys:
+                msg = (
+                    f"Requested keys {invalid_keys} are not included in the `_atom_site"
+                    "_fract_[xyz]` loop and cannot be included in the unit cell."
+                )
+                raise ValueError(msg)
 
         # Read the cell params and convert to a matrix of basis vectors
-        cell = self.read_cell_params(degrees=False)
-        cell_matrix = _matrix_from_lengths_and_angles(*cell)
+        # cell = self.read_cell_params(degrees=False)
+        # cell_matrix = _matrix_from_lengths_and_angles(*cell)
 
         symops_str = np.array2string(
-            self.symops,
+            symops,
             separator=",",  # Place a comma after each line in the array for eval
             threshold=np.inf,  # Ensure that every line is included in the string
             floatmode="unique",  # Ensures strings can uniquely represent each float
         )
+        # print((symops_str,), "\n\n")
+        # print(symops_str, "\n")
 
         all_frac_positions = [
             _safe_eval(symops_str, *xyz) for xyz in fractional_positions
-        ]
+        ]  # Compute N_symmetry_elements coordinates for each Wyckoff site
 
         pos = np.vstack(all_frac_positions)
         pos %= 1  # Wrap particles into the box
 
+        # auxiliary_data =
+        # print([self.symops])
+        print(fractional_positions)
+        # print(pos[:8])
+        # print(pos.shape, fractional_positions.shape)
+        print(self.get_from_loops("_atom_site_label"))
+
         # Filter unique points. This takes some time but makes the method faster overall
         _, unique_indices, unique_counts = np.unique(
-            pos.round(n_decimal_places), return_index=True, return_counts=True, axis=0
-        )
-
-        if verbose:
-            _write_debug_output(unique_indices, unique_counts, pos, check="Initial")
-
-        # Remove initial duplicates, then map to real space for a second check
-        pos = pos[unique_indices]
-
-        real_space_positions = pos @ cell_matrix
-
-        _, unique_indices, unique_counts = np.unique(
-            real_space_positions.round(n_decimal_places),
+            # pos.round(n_decimal_places), return_index=True, return_counts=True, axis=0
+            pos.round(n_decimal_places),
             return_index=True,
             return_counts=True,
             axis=0,
         )
+        unique_indices.sort()  # TODO: is this correct?
 
         if verbose:
-            _write_debug_output(unique_indices, unique_counts, pos, check="Secondary")
+            _write_debug_output(unique_indices, unique_counts, pos, check="Initial")
 
-        return pos[unique_indices]
+        if additional_cols is None:
+            return pos[unique_indices]
+
+        tiled_data = np.repeat(
+            self.get_from_loops(additional_data), len(symops), axis=0
+        )
+
+        return [*zip(tiled_data[unique_indices], pos[unique_indices])]
 
     @property
     def box(self):
@@ -646,13 +672,9 @@ class CifFile:
 
         .. _`parsable algebraic form`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Ispace_group_symop_operation_xyz.html
         """
-        symmetry_keys = (
-            "_symmetry_equiv_pos_as_xyz",
-            "_space_group_symop_operation_xyz",
-        )
-
         # Only one key is valid in each standard, so we only ever get one match.
-        return self.get_from_loops(symmetry_keys)
+        return self.get_from_loops(self.__class__._SYMOP_KEYS)
+        # TODO: shape is (N, 1), not (N, )
 
     @property
     def wyckoff_positions(self):
@@ -665,16 +687,10 @@ class CifFile:
 
         .. _`fractional coordinates`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html
         """
-        xyz_keys = (
-            "_atom_site_fract_x",
-            "_atom_site_fract_y",
-            "_atom_site_fract_z",
-            "_atom_site_Cartn_x",
-            "_atom_site_Cartn_y",
-            "_atom_site_Cartn_z",
-        )  # Only one set should be stored at a time
-
-        return cast_array_to_float(arr=self.get_from_loops(xyz_keys), dtype=float)
+        # TODO: add additional checking in get_from_loops to verify correctness
+        return cast_array_to_float(
+            arr=self.get_from_loops(self.__class__._WYCKOFF_KEYS), dtype=float
+        )
 
     @property
     def cast_values(self):
@@ -842,3 +858,17 @@ class CifFile:
     This dictionary can be modified to change parsing behavior, although doing is not
     recommended. Changes to this variable are shared across all instances of the class.
     """
+
+    _SYMOP_KEYS = (
+        "_symmetry_equiv_pos_as_xyz",
+        "_space_group_symop_operation_xyz",
+    )
+    # TODO: cannot be set/frozenset: order matters!
+    _WYCKOFF_KEYS = (
+        "_atom_site_fract_x",
+        "_atom_site_fract_y",
+        "_atom_site_fract_z",
+        "_atom_site_Cartn_x",
+        "_atom_site_Cartn_y",
+        "_atom_site_Cartn_z",
+    )  # Only one set should be stored at a time
