@@ -460,7 +460,10 @@ class CifFile:
     def build_unit_cell(
         self,
         n_decimal_places: int = 4,
-        additional_cols: ArrayLike | None = None,
+        additional_columns: ArrayLike | None = [
+            "_atom_site_label",
+            "_atom_site_U_iso_or_equiv",
+        ],
         verbose: bool = False,
     ):
         """Reconstruct fractional atomic positions from Wyckoff sites and symops.
@@ -499,14 +502,14 @@ class CifFile:
         ValueError
             If the stored data cannot form a valid box.
         ValueError
-            If the `additional_cols` are not properly associated with the unit cell.
+            If the `additional_columns` are not properly associated with the unit cell.
         """
         symops, fractional_positions = self.symops, self.wyckoff_positions
 
-        if additional_cols is not None:
+        if additional_columns is not None:
             # Find the table of Wyckoff positions and compare to keys in additional_data
             invalid_keys = next(
-                set(np.atleast_1d(additional_cols)) - set(labels)
+                set(np.atleast_1d(additional_columns)) - set(labels)
                 for labels in self.loop_labels
                 if set(labels) & set(self.__class__._WYCKOFF_KEYS)
             )
@@ -544,14 +547,26 @@ class CifFile:
         if verbose:
             _write_debug_output(unique_indices, unique_counts, pos, check="Initial")
 
-        if additional_cols is None:
+        if additional_columns is None:
             return pos[unique_indices]
 
         tiled_data = np.repeat(
-            self.get_from_loops(additional_data), len(symops), axis=0
+            self.get_from_loops(additional_columns), len(symops), axis=0
         )
 
-        return [*zip(tiled_data[unique_indices], pos[unique_indices])]
+        # return tiled_data[unique_indices], pos[unique_indices]
+        return np.rec.array(
+            list(zip(*tiled_data.T, *pos.T)),
+            dtype=[
+                *[
+                    (label, tiled_data.dtype)
+                    for label in np.atleast_1d(additional_columns)
+                ],
+                ("x", float),
+                ("y", float),
+                ("z", float),
+            ],
+        )
 
     @property
     def box(self):
