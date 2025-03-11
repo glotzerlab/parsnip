@@ -88,6 +88,7 @@ from parsnip.patterns import (
     _flatten_or_none,
     _is_data,
     _is_key,
+    _matrix_from_lengths_and_angles,
     _safe_eval,
     _strip_comments,
     _strip_quotes,
@@ -518,8 +519,8 @@ class CifFile:
                 raise ValueError(msg)
 
         # Read the cell params and convert to a matrix of basis vectors
-        # cell = self.read_cell_params(degrees=False)
-        # cell_matrix = _matrix_from_lengths_and_angles(*cell)
+        cell = self.read_cell_params(degrees=False)
+        cell_matrix = _matrix_from_lengths_and_angles(*cell)
 
         symops_str = np.array2string(
             symops,
@@ -536,13 +537,32 @@ class CifFile:
         pos %= 1  # Wrap particles into the box
 
         # Filter unique points. This takes some time but makes the method faster overall
-        _, unique_indices, unique_counts = np.unique(
+        _, unique_fractional, unique_counts = np.unique(
             pos.round(n_decimal_places), return_index=True, return_counts=True, axis=0
         )
-        unique_indices.sort()  # TODO: is this correct?
 
         if verbose:
-            _write_debug_output(unique_indices, unique_counts, pos, check="Initial")
+            _write_debug_output(
+                unique_fractional, unique_counts, pos, check="Fractional"
+            )
+
+        # Double-check for duplicates with real space coordinates
+        real_space_positions = pos @ cell_matrix
+
+        _, unique_realspace, unique_counts = np.unique(
+            real_space_positions.round(n_decimal_places),
+            return_index=True,
+            return_counts=True,
+            axis=0,
+        )
+
+        # Merge unique points from realspace and fractional calculations
+        unique_indices = sorted({*unique_fractional} & {*unique_realspace})
+
+        if verbose:
+            _write_debug_output(
+                unique_fractional, unique_counts, pos, check="Realspace"
+            )
 
         if additional_columns is None:
             return pos[unique_indices]
