@@ -460,10 +460,7 @@ class CifFile:
     def build_unit_cell(
         self,
         n_decimal_places: int = 4,
-        additional_columns: ArrayLike | None = [
-            "_atom_site_label",
-            "_atom_site_U_iso_or_equiv",
-        ],
+        additional_columns: ArrayLike | None = None,
         verbose: bool = False,
     ):
         """Reconstruct fractional atomic positions from Wyckoff sites and symops.
