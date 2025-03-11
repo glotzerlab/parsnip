@@ -228,7 +228,6 @@ class CifFile:
         for key in index:
             pairs_match = self.get_from_pairs(key)
             loops_match = self.get_from_loops(key)
-            # print(pairs_match if pairs_match is not None else loops_match)
             output.append(pairs_match if pairs_match is not None else loops_match)
         return output[0] if len(output) == 1 else output
 
@@ -462,7 +461,6 @@ class CifFile:
         self,
         n_decimal_places: int = 4,
         additional_cols: ArrayLike | None = None,
-        # additional_cols: ArrayLike | None = "_atom_site_label",
         verbose: bool = False,
     ):
         """Reconstruct fractional atomic positions from Wyckoff sites and symops.
@@ -500,8 +498,9 @@ class CifFile:
         ------
         ValueError
             If the stored data cannot form a valid box.
-            If the `additional_cols` is not properly associated with the unit cell.
-        """  # TODO: does this format correctly?
+        ValueError
+            If the `additional_cols` are not properly associated with the unit cell.
+        """
         symops, fractional_positions = self.symops, self.wyckoff_positions
 
         if additional_cols is not None:
@@ -511,7 +510,6 @@ class CifFile:
                 for labels in self.loop_labels
                 if set(labels) & set(self.__class__._WYCKOFF_KEYS)
             )
-            print(invalid_keys)
             if invalid_keys:
                 msg = (
                     f"Requested keys {invalid_keys} are not included in the `_atom_site"
@@ -529,8 +527,6 @@ class CifFile:
             threshold=np.inf,  # Ensure that every line is included in the string
             floatmode="unique",  # Ensures strings can uniquely represent each float
         )
-        # print((symops_str,), "\n\n")
-        # print(symops_str, "\n")
 
         all_frac_positions = [
             _safe_eval(symops_str, *xyz) for xyz in fractional_positions
@@ -539,20 +535,9 @@ class CifFile:
         pos = np.vstack(all_frac_positions)
         pos %= 1  # Wrap particles into the box
 
-        # auxiliary_data =
-        # print([self.symops])
-        print(fractional_positions)
-        # print(pos[:8])
-        # print(pos.shape, fractional_positions.shape)
-        print(self.get_from_loops("_atom_site_label"))
-
         # Filter unique points. This takes some time but makes the method faster overall
         _, unique_indices, unique_counts = np.unique(
-            # pos.round(n_decimal_places), return_index=True, return_counts=True, axis=0
-            pos.round(n_decimal_places),
-            return_index=True,
-            return_counts=True,
-            axis=0,
+            pos.round(n_decimal_places), return_index=True, return_counts=True, axis=0
         )
         unique_indices.sort()  # TODO: is this correct?
 
