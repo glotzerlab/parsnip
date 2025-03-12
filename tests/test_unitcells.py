@@ -1,4 +1,6 @@
+import re
 import warnings
+from contextlib import nullcontext
 
 import numpy as np
 import pytest
@@ -6,6 +8,7 @@ from ase import io
 from ase.build import supercells
 from conftest import box_keys, cif_files_mark
 from gemmi import cif
+from more_itertools import flatten
 
 
 def _gemmi_read_table(filename, keys):
@@ -17,6 +20,10 @@ def _gemmi_read_keys(filename, keys, as_number=True):
     if as_number:
         return np.array([cif.as_number(file_block.find_value(key)) for key in keys])
     return np.array([file_block.find_value(key) for key in keys])
+
+
+def _arrstrip(arr: np.ndarray, pattern: str):
+    return np.vectorize(lambda x: re.sub(pattern, "", x))(arr)
 
 
 @cif_files_mark  # TODO: test with conversions to numeric as well
@@ -54,17 +61,46 @@ def test_read_symmetry_operations(cif_data):
 
 
 @cif_files_mark
-@pytest.mark.parametrize("n_decimal_places", [3, 4, 5, 6, 9])
-def test_build_unit_cell(cif_data, n_decimal_places):
+@pytest.mark.parametrize("n_decimal_places", [3, 4, 6, 9])
+@pytest.mark.parametrize(
+    "cols",
+    [
+        None,
+        "_atom_site_type_symbol",
+        ["_atom_site_type_symbol", "_atom_site_occupancy"],
+    ],
+)
+def test_build_unit_cell(cif_data, n_decimal_places, cols):
     warnings.filterwarnings("ignore", "crystal system", category=UserWarning)
 
     if "PDB_4INS_head.cif" in cif_data.filename:
         return
 
-    parsnip_positions = (
-        cif_data.file.build_unit_cell(n_decimal_places=n_decimal_places)
-        @ cif_data.file.lattice_vectors.T
+    should_raise = cols is not None and any(
+        k not in flatten(cif_data.file.loop_labels) for k in np.atleast_1d(cols)
     )
+    occupancies, read_data = None, None
+    with (
+        pytest.raises(ValueError, match=r"not included in the `_atom_site_fract_\[xyz")
+        if should_raise
+        else nullcontext()
+    ):
+        read_data = cif_data.file.build_unit_cell(
+            n_decimal_places=n_decimal_places, additional_columns=cols
+        )
+
+    if read_data is None:
+        return  # ValueError was raised
+
+    if cols is None:
+        parsnip_positions = read_data @ cif_data.file.lattice_vectors.T
+    else:
+        auxiliary_arr, parsnip_positions = read_data
+        parsnip_positions = parsnip_positions @ cif_data.file.lattice_vectors.T
+
+        che_symbols = _arrstrip(auxiliary_arr[:, 0], r"[^A-Za-z]+")
+        if isinstance(cols, list):
+            occupancies = _arrstrip(auxiliary_arr[:, 1], r"[^\d\.]+").astype(float)
 
     # Read the structure, then extract to Python builtin types. Then, wrap into the box
     ase_file = io.read(cif_data.filename)
@@ -77,10 +113,20 @@ def test_build_unit_cell(cif_data, n_decimal_places):
     ase_positions = np.array(
         sorted(ase_data.get_positions(), key=lambda x: (x[0], x[1], x[2]))
     )
+    ase_symbols = np.array(ase_data.get_chemical_symbols())
 
     parsnip_minmax = [parsnip_positions.min(axis=0), parsnip_positions.max(axis=0)]
     ase_minmax = [ase_positions.min(axis=0), ase_positions.max(axis=0)]
     np.testing.assert_allclose(parsnip_minmax, ase_minmax, atol=1e-12)
+
+    if cols is not None:
+        # NOTE: ASE saves the occupancies of the most dominant species!
+        # Parsnip makes no assumptions regarding the correct occupancy
+        # Check all if full occupancy, partial if occ is ndarray and None if occ is None
+        mask = (
+            ... if cif_data.file["_atom_site_occupancy"] is None else occupancies == 1
+        )
+        np.testing.assert_equal(che_symbols[mask], ase_symbols[mask])
 
     if "zeolite" in cif_data.filename:
         return  # Four decimal places not sufficient to reconstruct this structure

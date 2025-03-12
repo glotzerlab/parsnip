@@ -77,7 +77,6 @@ from typing import ClassVar
 import numpy as np
 from more_itertools import flatten, peekable
 from numpy.lib.recfunctions import structured_to_unstructured
-from numpy.typing import ArrayLike
 
 from parsnip._errors import ParseWarning
 from parsnip.patterns import (
@@ -182,7 +181,7 @@ class CifFile:
 
         Returns
         -------
-        list[:class:`numpy.ndarray[str]`]:
+        list[numpy.ndarray[str]]
             A list of structured arrays containing table data from the file.
         """
         return self._loops
@@ -191,7 +190,7 @@ class CifFile:
         """Return an item or list of items from :meth:`~.pairs` and :meth:`~.loops`.
 
         This getter searches the entire CIF state to identify the input keys, returning
-        `None` if the key does not match any data. Matching columns from `loop` tables
+        ``None`` if the key does not match any data. Matching columns from `loop` tables
         are returned as 1D arrays.
 
         .. tip::
@@ -223,13 +222,17 @@ class CifFile:
         >>> cif[["_journal*", "_atom_site_fract_?"]]
         [['1999', '0', '123'],
         ...array([['0.0000000000', '0.0000000000', '0.0000000000']], dtype='<U12')]
+
+        Parameters
+        ----------
+            index: str | typing.Iterable[str]
+                An item key or list of keys.
         """
         output = []
         index = [index] if isinstance(index, str) else index
         for key in index:
             pairs_match = self.get_from_pairs(key)
             loops_match = self.get_from_loops(key)
-            # print(pairs_match if pairs_match is not None else loops_match)
             output.append(pairs_match if pairs_match is not None else loops_match)
         return output[0] if len(output) == 1 else output
 
@@ -238,12 +241,12 @@ class CifFile:
 
         .. tip::
 
-            This method supports a few unix-style wildcards. Use `*` to match any number
-            of any character, and `?` to match any single character. If a wildcard
-            matches more than one key, a list is returned for that index.
+            This method supports a few unix-style wildcards. Use ``*`` to match any
+            number of any character, and ``?`` to match any single character. If a
+            wildcard matches more than one key, a list is returned for that index.
 
         Indexing with a string returns the value from the :meth:`~.pairs` dict. Indexing
-        with an Iterable of strings returns a list of values, with `None` as a
+        with an Iterable of strings returns a list of values, with ``None`` as a
         placeholder for keys that did not match any data.
 
         Example
@@ -270,7 +273,7 @@ class CifFile:
 
         Parameters
         ----------
-            index: str | Iterable[str]
+            index: str | typing.Iterable[str]
                 An item key or list of keys.
 
         Returns
@@ -292,7 +295,7 @@ class CifFile:
 
         return [_flatten_or_none([self.pairs.get(k, None) for k in m]) for m in matches]
 
-    def get_from_loops(self, index: ArrayLike):
+    def get_from_loops(self, index: str | Iterable[str]):
         """Return a column or columns from the matching table in :attr:`~.loops`.
 
         If index is a single string, a single column will be returned from the matching
@@ -363,7 +366,7 @@ class CifFile:
 
         Parameters
         ----------
-            index: str | Iterable[str]
+            index: str | typing.Iterable[str]
                 A column name or list of column names.
 
         Returns
@@ -387,6 +390,9 @@ class CifFile:
                 return None
             return result[0] if len(result) == 1 else result
 
+        if isinstance(index, (set, frozenset)):
+            index = list(index)
+
         result, index = [], np.atleast_1d(index)
         for table in self.loops:
             matches = index[np.any(index[:, None] == table.dtype.names, axis=1)]
@@ -401,18 +407,18 @@ class CifFile:
         return _flatten_or_none(result)
 
     def read_cell_params(self, degrees: bool = True, normalize: bool = False):
-        r"""Read the `unit cell parameters`_ (lengths and angles) from a CIF file.
+        r"""Read the `unit cell parameters`_ (lengths and angles).
 
         .. _`unit cell parameters`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Ccell.html
 
         Parameters
         ----------
             degrees : bool, optional
-                When True, angles are returned in degrees (as per the CIF spec). When
-                False, angles are converted to radians. Default value = ``True``
-            normalize: (bool, optional)
+                When ``True``, angles are returned in degrees (as in the CIF spec). When
+                ``False``, angles are converted to radians. Default value = ``True``
+            normalize: bool, optional
                 Whether to scale the unit cell such that the smallest lattice parameter
-                is `1.0`.
+                is ``1.0``.
                 Default value = ``False``
 
         Returns
@@ -459,31 +465,57 @@ class CifFile:
     def build_unit_cell(
         self,
         n_decimal_places: int = 4,
+        additional_columns: str | Iterable[str] | None = None,
         verbose: bool = False,
     ):
         """Reconstruct fractional atomic positions from Wyckoff sites and symops.
 
         Rather than storing an entire unit cell's atomic positions, CIF files instead
         include the data required to recreate those positions based on symmetry rules.
-        Symmetry operations (stored as strings of x,y,z position permutations) are
+        Symmetry operations (stored as strings of `x,y,z` position permutations) are
         applied to the Wyckoff (symmetry irreducible) positions to create a list of
         possible atomic sites. These are then wrapped into the unit cell and filtered
         for uniqueness to yield the final crystal.
 
-        .. warning::
+        Example
+        -------
+        Construct the atomic positions of the FCC unit cell from its Wyckoff sites:
 
-            Reconstructing positions requires several floating point calculations that
-            can be impacted by low-precision data in CIF files. Typically, at least four
-            decimal places are required to accurately reconstruct complicated unit
-            cells: less precision than this can yield cells with duplicate or missing
-            positions.
+        >>> pos = cif.build_unit_cell()
+        >>> pos
+        array([[0. , 0. , 0. ],
+               [0. , 0.5, 0.5],
+               [0.5, 0. , 0.5],
+               [0.5, 0.5, 0. ]])
 
-        Args:
-            n_decimal_places : (int, optional)
+        Reconstruct a unit cell with its associated atomic labels. The ordering of the
+        auxiliary data array will match the ordering of the atomic positions:
+
+        >>> data = cif.build_unit_cell(additional_columns=["_atom_site_type_symbol"])
+        >>> data[0] # Chemical symbol for the atoms at each lattice site
+        array([['Cu'],
+               ['Cu'],
+               ['Cu'],
+               ['Cu']], dtype='<U12')
+        >>> data[1] # Lattice positions
+        array([[0. , 0. , 0. ],
+               [0. , 0.5, 0.5],
+               [0.5, 0. , 0.5],
+               [0.5, 0.5, 0. ]])
+        >>> assert (pos==data[1]).all()
+
+        Parameters
+        ----------
+            n_decimal_places : int, optional
                 The number of decimal places to round each position to for the
                 uniqueness comparison. Values higher than 4 may not work for all CIF
                 files. Default value = ``4``
-            verbose : (bool, optional)
+            additional_columns : str | typing.Iterable[str] | None, optional
+                A column name or list of column names from the loop containing
+                the Wyckoff site positions. This data is replicated alongside the atomic
+                coordinates and returned in an auxiliary array.
+                Default value = ``None``
+            verbose : bool, optional
                 Whether to print debug information about the uniqueness checks.
                 Default value = ``False``
 
@@ -496,51 +528,85 @@ class CifFile:
         ------
         ValueError
             If the stored data cannot form a valid box.
+        ValueError
+            If the ``additional_columns`` are not properly associated with the Wyckoff
+            positions.
+
+
+        .. caution::
+
+            Reconstructing positions requires several floating point calculations that
+            can be impacted by low-precision data in CIF files. Typically, at least four
+            decimal places are required to accurately reconstruct complicated unit
+            cells: less precision than this can yield cells with duplicate or missing
+            positions.
         """
-        fractional_positions = self.wyckoff_positions
+        symops, fractional_positions = self.symops, self.wyckoff_positions
+
+        if additional_columns is not None:
+            # Find the table of Wyckoff positions and compare to keys in additional_data
+            invalid_keys = next(
+                set(map(str, np.atleast_1d(additional_columns))) - set(labels)
+                for labels in self.loop_labels
+                if set(labels) & set(self.__class__._WYCKOFF_KEYS)
+            )
+            if invalid_keys:
+                msg = (
+                    f"Requested keys {invalid_keys} are not included in the `_atom_site"
+                    "_fract_[xyz]` loop and cannot be included in the unit cell."
+                )
+                raise ValueError(msg)
 
         # Read the cell params and convert to a matrix of basis vectors
         cell = self.read_cell_params(degrees=False)
         cell_matrix = _matrix_from_lengths_and_angles(*cell)
 
         symops_str = np.array2string(
-            self.symops,
-            separator=",",  # Place a comma after each line in the array for eval
-            threshold=np.inf,  # Ensure that every line is included in the string
-            floatmode="unique",  # Ensures strings can uniquely represent each float
+            symops, separator=",", threshold=np.inf, floatmode="unique"
         )
 
         all_frac_positions = [
             _safe_eval(symops_str, *xyz) for xyz in fractional_positions
-        ]
+        ]  # Compute N_symmetry_elements coordinates for each Wyckoff site
 
         pos = np.vstack(all_frac_positions)
         pos %= 1  # Wrap particles into the box
 
-        # Filter unique points. This takes some time but makes the method faster overall
-        _, unique_indices, unique_counts = np.unique(
+        # Filter unique points. TODO: support arbitrary precision, fractional sites
+        _, unique_fractional, unique_counts = np.unique(
             pos.round(n_decimal_places), return_index=True, return_counts=True, axis=0
         )
 
-        if verbose:
-            _write_debug_output(unique_indices, unique_counts, pos, check="Initial")
-
-        # Remove initial duplicates, then map to real space for a second check
-        pos = pos[unique_indices]
-
+        # Double-check for duplicates with real space coordinates
         real_space_positions = pos @ cell_matrix
 
-        _, unique_indices, unique_counts = np.unique(
+        _, unique_realspace, unique_counts = np.unique(
             real_space_positions.round(n_decimal_places),
             return_index=True,
             return_counts=True,
             axis=0,
         )
 
-        if verbose:
-            _write_debug_output(unique_indices, unique_counts, pos, check="Secondary")
+        # Merge unique points from realspace and fractional calculations
+        unique_indices = sorted({*unique_fractional} & {*unique_realspace})
+        # TODO: Reintroduce AFLOW test suite
 
-        return pos[unique_indices]
+        if verbose:
+            _write_debug_output(
+                unique_fractional, unique_counts, pos, check="Fractional"
+            )
+            _write_debug_output(
+                unique_fractional, unique_counts, pos, check="Realspace"
+            )
+
+        if additional_columns is None:
+            return pos[unique_indices]
+
+        tiled_data = np.repeat(
+            self.get_from_loops(additional_columns), len(symops), axis=0
+        )
+
+        return tiled_data[unique_indices], pos[unique_indices]
 
     @property
     def box(self):
@@ -628,7 +694,7 @@ class CifFile:
 
     @property
     def symops(self):
-        r"""Extract the symmetry operations from a CIF file.
+        r"""Extract the symmetry operations in a `parsable algebraic form`_.
 
         Example
         -------
@@ -640,41 +706,29 @@ class CifFile:
 
         Returns
         -------
-            :math:`(N,)` :class:`numpy.ndarray[str]`:
-                An array of strings containing the symmetry operations in a
-                `parsable algebraic form`_.
+            :math:`(N,1)` numpy.ndarray[str]:
+                An array containing the symmetry operations.
 
         .. _`parsable algebraic form`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Ispace_group_symop_operation_xyz.html
         """
-        symmetry_keys = (
-            "_symmetry_equiv_pos_as_xyz",
-            "_space_group_symop_operation_xyz",
-        )
-
         # Only one key is valid in each standard, so we only ever get one match.
-        return self.get_from_loops(symmetry_keys)
+        return self.get_from_loops(self.__class__._SYMOP_KEYS)
 
     @property
     def wyckoff_positions(self):
-        r"""Extract symmetry-irreducible, fractional x,y,z coordinates from a CIF file.
+        r"""Extract symmetry-irreducible, fractional `x,y,z` coordinates.
 
         Returns
         -------
-            :math:`(N, 3)` :class:`numpy.ndarray[float]`:
+            :math:`(N, 3)` :class:`numpy.ndarray`:
                 Symmetry-irreducible positions of atoms in `fractional coordinates`_.
 
         .. _`fractional coordinates`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html
         """
-        xyz_keys = (
-            "_atom_site_fract_x",
-            "_atom_site_fract_y",
-            "_atom_site_fract_z",
-            "_atom_site_Cartn_x",
-            "_atom_site_Cartn_y",
-            "_atom_site_Cartn_z",
-        )  # Only one set should be stored at a time
-
-        return cast_array_to_float(arr=self.get_from_loops(xyz_keys), dtype=float)
+        # TODO: add additional checking in get_from_loops to verify correctness
+        return cast_array_to_float(
+            arr=self.get_from_loops(self.__class__._WYCKOFF_KEYS), dtype=float
+        )
 
     @property
     def cast_values(self):
@@ -797,10 +851,10 @@ class CifFile:
 
                 if n_elements % n_cols != 0:
                     warnings.warn(
-                        f"Parsed data for table {len(self.loops) + 1} cannot be resolved"
-                        f" into a table of the expected size and will be ignored. "
-                        f"Got n={n_elements} items, expected c={n_cols} columns: "
-                        f"n%c={n_elements % n_cols}).",
+                        f"Parsed data for table {len(self.loops) + 1} cannot be"
+                        f" resolved into a table of the expected size and will be"
+                        f"ignored. Got n={n_elements} items, expected c={n_cols}"
+                        f"columns: n%c={n_elements % n_cols}).",
                         category=ParseWarning,
                         stacklevel=2,
                     )
@@ -842,3 +896,16 @@ class CifFile:
     This dictionary can be modified to change parsing behavior, although doing is not
     recommended. Changes to this variable are shared across all instances of the class.
     """
+
+    _SYMOP_KEYS = (
+        "_symmetry_equiv_pos_as_xyz",
+        "_space_group_symop_operation_xyz",
+    )
+    _WYCKOFF_KEYS = (
+        "_atom_site_fract_x",
+        "_atom_site_fract_y",
+        "_atom_site_fract_z",
+        "_atom_site_Cartn_x",
+        "_atom_site_Cartn_y",
+        "_atom_site_Cartn_z",
+    )  # Only one set should be stored at a time
