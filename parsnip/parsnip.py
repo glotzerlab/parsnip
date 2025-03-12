@@ -491,17 +491,18 @@ class CifFile:
         Reconstruct a unit cell with its associated atomic labels. The ordering of the
         auxiliary data array will match the ordering of the atomic positions:
 
-        >>> atoms, pos = cif.build_unit_cell(additional_columns=["_atom_site_label"])
-        >>> atoms
-        array([['Cu1'],
-               ['Cu1'],
-               ['Cu1'],
-               ['Cu1']], dtype='<U12')
-        >>> pos
+        >>> data = cif.build_unit_cell(additional_columns=["_atom_site_type_symbol"])
+        >>> data[0] # Chemical symbol for the atoms at each lattice site
+        array([['Cu'],
+               ['Cu'],
+               ['Cu'],
+               ['Cu']], dtype='<U12')
+        >>> data[1] # Lattice positions
         array([[0. , 0. , 0. ],
                [0. , 0.5, 0.5],
                [0.5, 0. , 0.5],
                [0.5, 0.5, 0. ]])
+        >>> assert (pos==data[1]).all()
 
         Parameters
         ----------
@@ -545,7 +546,7 @@ class CifFile:
         if additional_columns is not None:
             # Find the table of Wyckoff positions and compare to keys in additional_data
             invalid_keys = next(
-                set(np.atleast_1d(additional_columns)) - set(labels)
+                set(map(str, np.atleast_1d(additional_columns))) - set(labels)
                 for labels in self.loop_labels
                 if set(labels) & set(self.__class__._WYCKOFF_KEYS)
             )
@@ -571,15 +572,10 @@ class CifFile:
         pos = np.vstack(all_frac_positions)
         pos %= 1  # Wrap particles into the box
 
-        # Filter unique points. This takes some time but makes the method faster overall
+        # Filter unique points. TODO: support arbitrary precision, fractional sites
         _, unique_fractional, unique_counts = np.unique(
             pos.round(n_decimal_places), return_index=True, return_counts=True, axis=0
         )
-
-        if verbose:
-            _write_debug_output(
-                unique_fractional, unique_counts, pos, check="Fractional"
-            )
 
         # Double-check for duplicates with real space coordinates
         real_space_positions = pos @ cell_matrix
@@ -596,6 +592,9 @@ class CifFile:
         # TODO: Reintroduce AFLOW test suite
 
         if verbose:
+            _write_debug_output(
+                unique_fractional, unique_counts, pos, check="Fractional"
+            )
             _write_debug_output(
                 unique_fractional, unique_counts, pos, check="Realspace"
             )
