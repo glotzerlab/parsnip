@@ -556,10 +556,7 @@ class CifFile:
         cell_matrix = _matrix_from_lengths_and_angles(*cell)
 
         symops_str = np.array2string(
-            symops,
-            separator=",",  # Place a comma after each line in the array for eval
-            threshold=np.inf,  # Ensure that every line is included in the string
-            floatmode="unique",  # Ensures strings can uniquely represent each float
+            symops, separator=",", threshold=np.inf, floatmode="unique"
         )
 
         all_frac_positions = [
@@ -591,6 +588,7 @@ class CifFile:
 
         # Merge unique points from realspace and fractional calculations
         unique_indices = sorted({*unique_fractional} & {*unique_realspace})
+        # TODO: Reintroduce AFLOW test suite
 
         if verbose:
             _write_debug_output(
