@@ -410,11 +410,11 @@ class CifFile:
         Parameters
         ----------
             degrees : bool, optional
-                When True, angles are returned in degrees (as per the CIF spec). When
-                False, angles are converted to radians. Default value = ``True``
-            normalize: (bool, optional)
+                When ``True``, angles are returned in degrees (as in the CIF spec). When
+                ``False``, angles are converted to radians. Default value = ``True``
+            normalize: bool, optional
                 Whether to scale the unit cell such that the smallest lattice parameter
-                is `1.0`.
+                is ``1.0``.
                 Default value = ``False``
 
         Returns
