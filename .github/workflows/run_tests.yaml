@@ -23,10 +23,15 @@ jobs:
       with:
         python-version: ${{ inputs.python-version }}
         version: "0.6.6"
-    # - name: Set up environment with dependencies
-    #   run: |
-    #     uv venv && . .venv/bin/activate 2> /dev/null || .venv\Scripts\activate
-    #     echo PATH=$PATH >> $GITHUB_ENV
+    - name: Set up environment with dependencies
+      run: |
+        uv venv && . .venv/bin/activate 2> /dev/null || .venv\Scripts\activate
+        echo PATH=$PATH >> $GITHUB_ENV
+    - name: Install package
+      run: |
+        python --version
+        uv pip install . -r ${{ inputs.requirements-file }} -v
+        python -c "import parsnip; print('parsnip', parsnip.__version__)"
     - name: Test with pytest
-      run:  |
-        uv run -v --frozen --with-requirements ${{ inputs.requirements-file }} pytest
+      run: |
+        python -m pytest -v
