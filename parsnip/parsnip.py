@@ -461,32 +461,55 @@ class CifFile:
     def build_unit_cell(
         self,
         n_decimal_places: int = 4,
-        additional_columns: ArrayLike | None = None,
+        additional_columns: str | Iterable[str] | None = None,
         verbose: bool = False,
     ):
         """Reconstruct fractional atomic positions from Wyckoff sites and symops.
 
         Rather than storing an entire unit cell's atomic positions, CIF files instead
         include the data required to recreate those positions based on symmetry rules.
-        Symmetry operations (stored as strings of x,y,z position permutations) are
+        Symmetry operations (stored as strings of `x,y,z` position permutations) are
         applied to the Wyckoff (symmetry irreducible) positions to create a list of
         possible atomic sites. These are then wrapped into the unit cell and filtered
         for uniqueness to yield the final crystal.
 
-        .. warning::
+        Example
+        -------
+        Construct the atomic positions of the FCC unit cell from its Wyckoff sites:
 
-            Reconstructing positions requires several floating point calculations that
-            can be impacted by low-precision data in CIF files. Typically, at least four
-            decimal places are required to accurately reconstruct complicated unit
-            cells: less precision than this can yield cells with duplicate or missing
-            positions.
+        >>> pos = cif.build_unit_cell()
+        >>> pos
+        array([[0. , 0. , 0. ],
+               [0. , 0.5, 0.5],
+               [0.5, 0. , 0.5],
+               [0.5, 0.5, 0. ]])
 
-        Args:
-            n_decimal_places : (int, optional)
+        Reconstruct a unit cell with its associated atomic labels:
+
+        >>> atoms, pos = cif.build_unit_cell(additional_columns=["_atom_site_label"])
+        >>> atoms
+        array([['Cu1'],
+               ['Cu1'],
+               ['Cu1'],
+               ['Cu1']], dtype='<U12')
+        >>> pos
+        array([[0. , 0. , 0. ],
+               [0. , 0.5, 0.5],
+               [0.5, 0. , 0.5],
+               [0.5, 0.5, 0. ]])
+
+        Parameters
+        ----------
+            n_decimal_places : int, optional
                 The number of decimal places to round each position to for the
                 uniqueness comparison. Values higher than 4 may not work for all CIF
                 files. Default value = ``4``
-            verbose : (bool, optional)
+            additional_columns : str | Iterable[str] | None, optional
+                A column name or list of column names from the loop containing
+                the Wyckoff site positions. This data is replicated alongside the atomic
+                coordinates and returned in an auxiliary array.
+                Default value = ``None``
+            verbose : bool, optional
                 Whether to print debug information about the uniqueness checks.
                 Default value = ``False``
 
@@ -500,7 +523,17 @@ class CifFile:
         ValueError
             If the stored data cannot form a valid box.
         ValueError
-            If the `additional_columns` are not properly associated with the unit cell.
+            If the ``additional_columns`` are not properly associated with the Wyckoff
+            positions.
+
+
+        .. warning::
+
+            Reconstructing positions requires several floating point calculations that
+            can be impacted by low-precision data in CIF files. Typically, at least four
+            decimal places are required to accurately reconstruct complicated unit
+            cells: less precision than this can yield cells with duplicate or missing
+            positions.
         """
         symops, fractional_positions = self.symops, self.wyckoff_positions
 
