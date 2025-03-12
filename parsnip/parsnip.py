@@ -190,7 +190,7 @@ class CifFile:
         """Return an item or list of items from :meth:`~.pairs` and :meth:`~.loops`.
 
         This getter searches the entire CIF state to identify the input keys, returning
-        `None` if the key does not match any data. Matching columns from `loop` tables
+        ``None`` if the key does not match any data. Matching columns from `loop` tables
         are returned as 1D arrays.
 
         .. tip::
@@ -246,7 +246,7 @@ class CifFile:
             wildcard matches more than one key, a list is returned for that index.
 
         Indexing with a string returns the value from the :meth:`~.pairs` dict. Indexing
-        with an Iterable of strings returns a list of values, with `None` as a
+        with an Iterable of strings returns a list of values, with ``None`` as a
         placeholder for keys that did not match any data.
 
         Example
