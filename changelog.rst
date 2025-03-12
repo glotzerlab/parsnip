@@ -4,6 +4,19 @@ Changelog
 The format is based on `Keep a Changelog <http://keepachangelog.com/en/1.1.0/>`__.
 This project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`__.
 
+v0.2.1 - 20XX-XX-XX
+-------------------
+
+Added
+~~~~~
+- New ``additional_columns`` parameter for ``build_unit_cell`` that allows the return of
+  atom site labels and similar data alongside unit cell positions.
+- Ensured consistent ordering of lattice positions returned from ``build_unit_cell``.
+
+Fixed
+~~~~~
+- Type hints now properly link to their associated documentation.
+
 v0.2.0 - 2025-02-19
 -------------------
 

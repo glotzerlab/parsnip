@@ -391,7 +391,7 @@ class CifFile:
             return result[0] if len(result) == 1 else result
 
         if isinstance(index, (set, frozenset)):
-            index = list(index)  # TODO: add to changelog
+            index = list(index)
 
         result, index = [], np.atleast_1d(index)
         for table in self.loops:
