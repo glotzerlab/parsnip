@@ -97,7 +97,7 @@ def test_build_unit_cell(cif_data, n_decimal_places, cols):
         parsnip_positions = read_data @ cif_data.file.lattice_vectors.T
     else:
         auxiliary_arr, parsnip_positions = read_data
-        parsnip_positions @= cif_data.file.lattice_vectors.T
+        parsnip_positions = parsnip_positions @ cif_data.file.lattice_vectors.T
 
         che_symbols = _arrstrip(auxiliary_arr[:, 0], r"[^A-Za-z]+")
         if isinstance(cols, list):
