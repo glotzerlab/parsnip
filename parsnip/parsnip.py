@@ -77,7 +77,6 @@ from typing import ClassVar
 import numpy as np
 from more_itertools import flatten, peekable
 from numpy.lib.recfunctions import structured_to_unstructured
-from numpy.typing import ArrayLike
 
 from parsnip._errors import ParseWarning
 from parsnip.patterns import (
@@ -182,7 +181,7 @@ class CifFile:
 
         Returns
         -------
-        list[:class:`numpy.ndarray[str]`]:
+        list[numpy.ndarray[str]]
             A list of structured arrays containing table data from the file.
         """
         return self._loops
@@ -223,6 +222,11 @@ class CifFile:
         >>> cif[["_journal*", "_atom_site_fract_?"]]
         [['1999', '0', '123'],
         ...array([['0.0000000000', '0.0000000000', '0.0000000000']], dtype='<U12')]
+
+        Parameters
+        ----------
+            index: str | typing.Iterable[str]
+                An item key or list of keys.
         """
         output = []
         index = [index] if isinstance(index, str) else index
@@ -237,9 +241,9 @@ class CifFile:
 
         .. tip::
 
-            This method supports a few unix-style wildcards. Use `*` to match any number
-            of any character, and `?` to match any single character. If a wildcard
-            matches more than one key, a list is returned for that index.
+            This method supports a few unix-style wildcards. Use ``*`` to match any
+            number of any character, and ``?`` to match any single character. If a
+            wildcard matches more than one key, a list is returned for that index.
 
         Indexing with a string returns the value from the :meth:`~.pairs` dict. Indexing
         with an Iterable of strings returns a list of values, with `None` as a
@@ -269,7 +273,7 @@ class CifFile:
 
         Parameters
         ----------
-            index: str | Iterable[str]
+            index: str | typing.Iterable[str]
                 An item key or list of keys.
 
         Returns
@@ -291,7 +295,7 @@ class CifFile:
 
         return [_flatten_or_none([self.pairs.get(k, None) for k in m]) for m in matches]
 
-    def get_from_loops(self, index: ArrayLike):
+    def get_from_loops(self, index: str | Iterable[str]):
         """Return a column or columns from the matching table in :attr:`~.loops`.
 
         If index is a single string, a single column will be returned from the matching
@@ -362,7 +366,7 @@ class CifFile:
 
         Parameters
         ----------
-            index: str | Iterable[str]
+            index: str | typing.Iterable[str]
                 A column name or list of column names.
 
         Returns
@@ -484,7 +488,8 @@ class CifFile:
                [0.5, 0. , 0.5],
                [0.5, 0.5, 0. ]])
 
-        Reconstruct a unit cell with its associated atomic labels:
+        Reconstruct a unit cell with its associated atomic labels. The ordering of the
+        auxiliary data array will match the ordering of the atomic positions:
 
         >>> atoms, pos = cif.build_unit_cell(additional_columns=["_atom_site_label"])
         >>> atoms
@@ -504,7 +509,7 @@ class CifFile:
                 The number of decimal places to round each position to for the
                 uniqueness comparison. Values higher than 4 may not work for all CIF
                 files. Default value = ``4``
-            additional_columns : str | Iterable[str] | None, optional
+            additional_columns : str | typing.Iterable[str] | None, optional
                 A column name or list of column names from the loop containing
                 the Wyckoff site positions. This data is replicated alongside the atomic
                 coordinates and returned in an auxiliary array.
@@ -527,7 +532,7 @@ class CifFile:
             positions.
 
 
-        .. warning::
+        .. caution::
 
             Reconstructing positions requires several floating point calculations that
             can be impacted by low-precision data in CIF files. Typically, at least four
@@ -702,7 +707,7 @@ class CifFile:
 
         Returns
         -------
-            :math:`(N,)` :class:`numpy.ndarray[str]`:
+            :math:`(N,1)` numpy.ndarray[str]:
                 An array of strings containing the symmetry operations in a
                 `parsable algebraic form`_.
 
@@ -710,7 +715,6 @@ class CifFile:
         """
         # Only one key is valid in each standard, so we only ever get one match.
         return self.get_from_loops(self.__class__._SYMOP_KEYS)
-        # TODO: shape is (N, 1), not (N, )
 
     @property
     def wyckoff_positions(self):
@@ -718,7 +722,7 @@ class CifFile:
 
         Returns
         -------
-            :math:`(N, 3)` :class:`numpy.ndarray[float]`:
+            :math:`(N, 3)` :class:`numpy.ndarray`:
                 Symmetry-irreducible positions of atoms in `fractional coordinates`_.
 
         .. _`fractional coordinates`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html
