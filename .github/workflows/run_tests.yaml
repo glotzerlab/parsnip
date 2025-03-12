@@ -23,13 +23,11 @@ jobs:
       with:
         python-version: ${{ inputs.python-version }}
         version: "0.6.6"
-    - name: Install parsnip
-      run: uv sync --all-extras --dev
     # - name: Set up environment with dependencies
     #   run: |
     #     uv venv && . .venv/bin/activate 2> /dev/null || .venv\Scripts\activate
     #     echo PATH=$PATH >> $GITHUB_ENV
-    - name: Install package
+    - name: Install parsnip
       run: |
         uv pip install . -r ${{ inputs.requirements-file }} -v
     - name: Test with pytest
