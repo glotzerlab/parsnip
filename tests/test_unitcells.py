@@ -61,8 +61,7 @@ def test_read_symmetry_operations(cif_data):
 
 
 @cif_files_mark
-# @pytest.mark.parametrize("n_decimal_places", [3, 4, 5, 6, 9])
-@pytest.mark.parametrize("n_decimal_places", [3])
+@pytest.mark.parametrize("n_decimal_places", [3, 4, 6, 9])
 @pytest.mark.parametrize(
     "cols",
     [
