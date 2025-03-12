@@ -25,7 +25,7 @@ jobs:
         version: "0.5.11"
     - name: Set up environment with dependencies
       run: |
-        uv venv && . .venv/bin/activate
+        uv venv && (source .venv/bin/activate || .venv\Scripts\activate.bat)
         echo PATH=$PATH >> $GITHUB_ENV
     - name: Install package
       run: |
