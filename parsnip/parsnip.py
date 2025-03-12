@@ -407,7 +407,7 @@ class CifFile:
         return _flatten_or_none(result)
 
     def read_cell_params(self, degrees: bool = True, normalize: bool = False):
-        r"""Read the `unit cell parameters`_ (lengths and angles) from a CIF file.
+        r"""Read the `unit cell parameters`_ (lengths and angles).
 
         .. _`unit cell parameters`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Ccell.html
 
@@ -695,7 +695,7 @@ class CifFile:
 
     @property
     def symops(self):
-        r"""Extract the symmetry operations from a CIF file.
+        r"""Extract the symmetry operations in a `parsable algebraic form`_.
 
         Example
         -------
@@ -708,8 +708,7 @@ class CifFile:
         Returns
         -------
             :math:`(N,1)` numpy.ndarray[str]:
-                An array of strings containing the symmetry operations in a
-                `parsable algebraic form`_.
+                An array containing the symmetry operations.
 
         .. _`parsable algebraic form`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Ispace_group_symop_operation_xyz.html
         """
@@ -718,7 +717,7 @@ class CifFile:
 
     @property
     def wyckoff_positions(self):
-        r"""Extract symmetry-irreducible, fractional x,y,z coordinates from a CIF file.
+        r"""Extract symmetry-irreducible, fractional `x,y,z` coordinates.
 
         Returns
         -------
