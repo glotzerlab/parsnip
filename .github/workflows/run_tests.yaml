@@ -27,8 +27,6 @@ jobs:
     #   run: |
     #     uv venv && . .venv/bin/activate 2> /dev/null || .venv\Scripts\activate
     #     echo PATH=$PATH >> $GITHUB_ENV
-    - name: Install parsnip
-      run: |
-        uv pip install . -r ${{ inputs.requirements-file }} -v
     - name: Test with pytest
-      run: uv run --verbose --no-sync pytest
+      run:  |
+        uv run -v --frozen --with-requirements ${{ inputs.requirements-file }} pytest
