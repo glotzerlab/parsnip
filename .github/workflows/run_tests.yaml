@@ -28,6 +28,7 @@ jobs:
         uv venv && . .venv/*/activate
         if [ $RUNNER_OS != 'Windows' ]; then . .venv/bin/activate; else .\\venv\\Scripts\\activate; fi
         echo "PATH=$PATH" >> $GITHUB_ENV
+      shell: bash
     - name: Install package
       run: |
         python --version
