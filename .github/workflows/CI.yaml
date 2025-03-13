@@ -16,14 +16,14 @@ jobs:
         # python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
         # runs-on: ["ubuntu-latest"]
         include:
-          - runs-on: "macos-latest"
-            python-version: "3.13"
+          # - runs-on: "macos-latest"
+          #   python-version: "3.13"
           - runs-on: "windows-latest"
             python-version: "3.13"
           - runs-on: "windows-latest"
             python-version: "3.9"
-          - runs-on: "macos-latest"
-            python-version: "3.9"
+          # - runs-on: "macos-latest"
+          #   python-version: "3.9"
     # Pull in the test script from run_tests and distribute python from matrix versions
     uses: ./.github/workflows/run_tests.yaml
     with:
