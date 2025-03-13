@@ -37,9 +37,10 @@ jobs:
         which python
         ls .venv
         ls .venv\Lib
+        ls .venv\Lib\site-packages
         ls .venv\Scripts
-        uv pip install . -r ${{ inputs.requirements-file }} -v --reinstall
+        uv pip install . -r ${{ inputs.requirements-file }} -v --reinstall --python .venv\Scripts\python.exe
         python -c "import parsnip; print('parsnip', parsnip.__version__)"
         python -c "import numpy; print('numpy', numpy.__version__)"
     - name: Test with pytest
-      run: python -m pytest -v
+      run: .venv\Scripts\python -m pytest -v
