@@ -99,3 +99,9 @@ indent-style = "space"
 omit = [
     "parsnip/coverage.py",
 ]
+
+[tool.bumpversion]
+# Configuration for https://github.com/callowayproject/bump-my-version
+tag = false
+commit = false
+message = "Bump version: {current_version} → {new_version}"
