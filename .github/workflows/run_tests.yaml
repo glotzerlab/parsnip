@@ -24,14 +24,13 @@ jobs:
         python-version: ${{ inputs.python-version }}
         version: "0.6.6"
     - name: Set up uv venv
-      run: |
-        uv venv
-        if [ "$RUNNER_OS" == "Windows" ]; then
-             .\venv\Scripts\activate
-        else
-             . .venv/bin/activate
-        fi
-        echo "PATH=$PATH" >> $GITHUB_ENV
+      run: uv venv
+    - name: Activate environment (Windows)
+      if: $RUNNER_OS == "Windows"
+      run: .\venv\Scripts\activate && echo "PATH=$PATH" >> $GITHUB_ENV
+    - name: Activate environment (Unix)
+      if: $RUNNER_OS != "Windows"
+      run: . .venv/bin/activate && echo "PATH=$PATH" >> $GITHUB_ENV
     - name: Install package
       run: |
         python --version
