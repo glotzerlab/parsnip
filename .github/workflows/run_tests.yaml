@@ -23,10 +23,10 @@ jobs:
       with:
         python-version: ${{ inputs.python-version }}
         version: "0.6.6"
-    - name: Set up environment with dependencies
+    - name: Set up uv venv
       run: |
         uv venv && . .venv/*/activate
-        echo PATH=$PATH >> $GITHUB_ENV
+        echo "PATH=$PATH" >> $GITHUB_ENV
     - name: Install package
       run: |
         python --version
