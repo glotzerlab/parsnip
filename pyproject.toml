@@ -25,7 +25,7 @@ keywords = [
         "Topic :: Scientific/Engineering :: Physics",
         "Topic :: Scientific/Engineering :: Chemistry",
     ]
-# dynamic = ["optional-dependencies"]
+dynamic = ["optional-dependencies"]
 
 [project.urls]
 Source = "https://github.com/glotzerlab/parsnip"
@@ -34,8 +34,8 @@ Issues = "https://github.com/glotzerlab/parsnip/issues"
 [tool.setuptools]
 packages=["parsnip"]
 
-# [tool.setuptools.dynamic]
-# optional-dependencies = {tests = { file = ["tests/requirements.in"] }, doc = { file = ["doc/requirements.txt"] }}
+[tool.setuptools.dynamic]
+optional-dependencies = {tests = { file = ["tests/requirements.in"] }, doc = { file = ["doc/requirements.txt"] }}
 
 [tool.pytest.ini_options]
 testpaths = ["tests", "parsnip", "doc"]
@@ -98,22 +98,4 @@ indent-style = "space"
 [tool.coverage.run]
 omit = [
     "parsnip/coverage.py",
-]
-
-[optional-dependencies]
-dev = [
-    "ase",
-    "gemmi",
-    "pycifrw",
-    "pytest",
-    "pytest-doctestplus",
-]
-doc = [
-    "autodocsumm>=0.2.14",
-    "furo>=2023.3.27",
-    "numpy>=1.21.6",
-    "pytest-doctestplus>=1.0.0",
-    "sphinx>=5.3.0",
-    "sphinx-copybutton>=0.5.2",
-    "sphinx-notfound-page>=0.8.3",
 ]
