@@ -32,7 +32,6 @@ jobs:
           . .venv/bin/activate
         fi
         echo "PATH=$PATH" >> $GITHUB_ENV
-      shell: bash
     - name: Install package
       run: |
         python --version
