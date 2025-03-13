@@ -12,6 +12,7 @@ Added
 - New ``additional_columns`` parameter for ``build_unit_cell`` that allows the return of
   atom site labels and similar data alongside unit cell positions.
 - Ensured consistent ordering of lattice positions returned from ``build_unit_cell``.
+- CI testing on Windows and macOS
 
 Fixed
 ~~~~~
