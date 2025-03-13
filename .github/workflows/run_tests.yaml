@@ -24,9 +24,7 @@ jobs:
         python-version: ${{ inputs.python-version }}
         version: "0.6.6"
     - name: Set up uv venv
-      run: |
-        uv venv && . .venv/*/activate
-        echo "PATH=$PATH" >> $GITHUB_ENV
+      run: uv venv && . .venv/*/activate
     - name: Install package
       run: |
         python --version
