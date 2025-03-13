@@ -6,7 +6,7 @@ contourpy==1.3.1
     # via matplotlib
 cycler==0.12.1
     # via matplotlib
-fonttools==4.55.3
+fonttools==4.56.0
     # via matplotlib
 gemmi==0.7.0
     # via -r tests/requirements.in
@@ -14,13 +14,13 @@ iniconfig==2.0.0
     # via pytest
 kiwisolver==1.4.8
     # via matplotlib
-matplotlib==3.10.0
+matplotlib==3.10.1
     # via ase
 more-itertools==10.6.0
-    # via parsnip (pyproject.toml)
-numpy==2.2.1
+    # via parsnip-cif (pyproject.toml)
+numpy==2.2.3
     # via
-    #   parsnip (pyproject.toml)
+    #   parsnip-cif (pyproject.toml)
     #   ase
     #   contourpy
     #   matplotlib
@@ -41,15 +41,15 @@ pycifrw==4.4.6
     # via -r tests/requirements.in
 pyparsing==3.2.1
     # via matplotlib
-pytest==8.3.4
+pytest==8.3.5
     # via
     #   -r tests/requirements.in
     #   pytest-doctestplus
-pytest-doctestplus==1.3.0
+pytest-doctestplus==1.4.0
     # via -r tests/requirements.in
 python-dateutil==2.9.0.post0
     # via matplotlib
-scipy==1.15.1
+scipy==1.15.2
     # via ase
 six==1.17.0
     # via python-dateutil

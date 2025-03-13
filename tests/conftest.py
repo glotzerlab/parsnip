@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+import re
 from dataclasses import dataclass
 
 import numpy as np
@@ -12,6 +13,10 @@ from parsnip import CifFile
 rng = np.random.default_rng(seed=161181914916)
 
 data_file_path = os.path.dirname(__file__) + "/sample_data/"
+
+
+def _arrstrip(arr: np.ndarray, pattern: str):
+    return np.vectorize(lambda x: re.sub(pattern, "", x))(arr)
 
 
 @dataclass

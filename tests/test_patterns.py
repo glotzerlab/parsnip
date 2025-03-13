@@ -206,7 +206,7 @@ def test_try_cast_to_numeric(s):
 def test_repr(cif_data):
     import re
 
-    repr = re.sub(r"[a-z\s]*", "", cif_data.file.__repr__().split(":")[1]).split(",")
+    repr = re.sub(r"[a-z\s]*", "", cif_data.file.__repr__().split(" : ")[1]).split(",")
     n_pairs, n_tabs = [int(i) for i in repr]
     assert n_pairs == len(cif_data.file.pairs)
     assert n_tabs == len(cif_data.file.loops)

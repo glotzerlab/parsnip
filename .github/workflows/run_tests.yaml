@@ -18,20 +18,20 @@ jobs:
     runs-on: ${{ inputs.runs-on }}
     steps:
     - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
     - name: Install uv
       uses: astral-sh/setup-uv@v4
       with:
-        python-version: ${{ inputs.python-version }}
-        version: "0.5.11"
-    - name: Set up environment with dependencies
-      run: |
-        uv venv && . .venv/bin/activate
-        echo PATH=$PATH >> $GITHUB_ENV
+        version: "0.6.6"
+
     - name: Install package
       run: |
+        which python
         python --version
-        uv pip install . -r ${{ inputs.requirements-file }} -v
+        uv pip install . -r ${{ inputs.requirements-file }} -v --reinstall --system
         python -c "import parsnip; print('parsnip', parsnip.__version__)"
+
     - name: Test with pytest
-      run: |
-        python -m pytest -v
+      run: python -m ${{ runner.os != 'Windows' && 'pytest' || 'pytest tests' }} -v
