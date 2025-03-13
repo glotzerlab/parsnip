@@ -18,8 +18,8 @@ jobs:
         include:
           - runs-on: "macos-latest"
             python-version: "3.13"
-          # - runs-on: "windows-latest"
-          #   python-version: "3.13"
+          - runs-on: "windows-latest"
+            python-version: "3.13"
           # - runs-on: "windows-latest"
           #   python-version: "3.9"
           - runs-on: "macos-latest"
