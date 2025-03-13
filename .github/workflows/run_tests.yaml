@@ -26,10 +26,10 @@ jobs:
     - name: Set up uv venv
       run: |
         uv venv
-        if [ ${{ runner.os }} == 'Windows' ]; then
-          .\venv\Scripts\activate
+        if [ "$RUNNER_OS" == "Windows" ]; then
+             .\venv\Scripts\activate
         else
-          . .venv/bin/activate
+             . .venv/bin/activate
         fi
         echo "PATH=$PATH" >> $GITHUB_ENV
     - name: Install package
