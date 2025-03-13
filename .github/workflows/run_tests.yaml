@@ -26,6 +26,7 @@ jobs:
     - name: Set up uv venv
       run: |
         uv venv && . .venv/*/activate
+        [ $RUNNER_OS == 'Windows' ] && .\\venv\\Scripts\\activate || . .venv/bin/activate
         echo "PATH=$PATH" >> $GITHUB_ENV
     - name: Install package
       run: |
