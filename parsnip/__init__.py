@@ -6,4 +6,4 @@
 # from . import parse, patterns, unitcells
 from .parsnip import CifFile
 
-__version__ = "0.1.0"
+__version__ = "0.2.1"
