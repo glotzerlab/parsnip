@@ -30,7 +30,7 @@ jobs:
     - name: Install package
       run: |
         python --version
-        uv pip install . -r ${{ inputs.requirements-file }} -v
+        uv pip sync ${{ inputs.requirements-file }} --only-binary=:all: --reinstall
         python -c "import parsnip; print('parsnip', parsnip.__version__)"
     - name: Test with pytest
       run: |
