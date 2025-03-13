@@ -42,5 +42,5 @@ jobs:
         uv pip install . -r ${{ inputs.requirements-file }} -v --reinstall --system
         python -c "import parsnip; print('parsnip', parsnip.__version__)"
 
-    - name: Test with pytest # Skip doctests on Windows
-      run: ${{ runner.os != 'Windows' && 'pytest' || 'pytest tests' }}
+    - name: Test with pytest
+      run: python -m ${{ runner.os != 'Windows' && 'pytest' || 'pytest tests' }} -v
