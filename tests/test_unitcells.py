@@ -1,4 +1,3 @@
-import re
 import warnings
 from contextlib import nullcontext
 
@@ -6,7 +5,7 @@ import numpy as np
 import pytest
 from ase import io
 from ase.build import supercells
-from conftest import box_keys, cif_files_mark
+from conftest import _arrstrip, box_keys, cif_files_mark
 from gemmi import cif
 from more_itertools import flatten
 
@@ -20,10 +19,6 @@ def _gemmi_read_keys(filename, keys, as_number=True):
     if as_number:
         return np.array([cif.as_number(file_block.find_value(key)) for key in keys])
     return np.array([file_block.find_value(key) for key in keys])
-
-
-def _arrstrip(arr: np.ndarray, pattern: str):
-    return np.vectorize(lambda x: re.sub(pattern, "", x))(arr)
 
 
 @cif_files_mark  # TODO: test with conversions to numeric as well

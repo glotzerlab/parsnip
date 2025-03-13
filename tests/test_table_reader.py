@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 from ase.io import cif as asecif
 from CifFile import CifFile as pycifRW
-from conftest import bad_cif, cif_files_mark
+from conftest import _arrstrip, bad_cif, cif_files_mark
 from gemmi import cif
 from more_itertools import flatten
 
@@ -34,9 +34,7 @@ def test_reads_all_keys(cif_data):
         loop = [pycif.true_case[key] for key in loop]
         parsnip_data = cif_data.file.get_from_loops(loop)
         gemmi_data = _gemmi_read_table(cif_data.filename, loop)
-        np.testing.assert_array_equal(
-            parsnip_data, [s.replace(r"\r", "") for s in gemmi_data]
-        )
+        np.testing.assert_array_equal(parsnip_data, _arrstrip(gemmi_data, r"\r"))
 
 
 @cif_files_mark
