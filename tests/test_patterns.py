@@ -202,12 +202,11 @@ def test_try_cast_to_numeric(s):
         assert isinstance(result, int)
 
 
-# @pytest.mark.skipif(os.getenv("RUNNER_OS") == "Windows", reason="String formatting")
 @cif_files_mark
 def test_repr(cif_data):
     import re
-    print(cif_data.file.__repr__())
-    repr = re.sub(r"[a-z\s]*", "", cif_data.file.__repr__().split(":")[1]).split(",")
+
+    repr = re.sub(r"[a-z\s]*", "", cif_data.file.__repr__().split(" : ")[1]).split(",")
     n_pairs, n_tabs = [int(i) for i in repr]
     assert n_pairs == len(cif_data.file.pairs)
     assert n_tabs == len(cif_data.file.loops)

@@ -30,10 +30,13 @@ def test_reads_all_keys(cif_data):
     for key in all_keys:
         assert key in found_labels, f"Missing label: {found_labels}"
 
+
     for loop in pycif.loops.values():
         loop = [pycif.true_case[key] for key in loop]
         parsnip_data = cif_data.file.get_from_loops(loop)
         gemmi_data = _gemmi_read_table(cif_data.filename, loop)
+        print(parsnip_data[parsnip_data!=gemmi_data])
+        print(gemmi_data[parsnip_data!=gemmi_data])
         np.testing.assert_array_equal(parsnip_data, gemmi_data)
 
 
