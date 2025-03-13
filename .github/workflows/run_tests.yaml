@@ -21,7 +21,6 @@ jobs:
     - name: Install uv
       uses: astral-sh/setup-uv@v4
       with:
-        python-version: ${{ inputs.python-version }}
         version: "0.6.6"
 
     # - name: Set up uv venv
@@ -35,6 +34,7 @@ jobs:
 
     - name: Install package
       run: |
+        uv python install ${{ inputs.python-version }}
         which python
         python --version
         uv pip install . -r ${{ inputs.requirements-file }} -v --reinstall --system
