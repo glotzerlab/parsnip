@@ -23,24 +23,22 @@ jobs:
       with:
         python-version: ${{ inputs.python-version }}
         version: "0.6.6"
+
     - name: Set up uv venv
       run: uv venv
-    - name: Activate environment (Windows)
-      if: runner.os == 'Windows'
-      run: .venv\Scripts\activate && echo "PATH=$PATH" >> $GITHUB_ENV
     - name: Activate environment (Unix)
       if: runner.os != 'Windows'
       run: . .venv/bin/activate && echo "PATH=$PATH" >> $GITHUB_ENV
+    - name: Activate environment (Windows)
+      if: runner.os == 'Windows'
+      run: .venv\Scripts\activate && echo "PATH=$PATH" >> $GITHUB_ENV
+
     - name: Install package
       run: |
-        python --version
         which python
-        ls .venv
-        ls .venv\Lib
-        ls .venv\Lib\site-packages
-        ls .venv\Scripts
-        uv pip install . -r ${{ inputs.requirements-file }} -v --reinstall --python .venv\Scripts\python.exe
+        python --version
+        uv pip install . -r ${{ inputs.requirements-file }} -v --reinstall
         python -c "import parsnip; print('parsnip', parsnip.__version__)"
-        python -c "import numpy; print('numpy', numpy.__version__)"
+
     - name: Test with pytest
-      run: .venv\Scripts\python -m pytest -v
+      run: python -m pytest -v

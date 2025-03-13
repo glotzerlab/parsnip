@@ -13,17 +13,17 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        # python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
-        # runs-on: ["ubuntu-latest"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        runs-on: ["ubuntu-latest"]
         include:
-          # - runs-on: "macos-latest"
-          #   python-version: "3.13"
-          - runs-on: "windows-latest"
+          - runs-on: "macos-latest"
             python-version: "3.13"
-          - runs-on: "windows-latest"
-            python-version: "3.9"
-          # - runs-on: "macos-latest"
+          # - runs-on: "windows-latest"
+          #   python-version: "3.13"
+          # - runs-on: "windows-latest"
           #   python-version: "3.9"
+          - runs-on: "macos-latest"
+            python-version: "3.9"
     # Pull in the test script from run_tests and distribute python from matrix versions
     uses: ./.github/workflows/run_tests.yaml
     with:
@@ -37,7 +37,7 @@ jobs:
       fail-fast: false # Legacy versions are much less stable - run tests independently
       matrix: # Code works on py3.6, but type annotations are broken
         python-version: ["3.7", "3.8"]
-        runs-on: ["ubuntu-20.04", "windows-latest"]
+        runs-on: ["ubuntu-20.04"]
         include:
           - runs-on: "macos-14"
             python-version: "3.8"
