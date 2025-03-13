@@ -31,5 +31,11 @@ jobs:
     - name: Activate environment (Unix)
       if: runner.os != 'Windows'
       run: . .venv/bin/activate && echo "PATH=$PATH" >> $GITHUB_ENV
+    - name: Install package
+      run: |
+        python --version
+        uv pip install -v .
+        python -c "import parsnip; print('parsnip', parsnip.__version__)"
+        python -c "import numpy; print('numpy', numpy.__version__)"
     - name: Test with pytest
       run: uv run --no-sync --with-requirements ${{ inputs.requirements-file }} pytest
