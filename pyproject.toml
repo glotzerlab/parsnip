@@ -100,7 +100,7 @@ omit = [
     "parsnip/coverage.py",
 ]
 
-[dependency-groups]
+[optional-dependencies]
 dev = [
     "ase",
     "gemmi",
