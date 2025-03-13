@@ -36,6 +36,8 @@ jobs:
         python --version
         which python
         ls .venv
+        ls .venv\Lib
+        ls .venv\Scripts
         uv pip install . -r ${{ inputs.requirements-file }} -v --reinstall
         python -c "import parsnip; print('parsnip', parsnip.__version__)"
         python -c "import numpy; print('numpy', numpy.__version__)"
