@@ -34,7 +34,7 @@ jobs:
     - name: Install package
       run: |
         python --version
-        uv pip install -r ${{ inputs.requirements-file }} --system --reinstall
+        uv pip install -r ${{ inputs.requirements-file }} --reinstall
         python -c "import parsnip; print('parsnip', parsnip.__version__)"
         python -c "import numpy; print('numpy', numpy.__version__)"
     - name: Test with pytest
