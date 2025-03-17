@@ -893,7 +893,7 @@ class CifFile:
             r"("
             r"\;[^\;]*\;|"  # Non-semicolon data bracketed by semicolons
             r"\'(?:(?:\\|O|d)'|[^'])*\'|"  # Data with non-escaped single quotes
-            '"[^"]*"|'  # Data with non-escaled double quotes
+            r"\"[^\"]*\"|"  # Data with double quotes
             r"[^\'\"\;\s]*"  # Additional non-bracketed data
             r")[\s]*"
         ),
