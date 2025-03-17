@@ -49,7 +49,7 @@ def test_reads_all_keys(cif_data):
         np.testing.assert_array_equal(parsnip_data, _arrstrip(gemmi_data, r"\r"))
 
 
-@all_files_mark
+@cif_files_mark
 def test_read_symop(cif_data):
     parsnip_data = cif_data.file.get_from_loops(cif_data.symop_keys)
     gemmi_data = _gemmi_read_table(cif_data.filename, cif_data.symop_keys)
