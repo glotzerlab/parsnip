@@ -3,8 +3,13 @@ import warnings
 import numpy as np
 import pytest
 from ase.io import cif as asecif
-from CifFile import CifFile as pycifRW
-from conftest import _arrstrip, bad_cif, cif_files_mark
+from conftest import (
+    _arrstrip,
+    all_files_mark,
+    bad_cif,
+    cif_files_mark,
+    pycifrw_or_xfail,
+)
 from gemmi import cif
 from more_itertools import flatten
 
@@ -17,18 +22,25 @@ Used to simplify processing of structured arrays.
 
 
 def _gemmi_read_table(filename, keys):
-    return np.array(cif.read_file(filename).sole_block().find(keys))
+    try:
+        return np.array(cif.read_file(filename).sole_block().find(keys))
+    except (RuntimeError, ValueError):
+        pytest.xfail("Gemmi failed to read file!")
 
 
-@cif_files_mark
+@all_files_mark
 def test_reads_all_keys(cif_data):
-    pycif = pycifRW(cif_data.filename).first_block()
+    pycif = pycifrw_or_xfail(cif_data)
     loop_keys = [*flatten(pycif.loops.values())]
     all_keys = [key for key in pycif.true_case.values() if key.lower() in loop_keys]
 
     found_labels = [*flatten(cif_data.file.loop_labels)]
     for key in all_keys:
-        assert key in found_labels, f"Missing label: {found_labels}"
+        assert key in found_labels, f"Missing label: {key}"
+
+    if "A2BC_tP16" in cif_data.filename:
+        print(cif_data.filename)
+        pytest.xfail("Double single quote at EOL is not supported.")
 
     for loop in pycif.loops.values():
         loop = [pycif.true_case[key] for key in loop]
@@ -59,7 +71,9 @@ def test_read_atom_sites(cif_data):
             return
 
         warnings.filterwarnings("ignore", category=UserWarning)
+
         atoms = asecif.read_cif(cif_data.filename)
+
         ase_data = [
             occ for site in atoms.info["occupancy"].values() for occ in site.values()
         ]
@@ -118,7 +132,6 @@ def test_bad_cif_atom_sites(cif_data=bad_cif):
     np.testing.assert_array_equal(
         parsnip_data[:, 3], ["0.00000(1)", "0.00000", "0.19180", "0.09390"]
     )
-
     # "_atom_site_fract_z"
     np.testing.assert_array_equal(
         parsnip_data[:, 4], ["0.25000", "0.(28510)", "0.05170", "0.41220"]

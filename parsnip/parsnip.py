@@ -71,6 +71,7 @@ import re
 import warnings
 from collections.abc import Iterable
 from fnmatch import filter as fnfilter
+from fnmatch import fnmatch
 from pathlib import Path
 from typing import ClassVar
 
@@ -244,6 +245,7 @@ class CifFile:
             This method supports a few unix-style wildcards. Use ``*`` to match any
             number of any character, and ``?`` to match any single character. If a
             wildcard matches more than one key, a list is returned for that index.
+            Lookups using this method are case-insensitive, per the CIF spec.
 
         Indexing with a string returns the value from the :meth:`~.pairs` dict. Indexing
         with an Iterable of strings returns a list of values, with ``None`` as a
@@ -286,14 +288,28 @@ class CifFile:
         if isinstance(index, str):  # Escape brackets with []
             index = re.sub(_bracket_pattern, r"[\1]", index)
             return _flatten_or_none(
-                [self.pairs.get(k) for k in fnfilter(self.pairs, index)]
+                [
+                    v
+                    for (k, v) in self.pairs.items()
+                    if fnmatch(k.lower(), index.lower())
+                ]
             )
 
         # Escape all brackets in all indices
         index = [re.sub(_bracket_pattern, r"[\1]", i) for i in index]
-        matches = [fnfilter(self.pairs, pat) for pat in index]
-
-        return [_flatten_or_none([self.pairs.get(k, None) for k in m]) for m in matches]
+        matches = [
+            [
+                _flatten_or_none(
+                    [
+                        v
+                        for (k, v) in self.pairs.items()
+                        if fnmatch(k.lower(), pat.lower())
+                    ]
+                )
+            ]
+            for pat in index
+        ]
+        return [_flatten_or_none(m) for m in matches]
 
     def get_from_loops(self, index: str | Iterable[str]):
         """Return a column or columns from the matching table in :attr:`~.loops`.
@@ -838,7 +854,7 @@ class CifFile:
                         data_iter, _strip_comments(next(data_iter))
                     )
                     parsed_line = self._cpat["space_delimited_data"].findall(line)
-                    parsed_line = [m for m in parsed_line if m != ""]
+                    parsed_line = [m for m in parsed_line if m != "" and m != ","]
                     loop_data.extend([parsed_line] if parsed_line else [])
 
                 n_elements, n_cols = (
@@ -870,7 +886,6 @@ class CifFile:
                         stacklevel=2,
                     )
                     continue
-
                 rectable = np.atleast_2d(loop_data)
                 rectable.dtype = [*zip(loop_keys, [dt] * n_cols)]
                 rectable = rectable.reshape(rectable.shape, order="F")
@@ -889,7 +904,14 @@ class CifFile:
         "loop_delimiter": r"([Ll][Oo][Oo][Pp]_)[ |\t]*([^\n]*)",
         "block_delimiter": r"([Dd][Aa][Tt][Aa]_)[ |\t]*([^\n]*)",
         "key_list": r"_[\w_\.*]+[\[\d\]]*",
-        "space_delimited_data": r"(\;[^\;]*\;|\'[^\']*\'|\"[^\"]*\"]|[^\'\"\;\s]*)\s*",
+        "space_delimited_data": (
+            r"("
+            r"\;[^\;]*\;|"  # Non-semicolon data bracketed by semicolons
+            r"\'(?:'[^\s]|[^'])*\'|"  # Data with single quotes not followed by \s
+            r"\"[^\"]*\"|"  # Data with double quotes
+            r"[^\'\"\;\s]*"  # Additional non-bracketed data
+            r")[\s]*"
+        ),
     }
     """Regex patterns used when parsing files.
 

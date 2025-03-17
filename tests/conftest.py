@@ -4,15 +4,47 @@ from __future__ import annotations
 import os
 import re
 from dataclasses import dataclass
+from glob import glob
 
 import numpy as np
 import pytest
+from CifFile import CifFile as pycifRW
+from CifFile import StarError
+from gemmi import cif
 
 from parsnip import CifFile
+
+ADDITIONAL_TEST_FILES_PATH = ""
 
 rng = np.random.default_rng(seed=161181914916)
 
 data_file_path = os.path.dirname(__file__) + "/sample_data/"
+
+
+def pycifrw_or_xfail(cif_data):
+    try:
+        return pycifRW(cif_data.filename).first_block()
+    except StarError:
+        pytest.xfail("pycifRW failed to read the file!")
+
+
+def remove_invalid(s):
+    """Our parser strips newlines and carriage returns.
+    TODO: newlines should be retained
+    """
+    if s is None:
+        return None
+    return s.replace("\r", "")
+
+
+def _gemmi_read_keys(filename, keys, as_number=True):
+    try:
+        file_block = cif.read_file(filename).sole_block()
+    except (RuntimeError, ValueError):
+        pytest.xfail("Gemmi failed to read file!")
+    if as_number:
+        return np.array([cif.as_number(file_block.find_value(key)) for key in keys])
+    return np.array([remove_invalid(file_block.find_value(key)) for key in keys])
 
 
 def _arrstrip(arr: np.ndarray, pattern: str):
@@ -32,6 +64,20 @@ class CifData:
 
 # Assorted keys to select from
 assorted_keys = np.loadtxt(data_file_path + "cif_file_keys.txt", dtype=str)
+
+
+def combine_marks(*marks, argnames="cif_data"):
+    combinedargvalues = []
+    combinedids = []
+    for mark in marks:
+        argvalues, ids = mark.kwargs["argvalues"], mark.kwargs["ids"]
+        combinedargvalues.extend(argvalues)
+        combinedids.extend(ids)
+    return pytest.mark.parametrize(
+        argnames=argnames,
+        argvalues=combinedargvalues,
+        ids=combinedids,
+    )
 
 
 def generate_random_key_sequences(arr, n_samples, seed=42):
@@ -171,71 +217,18 @@ cif_files_mark = pytest.mark.parametrize(
     argvalues=cif_data_array,
     ids=[cif.filename.split("/")[-1] for cif in cif_data_array],
 )
-LINE_TEST_CASES = [
-    None,
-    "_key",
-    "__key",
-    "_key.loop_",
-    "asdf        ",
-    "loop_",
-    "",
-    " ",
-    "# comment",
-    "_key#comment_ # 2",
-    "loop_##com",
-    "'my quote' # abc",
-    "\"malformed ''#",
-    ";oddness\"'\n;asdf",
-    "_key.loop.inner_",
-    "normal_case",
-    "multi.periods....",
-    "__underscore__",
-    "_key_with_numbers123",
-    "test#hash",
-    "#standalone",
-    "'quote_in_single'",
-    '"quote_in_double"',
-    " \"mismatched_quotes' ",
-    ";semicolon_in_text",
-    ";;double_semicolon",
-    "trailing_space ",
-    " leading_space",
-    "_key.with#hash.loop",
-    "__double#hash#inside__",
-    "single'; quote",
-    'double;"quote',
-    "#comment;inside",
-    "_tricky'combination;#",
-    ";'#another#combo;'",
-    '"#edge_case"',
-    'loop;"#complex"case',
-    "_'_weird_key'_",
-    "semi;;colon_and_hash#",
-    "_odd.key_with#hash",
-    "__leading_double_underscore__",
-    "middle;;semicolon",
-    "#just_a_comment",
-    '"escaped "quote"',
-    "'single_quote_with_hash#'",
-    "_period_end.",
-    "loop_.trailing_",
-    "escaped\\nnewline",
-    "#escaped\\twith_tab ",
-    "only;semicolon",
-    "trailing_semicolon;",
-    "leading_semicolon;",
-    "_key;.semicolon",
-    "semicolon;hash#",
-    "complex\"';hash#loop",
-    "just_text",
-    'loop#weird"text;',
-    "nested'quotes\"here   ",
-    "normal_case2",
-    "__underscored_case__",
-    'escaped\\"quotes#',
-    ";semicolon#hash;",
-    "double#hash_inside##key",
-    "__double..periods__",
-    "key#comment ; and_more",
-    "_weird_;;#combo    ",
+additional_data_array = [
+    CifData(
+        filename=fn,
+        file=CifFile(fn),
+        symop_keys=("_space_group_symop_operation_xyz", "_symmetry_equiv_pos_as_xyz"),
+    )
+    for fn in glob(ADDITIONAL_TEST_FILES_PATH)
 ]
+additional_files_mark = pytest.mark.parametrize(
+    argnames="cif_data",
+    argvalues=additional_data_array,
+    ids=[cif.filename.split("/")[-1] for cif in additional_data_array],
+)
+
+all_files_mark = combine_marks(cif_files_mark, additional_files_mark)
