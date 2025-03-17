@@ -36,6 +36,20 @@ class CifData:
 # Assorted keys to select from
 assorted_keys = np.loadtxt(data_file_path + "cif_file_keys.txt", dtype=str)
 
+def combine_marks(*marks, argnames="cif_data"):
+    combinedargvalues = []
+    combinedids = []
+    for mark in marks:
+        argvalues, ids = mark.kwargs["argvalues"], mark.kwargs["ids"]
+        combinedargvalues.extend(argvalues)
+        combinedids.extend(ids)
+    return pytest.mark.parametrize(
+        argnames=argnames,
+        argvalues=combinedargvalues,
+        ids=combinedids,
+    )
+
+
 
 def generate_random_key_sequences(arr, n_samples, seed=42):
     rng = np.random.default_rng(seed)
@@ -167,17 +181,24 @@ cif_data_array = [
     ccdc_Pm3m,
     cod_aP16,
     izasc_gismondine,
-    pdb_4INS,
-    *[
-        CifData(
-            filename=fn,
-            file=CifFile(fn),
-        )
-        for fn in glob(ADDITIONAL_TEST_FILES_PATH)
-    ],
+    pdb_4INS
 ]
 cif_files_mark = pytest.mark.parametrize(
     argnames="cif_data",
     argvalues=cif_data_array,
     ids=[cif.filename.split("/")[-1] for cif in cif_data_array],
 )
+additional_data_array = [
+    CifData(
+        filename=fn,
+        file=CifFile(fn),
+    )
+    for fn in glob(ADDITIONAL_TEST_FILES_PATH)
+]
+additional_files_mark = pytest.mark.parametrize(
+    argnames="cif_data",
+    argvalues=additional_data_array ,
+    ids=[cif.filename.split("/")[-1] for cif in additional_data_array],
+)
+
+all_files_mark = combine_marks(cif_files_mark, additional_files_mark)

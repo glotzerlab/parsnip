@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 from CifFile import CifFile as pycifRW
 from CifFile.StarFile import StarError
-from conftest import bad_cif, cif_files_mark, random_keys_mark
+from conftest import bad_cif, cif_files_mark, random_keys_mark, all_files_mark
 from gemmi import cif
 from more_itertools import flatten
 
@@ -38,7 +38,7 @@ def _array_assertion_verbose(keys, test_data, real_data):
     np.testing.assert_equal(test_data, real_data, err_msg=msg)
 
 
-@cif_files_mark
+@all_files_mark
 def test_read_key_value_pairs(cif_data):
     try:
         pycif = pycifRW(cif_data.filename).first_block()
@@ -59,7 +59,7 @@ def test_read_key_value_pairs(cif_data):
     _array_assertion_verbose(all_keys, parsnip_data, gemmi_data)
 
 
-@cif_files_mark
+@all_files_mark
 @random_keys_mark(n_samples=20)
 def test_read_key_value_pairs_random(cif_data, keys):
     parsnip_data = np.asarray(cif_data.file[keys])

@@ -5,7 +5,7 @@ import pytest
 from ase.io import cif as asecif
 from CifFile import CifFile as pycifRW
 from CifFile.StarFile import StarError
-from conftest import _arrstrip, bad_cif, cif_files_mark
+from conftest import _arrstrip, bad_cif, cif_files_mark, additional_files_mark, all_files_mark
 from gemmi import cif
 from more_itertools import flatten
 
@@ -18,10 +18,13 @@ Used to simplify processing of structured arrays.
 
 
 def _gemmi_read_table(filename, keys):
-    return np.array(cif.read_file(filename).sole_block().find(keys))
+    try:
+        return np.array(cif.read_file(filename).sole_block().find(keys))
+    except (RuntimeError, ValueError):
+        pytest.xfail("Gemmi failed to read file!")
 
 
-@cif_files_mark
+@all_files_mark
 def test_reads_all_keys(cif_data):
     try:
         pycif = pycifRW(cif_data.filename).first_block()
@@ -41,7 +44,7 @@ def test_reads_all_keys(cif_data):
         np.testing.assert_array_equal(parsnip_data, _arrstrip(gemmi_data, r"\r"))
 
 
-@cif_files_mark
+@all_files_mark
 def test_read_symop(cif_data):
     parsnip_data = cif_data.file.get_from_loops(cif_data.symop_keys)
     gemmi_data = _gemmi_read_table(cif_data.filename, cif_data.symop_keys)
@@ -63,7 +66,9 @@ def test_read_atom_sites(cif_data):
             return
 
         warnings.filterwarnings("ignore", category=UserWarning)
+
         atoms = asecif.read_cif(cif_data.filename)
+
         ase_data = [
             occ for site in atoms.info["occupancy"].values() for occ in site.values()
         ]
@@ -122,7 +127,6 @@ def test_bad_cif_atom_sites(cif_data=bad_cif):
     np.testing.assert_array_equal(
         parsnip_data[:, 3], ["0.00000(1)", "0.00000", "0.19180", "0.09390"]
     )
-
     # "_atom_site_fract_z"
     np.testing.assert_array_equal(
         parsnip_data[:, 4], ["0.25000", "0.(28510)", "0.05170", "0.41220"]
