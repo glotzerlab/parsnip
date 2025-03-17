@@ -66,7 +66,7 @@ def test_read_symmetry_operations(cif_data):
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
 
 
-@all_files_mark
+@cif_files_mark
 @pytest.mark.parametrize("n_decimal_places", [3, 4, 6, 9])
 @pytest.mark.parametrize(
     "cols",

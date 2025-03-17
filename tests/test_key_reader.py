@@ -1,5 +1,6 @@
 import numpy as np
 from conftest import (
+    _gemmi_read_keys,
     all_files_mark,
     bad_cif,
     pycifrw_or_xfail,
