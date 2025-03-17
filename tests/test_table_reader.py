@@ -4,6 +4,7 @@ import numpy as np
 import pytest
 from ase.io import cif as asecif
 from CifFile import CifFile as pycifRW
+from CifFile.StarFile import StarError
 from conftest import _arrstrip, bad_cif, cif_files_mark
 from gemmi import cif
 from more_itertools import flatten
@@ -22,7 +23,10 @@ def _gemmi_read_table(filename, keys):
 
 @cif_files_mark
 def test_reads_all_keys(cif_data):
-    pycif = pycifRW(cif_data.filename).first_block()
+    try:
+        pycif = pycifRW(cif_data.filename).first_block()
+    except StarError:
+        pytest.xfail("pycifRW failed to read the file!")
     loop_keys = [*flatten(pycif.loops.values())]
     all_keys = [key for key in pycif.true_case.values() if key.lower() in loop_keys]
 
