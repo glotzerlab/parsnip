@@ -908,7 +908,7 @@ class CifFile:
         "space_delimited_data": (
             r"("
             r"\;[^\;]*\;|"  # Non-semicolon data bracketed by semicolons
-            r"\'(?:[\\\w]'[^\s]|[^'])*\'|"  # Data with non-escaped single quotes
+            r"\'(?:[\\\w]'[^\s]|[^'])*\'|"  # Data with single quotes not followed by \s
             r"\"[^\"]*\"|"  # Data with double quotes
             r"[^\'\"\;\s]*"  # Additional non-bracketed data
             r")[\s]*"
