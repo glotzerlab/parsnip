@@ -1,5 +1,7 @@
+import re
 import warnings
 from contextlib import nullcontext
+from glob import glob
 
 import numpy as np
 import pytest
@@ -8,6 +10,8 @@ from ase.build import supercells
 from conftest import _arrstrip, box_keys, cif_files_mark
 from gemmi import cif
 from more_itertools import flatten
+
+from parsnip import CifFile
 
 
 def _gemmi_read_table(filename, keys):
@@ -144,3 +148,21 @@ def test_invalid_unit_cell(cif_data):
     # with pytest.raises(ValueError, match="did not return any data"):
     #     cif_data.file.build_unit_cell()
     # cif_data.file._pairs["_cell_angle_alpha"] = previous_alpha
+
+
+TEST_FILES_PATH = "../aflow_cif_db/AFLOW/*.cif"
+# TEST_FILES_PATH = ""
+
+
+@pytest.mark.skipif(TEST_FILES_PATH == "", reason="No test path provided.")
+@pytest.mark.parametrize("filename", glob(TEST_FILES_PATH))
+def test_build_accuracy(filename):
+    def n_from_pearson(p: str) -> int:
+        return int(re.sub(r"[^\w]", "", p)[2:])
+
+    cif = CifFile(filename)
+    n, uc = n_from_pearson(cif["*Pearson"]), cif.build_unit_cell()
+    uc = np.array(sorted(uc, key=lambda x: tuple(x)))
+    # np.testing.assert_equal(
+    #     len(uc), n, err_msg="cell does not match Pearson symbol!"
+    # )
