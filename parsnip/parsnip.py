@@ -80,6 +80,7 @@ from numpy.lib.recfunctions import structured_to_unstructured
 
 from parsnip._errors import ParseWarning
 from parsnip.patterns import (
+    AFLOW_ACCENT,
     _accumulate_nonsimple_data,
     _box_from_lengths_and_angles,
     _bracket_pattern,
@@ -870,7 +871,7 @@ class CifFile:
                         stacklevel=2,
                     )
                     continue
-
+                # print(loop_data)
                 rectable = np.atleast_2d(loop_data)
                 rectable.dtype = [*zip(loop_keys, [dt] * n_cols)]
                 rectable = rectable.reshape(rectable.shape, order="F")
@@ -889,7 +890,14 @@ class CifFile:
         "loop_delimiter": r"([Ll][Oo][Oo][Pp]_)[ |\t]*([^\n]*)",
         "block_delimiter": r"([Dd][Aa][Tt][Aa]_)[ |\t]*([^\n]*)",
         "key_list": r"_[\w_\.*]+[\[\d\]]*",
-        "space_delimited_data": r"(\;[^\;]*\;|\'[^\']*\'|\"[^\"]*\"]|[^\'\"\;\s]*)\s*",
+        "space_delimited_data": (
+            r"("
+            r"\;[^\;]*\;|"  # Non-semicolon data bracketed by semicolons
+            f"'(?:{AFLOW_ACCENT}|[^'])*'|"  # Data with non-escaped single quotes
+            f'"(?:{AFLOW_ACCENT}|[^"])*"|'  # Data with non-escaled double quotes
+            r"[^\'\"\;\s]*"  # Additional non-bracted data
+            r")\s*"
+        ),
     }
     """Regex patterns used when parsing files.
 

@@ -22,6 +22,8 @@ from parsnip._errors import ParseWarning
 ALLOWED_DELIMITERS = [";\n", "'''", '"""']
 """Delimiters allowed for nonsimple (multi-line) data entries."""
 
+AFLOW_ACCENT = r"\{?\\*[\'\"]\{?[aeiou]\}"
+"""Regex pattern for AFlow-style special characters."""
 
 _bracket_pattern = re.compile(r"(\[|\])")
 
