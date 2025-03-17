@@ -70,7 +70,8 @@ from __future__ import annotations
 import re
 import warnings
 from collections.abc import Iterable
-from fnmatch import filter as fnfilter, fnmatch
+from fnmatch import filter as fnfilter
+from fnmatch import fnmatch
 from pathlib import Path
 from typing import ClassVar
 
@@ -288,7 +289,9 @@ class CifFile:
             index = re.sub(_bracket_pattern, r"[\1]", index)
             return _flatten_or_none(
                 [
-                    v for (k, v) in self.pairs.items() if fnmatch(k.lower(), index.lower())
+                    v
+                    for (k, v) in self.pairs.items()
+                    if fnmatch(k.lower(), index.lower())
                 ]
             )
 
@@ -296,9 +299,13 @@ class CifFile:
         index = [re.sub(_bracket_pattern, r"[\1]", i) for i in index]
         matches = [
             [
-                _flatten_or_none([
-                    v for (k, v) in self.pairs.items() if fnmatch(k.lower(), pat.lower())
-                ])
+                _flatten_or_none(
+                    [
+                        v
+                        for (k, v) in self.pairs.items()
+                        if fnmatch(k.lower(), pat.lower())
+                    ]
+                )
             ]
             for pat in index
         ]
