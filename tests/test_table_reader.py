@@ -28,7 +28,7 @@ def test_reads_all_keys(cif_data):
 
     found_labels = [*flatten(cif_data.file.loop_labels)]
     for key in all_keys:
-        assert key in found_labels, f"Missing label: {found_labels}"
+        assert key in found_labels, f"Missing label: {key}"
 
     for loop in pycif.loops.values():
         loop = [pycif.true_case[key] for key in loop]
