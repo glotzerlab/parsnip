@@ -70,7 +70,7 @@ from __future__ import annotations
 import re
 import warnings
 from collections.abc import Iterable
-from fnmatch import filter as fnfilter
+from fnmatch import filter as fnfilter, fnmatch
 from pathlib import Path
 from typing import ClassVar
 
@@ -285,24 +285,31 @@ class CifFile:
         """
         if isinstance(index, str):  # Escape brackets with []
             index = re.sub(_bracket_pattern, r"[\1]", index)
-            print(
-                _flatten_or_none([self.pairs.get(k) for k in fnfilter({k.lower(): v for k, v in self.pairs.items()}, index.lower())])
-            )
+            if index ==  '_symmetry_Int_Tables_number':
+                print(
+                    [
+                        v for (k, v) in self.pairs.items() if fnmatch(k.lower(), index.lower())
+                    ]
+                )
             return _flatten_or_none(
                 # [self.pairs.get(k) for k in fnfilter(self.pairs, index)]
-                [self.pairs.get(k) for k in fnfilter({k.lower(): v for k, v in self.pairs.items()}, index.lower())]
+                [
+                    v for (k, v) in self.pairs.items() if fnmatch(k.lower(), index.lower())
+                ]
             )
 
         # Escape all brackets in all indices
         index = [re.sub(_bracket_pattern, r"[\1]", i) for i in index]
         # matches = [fnfilter(self.pairs, pat) for pat in index]
-        matches = [[self.pairs.get(k) for k in fnfilter({k.lower(): v for k, v in self.pairs.items()}, pat.lower())] for pat in index]
-        print([_flatten_or_none(m) for m in matches])
+        matches = [
+            [
+                _flatten_or_none([
+                    v for (k, v) in self.pairs.items() if fnmatch(k.lower(), pat.lower())
+                ])
+            ]
+            for pat in index
+        ]
         return [_flatten_or_none(m) for m in matches]
-        print([_flatten_or_none([self.pairs.get(k, None) for k in m]) for m in matches])
-        print(_flatten_or_none([[self.pairs.get(k, None) for k in m] for m in matches]))
-
-        return [_flatten_or_none([self.pairs.get(k, None) for k in m]) for m in matches]
 
     def get_from_loops(self, index: str | Iterable[str]):
         """Return a column or columns from the matching table in :attr:`~.loops`.
