@@ -244,6 +244,7 @@ class CifFile:
             This method supports a few unix-style wildcards. Use ``*`` to match any
             number of any character, and ``?`` to match any single character. If a
             wildcard matches more than one key, a list is returned for that index.
+            Lookups using this method are case-insensitive, per the CIF spec.
 
         Indexing with a string returns the value from the :meth:`~.pairs` dict. Indexing
         with an Iterable of strings returns a list of values, with ``None`` as a
@@ -285,14 +286,7 @@ class CifFile:
         """
         if isinstance(index, str):  # Escape brackets with []
             index = re.sub(_bracket_pattern, r"[\1]", index)
-            if index ==  '_symmetry_Int_Tables_number':
-                print(
-                    [
-                        v for (k, v) in self.pairs.items() if fnmatch(k.lower(), index.lower())
-                    ]
-                )
             return _flatten_or_none(
-                # [self.pairs.get(k) for k in fnfilter(self.pairs, index)]
                 [
                     v for (k, v) in self.pairs.items() if fnmatch(k.lower(), index.lower())
                 ]
@@ -300,7 +294,6 @@ class CifFile:
 
         # Escape all brackets in all indices
         index = [re.sub(_bracket_pattern, r"[\1]", i) for i in index]
-        # matches = [fnfilter(self.pairs, pat) for pat in index]
         matches = [
             [
                 _flatten_or_none([
