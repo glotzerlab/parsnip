@@ -80,7 +80,6 @@ from numpy.lib.recfunctions import structured_to_unstructured
 
 from parsnip._errors import ParseWarning
 from parsnip.patterns import (
-    AFLOW_ACCENT,
     _accumulate_nonsimple_data,
     _box_from_lengths_and_angles,
     _bracket_pattern,
@@ -838,12 +837,8 @@ class CifFile:
                     line = _accumulate_nonsimple_data(
                         data_iter, _strip_comments(next(data_iter))
                     )
-                    print({line})
                     parsed_line = self._cpat["space_delimited_data"].findall(line)
                     parsed_line = [m for m in parsed_line if m != "" and m != ","]
-                    # parsed_line = [m for m in parsed_line if m != ""]
-                    print([np.atleast_1d(w).shape for w in parsed_line])
-                    print(parsed_line, "\n")
                     loop_data.extend([parsed_line] if parsed_line else [])
 
                 n_elements, n_cols = (
@@ -897,8 +892,8 @@ class CifFile:
         "space_delimited_data": (
             r"("
             r"\;[^\;]*\;|"  # Non-semicolon data bracketed by semicolons
-            "'(?:\\\'|[^'])*'|"  # Data with non-escaped single quotes
-            '"[^"]*"|'  # Data with non-escaled double quotes
+            "'(?:\\'|[^'])*'|"  # Data with non-escaped single quotes
+            '"(?:\\"|[^"])*"|'  # Data with non-escaled double quotes
             r"[^\'\"\;\s]*"  # Additional non-bracketed data
             r")[\s]*"
         ),
