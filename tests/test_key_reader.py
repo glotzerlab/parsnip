@@ -1,8 +1,11 @@
 import numpy as np
 import pytest
-from CifFile import CifFile as pycifRW
-from CifFile.StarFile import StarError
-from conftest import bad_cif, cif_files_mark, random_keys_mark, all_files_mark
+from conftest import (
+    all_files_mark,
+    bad_cif,
+    pycifrw_or_xfail,
+    random_keys_mark,
+)
 from gemmi import cif
 from more_itertools import flatten
 
@@ -40,10 +43,7 @@ def _array_assertion_verbose(keys, test_data, real_data):
 
 @all_files_mark
 def test_read_key_value_pairs(cif_data):
-    try:
-        pycif = pycifRW(cif_data.filename).first_block()
-    except StarError:
-        pytest.xfail("pycifRW failed to read the file!")
+    pycif = pycifrw_or_xfail(cif_data)
 
     invalid = [*flatten(pycif.loops.values()), *cif_data.failing]
     all_keys = [key for key in pycif.true_case.values() if key.lower() not in invalid]
@@ -54,7 +54,6 @@ def test_read_key_value_pairs(cif_data):
         np.testing.assert_equal(
             cif_data.file[all_keys[i]], cif_data.file.get_from_pairs(all_keys[i])
         )
-        # assert cif_data.file[all_keys[i]] == cif_data.file.get_from_pairs(all_keys[i])
     gemmi_data = _gemmi_read_keys(cif_data.filename, keys=all_keys, as_number=False)
     _array_assertion_verbose(all_keys, parsnip_data, gemmi_data)
 

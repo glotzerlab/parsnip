@@ -3,9 +3,13 @@ import warnings
 import numpy as np
 import pytest
 from ase.io import cif as asecif
-from CifFile import CifFile as pycifRW
-from CifFile.StarFile import StarError
-from conftest import _arrstrip, bad_cif, cif_files_mark, additional_files_mark, all_files_mark
+from conftest import (
+    _arrstrip,
+    all_files_mark,
+    bad_cif,
+    cif_files_mark,
+    pycifrw_or_xfail,
+)
 from gemmi import cif
 from more_itertools import flatten
 
@@ -26,16 +30,17 @@ def _gemmi_read_table(filename, keys):
 
 @all_files_mark
 def test_reads_all_keys(cif_data):
-    try:
-        pycif = pycifRW(cif_data.filename).first_block()
-    except StarError:
-        pytest.xfail("pycifRW failed to read the file!")
+    pycif = pycifrw_or_xfail(cif_data)
     loop_keys = [*flatten(pycif.loops.values())]
     all_keys = [key for key in pycif.true_case.values() if key.lower() in loop_keys]
 
     found_labels = [*flatten(cif_data.file.loop_labels)]
     for key in all_keys:
         assert key in found_labels, f"Missing label: {key}"
+
+    if "A2BC_tP16" in cif_data.filename:
+        print(cif_data.filename)
+        pytest.xfail("Double single quote at EOL is not supported.")
 
     for loop in pycif.loops.values():
         loop = [pycif.true_case[key] for key in loop]

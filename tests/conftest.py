@@ -8,6 +8,8 @@ from glob import glob
 
 import numpy as np
 import pytest
+from CifFile import CifFile as pycifRW
+from CifFile import StarError
 
 from parsnip import CifFile
 
@@ -16,6 +18,13 @@ ADDITIONAL_TEST_FILES_PATH = "../aflow_cif_db/AFLOW/*.cif"
 rng = np.random.default_rng(seed=161181914916)
 
 data_file_path = os.path.dirname(__file__) + "/sample_data/"
+
+
+def pycifrw_or_xfail(cif_data):
+    try:
+        return pycifRW(cif_data.filename).first_block()
+    except StarError:
+        pytest.xfail("pycifRW failed to read the file!")
 
 
 def _arrstrip(arr: np.ndarray, pattern: str):
@@ -36,6 +45,7 @@ class CifData:
 # Assorted keys to select from
 assorted_keys = np.loadtxt(data_file_path + "cif_file_keys.txt", dtype=str)
 
+
 def combine_marks(*marks, argnames="cif_data"):
     combinedargvalues = []
     combinedids = []
@@ -48,7 +58,6 @@ def combine_marks(*marks, argnames="cif_data"):
         argvalues=combinedargvalues,
         ids=combinedids,
     )
-
 
 
 def generate_random_key_sequences(arr, n_samples, seed=42):
@@ -181,7 +190,7 @@ cif_data_array = [
     ccdc_Pm3m,
     cod_aP16,
     izasc_gismondine,
-    pdb_4INS
+    pdb_4INS,
 ]
 cif_files_mark = pytest.mark.parametrize(
     argnames="cif_data",
@@ -197,7 +206,7 @@ additional_data_array = [
 ]
 additional_files_mark = pytest.mark.parametrize(
     argnames="cif_data",
-    argvalues=additional_data_array ,
+    argvalues=additional_data_array,
     ids=[cif.filename.split("/")[-1] for cif in additional_data_array],
 )
 
