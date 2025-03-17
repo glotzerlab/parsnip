@@ -166,6 +166,4 @@ def test_build_accuracy(filename):
     cif = CifFile(filename)
     n, uc = n_from_pearson(cif["*Pearson"]), cif.build_unit_cell()
     uc = np.array(sorted(uc, key=lambda x: tuple(x)))
-    # np.testing.assert_equal(
-    #     len(uc), n, err_msg="cell does not match Pearson symbol!"
-    # )
+    np.testing.assert_equal(len(uc), n, err_msg="cell does not match Pearson symbol!")

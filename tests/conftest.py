@@ -14,7 +14,7 @@ from gemmi import cif
 
 from parsnip import CifFile
 
-ADDITIONAL_TEST_FILES_PATH = "../aflow_cif_db/AFLOW/*.cif"
+ADDITIONAL_TEST_FILES_PATH = ""
 
 rng = np.random.default_rng(seed=161181914916)
 
