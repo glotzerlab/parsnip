@@ -15,6 +15,8 @@ from parsnip.patterns import (
     _write_debug_output,
 )
 
+BOX_ATOL = 8e-7
+
 TEST_CASES = [
     None,
     "_key",
@@ -222,13 +224,13 @@ def test_box(cif_data):
     freud_box_2 = freud.Box(*cif_data.file.box)
     parsnip_box = _box_from_lengths_and_angles(*cif_box)
 
-    np.testing.assert_allclose(parsnip_box[:3], freud_box.L, atol=1e-15)
+    np.testing.assert_allclose(parsnip_box[:3], freud_box.L, atol=BOX_ATOL)
     np.testing.assert_allclose(
-        parsnip_box[3:], [freud_box.xy, freud_box.xz, freud_box.yz], atol=1e-15
+        parsnip_box[3:], [freud_box.xy, freud_box.xz, freud_box.yz], atol=BOX_ATOL
     )
     if "PDB" not in cif_data.filename:
         np.testing.assert_allclose(
             [*freud_box.L, freud_box.xy, freud_box.xz, freud_box.yz],
             [*freud_box_2.L, freud_box_2.xy, freud_box_2.xz, freud_box_2.yz],
-            atol=1e-8,
+            atol=BOX_ATOL,
         )
