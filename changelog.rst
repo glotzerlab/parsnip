@@ -4,6 +4,18 @@ Changelog
 The format is based on `Keep a Changelog <http://keepachangelog.com/en/1.1.0/>`__.
 This project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`__.
 
+v0.X.X - 20XX-XX-XX
+-------------------
+
+Added
+~~~~~
+- Additional testpath flag to conftest
+
+Fixed
+~~~~~
+- Accessing data pairs with ``get_from_pairs`` or ``__getitem__`` now allows for case-insensitive searches
+- Quote-delimited strings containing the delimiting character are now parsed properly
+
 v0.2.1 - 2025-03-12
 -------------------
 
