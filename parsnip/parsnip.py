@@ -285,13 +285,22 @@ class CifFile:
         """
         if isinstance(index, str):  # Escape brackets with []
             index = re.sub(_bracket_pattern, r"[\1]", index)
+            print(
+                _flatten_or_none([self.pairs.get(k) for k in fnfilter({k.lower(): v for k, v in self.pairs.items()}, index.lower())])
+            )
             return _flatten_or_none(
-                [self.pairs.get(k) for k in fnfilter(self.pairs, index)]
+                # [self.pairs.get(k) for k in fnfilter(self.pairs, index)]
+                [self.pairs.get(k) for k in fnfilter({k.lower(): v for k, v in self.pairs.items()}, index.lower())]
             )
 
         # Escape all brackets in all indices
         index = [re.sub(_bracket_pattern, r"[\1]", i) for i in index]
-        matches = [fnfilter(self.pairs, pat) for pat in index]
+        # matches = [fnfilter(self.pairs, pat) for pat in index]
+        matches = [[self.pairs.get(k) for k in fnfilter({k.lower(): v for k, v in self.pairs.items()}, pat.lower())] for pat in index]
+        print([_flatten_or_none(m) for m in matches])
+        return [_flatten_or_none(m) for m in matches]
+        print([_flatten_or_none([self.pairs.get(k, None) for k in m]) for m in matches])
+        print(_flatten_or_none([[self.pairs.get(k, None) for k in m] for m in matches]))
 
         return [_flatten_or_none([self.pairs.get(k, None) for k in m]) for m in matches]
 
@@ -893,7 +902,6 @@ class CifFile:
             r"("
             r"\;[^\;]*\;|"  # Non-semicolon data bracketed by semicolons
             r"\'(?:(?:[\\\w])'[^\s]|[^'])*\'|"  # Data with non-escaped single quotes
-            # r"\'(?:[^']|'(?=[^'\s]))*\'|" # Lookahead
             r"\"[^\"]*\"|"  # Data with double quotes
             r"[^\'\"\;\s]*"  # Additional non-bracketed data
             r")[\s]*"
