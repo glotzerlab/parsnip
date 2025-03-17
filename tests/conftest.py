@@ -221,6 +221,7 @@ additional_data_array = [
     CifData(
         filename=fn,
         file=CifFile(fn),
+        symop_keys=("_space_group_symop_operation_xyz", "_symmetry_equiv_pos_as_xyz"),
     )
     for fn in glob(ADDITIONAL_TEST_FILES_PATH)
 ]

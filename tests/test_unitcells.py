@@ -58,7 +58,11 @@ def test_read_symmetry_operations(cif_data):
         return  # Excerpt of PDB file does not contain symmetry information
 
     parsnip_data = cif_data.file.symops
-    gemmi_data = _gemmi_read_table(filename=cif_data.filename, keys=cif_data.symop_keys)
+    gemmi_data = [
+        _gemmi_read_table(filename=cif_data.filename, keys=[k])
+        for k in cif_data.symop_keys
+    ]
+    gemmi_data = gemmi_data[0] if len(gemmi_data[0]) != 0 else gemmi_data[1]
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
 
 
