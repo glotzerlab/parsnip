@@ -11,6 +11,8 @@ import pytest
 
 from parsnip import CifFile
 
+ADDITIONAL_TEST_FILES_PATH = "../aflow_cif_db/AFLOW/*.cif"
+
 rng = np.random.default_rng(seed=161181914916)
 
 data_file_path = os.path.dirname(__file__) + "/sample_data/"
@@ -171,7 +173,7 @@ cif_data_array = [
             filename=fn,
             file=CifFile(fn),
         )
-        for fn in glob("../aflow_cif_db/AFLOW/*.cif")
+        for fn in glob(ADDITIONAL_TEST_FILES_PATH)
     ],
 ]
 cif_files_mark = pytest.mark.parametrize(

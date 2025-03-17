@@ -7,7 +7,7 @@ import numpy as np
 import pytest
 from ase import io
 from ase.build import supercells
-from conftest import _arrstrip, box_keys, cif_files_mark
+from conftest import ADDITIONAL_TEST_FILES_PATH, _arrstrip, box_keys, cif_files_mark
 from gemmi import cif
 from more_itertools import flatten
 
@@ -150,12 +150,8 @@ def test_invalid_unit_cell(cif_data):
     # cif_data.file._pairs["_cell_angle_alpha"] = previous_alpha
 
 
-TEST_FILES_PATH = "../aflow_cif_db/AFLOW/*.cif"
-# TEST_FILES_PATH = ""
-
-
-@pytest.mark.skipif(TEST_FILES_PATH == "", reason="No test path provided.")
-@pytest.mark.parametrize("filename", glob(TEST_FILES_PATH))
+@pytest.mark.skipif(ADDITIONAL_TEST_FILES_PATH == "", reason="No test path provided.")
+@pytest.mark.parametrize("filename", glob(ADDITIONAL_TEST_FILES_PATH))
 def test_build_accuracy(filename):
     def n_from_pearson(p: str) -> int:
         return int(re.sub(r"[^\w]", "", p)[2:])
