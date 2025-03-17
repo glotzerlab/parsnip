@@ -886,7 +886,6 @@ class CifFile:
                         stacklevel=2,
                     )
                     continue
-                # print(loop_data)
                 rectable = np.atleast_2d(loop_data)
                 rectable.dtype = [*zip(loop_keys, [dt] * n_cols)]
                 rectable = rectable.reshape(rectable.shape, order="F")
