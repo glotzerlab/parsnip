@@ -1,32 +1,11 @@
 import numpy as np
-import pytest
 from conftest import (
     all_files_mark,
     bad_cif,
     pycifrw_or_xfail,
     random_keys_mark,
 )
-from gemmi import cif
 from more_itertools import flatten
-
-
-def remove_invalid(s):
-    """Our parser strips newlines and carriage returns.
-    TODO: newlines should be retained
-    """
-    if s is None:
-        return None
-    return s.replace("\r", "")
-
-
-def _gemmi_read_keys(filename, keys, as_number=True):
-    try:
-        file_block = cif.read_file(filename).sole_block()
-    except (RuntimeError, ValueError):
-        pytest.xfail("Gemmi failed to read file!")
-    if as_number:
-        return np.array([cif.as_number(file_block.find_value(key)) for key in keys])
-    return np.array([remove_invalid(file_block.find_value(key)) for key in keys])
 
 
 def _array_assertion_verbose(keys, test_data, real_data):

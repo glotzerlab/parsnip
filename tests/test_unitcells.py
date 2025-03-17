@@ -7,7 +7,14 @@ import numpy as np
 import pytest
 from ase import io
 from ase.build import supercells
-from conftest import ADDITIONAL_TEST_FILES_PATH, _arrstrip, box_keys, cif_files_mark
+from conftest import (
+    ADDITIONAL_TEST_FILES_PATH,
+    _arrstrip,
+    _gemmi_read_keys,
+    all_files_mark,
+    box_keys,
+    cif_files_mark,
+)
 from gemmi import cif
 from more_itertools import flatten
 
@@ -15,17 +22,13 @@ from parsnip import CifFile
 
 
 def _gemmi_read_table(filename, keys):
-    return np.array(cif.read_file(filename).sole_block().find(keys))
+    try:
+        return np.array(cif.read_file(filename).sole_block().find(keys))
+    except (RuntimeError, ValueError):
+        pytest.xfail("Gemmi failed to read file!")
 
 
-def _gemmi_read_keys(filename, keys, as_number=True):
-    file_block = cif.read_file(filename).sole_block()
-    if as_number:
-        return np.array([cif.as_number(file_block.find_value(key)) for key in keys])
-    return np.array([file_block.find_value(key) for key in keys])
-
-
-@cif_files_mark  # TODO: test with conversions to numeric as well
+@all_files_mark  # TODO: test with conversions to numeric as well
 def test_read_wyckoff_positions(cif_data):
     if "PDB_4INS_head.cif" in cif_data.filename:
         return
@@ -36,7 +39,7 @@ def test_read_wyckoff_positions(cif_data):
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
 
 
-@cif_files_mark
+@all_files_mark
 def test_read_cell_params(cif_data, keys=box_keys):
     if "PDB_4INS_head.cif" in cif_data.filename:
         keys = (key[0] + key[1:].replace("_", ".", 1) for key in keys)
@@ -49,7 +52,7 @@ def test_read_cell_params(cif_data, keys=box_keys):
     assert min(normalized[:3]) == 1
 
 
-@cif_files_mark
+@all_files_mark
 def test_read_symmetry_operations(cif_data):
     if "PDB_4INS_head.cif" in cif_data.filename:
         return  # Excerpt of PDB file does not contain symmetry information
@@ -59,7 +62,7 @@ def test_read_symmetry_operations(cif_data):
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
 
 
-@cif_files_mark
+@all_files_mark
 @pytest.mark.parametrize("n_decimal_places", [3, 4, 6, 9])
 @pytest.mark.parametrize(
     "cols",

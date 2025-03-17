@@ -10,6 +10,7 @@ import numpy as np
 import pytest
 from CifFile import CifFile as pycifRW
 from CifFile import StarError
+from gemmi import cif
 
 from parsnip import CifFile
 
@@ -25,6 +26,25 @@ def pycifrw_or_xfail(cif_data):
         return pycifRW(cif_data.filename).first_block()
     except StarError:
         pytest.xfail("pycifRW failed to read the file!")
+
+
+def remove_invalid(s):
+    """Our parser strips newlines and carriage returns.
+    TODO: newlines should be retained
+    """
+    if s is None:
+        return None
+    return s.replace("\r", "")
+
+
+def _gemmi_read_keys(filename, keys, as_number=True):
+    try:
+        file_block = cif.read_file(filename).sole_block()
+    except (RuntimeError, ValueError):
+        pytest.xfail("Gemmi failed to read file!")
+    if as_number:
+        return np.array([cif.as_number(file_block.find_value(key)) for key in keys])
+    return np.array([remove_invalid(file_block.find_value(key)) for key in keys])
 
 
 def _arrstrip(arr: np.ndarray, pattern: str):
