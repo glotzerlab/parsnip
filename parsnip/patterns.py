@@ -105,7 +105,7 @@ def _safe_eval(
         return _sympy_evaluate_array(safe_string)
     if parse_mode == "python_float":
         return eval(safe_string, {"__builtins__": {}}, {})  # noqa: S307
-    raise ValueError(f"Unknown parse mod '{parse}' was provided!")
+    raise ValueError(f"Unknown parse mode '{parse_mode}' was provided!")
 
 
 def _write_debug_output(unique_indices, unique_counts, pos, check="Initial"):
