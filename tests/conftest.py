@@ -178,6 +178,13 @@ pdb_4INS = CifData(
     file=CifFile(data_file_path + "PDB_4INS_head.cif"),
 )
 
+structure_issue_42 = CifData(
+    filename=data_file_path + "no42.cif",
+    symop_keys=("_symmetry_equiv_pos_as_xyz",),
+    atom_site_keys=atom_site_keys[:-1],
+    file=CifFile(data_file_path + "no42.cif"),
+)
+
 bad_cif = CifData(
     filename=data_file_path + "INTENTIONALLY_BAD_CIF.cif",
     symop_keys=("_space_group_symop_id", "_space_group_symop_operation_xyz"),
@@ -211,6 +218,7 @@ cif_data_array = [
     cod_aP16,
     izasc_gismondine,
     pdb_4INS,
+    structure_issue_42,
 ]
 cif_files_mark = pytest.mark.parametrize(
     argnames="cif_data",
