@@ -160,10 +160,14 @@ def test_invalid_unit_cell(cif_data):
 @pytest.mark.skipif(ADDITIONAL_TEST_FILES_PATH == "", reason="No test path provided.")
 @pytest.mark.parametrize("filename", glob(ADDITIONAL_TEST_FILES_PATH))
 def test_build_accuracy(filename):
-    def n_from_pearson(p: str) -> int:
-        return int(re.sub(r"[^\w]", "", p)[2:])
+    def parse_pearson(p: str) -> tuple[bool, int]:
+        return (p.strip("'")[:2] == "hR", int(re.sub(r"[^\w]", "", p)[2:]))
 
     cif = CifFile(filename)
-    n, uc = n_from_pearson(cif["*Pearson"]), cif.build_unit_cell()
+    (is_rhombohedral, n), uc = parse_pearson(cif["*Pearson"]), cif.build_unit_cell()
     uc = np.array(sorted(uc, key=lambda x: tuple(x)))
-    np.testing.assert_equal(len(uc), n, err_msg="cell does not match Pearson symbol!")
+    msg = "cell does not match Pearson symbol!"
+    if not is_rhombohedral:
+        np.testing.assert_equal(len(uc), n, err_msg=msg)
+    else:
+        np.testing.assert_equal(len(uc), 3 * n, err_msg=msg)
