@@ -576,6 +576,7 @@ class CifFile:
                 category=RuntimeWarning,
                 stacklevel=2,
             )
+            parse_mode = "python_float"
 
         symops = self.symops
 
