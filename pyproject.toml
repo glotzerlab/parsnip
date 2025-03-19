@@ -35,7 +35,9 @@ Issues = "https://github.com/glotzerlab/parsnip/issues"
 packages=["parsnip"]
 
 [tool.setuptools.dynamic]
-optional-dependencies = {tests = { file = ["tests/requirements.in"] }, doc = { file = ["doc/requirements.txt"] }}
+optional-dependencies.tests = { file = ["tests/requirements.in"] }
+optional-dependencies.doc = { file = ["doc/requirements.txt"] }
+optional-dependencies.sympy = { file = ["requirements-sympy.txt"] }
 
 [tool.pytest.ini_options]
 testpaths = ["tests", "parsnip", "doc"]
