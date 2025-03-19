@@ -587,8 +587,9 @@ class CifFile:
             _safe_eval(symops_str, *xyz) for xyz in frac_strs
         ]  # Compute N_symmetry_elements coordinates for each Wyckoff site
 
-        pos = np.vstack(all_frac_positions)  # .round(n_decimal_places)
-        pos %= 1  # Wrap particles into the box
+        pos = np.vstack(all_frac_positions)
+        unrounded_pos = pos.copy() % 1
+        pos = pos.round(n_decimal_places) % 1  # Wrap particles into the box
 
         # Filter unique points. TODO: support arbitrary precision, fractional sites
         _, unique_fractional, unique_counts = np.unique(
@@ -617,13 +618,13 @@ class CifFile:
             )
 
         if additional_columns is None:
-            return pos[unique_indices]
+            return unrounded_pos[unique_indices]
 
         tiled_data = np.repeat(
             self.get_from_loops(additional_columns), len(symops), axis=0
         )
 
-        return tiled_data[unique_indices], pos[unique_indices]
+        return tiled_data[unique_indices], unrounded_pos[unique_indices]
 
     @property
     def box(self):
