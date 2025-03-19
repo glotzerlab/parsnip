@@ -168,7 +168,10 @@ def test_build_accuracy(filename):
         return (p.strip("'")[:2] == "hR", int(re.sub(r"[^\w]", "", p)[2:]))
 
     cif = CifFile(filename)
-    (is_rhombohedral, n), uc = parse_pearson(cif["*Pearson"]), cif.build_unit_cell(3)
+    (is_rhombohedral, n), uc = (
+        parse_pearson(cif["*Pearson"]),
+        cif.build_unit_cell(3, parse_mode="sympy"),
+    )
     uc = np.array(sorted(uc, key=lambda x: tuple(x)))
     msg = "cell does not match Pearson symbol!"
     if not is_rhombohedral:
