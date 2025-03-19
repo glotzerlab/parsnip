@@ -483,7 +483,7 @@ class CifFile:
         n_decimal_places: int = 4,
         additional_columns: str | Iterable[str] | None = None,
         verbose: bool = False,
-        parse_mode="sympy"
+        parse_mode="sympy",
     ):
         """Reconstruct fractional atomic positions from Wyckoff sites and symops.
 
@@ -585,9 +585,7 @@ class CifFile:
         frac_strs = self.get_from_loops(self.__class__._WYCKOFF_KEYS)
 
         all_frac_positions = [
-            # _safe_eval(symops_str, *xyz, parse="python_float")
-            _safe_eval(symops_str, *xyz, parse=parse_mode)
-            for xyz in frac_strs
+            _safe_eval(symops_str, *xyz, parse_mode=parse_mode) for xyz in frac_strs
         ]  # Compute N_symmetry_elements coordinates for each Wyckoff site
 
         pos = np.vstack(all_frac_positions)
@@ -595,7 +593,6 @@ class CifFile:
         # Wrap into box - works generally because these are fractional coordinates
         unrounded_pos = pos.copy() % 1
         pos = pos.round(n_decimal_places) % 1
-
 
         # Filter unique points. TODO: support arbitrary precision, fractional sites
         _, unique_fractional, unique_counts = np.unique(
