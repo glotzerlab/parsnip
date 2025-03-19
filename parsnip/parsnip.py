@@ -486,8 +486,8 @@ class CifFile:
         self,
         n_decimal_places: int = 4,
         additional_columns: str | Iterable[str] | None = None,
-        verbose: bool = False,
         parse_mode: str | None = None,
+        verbose: bool = False,
     ):
         """Reconstruct fractional atomic positions from Wyckoff sites and symops.
 
@@ -535,6 +535,11 @@ class CifFile:
                 A column name or list of column names from the loop containing
                 the Wyckoff site positions. This data is replicated alongside the atomic
                 coordinates and returned in an auxiliary array.
+                Default value = ``None``
+            parse_mode : {'sympy', 'python_float'} | None
+                Whether to parse lattice sites symbolically (``parse_mode='sympy'``) or
+                numerically (``parse_mode='python_float'``). If set to ``None``,
+                ``sympy`` will be enabled only if the associated package is installed.
                 Default value = ``None``
             verbose : bool, optional
                 Whether to print debug information about the uniqueness checks.
