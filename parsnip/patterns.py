@@ -16,7 +16,7 @@ import warnings
 
 import numpy as np
 from numpy.typing import ArrayLike
-from sympy import Float, sympify, Rational
+from sympy import Rational, sympify
 
 from parsnip._errors import ParseWarning
 
@@ -35,6 +35,7 @@ def _flatten_or_none(ls: list):
     """Return the sole element from a list of l=1, None if l=0, else l."""
     return None if not ls else ls[0] if len(ls) == 1 else ls
 
+
 def _sympy_evaluate_array(arr: str) -> list[list[float]]:
     one = Rational(1)
     return [
@@ -45,8 +46,13 @@ def _sympy_evaluate_array(arr: str) -> list[list[float]]:
         for ls in arr.split("],")
     ]
 
+
 def _safe_eval(
-    str_input: str, x: int | float, y: int | float, z: int | float, parse_mode: str = "python_float"
+    str_input: str,
+    x: int | float,
+    y: int | float,
+    z: int | float,
+    parse_mode: str = "python_float",
 ):
     """Attempt to safely evaluate a string of symmetry equivalent positions.
 
