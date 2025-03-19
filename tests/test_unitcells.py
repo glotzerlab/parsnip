@@ -161,8 +161,6 @@ def test_invalid_unit_cell(cif_data):
 @pytest.mark.parametrize("filename", glob(ADDITIONAL_TEST_FILES_PATH))
 @pytest.mark.parametrize("n_decimal_places", [3, 4])
 def test_build_accuracy(filename, n_decimal_places):
-    np.set_printoptions(floatmode="maxprec", suppress=True, threshold=999_999)
-
     if "A5B10C8D4_mC108_15_a2ef_5f_4f_2f.cif" in filename or (
         "A12B36CD12_cF488_210" in filename and n_decimal_places == 4
     ):
