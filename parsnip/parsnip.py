@@ -609,7 +609,7 @@ class CifFile:
         unrounded_pos = pos.copy() % 1
         pos = pos.round(n_decimal_places) % 1
 
-        # Filter unique points. TODO: support arbitrary precision, fractional sites
+        # Filter unique points
         _, unique_fractional, unique_counts = np.unique(
             pos, return_index=True, return_counts=True, axis=0
         )
