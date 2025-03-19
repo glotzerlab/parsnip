@@ -483,6 +483,7 @@ class CifFile:
         n_decimal_places: int = 4,
         additional_columns: str | Iterable[str] | None = None,
         verbose: bool = False,
+        parse_mode="sympy"
     ):
         """Reconstruct fractional atomic positions from Wyckoff sites and symops.
 
@@ -584,16 +585,21 @@ class CifFile:
         frac_strs = self.get_from_loops(self.__class__._WYCKOFF_KEYS)
 
         all_frac_positions = [
-            _safe_eval(symops_str, *xyz) for xyz in frac_strs
+            # _safe_eval(symops_str, *xyz, parse="python_float")
+            _safe_eval(symops_str, *xyz, parse=parse_mode)
+            for xyz in frac_strs
         ]  # Compute N_symmetry_elements coordinates for each Wyckoff site
 
         pos = np.vstack(all_frac_positions)
+
+        # Wrap into box - works generally because these are fractional coordinates
         unrounded_pos = pos.copy() % 1
-        pos = pos.round(n_decimal_places) % 1  # Wrap particles into the box
+        pos = pos.round(n_decimal_places) % 1
+
 
         # Filter unique points. TODO: support arbitrary precision, fractional sites
         _, unique_fractional, unique_counts = np.unique(
-            pos.round(n_decimal_places), return_index=True, return_counts=True, axis=0
+            pos, return_index=True, return_counts=True, axis=0
         )
 
         # Double-check for duplicates with real space coordinates
@@ -663,11 +669,7 @@ class CifFile:
 
     @property
     def lattice_vectors(self):
-        r"""The lattice vectors of the unit cell, with :math:`\vec{a_1}\perp[100]`.
-
-        .. important::
-
-            The lattice vectors are stored as *columns* of the returned matrix, similar
+        r"""The lattice vectors of the unit cell, with :math:`\vec{a_1}\perp[100], parse="python_floatof the returned matrix, similar
             to `freud to_matrix()`_. This matrix must be transposed when creating a
             Freud box or transforming fractional coordinates to absolute.
 

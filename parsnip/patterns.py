@@ -16,7 +16,7 @@ import warnings
 
 import numpy as np
 from numpy.typing import ArrayLike
-from sympy import Float, sympify
+from sympy import Float, sympify, Rational
 
 from parsnip._errors import ParseWarning
 
@@ -35,9 +35,18 @@ def _flatten_or_none(ls: list):
     """Return the sole element from a list of l=1, None if l=0, else l."""
     return None if not ls else ls[0] if len(ls) == 1 else ls
 
+def _sympy_evaluate_array(arr: str) -> list[list[float]]:
+    one = Rational(1)
+    return [
+        [
+            float(sympify(coord, rational=True, locals={}) % one)
+            for coord in ls.strip("]").strip("[").split(",")
+        ]
+        for ls in arr.split("],")
+    ]
 
 def _safe_eval(
-    str_input: str, x: int | float, y: int | float, z: int | float, precision: int = 4
+    str_input: str, x: int | float, y: int | float, z: int | float, parse_mode: str = "python_float"
 ):
     """Attempt to safely evaluate a string of symmetry equivalent positions.
 
@@ -85,20 +94,11 @@ def _safe_eval(
         "numerics or characters in { [],.+-/ } and adjust `regex_filter` param "
         "accordingly."
     )
-
-    one = Float(1.0, 4)
-    sarr = [
-        [
-            float((coord % one).evalf(4))
-            for coord in sympify(_reformat_sublist(ls), evaluate=False)
-        ]
-        for ls in safe_string.split("],")
-    ]
-    # [print(x) for x in sarr]
-    # print()
-    # return sarr
-
-    return eval(safe_string, {"__builtins__": {}}, {})  # noqa: S307
+    if parse_mode == "sympy":
+        return _sympy_evaluate_array(safe_string)
+    if parse_mode == "python_float":
+        return eval(safe_string, {"__builtins__": {}}, {})  # noqa: S307
+    raise ValueError(f"Unknown parse mod '{parse}' was provided!")
 
 
 def _write_debug_output(unique_indices, unique_counts, pos, check="Initial"):
