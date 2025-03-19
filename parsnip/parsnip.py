@@ -72,6 +72,7 @@ import warnings
 from collections.abc import Iterable
 from fnmatch import filter as fnfilter
 from fnmatch import fnmatch
+from importlib.util import find_spec
 from pathlib import Path
 from typing import ClassVar
 
@@ -96,6 +97,9 @@ from parsnip.patterns import (
     _write_debug_output,
     cast_array_to_float,
 )
+
+_SYMPY_AVAILABLE = find_spec("sympy") is not None
+
 
 NONTABLE_LINE_PREFIXES = ("_", "#")
 
@@ -483,7 +487,7 @@ class CifFile:
         n_decimal_places: int = 4,
         additional_columns: str | Iterable[str] | None = None,
         verbose: bool = False,
-        parse_mode="sympy",
+        parse_mode: str | None = None,
     ):
         """Reconstruct fractional atomic positions from Wyckoff sites and symops.
 
@@ -558,6 +562,17 @@ class CifFile:
             cells: less precision than this can yield cells with duplicate or missing
             positions.
         """
+        if parse_mode is None and _SYMPY_AVAILABLE:
+            parse_mode = "sympy"
+        elif parse_mode is None and not _SYMPY_AVAILABLE:
+            parse_mode = "python_float"
+        elif parse_mode == "sympy" and not _SYMPY_AVAILABLE:
+            warnings.warn(
+                "Sympy is not available! parse_mode falling back to 'python_float'",
+                category=RuntimeWarning,
+                stacklevel=2,
+            )
+
         symops = self.symops
 
         if additional_columns is not None:
