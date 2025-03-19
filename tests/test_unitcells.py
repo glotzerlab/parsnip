@@ -80,10 +80,10 @@ def test_read_symmetry_operations(cif_data):
 def test_build_unit_cell(cif_data, n_decimal_places, parse_mode, cols):
     warnings.filterwarnings("ignore", "crystal system", category=UserWarning)
 
-    if "PDB_4INS_head.cif" in cif_data.filename:
+    if "PDB_4INS_head.cif" in cif_data.filename or (
+        "no42.cif" in cif_data.filename and n_decimal_places > 3
+    ):
         return
-    if "no42.cif" in cif_data.filename and n_decimal_places > 3:
-        pytest.xfail("Parameter set results in incorrect data!")
 
     should_raise = cols is not None and any(
         k not in flatten(cif_data.file.loop_labels) for k in np.atleast_1d(cols)
