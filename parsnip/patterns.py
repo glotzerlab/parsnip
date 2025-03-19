@@ -16,7 +16,6 @@ import warnings
 
 import numpy as np
 from numpy.typing import ArrayLike
-from sympy import Rational, sympify
 
 from parsnip._errors import ParseWarning
 
@@ -37,6 +36,8 @@ def _flatten_or_none(ls: list):
 
 
 def _sympy_evaluate_array(arr: str) -> list[list[float]]:
+    from sympy import Rational, sympify
+
     one = Rational(1)
     return [
         [
