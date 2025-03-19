@@ -124,18 +124,6 @@ def test_build_unit_cell(cif_data, n_decimal_places, parse_mode, cols):
     ase_positions = np.array(
         sorted(ase_data.get_positions(), key=lambda x: (x[0], x[1], x[2]))
     )
-    if "no42.cif" in cif_data.filename:
-        print(
-            (
-                parsnip_positions[
-                    np.any(np.abs(parsnip_positions - ase_positions) > 1e-4, axis=1)
-                ]
-                - ase_positions[
-                    np.any(np.abs(parsnip_positions - ase_positions) > 1e-4, axis=1)
-                ]
-            ).round(12)
-        )
-        # print(ase_positions.shape)
     ase_symbols = np.array(ase_data.get_chemical_symbols())
 
     parsnip_minmax = [parsnip_positions.min(axis=0), parsnip_positions.max(axis=0)]
