@@ -16,6 +16,7 @@ import warnings
 
 import numpy as np
 from numpy.typing import ArrayLike
+from sympy import Float, sympify
 
 from parsnip._errors import ParseWarning
 
@@ -26,12 +27,18 @@ ALLOWED_DELIMITERS = [";\n", "'''", '"""']
 _bracket_pattern = re.compile(r"(\[|\])")
 
 
+def _reformat_sublist(s: str) -> str:
+    return f"[{s.lstrip('[').rstrip(']')}]"
+
+
 def _flatten_or_none(ls: list):
     """Return the sole element from a list of l=1, None if l=0, else l."""
     return None if not ls else ls[0] if len(ls) == 1 else ls
 
 
-def _safe_eval(str_input: str, x: int | float, y: int | float, z: int | float):
+def _safe_eval(
+    str_input: str, x: int | float, y: int | float, z: int | float, precision: int = 4
+):
     """Attempt to safely evaluate a string of symmetry equivalent positions.
 
     Python's ``eval`` is notoriously unsafe. While we could evaluate the entire list at
@@ -71,12 +78,26 @@ def _safe_eval(str_input: str, x: int | float, y: int | float, z: int | float):
 
     # Remove any unexpected characters from the string, including precision specifiers.
     safe_string = re.sub(r"(\(\d+\))|[^\d\[\]\,\+\-\/\*\.]", "", substituted_string)
+
     # Double check to be sure:
     assert all(char in ",.0123456789+-/*[]" for char in safe_string), (
         "Evaluation aborted. Check that symmetry operation string only contains "
         "numerics or characters in { [],.+-/ } and adjust `regex_filter` param "
         "accordingly."
     )
+
+    one = Float(1.0, 4)
+    sarr = [
+        [
+            float((coord % one).evalf(4))
+            for coord in sympify(_reformat_sublist(ls), evaluate=False)
+        ]
+        for ls in safe_string.split("],")
+    ]
+    # [print(x) for x in sarr]
+    # print()
+    # return sarr
+
     return eval(safe_string, {"__builtins__": {}}, {})  # noqa: S307
 
 
