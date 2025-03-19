@@ -182,5 +182,5 @@ def test_build_accuracy(filename, n_decimal_places):
     msg = "cell does not match Pearson symbol!"
     if not is_rhombohedral:
         np.testing.assert_equal(len(uc), n, err_msg=msg)
-    else:
+    else:  # AFlow rhombohedral structures include data for hexagonal setting
         np.testing.assert_equal(len(uc), 3 * n, err_msg=msg)
