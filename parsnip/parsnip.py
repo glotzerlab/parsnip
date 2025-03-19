@@ -686,7 +686,10 @@ class CifFile:
 
     @property
     def lattice_vectors(self):
-        r"""The lattice vectors of the unit cell, with :math:`\vec{a_1}\perp[100], parse="python_floatof the returned matrix, similar
+        r"""The lattice vectors of the unit cell, with :math:`\vec{a_1}\perp[100]`.
+
+        .. important::
+            The lattice vectors are stored as *columns* of the returned matrix, similar
             to `freud to_matrix()`_. This matrix must be transposed when creating a
             Freud box or transforming fractional coordinates to absolute.
 
