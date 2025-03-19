@@ -62,15 +62,15 @@ def _safe_eval(str_input: str, x: int | float, y: int | float, z: int | float):
             :math:`(N,3)` list of fractional coordinates.
 
     """
-    ordered_inputs = {"x": "{0:.20f}", "y": "{1:.20f}", "z": "{2:.20f}"}
+    ordered_inputs = {"x": "{0}", "y": "{1}", "z": "{2}"}
     # Replace any x, y, or z with the same character surrounded by curly braces. Then,
     # perform substitutions to insert the actual values.
     substituted_string = (
         re.sub(r"([xyz])", r"{\1}", str_input).format(**ordered_inputs).format(x, y, z)
     )
 
-    # Remove any unexpected characters from the string.
-    safe_string = re.sub(r"[^\d\[\]\,\+\-\/\*\.]", "", substituted_string)
+    # Remove any unexpected characters from the string, including precision specifiers.
+    safe_string = re.sub(r"(\(\d+\))|[^\d\[\]\,\+\-\/\*\.]", "", substituted_string)
     # Double check to be sure:
     assert all(char in ",.0123456789+-/*[]" for char in safe_string), (
         "Evaluation aborted. Check that symmetry operation string only contains "

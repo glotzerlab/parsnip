@@ -557,7 +557,7 @@ class CifFile:
             cells: less precision than this can yield cells with duplicate or missing
             positions.
         """
-        symops, fractional_positions = self.symops, self.wyckoff_positions
+        symops = self.symops
 
         if additional_columns is not None:
             # Find the table of Wyckoff positions and compare to keys in additional_data
@@ -581,11 +581,13 @@ class CifFile:
             symops, separator=",", threshold=np.inf, floatmode="unique"
         )
 
+        frac_strs = self.get_from_loops(self.__class__._WYCKOFF_KEYS)
+
         all_frac_positions = [
-            _safe_eval(symops_str, *xyz) for xyz in fractional_positions
+            _safe_eval(symops_str, *xyz) for xyz in frac_strs
         ]  # Compute N_symmetry_elements coordinates for each Wyckoff site
 
-        pos = np.vstack(all_frac_positions)
+        pos = np.vstack(all_frac_positions)  # .round(n_decimal_places)
         pos %= 1  # Wrap particles into the box
 
         # Filter unique points. TODO: support arbitrary precision, fractional sites
@@ -605,7 +607,6 @@ class CifFile:
 
         # Merge unique points from realspace and fractional calculations
         unique_indices = sorted({*unique_fractional} & {*unique_realspace})
-        # TODO: Reintroduce AFLOW test suite
 
         if verbose:
             _write_debug_output(
