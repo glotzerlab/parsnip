@@ -43,9 +43,11 @@ pluggy==1.5.0
     # via pytest
 ply==3.11
     # via pycifrw
-pycifrw==4.4.6
+prettytable==3.15.1
+    # via pycifrw
+pycifrw==5.0.1
     # via -r tests/requirements.in
-pyparsing==3.2.1
+pyparsing==3.2.2
     # via matplotlib
 pytest==8.3.5
     # via
@@ -60,8 +62,12 @@ scipy==1.13.1
 six==1.17.0
     # via python-dateutil
 sympy==1.13.3
-    # via -r requirements-sympy.txt
+    # via
+    #   -r requirements-sympy.txt
+    #   -r tests/requirements.in
 tomli==2.2.1
     # via pytest
+wcwidth==0.2.13
+    # via prettytable
 zipp==3.21.0
     # via importlib-resources
