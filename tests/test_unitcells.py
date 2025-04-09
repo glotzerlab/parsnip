@@ -2,6 +2,7 @@ import re
 import warnings
 from contextlib import nullcontext
 from glob import glob
+from importlib.util import find_spec
 
 import numpy as np
 import pytest
@@ -67,8 +68,18 @@ def test_read_symmetry_operations(cif_data):
 
 
 @cif_files_mark
+def test_build_unit_cell_errors(cif_data):
+    cif_data.file.__class__._SYMPY_AVAILABLE = False
+    with pytest.raises(ImportError, match="Sympy is not available!"):
+        cif_data.file.build_unit_cell(parse_mode="sympy")
+    cif_data.file.__class__._SYMPY_AVAILABLE = find_spec("sympy") is not None
+    with pytest.raises(ValueError, match="Parse mode 'asdf'"):
+        cif_data.file.build_unit_cell(parse_mode="asdf")
+
+
+@cif_files_mark
 @pytest.mark.parametrize("n_decimal_places", [3, 4, 6, 9])
-@pytest.mark.parametrize("parse_mode", [None, "python_float", "sympy"])
+@pytest.mark.parametrize("parse_mode", ["python_float", "sympy"])
 @pytest.mark.parametrize(
     "cols",
     [
