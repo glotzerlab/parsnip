@@ -98,9 +98,6 @@ from parsnip.patterns import (
     cast_array_to_float,
 )
 
-_SYMPY_AVAILABLE = find_spec("sympy") is not None
-
-
 NONTABLE_LINE_PREFIXES = ("_", "#")
 
 
@@ -160,6 +157,8 @@ class CifFile:
 
         with open(fn) as file:
             self._parse(peekable(file))
+
+    _SYMPY_AVAILABLE = find_spec("sympy") is not None
 
     @property
     def pairs(self):
@@ -568,7 +567,7 @@ class CifFile:
         ImportError
             If ``parse_mode='sympy'`` and Sympy is not installed.
         """
-        if parse_mode == "sympy" and not _SYMPY_AVAILABLE:
+        if parse_mode == "sympy" and not self.__class__._SYMPY_AVAILABLE:
             raise ImportError(
                 "Sympy is not available! Please set parse_mode='python_float' "
                 "or install sympy."
