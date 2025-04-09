@@ -486,7 +486,7 @@ class CifFile:
         self,
         n_decimal_places: int = 4,
         additional_columns: str | Iterable[str] | None = None,
-        parse_mode: str | None = None,
+        parse_mode: str = "python_float",
         verbose: bool = False,
     ):
         """Reconstruct fractional atomic positions from Wyckoff sites and symops.
@@ -503,7 +503,8 @@ class CifFile:
             If the parsed unit cell has more atoms than expected, decrease
             ``n_decimal_places`` to account for noise. If the unit cell has fewer atoms
             than expected, increase ``n_decimal_places`` to ensure atoms are compared
-            with sufficient precision.
+            with sufficient precision. In many cases, setting ``parse_mode='sympy'``
+            can improve the accuracy of reconstructed unit cells.
 
         Example
         -------
@@ -544,11 +545,10 @@ class CifFile:
                 the Wyckoff site positions. This data is replicated alongside the atomic
                 coordinates and returned in an auxiliary array.
                 Default value = ``None``
-            parse_mode : {'sympy', 'python_float'} | None, optional
+            parse_mode : {'sympy', 'python_float'}, optional
                 Whether to parse lattice sites symbolically (``parse_mode='sympy'``) or
-                numerically (``parse_mode='python_float'``). If set to ``None``,
-                sympy will be enabled only if the associated package is installed.
-                Default value = ``None``
+                numerically (``parse_mode='python_float'``). Sympy is typically more
+                accurate, but may be slower. Default value = ``'python_float'``
             verbose : bool, optional
                 Whether to print debug information about the uniqueness checks.
                 Default value = ``False``
@@ -565,18 +565,17 @@ class CifFile:
         ValueError
             If the ``additional_columns`` are not properly associated with the Wyckoff
             positions.
+        ImportError
+            If ``parse_mode='sympy'`` and Sympy is not installed.
         """
-        if parse_mode is None and _SYMPY_AVAILABLE:
-            parse_mode = "sympy"
-        elif parse_mode is None and not _SYMPY_AVAILABLE:
-            parse_mode = "python_float"
-        elif parse_mode == "sympy" and not _SYMPY_AVAILABLE:
-            warnings.warn(
-                "Sympy is not available! parse_mode falling back to 'python_float'",
-                category=RuntimeWarning,
-                stacklevel=2,
+        if parse_mode == "sympy" and not _SYMPY_AVAILABLE:
+            raise ImportError(
+                "Sympy is not available! Please set parse_mode='python_float' "
+                "or install sympy."
             )
-            parse_mode = "python_float"
+        valid_modes = {"sympy", "python_float"}
+        if parse_mode not in valid_modes:
+            raise ValueError(f"Parse mode '{parse_mode}' not in {valid_modes}.")
 
         symops = self.symops
 
