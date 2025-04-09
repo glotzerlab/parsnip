@@ -3,7 +3,6 @@
 
 """``parsnip``: a package for the simple reading and processing of .cif files."""
 
-# from . import parse, patterns, unitcells
 from .parsnip import CifFile
 
 __version__ = "0.2.1"
