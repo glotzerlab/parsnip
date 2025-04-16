@@ -26,12 +26,35 @@ ALLOWED_DELIMITERS = [";\n", "'''", '"""']
 _bracket_pattern = re.compile(r"(\[|\])")
 
 
+def _reformat_sublist(s: str) -> str:
+    return f"[{s.lstrip('[').rstrip(']')}]"
+
+
 def _flatten_or_none(ls: list):
     """Return the sole element from a list of l=1, None if l=0, else l."""
     return None if not ls else ls[0] if len(ls) == 1 else ls
 
 
-def _safe_eval(str_input: str, x: int | float, y: int | float, z: int | float):
+def _sympy_evaluate_array(arr: str) -> list[list[float]]:
+    from sympy import Rational, sympify
+
+    one = Rational(1)
+    return [
+        [
+            float(sympify(coord, rational=True, locals={}) % one)
+            for coord in ls.strip("]").strip("[").split(",")
+        ]
+        for ls in arr.split("],")
+    ]
+
+
+def _safe_eval(
+    str_input: str,
+    x: int | float,
+    y: int | float,
+    z: int | float,
+    parse_mode: str = "python_float",
+):
     """Attempt to safely evaluate a string of symmetry equivalent positions.
 
     Python's ``eval`` is notoriously unsafe. While we could evaluate the entire list at
@@ -62,22 +85,27 @@ def _safe_eval(str_input: str, x: int | float, y: int | float, z: int | float):
             :math:`(N,3)` list of fractional coordinates.
 
     """
-    ordered_inputs = {"x": "{0:.20f}", "y": "{1:.20f}", "z": "{2:.20f}"}
+    ordered_inputs = {"x": "{0}", "y": "{1}", "z": "{2}"}
     # Replace any x, y, or z with the same character surrounded by curly braces. Then,
     # perform substitutions to insert the actual values.
     substituted_string = (
         re.sub(r"([xyz])", r"{\1}", str_input).format(**ordered_inputs).format(x, y, z)
     )
 
-    # Remove any unexpected characters from the string.
-    safe_string = re.sub(r"[^\d\[\]\,\+\-\/\*\.]", "", substituted_string)
+    # Remove any unexpected characters from the string, including precision specifiers.
+    safe_string = re.sub(r"(\(\d+\))|[^\d\[\]\,\+\-\/\*\.]", "", substituted_string)
+
     # Double check to be sure:
     assert all(char in ",.0123456789+-/*[]" for char in safe_string), (
         "Evaluation aborted. Check that symmetry operation string only contains "
         "numerics or characters in { [],.+-/ } and adjust `regex_filter` param "
         "accordingly."
     )
-    return eval(safe_string, {"__builtins__": {}}, {})  # noqa: S307
+    if parse_mode == "sympy":
+        return _sympy_evaluate_array(safe_string)
+    if parse_mode == "python_float":
+        return eval(safe_string, {"__builtins__": {}}, {})  # noqa: S307
+    raise ValueError(f"Unknown parse mode '{parse_mode}' was provided!")
 
 
 def _write_debug_output(unique_indices, unique_counts, pos, check="Initial"):

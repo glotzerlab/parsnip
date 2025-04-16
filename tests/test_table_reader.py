@@ -64,7 +64,9 @@ def test_read_atom_sites(cif_data):
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
     assert (key in cif_data.file.loop_labels for key in cif_data.atom_site_keys)
 
-    if not any(s in cif_data.filename for s in ["CCDC", "PDB", "AMCSD", "zeolite"]):
+    if not any(
+        s in cif_data.filename for s in ["CCDC", "PDB", "AMCSD", "zeolite", "no42"]
+    ):
         import sys
 
         if sys.version_info < (3, 8):

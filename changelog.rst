@@ -10,11 +10,19 @@ v0.X.X - 20XX-XX-XX
 Added
 ~~~~~
 - Additional testpath flag to conftest
+- Symbolic parsing mode for ``build_unit_cell``
+
+Changed
+~~~~~~~
+- ``build_unit_cell`` now uses sympy by default if it is intalled - otherwise, it falls
+  back to the previous variant
 
 Fixed
 ~~~~~
 - Accessing data pairs with ``get_from_pairs`` or ``__getitem__`` now allows for case-insensitive searches
 - Quote-delimited strings containing the delimiting character are now parsed properly
+- ``build_unit_cell`` now rounds coordinates before wrapping into the box, fixing edge cases
+  where boundary atoms were not properly deduplicated
 
 v0.2.1 - 2025-03-12
 -------------------

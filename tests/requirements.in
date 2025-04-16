@@ -1,5 +1,6 @@
 ase
 gemmi
-pycifrw<5.0.0
+pycifrw!=5.0.0
 pytest
 pytest-doctestplus
+sympy

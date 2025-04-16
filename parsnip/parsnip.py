@@ -72,6 +72,7 @@ import warnings
 from collections.abc import Iterable
 from fnmatch import filter as fnfilter
 from fnmatch import fnmatch
+from importlib.util import find_spec
 from pathlib import Path
 from typing import ClassVar
 
@@ -156,6 +157,8 @@ class CifFile:
 
         with open(fn) as file:
             self._parse(peekable(file))
+
+    _SYMPY_AVAILABLE = find_spec("sympy") is not None
 
     @property
     def pairs(self):
@@ -482,6 +485,7 @@ class CifFile:
         self,
         n_decimal_places: int = 4,
         additional_columns: str | Iterable[str] | None = None,
+        parse_mode: str = "python_float",
         verbose: bool = False,
     ):
         """Reconstruct fractional atomic positions from Wyckoff sites and symops.
@@ -492,6 +496,14 @@ class CifFile:
         applied to the Wyckoff (symmetry irreducible) positions to create a list of
         possible atomic sites. These are then wrapped into the unit cell and filtered
         for uniqueness to yield the final crystal.
+
+        .. tip::
+
+            If the parsed unit cell has more atoms than expected, decrease
+            ``n_decimal_places`` to account for noise. If the unit cell has fewer atoms
+            than expected, increase ``n_decimal_places`` to ensure atoms are compared
+            with sufficient precision. In many cases, setting ``parse_mode='sympy'``
+            can improve the accuracy of reconstructed unit cells.
 
         Example
         -------
@@ -524,13 +536,18 @@ class CifFile:
         ----------
             n_decimal_places : int, optional
                 The number of decimal places to round each position to for the
-                uniqueness comparison. Values higher than 4 may not work for all CIF
-                files. Default value = ``4``
+                uniqueness comparison. Ideally this should be set to the number of
+                decimal places included in the CIF file, but ``3`` and ``4`` work in
+                most cases. Default value = ``4``
             additional_columns : str | typing.Iterable[str] | None, optional
                 A column name or list of column names from the loop containing
                 the Wyckoff site positions. This data is replicated alongside the atomic
                 coordinates and returned in an auxiliary array.
                 Default value = ``None``
+            parse_mode : {'sympy', 'python_float'}, optional
+                Whether to parse lattice sites symbolically (``parse_mode='sympy'``) or
+                numerically (``parse_mode='python_float'``). Sympy is typically more
+                accurate, but may be slower. Default value = ``'python_float'``
             verbose : bool, optional
                 Whether to print debug information about the uniqueness checks.
                 Default value = ``False``
@@ -547,17 +564,19 @@ class CifFile:
         ValueError
             If the ``additional_columns`` are not properly associated with the Wyckoff
             positions.
-
-
-        .. caution::
-
-            Reconstructing positions requires several floating point calculations that
-            can be impacted by low-precision data in CIF files. Typically, at least four
-            decimal places are required to accurately reconstruct complicated unit
-            cells: less precision than this can yield cells with duplicate or missing
-            positions.
+        ImportError
+            If ``parse_mode='sympy'`` and Sympy is not installed.
         """
-        symops, fractional_positions = self.symops, self.wyckoff_positions
+        if parse_mode == "sympy" and not self.__class__._SYMPY_AVAILABLE:
+            raise ImportError(
+                "Sympy is not available! Please set parse_mode='python_float' "
+                "or install sympy."
+            )
+        valid_modes = {"sympy", "python_float"}
+        if parse_mode not in valid_modes:
+            raise ValueError(f"Parse mode '{parse_mode}' not in {valid_modes}.")
+
+        symops = self.symops
 
         if additional_columns is not None:
             # Find the table of Wyckoff positions and compare to keys in additional_data
@@ -581,16 +600,21 @@ class CifFile:
             symops, separator=",", threshold=np.inf, floatmode="unique"
         )
 
+        frac_strs = self.get_from_loops(self.__class__._WYCKOFF_KEYS)
+
         all_frac_positions = [
-            _safe_eval(symops_str, *xyz) for xyz in fractional_positions
+            _safe_eval(symops_str, *xyz, parse_mode=parse_mode) for xyz in frac_strs
         ]  # Compute N_symmetry_elements coordinates for each Wyckoff site
 
         pos = np.vstack(all_frac_positions)
-        pos %= 1  # Wrap particles into the box
 
-        # Filter unique points. TODO: support arbitrary precision, fractional sites
+        # Wrap into box - works generally because these are fractional coordinates
+        unrounded_pos = pos.copy() % 1
+        pos = pos.round(n_decimal_places) % 1
+
+        # Filter unique points
         _, unique_fractional, unique_counts = np.unique(
-            pos.round(n_decimal_places), return_index=True, return_counts=True, axis=0
+            pos, return_index=True, return_counts=True, axis=0
         )
 
         # Double-check for duplicates with real space coordinates
@@ -605,7 +629,6 @@ class CifFile:
 
         # Merge unique points from realspace and fractional calculations
         unique_indices = sorted({*unique_fractional} & {*unique_realspace})
-        # TODO: Reintroduce AFLOW test suite
 
         if verbose:
             _write_debug_output(
@@ -616,13 +639,13 @@ class CifFile:
             )
 
         if additional_columns is None:
-            return pos[unique_indices]
+            return unrounded_pos[unique_indices]
 
         tiled_data = np.repeat(
             self.get_from_loops(additional_columns), len(symops), axis=0
         )
 
-        return tiled_data[unique_indices], pos[unique_indices]
+        return tiled_data[unique_indices], unrounded_pos[unique_indices]
 
     @property
     def box(self):
@@ -664,7 +687,6 @@ class CifFile:
         r"""The lattice vectors of the unit cell, with :math:`\vec{a_1}\perp[100]`.
 
         .. important::
-
             The lattice vectors are stored as *columns* of the returned matrix, similar
             to `freud to_matrix()`_. This matrix must be transposed when creating a
             Freud box or transforming fractional coordinates to absolute.
