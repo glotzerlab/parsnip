@@ -33,7 +33,7 @@ jobs:
       fail-fast: false # Legacy versions are much less stable - run tests independently
       matrix: # Code works on py3.6, but type annotations are broken
         python-version: ["3.8"]
-        runs-on: ["ubuntu-20.04", "macos-14"]
+        runs-on: ["ubuntu-22.04", "macos-14"]
     uses: ./.github/workflows/run_tests.yaml
     with:
       python-version: ${{ matrix.python-version }}
