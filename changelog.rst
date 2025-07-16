@@ -4,18 +4,18 @@ Changelog
 The format is based on `Keep a Changelog <http://keepachangelog.com/en/1.1.0/>`__.
 This project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`__.
 
-v0.X.X - 20XX-XX-XX
+v0.3.0 - 2025-07-16
 -------------------
 
 Added
 ~~~~~
-- Additional testpath flag to conftest
+- Additional testpath flag in conftest
 - Symbolic parsing mode for ``build_unit_cell``
 
 Changed
 ~~~~~~~
-- ``build_unit_cell`` now uses sympy by default if it is intalled - otherwise, it falls
-  back to the previous variant
+- ``build_unit_cell`` has a symbolic computation mode that allows for more accurate
+  construction of unit cells.
 
 Fixed
 ~~~~~
