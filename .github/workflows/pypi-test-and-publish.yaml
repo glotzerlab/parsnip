@@ -26,7 +26,7 @@ jobs:
     - name: Install pypa/build
       run: python3 -m pip install build --user
     - name: Build a binary wheel and a source tarball
-      run: python3 -m build
+      run: PYTHONWARNINGS=error python3 -m build
     - name: Store the distribution packages
       uses: actions/upload-artifact@v4.4.3
       with:
@@ -55,6 +55,7 @@ jobs:
         repository-url: https://test.pypi.org/legacy/
         verbose: true
         skip-existing: true
+        verify-metadata: true
 
   publish-to-pypi:
     name: Publish to PyPI
@@ -74,4 +75,4 @@ jobs:
         name: python-package-distributions
         path: dist/
     - name: Publish to PyPI
-      uses: pypa/gh-action-pypi-publish@v1.12.2
+      uses: pypa/gh-action-pypi-publish@v1.12.4

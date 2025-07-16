@@ -8,7 +8,7 @@ version = "0.3.0"
 requires-python = ">=3.7"
 description = "Minimal library for parsing CIF & mmCIF files in Python."
 readme = "README.rst"
-license = { file = "LICENSE" }
+license-files = ["LICENSE"]
 authors = [
     {name = "Jen Bradley", email = "jenbrad@umich.edu"},
 ]
