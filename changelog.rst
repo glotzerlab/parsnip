@@ -7,9 +7,14 @@ This project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html
 v0.3.1 - 2025-07-16
 -------------------
 
+Changed
+~~~~~~~
+- Source of ``LICENSE`` file in ``pyproject.toml`` to meet the change in Python spec.
+- Test and Publish CI now fails on warning, allowing for easier debugging.
+
 Removed
 ~~~~~~~
-- Support for Python 3.8.
+- Support for Python 3.8, which is incompatible with the changes to ``pyproject.toml``
 
 v0.3.0 - 2025-07-16
 -------------------
