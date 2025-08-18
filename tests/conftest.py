@@ -1,4 +1,3 @@
-# ruff: noqa: N816. Allow mixed-case global variables
 from __future__ import annotations
 
 import os
@@ -35,6 +34,18 @@ def remove_invalid(s):
     if s is None:
         return None
     return s.replace("\r", "")
+
+
+def _array_assertion_verbose(keys, test_data, real_data):
+    keys = np.asarray(keys)
+    test_data = np.asarray(test_data)
+    real_data = np.asarray(real_data)
+    msg = (
+        f"Key(s) {keys[test_data != real_data]} did not match:\n"
+        f"{test_data[test_data != real_data]}!="
+        f"{real_data[test_data != real_data]}\n"
+    )
+    np.testing.assert_equal(test_data, real_data, err_msg=msg)
 
 
 def _gemmi_read_keys(filename, keys, as_number=True):

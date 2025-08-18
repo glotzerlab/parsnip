@@ -73,8 +73,9 @@ from collections.abc import Iterable
 from fnmatch import filter as fnfilter
 from fnmatch import fnmatch
 from importlib.util import find_spec
+from io import IOBase
 from pathlib import Path
-from typing import ClassVar
+from typing import ClassVar, TextIO
 
 import numpy as np
 from more_itertools import flatten, peekable
@@ -111,7 +112,7 @@ class CifFile:
     >>> from parsnip import CifFile
     >>> cif = CifFile("example_file.cif")
     >>> print(cif)
-    CifFile(fn=example_file.cif) : 12 data entries, 2 data loops
+    CifFile(file=example_file.cif) : 12 data entries, 2 data loops
 
     Data entries are accessible via the :attr:`~.pairs` and :attr:`~.loops` attributes:
 
@@ -141,22 +142,28 @@ class CifFile:
             Default value = ``False``
     """
 
-    def __init__(self, fn: str | Path, cast_values: bool = False):
-        """Create a CifFile object from a filename.
+    def __init__(self, file: str | Path | TextIO, cast_values: bool = False):
+        """Create a CifFile object from a filename or file object.
 
         On construction, the entire file is parsed into key-value pairs and data loops.
         Comment lines are ignored.
 
         """
-        self._fn = fn
+        self._fn = file
         self._pairs = {}
         self._loops = []
 
         self._cpat = {k: re.compile(pattern) for (k, pattern) in self.PATTERNS.items()}
         self._cast_values = cast_values
 
-        with open(fn) as file:
+        if isinstance(file, (str, Path)):
+            with open(file) as file:
+                self._parse(peekable(file))
+        elif isinstance(file, (IOBase, TextIO)):
             self._parse(peekable(file))
+        else:
+            msg = "Input file must be a `str`, a `Path`, or a file object."
+            raise TypeError(msg)
 
     _SYMPY_AVAILABLE = find_spec("sympy") is not None
 
@@ -919,7 +926,7 @@ class CifFile:
     def __repr__(self):
         n_pairs = len(self.pairs)
         n_tabs = len(self.loops)
-        return f"CifFile(fn={self._fn}) : {n_pairs} data entries, {n_tabs} data loops"
+        return f"CifFile(file={self._fn}) : {n_pairs} data entries, {n_tabs} data loops"
 
     PATTERNS: ClassVar = {
         "key_value_general": r"^(_[\w\.\-/\[\d\]]+)\s+([^#]+)",
