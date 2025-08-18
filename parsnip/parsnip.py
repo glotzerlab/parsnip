@@ -80,7 +80,7 @@ import numpy as np
 from more_itertools import flatten, peekable
 from numpy.lib.recfunctions import structured_to_unstructured
 
-from parsnip._errors import ParseWarning
+from parsnip._errors import ParseWarning, _is_potentially_valid_path
 from parsnip.patterns import (
     _accumulate_nonsimple_data,
     _box_from_lengths_and_angles,
@@ -157,10 +157,21 @@ class CifFile:
         self._cpat = {k: re.compile(pattern) for (k, pattern) in self.PATTERNS.items()}
         self._cast_values = cast_values
 
-        if isinstance(file, (str, Path)):
+        if (isinstance(file, str) and _is_potentially_valid_path(file)) or isinstance(
+            file, Path
+        ):
             with open(file) as file:
                 self._parse(peekable(file))
         # We expect a TextIO | IOBase, but allow users to pass any Iterable[string_like]
+        # This includes a str that does not point to a file!
+        elif isinstance(file, str):
+            msg = (
+                "\nFile input was parsed as a raw CIF data block. "
+                "If you intended to read the input string as a file path, please "
+                "ensure it is validly formatted."
+            )
+            warnings.warn(msg, RuntimeWarning, stacklevel=2)
+            self._parse(peekable(file.splitlines(True)))
         else:
             self._parse(peekable(file))
 

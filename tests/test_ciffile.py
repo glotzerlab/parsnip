@@ -1,3 +1,4 @@
+# ruff: noqa: SIM115
 import re
 from pathlib import Path
 
@@ -33,31 +34,26 @@ def test_cast_values(cif_data):
     assert cif_data.file.pairs == uncast_pairs
 
 
+@pytest.mark.parametrize(
+    ("input_preprocessor", "expect_warning"),
+    [
+        (lambda fn: open(fn), None),  # IOBase
+        (lambda fn: fn, None),  # string file path
+        (lambda fn: Path(fn), None),  # Path
+        (lambda fn: open(fn).readlines(), None),  # list[str]
+        (lambda fn: open(fn).read(), RuntimeWarning),  # raw string
+    ],
+)
 @cif_files_mark
-def test_open_methods(cif_data):
+def test_open_methods(cif_data, input_preprocessor, expect_warning):
+    print(type(input_preprocessor(cif_data.filename)))
     keys = [*cif_data.file.pairs.keys()]
     stored_data = np.asarray([*cif_data.file.pairs.values()])
 
-    # IOBase
-    with open(cif_data.filename) as file:
-        buffered = CifFile(file)
-    _array_assertion_verbose(keys, buffered.get_from_pairs(keys), stored_data)
+    if expect_warning is not None:
+        with pytest.warns(expect_warning, match="parsed as a raw CIF data block."):
+            cif = CifFile(input_preprocessor(cif_data.filename))
+    else:
+        cif = CifFile(input_preprocessor(cif_data.filename))
 
-    unbuffered = CifFile(open(cif_data.filename))  # noqa: SIM115
-    _array_assertion_verbose(keys, unbuffered.get_from_pairs(keys), stored_data)
-
-    # string
-    string_input = CifFile(cif_data.filename)
-    _array_assertion_verbose(keys, string_input.get_from_pairs(keys), stored_data)
-
-    # Path
-    path_input = CifFile(Path(cif_data.filename))
-    _array_assertion_verbose(keys, path_input.get_from_pairs(keys), stored_data)
-
-    # Path
-    path_input = CifFile(Path(cif_data.filename))
-    _array_assertion_verbose(keys, path_input.get_from_pairs(keys), stored_data)
-
-    # list[str]
-    stringlist = CifFile(open(cif_data.filename).readlines())  # noqa: SIM115
-    _array_assertion_verbose(keys, stringlist.get_from_pairs(keys), stored_data)
+    _array_assertion_verbose(keys, cif.get_from_pairs(keys), stored_data)
