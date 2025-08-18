@@ -27,6 +27,7 @@ jobs:
 
     - name: Install package
       run: |
+        echo  ${{ matrix.python-version }}
         which python
         python --version
         uv pip sync ${{ inputs.requirements-file }}
