@@ -31,6 +31,7 @@ jobs:
         python --version
         uv pip sync ${{ inputs.requirements-file }}
         uv pip install .
+        uv lock
         python -c "import parsnip; print('parsnip', parsnip.__version__)"
 
     - name: Test with pytest
