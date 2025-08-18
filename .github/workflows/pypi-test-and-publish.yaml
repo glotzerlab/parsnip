@@ -52,7 +52,7 @@ jobs:
         version: "0.8.11"
 
     - name: Publish distribution to TestPyPI
-      run: uv publish --trusted-publishing always --publish-url "https://test.pypi.org/legacy/" --check-url "https://pypi.org/legacy/"
+      run: uv publish --trusted-publishing always --publish-url "https://test.pypi.org/legacy/"
       # uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc
       # with:
       #   repository-url: https://test.pypi.org/legacy/
