@@ -40,7 +40,6 @@ optional-dependencies.tests = { file = ["tests/requirements.in"] }
 optional-dependencies.sympy = { file = ["requirements-sympy.txt"] }
 
 [tool.pytest.ini_options]
-pythonpath = ["."]
 testpaths = ["tests", "parsnip", "doc"]
 addopts = ["--doctest-plus", "--doctest-glob='*.rst'"]
 doctest_rst = true
