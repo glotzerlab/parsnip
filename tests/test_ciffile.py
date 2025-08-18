@@ -35,7 +35,6 @@ def test_cast_values(cif_data):
 
 @cif_files_mark
 def test_open_methods(cif_data):
-    print(cif_data.filename)
     keys = [*cif_data.file.pairs.keys()]
     stored_data = np.asarray([*cif_data.file.pairs.values()])
 
@@ -54,3 +53,11 @@ def test_open_methods(cif_data):
     # Path
     path_input = CifFile(Path(cif_data.filename))
     _array_assertion_verbose(keys, path_input.get_from_pairs(keys), stored_data)
+
+    # Path
+    path_input = CifFile(Path(cif_data.filename))
+    _array_assertion_verbose(keys, path_input.get_from_pairs(keys), stored_data)
+
+    # list[str]
+    stringlist = CifFile(open(cif_data.filename).readlines())  # noqa: SIM115
+    _array_assertion_verbose(keys, stringlist.get_from_pairs(keys), stored_data)

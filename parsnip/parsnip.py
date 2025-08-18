@@ -73,7 +73,6 @@ from collections.abc import Iterable
 from fnmatch import filter as fnfilter
 from fnmatch import fnmatch
 from importlib.util import find_spec
-from io import IOBase
 from pathlib import Path
 from typing import ClassVar, TextIO
 
@@ -142,8 +141,10 @@ class CifFile:
             Default value = ``False``
     """
 
-    def __init__(self, file: str | Path | TextIO, cast_values: bool = False):
-        """Create a CifFile object from a filename or file object.
+    def __init__(
+        self, file: str | Path | TextIO | Iterable[str], cast_values: bool = False
+    ):
+        """Create a CifFile object from a filename, file object, or iterator over `str`.
 
         On construction, the entire file is parsed into key-value pairs and data loops.
         Comment lines are ignored.
@@ -159,11 +160,9 @@ class CifFile:
         if isinstance(file, (str, Path)):
             with open(file) as file:
                 self._parse(peekable(file))
-        elif isinstance(file, (IOBase, TextIO)):
-            self._parse(peekable(file))
+        # We expect a TextIO | IOBase, but allow users to pass any Iterable[string_like]
         else:
-            msg = "Input file must be a `str`, a `Path`, or a file object."
-            raise TypeError(msg)
+            self._parse(peekable(file))
 
     _SYMPY_AVAILABLE = find_spec("sympy") is not None
 
