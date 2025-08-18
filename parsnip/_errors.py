@@ -13,7 +13,12 @@ def _is_potentially_valid_path(file: str) -> bool:
     """
     try:
         path = Path(file)
-        return ".cif" in path.suffixes or path.exists() or path.parent.is_dir()
+        return (
+            ".cif" in path.suffixes  # Probably intended to parse as file
+            or path.exists()  # If it is a file, we definitely want to parse that
+            # Possibly a typo, but we want to check that path regardless.
+            or (path.parent.is_dir() and path.parent != Path("."))
+        )
     except OSError:
         return False
 
