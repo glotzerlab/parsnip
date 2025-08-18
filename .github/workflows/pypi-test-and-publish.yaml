@@ -46,6 +46,11 @@ jobs:
       with:
         name: python-package-distributions
         path: dist/
+    - name: Install uv
+      uses: astral-sh/setup-uv@d9e0f98d3fc6adb07d1e3d37f3043649ddad06a1
+      with:
+        version: "0.8.11"
+
     - name: Publish distribution to TestPyPI
       run: uv publish --trusted-publishing always --publish-url "https://test.pypi.org/legacy/"
       # uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc
@@ -72,5 +77,6 @@ jobs:
       with:
         name: python-package-distributions
         path: dist/
+
     - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc
