@@ -46,13 +46,13 @@ jobs:
       with:
         name: python-package-distributions
         path: dist/
-    # - name: Publish to TestPyPI
-    #   uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc
-    #   with:
-    #     repository-url: https://test.pypi.org/legacy/
-    #     verbose: true
-    #     skip-existing: true
-    #     verify-metadata: true
+    - name: Publish to TestPyPI
+      uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc
+      with:
+        repository-url: https://test.pypi.org/legacy/
+        verbose: true
+        skip-existing: true
+        verify-metadata: true
 
   publish-to-pypi:
     name: Publish to PyPI
