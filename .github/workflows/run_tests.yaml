@@ -24,13 +24,10 @@ jobs:
           python-version: ${{ matrix.python-version }}
           version: "0.8.11"
 
-      # - name: Install package
-      #   run: |
-      #     which python
-      #     python --version
-      #     uv pip sync ${{ inputs.requirements-file }}
-      #     uv pip install .
-      #     python -c "import parsnip; print('parsnip', parsnip.__version__)"
+      - name: Install package
+        run: |
+          uv run python --version
+          uv run --with . python -c "import parsnip; print(parsnip.__version__)"
 
       - name: Test with pytest
-        run: uv run --with . --with  ${{ inputs.requirements-file }} pytest ${{ runner.os != 'Windows' && '' || ' tests' }} -v
+        run: uv run --with . --with-requirements ${{ inputs.requirements-file }} pytest ${{ runner.os != 'Windows' && '' || ' tests' }} -v
