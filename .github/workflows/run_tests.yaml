@@ -29,7 +29,6 @@ jobs:
       run: |
         which python
         python --version
-        # uv pip install . -r ${{ inputs.requirements-file }} -v --reinstall --system
         uv pip sync ${{ inputs.requirements-file }}
         uv pip install .
         python -c "import parsnip; print('parsnip', parsnip.__version__)"
