@@ -22,13 +22,16 @@ jobs:
       uses: astral-sh/setup-uv@d9e0f98d3fc6adb07d1e3d37f3043649ddad06a1
       with:
         python-version: ${{ matrix.python-version }}
-        version: "0.6.6"
+        version: "0.8.11"
+        activate-environment: true
 
     - name: Install package
       run: |
         which python
         python --version
-        uv pip install . -r ${{ inputs.requirements-file }} -v --reinstall --system
+        # uv pip install . -r ${{ inputs.requirements-file }} -v --reinstall --system
+        uv pip sync ${{ inputs.requirements-file }
+        uv pip install .
         python -c "import parsnip; print('parsnip', parsnip.__version__)"
 
     - name: Test with pytest

@@ -21,7 +21,7 @@ jobs:
     - name: Install uv
       uses: astral-sh/setup-uv@d9e0f98d3fc6adb07d1e3d37f3043649ddad06a1
       with:
-        version: "0.6.6"
+        version: "0.8.11"
     - name: uv build
       run: uv build --verbose -o dist
     - name: Store the distribution packages
@@ -47,12 +47,13 @@ jobs:
         name: python-package-distributions
         path: dist/
     - name: Publish distribution to TestPyPI
-      uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc
-      with:
-        repository-url: https://test.pypi.org/legacy/
-        verbose: true
-        skip-existing: true
-        verify-metadata: true
+      run: uv publish --trusted-publishing always --publish-url "https://test.pypi.org/legacy/"
+      # uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc
+      # with:
+      #   repository-url: https://test.pypi.org/legacy/
+      #   verbose: true
+      #   skip-existing: true
+      #   verify-metadata: true
 
   publish-to-pypi:
     name: Publish to PyPI
