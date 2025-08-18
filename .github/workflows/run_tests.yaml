@@ -26,8 +26,11 @@ jobs:
 
       - name: Install package
         run: |
+          echo "UV_PYTHON=${{ matrix.python-version }}" >> $GITHUB_ENV
           uv run python --version
           uv run --with . python -c "import parsnip; print(parsnip.__version__)"
 
       - name: Test with pytest
-        run: uv run --with . --with-requirements ${{ inputs.requirements-file }} pytest ${{ runner.os != 'Windows' && '' || ' tests' }} -v
+        run: |
+          uv run python --version
+          uv run --with . --with-requirements ${{ inputs.requirements-file }} pytest ${{ runner.os != 'Windows' && '' || ' tests' }} -v
