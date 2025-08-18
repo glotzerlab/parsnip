@@ -34,4 +34,5 @@ jobs:
         python -c "import parsnip; print('parsnip', parsnip.__version__)"
 
     - name: Test with pytest
-      run: python -m ${{ runner.os != 'Windows' && 'pytest' || 'pytest tests' }} -v
+      # run: python -m ${{ runner.os != 'Windows' && 'pytest' || 'pytest tests' }} -v
+      run: uv run --frozen pytest -v
