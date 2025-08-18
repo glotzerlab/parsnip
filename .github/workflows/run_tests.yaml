@@ -21,13 +21,14 @@ jobs:
     - name: Install uv
       uses: astral-sh/setup-uv@d9e0f98d3fc6adb07d1e3d37f3043649ddad06a1
       with:
-        python-version: ${{ matrix.python-version }}
         version: "0.8.11"
+        python-version: ${{ matrix.python-version }}
         activate-environment: true
 
     - name: Install package
       run: |
-        echo  ${{ matrix.python-version }}
+        echo ${{ matrix.python-version }}
+        echo $UV_PYTHON
         which python
         python --version
         uv pip sync ${{ inputs.requirements-file }}
