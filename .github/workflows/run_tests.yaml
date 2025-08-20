@@ -26,12 +26,15 @@ jobs:
       with:
         version: "0.8.11"
 
-    - name: Install package
-      run: |
-        which python
-        python --version
-        uv pip install . -r ${{ inputs.requirements-file }} -v --reinstall --system
-        python -c "import parsnip; print('parsnip', parsnip.__version__)"
+    # - name: Install package
+    #   run: |
+    #     which python
+    #     python --version
+    #     uv pip install . -r ${{ inputs.requirements-file }} -v --reinstall --system
+    #     python -c "import parsnip; print('parsnip', parsnip.__version__)"
 
-    - name: Test with pytest
-      run: python -m ${{ runner.os != 'Windows' && 'pytest' || 'pytest tests' }} -v
+    # - name: Test with pytest
+    #   run: python -m ${{ runner.os != 'Windows' && 'pytest' || 'pytest tests' }} -v
+
+    - name: Install and test with pytest
+      run: uv run -r ${{ inputs.requirements-file }} -e . -- pytest -v
