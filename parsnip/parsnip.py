@@ -818,7 +818,7 @@ class CifFile:
         """
         return structured_to_unstructured(arr, copy=True)
 
-    def _parse(self, data_iter: Iterable):
+    def _parse(self, data_iter: peekable):
         """Parse the cif file into python objects."""
         for line in data_iter:
             if data_iter.peek(None) is None:
