@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import re
 import warnings
+import sys
 
 import numpy as np
 from numpy.typing import ArrayLike
@@ -21,6 +22,14 @@ from parsnip._errors import ParseWarning
 
 ALLOWED_DELIMITERS = [";\n", "'''", '"""']
 """Delimiters allowed for nonsimple (multi-line) data entries."""
+
+
+_MATCH_KEY = r"^(_[\w\.\-/\[\d\]]+)"
+_WHITESPACE_PLUS = r"\s++" if sys.version_info >= (3, 11) else r"\s+"
+"""Possessively/greedily match one or more whitespace characters."""
+
+_NONNEWLINE_STAR = r"\s*+" if sys.version_info >= (3, 11) else r"\s*"
+"""Possessively/greedily match any number of non-newline whitespace characters."""
 
 
 _bracket_pattern = re.compile(r"(\[|\])")

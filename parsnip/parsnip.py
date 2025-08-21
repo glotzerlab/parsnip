@@ -82,6 +82,9 @@ from numpy.lib.recfunctions import structured_to_unstructured
 
 from parsnip._errors import ParseWarning
 from parsnip.patterns import (
+    _MATCH_KEY,
+    _WHITESPACE_PLUS,
+    _NONNEWLINE_STAR,
     _accumulate_nonsimple_data,
     _box_from_lengths_and_angles,
     _bracket_pattern,
@@ -855,7 +858,7 @@ class CifFile:
                 )
 
             # Build up tables by incrementing through the iterator =====================
-            loop = re.match(self._cpat["loop_delimiter"], line)
+            loop = re.match(self._cpat["loop_delimiter"], line.lower())
 
             if loop is not None:
                 loop_keys, loop_data = [], []
@@ -913,7 +916,11 @@ class CifFile:
                         stacklevel=2,
                     )
                     continue
-                rectable = np.atleast_2d(loop_data)
+                try:
+                    rectable = np.atleast_2d(loop_data)
+                except ValueError:
+                    print(loop_data)
+                    raise ValueError
                 rectable.dtype = [*zip(loop_keys, [dt] * n_cols)]
                 rectable = rectable.reshape(rectable.shape, order="F")
                 self.loops.append(rectable)
@@ -927,10 +934,10 @@ class CifFile:
         return f"CifFile(fn={self._fn}) : {n_pairs} data entries, {n_tabs} data loops"
 
     PATTERNS: ClassVar = {
-        "key_value_general": r"^(_[\w\.\-/\[\d\]]+)\s+([^#]+)",
-        "key_value_multiline": r"^(_[\w\.\-/\[\d\]]+)\s+('[^#]+)",
-        "loop_delimiter": r"([Ll][Oo][Oo][Pp]_)[ |\t]*([^\n]*)",
-        "block_delimiter": r"([Dd][Aa][Tt][Aa]_)[ |\t]*([^\n]*)",
+        "key_value_general": rf"{_MATCH_KEY}{_WHITESPACE_PLUS}([^#]+)",
+        "key_value_multiline": rf"{_MATCH_KEY}{_WHITESPACE_PLUS}('[^#]+)",
+        "loop_delimiter": rf"([Ll][Oo][Oo][Pp]_){_NONNEWLINE_STAR}([^\n]*)",
+        "block_delimiter": rf"([Dd][Aa][Tt][Aa]_){_NONNEWLINE_STAR}([^\n]*)",
         "key_list": r"_[\w_\.*]+[\[\d\]]*",
         "space_delimited_data": (
             r"("
