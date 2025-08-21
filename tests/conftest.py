@@ -9,7 +9,7 @@ from glob import glob
 import numpy as np
 import pytest
 from CifFile import CifFile as pycifRW
-from CifFile import StarError
+from CifFile import CifSyntaxError, StarError
 from gemmi import cif
 
 from parsnip import CifFile
@@ -25,7 +25,9 @@ def pycifrw_or_xfail(cif_data):
     try:
         return pycifRW(cif_data.filename).first_block()
     except StarError:
-        pytest.xfail("pycifRW failed to read the file!")
+        pytest.xfail("pycifRW raised a StarError!")
+    except CifSyntaxError:
+        pytest.xfail("pycifRW raised a CifSyntaxError!")
 
 
 def remove_invalid(s):
