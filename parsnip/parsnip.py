@@ -944,10 +944,10 @@ class CifFile:
         "space_delimited_data": (
             r"("
             rf"\;[^\;]{_PROG_STAR}\;|"  # Non-semicolon data bracketed by semicolons
-            r"\'(?:'[^\s]|[^'])*\'|"  # Data with single quotes not followed by \s
+            r"\'(?:'\S|[^'])*\'|"  # Data with single quotes not followed by \s
             rf"\"[^\"]{_PROG_STAR}\"|"  # Data with double quotes
             rf"[^\'\"\;\s]{_PROG_STAR}"  # Additional non-bracketed data
-            rf")[\s]{_PROG_STAR}"
+            rf")"
         ),
     }
     """Regex patterns used when parsing files.
