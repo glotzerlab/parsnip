@@ -19,7 +19,42 @@ bibliography: paper.bib
 
 # Summary
 
+Parsnip provides a lightweight and well-documented interface for reading
+Crystallographic Information Files (CIFs).
+
 # Statement of need
+
+Materials scientists performing experimental or simulation research are fundementally
+exploring many of the same research questions. However, there is a divergence in need
+for the datatypes and analysis workflows of both parties. While many excellent libraries
+provide high-level interfaces and strongly typed class hierarchies for crystallographic
+data, the general nature of simulation science drives a need for array-formatted data
+with intuitive memory layouts that easily translate between simulation frameworks.
+
+<!-- `parsnip` provides access to all data through base Python or Numpy types, and offers a -->
+<!-- dictionary-like query API that supports wildcard characters. -->
+
+`parsnip` is targeted at colloidal and mesoscale materials research, rather than the
+atomic and protein datasets that the CIF and mmCIF specifications were originally
+targeted at. Rather than associating pure crystallographic data with atomic symbols or
+valence states by default, `parsnip` provides only the information required to
+reconstruct a particular structure unless otherwise queried. This generality allows
+users unfamiliar with the CIF specification to process crystallographic information
+files, as dedicated lookup methods automatically locate the correct queries that return
+unit cell and basis site information. We also support Unix-style wildcard queries, a
+feature that is not included in the Python APIs of any similar package. This feature
+allows for rapid access to "slices" of the CIF keyword specification, simplifying common
+complex lookups to much simpler queries.
+
+`parsnip` is designed and optimized for use as a dependency in larger simulation codes,
+requiring only Numpy as a dependency. For this reason, it has already been incorporated
+into the Freud analysis library, which uses `parsnip` to extract unit cell data for use
+as reference structures in high-throughput simulation analysis. Although many CIF
+libraries have minimal dependency sets, integrating C(++) code with other libraries is
+often nontrivial. `parsnip` uses Numpy structured arrays to provide a stable, in memory
+data layout for cross-language access.
+
+# Examples
 
 # Mathematics
 
