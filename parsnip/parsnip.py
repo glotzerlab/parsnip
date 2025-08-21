@@ -838,6 +838,11 @@ class CifFile:
 
             # Extract key-value pairs and save to the internal state ===================
             pair = self._cpat["key_value_general"].match(line)
+
+            # If we have a COD-style _key\n'long_value'
+            if pair is None and data_iter.peek("").lstrip()[:1] in "'\"" and data_iter.peek(None):
+                pair = self._cpat["key_value_multiline"].match(line+data_iter.peek(""))
+                next(data_iter)
             if pair is not None:
                 self._pairs.update(
                     {
@@ -923,6 +928,7 @@ class CifFile:
 
     PATTERNS: ClassVar = {
         "key_value_general": r"^(_[\w\.\-/\[\d\]]+)\s+([^#]+)",
+        "key_value_multiline": r"^(_[\w\.\-/\[\d\]]+)\s+('[^#]+)",
         "loop_delimiter": r"([Ll][Oo][Oo][Pp]_)[ |\t]*([^\n]*)",
         "block_delimiter": r"([Dd][Aa][Tt][Aa]_)[ |\t]*([^\n]*)",
         "key_list": r"_[\w_\.*]+[\[\d\]]*",
