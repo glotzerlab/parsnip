@@ -82,9 +82,8 @@ from numpy.lib.recfunctions import structured_to_unstructured
 
 from parsnip._errors import ParseWarning
 from parsnip.patterns import (
-    _MATCH_KEY,
-    _WHITESPACE_PLUS,
-    _NONNEWLINE_STAR,
+    _PROG_PLUS,
+    _PROG_STAR,
     _accumulate_nonsimple_data,
     _box_from_lengths_and_angles,
     _bracket_pattern,
@@ -835,7 +834,7 @@ class CifFile:
                 continue
 
             # TODO: could support multi-block files in the future ======================
-            block = re.match(self._cpat["block_delimiter"], line)
+            block = re.match(self._cpat["block_delimiter"], line.lower())
             if block is not None:
                 continue
 
@@ -844,7 +843,7 @@ class CifFile:
 
             # If we have a COD-style _key\n'long_value'
             if pair is None and data_iter.peek("").lstrip()[:1] in "'\"" and data_iter.peek(None):
-                pair = self._cpat["key_value_multiline"].match(line+data_iter.peek(""))
+                pair = self._cpat["key_value_general"].match(line+data_iter.peek(""))
                 next(data_iter)
             if pair is not None:
                 self._pairs.update(
@@ -918,9 +917,13 @@ class CifFile:
                     continue
                 try:
                     rectable = np.atleast_2d(loop_data)
-                except ValueError:
-                    print(loop_data)
-                    raise ValueError
+                except ValueError as e:
+                    msg =(
+                        "Ragged array identified: please check the loops' syntax."
+                        f"\n  Loop keys:      {loop_keys}"
+                        f"\n  Processed data: {loop_data}"
+                    ) if "setting an array element with a sequence" in str(e) else e
+                    raise ValueError(msg) from e
                 rectable.dtype = [*zip(loop_keys, [dt] * n_cols)]
                 rectable = rectable.reshape(rectable.shape, order="F")
                 self.loops.append(rectable)
@@ -934,18 +937,17 @@ class CifFile:
         return f"CifFile(fn={self._fn}) : {n_pairs} data entries, {n_tabs} data loops"
 
     PATTERNS: ClassVar = {
-        "key_value_general": rf"{_MATCH_KEY}{_WHITESPACE_PLUS}([^#]+)",
-        "key_value_multiline": rf"{_MATCH_KEY}{_WHITESPACE_PLUS}('[^#]+)",
-        "loop_delimiter": rf"([Ll][Oo][Oo][Pp]_){_NONNEWLINE_STAR}([^\n]*)",
-        "block_delimiter": rf"([Dd][Aa][Tt][Aa]_){_NONNEWLINE_STAR}([^\n]*)",
-        "key_list": r"_[\w_\.*]+[\[\d\]]*",
+        "key_value_general": rf"^(_[\w\.\-/\[\d\]]+)\s{_PROG_PLUS}([^#]{_PROG_PLUS})",
+        "loop_delimiter": rf"(loop_)[ |\t]{_PROG_STAR}([^\n]{_PROG_STAR})",
+        "block_delimiter": rf"(data_)[ |\t]{_PROG_STAR}([^\n]{_PROG_STAR})",
+        "key_list": rf"_[\w_\.{_PROG_STAR}]{_PROG_PLUS}[\[\d\]]{_PROG_STAR}",
         "space_delimited_data": (
             r"("
-            r"\;[^\;]*\;|"  # Non-semicolon data bracketed by semicolons
+            rf"\;[^\;]{_PROG_STAR}\;|"  # Non-semicolon data bracketed by semicolons
             r"\'(?:'[^\s]|[^'])*\'|"  # Data with single quotes not followed by \s
-            r"\"[^\"]*\"|"  # Data with double quotes
-            r"[^\'\"\;\s]*"  # Additional non-bracketed data
-            r")[\s]*"
+            rf"\"[^\"]{_PROG_STAR}\"|"  # Data with double quotes
+            rf"[^\'\"\;\s]{_PROG_STAR}"  # Additional non-bracketed data
+            rf")[\s]{_PROG_STAR}"
         ),
     }
     """Regex patterns used when parsing files.

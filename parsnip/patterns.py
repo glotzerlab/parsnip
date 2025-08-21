@@ -24,12 +24,10 @@ ALLOWED_DELIMITERS = [";\n", "'''", '"""']
 """Delimiters allowed for nonsimple (multi-line) data entries."""
 
 
-_MATCH_KEY = r"^(_[\w\.\-/\[\d\]]+)"
-_WHITESPACE_PLUS = r"\s++" if sys.version_info >= (3, 11) else r"\s+"
-"""Possessively/greedily match one or more whitespace characters."""
-
-_NONNEWLINE_STAR = r"\s*+" if sys.version_info >= (3, 11) else r"\s*"
-"""Possessively/greedily match any number of non-newline whitespace characters."""
+_PROG_STAR = "*+" if sys.version_info >= (3, 11) else "*"
+"""Progressively match prefix* if available, else greedily match."""
+_PROG_PLUS = "++" if sys.version_info >= (3, 11) else "+"
+"""Progressively match prefix+ if available, else greedily match."""
 
 
 _bracket_pattern = re.compile(r"(\[|\])")
