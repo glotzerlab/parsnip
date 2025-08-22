@@ -850,7 +850,7 @@ class CifFile:
                 and data_iter.peek(None)
             ):
                 pair = self._cpat["key_value_general"].match(line + data_iter.peek(""))
-                next(data_iter)
+                next(data_iter) # Advance the iterator to avoid re-parsing
             if pair is not None:
                 self._pairs.update(
                     {
