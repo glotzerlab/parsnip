@@ -938,13 +938,13 @@ class CifFile:
         return f"CifFile(fn={self._fn}) : {n_pairs} data entries, {n_tabs} data loops"
 
     PATTERNS: ClassVar = {
-        "key_value_general": rf"^(_[\w\.\-/\d\[\]]+)\s{_PROG_PLUS}([^#]{_PROG_PLUS})",
+        "key_value_general": rf"^(_[\w\.\-/\d\[\]]+?)\s{_PROG_PLUS}([^#]{_PROG_PLUS})",
         "loop_delimiter": rf"(loop_){_WHITESPACE}{_PROG_STAR}([^\n]{_PROG_STAR})",
         "block_delimiter": rf"(data_){_WHITESPACE}{_PROG_STAR}([^\n]{_PROG_STAR})",
         "key_list": rf"_[\w_\.]{_PROG_PLUS}[\d\[\]]{_PROG_STAR}",
         "space_delimited_data": (
             "("
-            rf";[^;]{_PROG_STAR};|"  # Non-semicolon data bracketed by semicolons
+            rf";[^;]*?;|"  # Non-semicolon data bracketed by semicolons
             r"'(?:'\S|[^'])*'|"  # Data with single quotes not followed by \s
             # rf"\"[^\"]{_PROG_STAR}\"|"  # Data with double quotes
             rf"[^';\"\s]{_PROG_STAR}"  # Additional non-bracketed data
