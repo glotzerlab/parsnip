@@ -14,20 +14,20 @@ from gemmi import cif
 
 from parsnip import CifFile
 
-ADDITIONAL_TEST_FILES_PATH = ""
+ADDITIONAL_TEST_FILES_PATH = "/Users/jenna/Downloads/asdf/*.cif"
 
 rng = np.random.default_rng(seed=161181914916)
 
 data_file_path = os.path.dirname(__file__) + "/sample_data/"
 
 
-def pycifrw_or_xfail(cif_data):
+def pycifrw_or_skip(cif_data):
     try:
         return pycifRW(cif_data.filename).first_block()
     except StarError:
-        pytest.xfail("pycifRW raised a StarError!")
+        pytest.skip("pycifRW raised a StarError!")
     except CifSyntaxError:
-        pytest.xfail("pycifRW raised a CifSyntaxError!")
+        pytest.skip("pycifRW raised a CifSyntaxError!")
 
 
 def remove_invalid(s):

@@ -8,7 +8,7 @@ from conftest import (
     all_files_mark,
     bad_cif,
     cif_files_mark,
-    pycifrw_or_xfail,
+    pycifrw_or_skip,
 )
 from gemmi import cif
 from more_itertools import flatten
@@ -30,7 +30,7 @@ def _gemmi_read_table(filename, keys):
 
 @all_files_mark
 def test_reads_all_keys(cif_data):
-    pycif = pycifrw_or_xfail(cif_data)
+    pycif = pycifrw_or_skip(cif_data)
     loop_keys = [*flatten(pycif.loops.values())]
     all_keys = [key for key in pycif.true_case.values() if key.lower() in loop_keys]
 

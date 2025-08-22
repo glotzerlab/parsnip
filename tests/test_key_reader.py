@@ -3,7 +3,7 @@ from conftest import (
     _gemmi_read_keys,
     all_files_mark,
     bad_cif,
-    pycifrw_or_xfail,
+    pycifrw_or_skip,
     random_keys_mark,
 )
 from more_itertools import flatten
@@ -23,7 +23,7 @@ def _array_assertion_verbose(keys, test_data, real_data):
 
 @all_files_mark
 def test_read_key_value_pairs(cif_data):
-    pycif = pycifrw_or_xfail(cif_data)
+    pycif = pycifrw_or_skip(cif_data)
 
     invalid = [*flatten(pycif.loops.values()), *cif_data.failing]
     all_keys = [key for key in pycif.true_case.values() if key.lower() not in invalid]
