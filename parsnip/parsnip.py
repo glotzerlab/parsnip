@@ -944,10 +944,10 @@ class CifFile:
         "key_list": rf"_[\w_\.]{_PROG_PLUS}[\d\[\]]{_PROG_STAR}",
         "space_delimited_data": (
             "("
-            rf"\;[^\;]{_PROG_STAR}\;|"  # Non-semicolon data bracketed by semicolons
-            r"\'(?:'\S|[^'])*\'|"  # Data with single quotes not followed by \s
+            rf";[^;]{_PROG_STAR};|"  # Non-semicolon data bracketed by semicolons
+            r"'(?:'\S|[^'])*'|"  # Data with single quotes not followed by \s
             # rf"\"[^\"]{_PROG_STAR}\"|"  # Data with double quotes
-            rf"[^\'\"\;\s]{_PROG_STAR}"  # Additional non-bracketed data
+            rf"[^';\"\s]{_PROG_STAR}"  # Additional non-bracketed data
             ")"
         ),
     }
