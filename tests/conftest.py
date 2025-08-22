@@ -43,7 +43,7 @@ def _gemmi_read_keys(filename, keys, as_number=True):
     try:
         file_block = cif.read_file(filename).sole_block()
     except (RuntimeError, ValueError):
-        pytest.xfail("Gemmi failed to read file!")
+        pytest.skip("Gemmi failed to read file!")
     if as_number:
         try:
             return np.array([cif.as_number(file_block.find_value(key)) for key in keys])
