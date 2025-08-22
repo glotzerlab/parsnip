@@ -190,33 +190,34 @@ structure_issue_42 = CifData(
     file=CifFile(data_file_path + "no42.cif"),
 )
 
-bad_cif = CifData(
-    filename=data_file_path + "INTENTIONALLY_BAD_CIF.cif",
-    symop_keys=("_space_group_symop_id", "_space_group_symop_operation_xyz"),
-    atom_site_keys=(
-        "_atom_site",
-        "_atom_site_type_symbol",
-        "_atom_site_symmetry_multiplicity",
-        "_atom_si te",
-        "_atom_site_fract_z",
-        "_this_key_does_not_exist",
-    ),
-    file=CifFile(data_file_path + "INTENTIONALLY_BAD_CIF.cif"),
-    manual_keys=(
-        "_cell_length_a",
-        "_cell_length_b",
-        "_cell_length_c",
-        "_cell_angle_alpha",
-        "_cell_angle_beta",
-        "_cell_angle_gamma",
-        "_cod_style_key",
-        "_cif_2.0_string",
-        "_cif_2.0_double_quoted_string",
-        "__________asdf",
-        "_-wasd",
-        "not_a_valid_key",
-    ),
-)
+with pytest.warns():
+    bad_cif = CifData(
+        filename=data_file_path + "INTENTIONALLY_BAD_CIF.cif",
+        symop_keys=("_space_group_symop_id", "_space_group_symop_operation_xyz"),
+        atom_site_keys=(
+            "_atom_site",
+            "_atom_site_type_symbol",
+            "_atom_site_symmetry_multiplicity",
+            "_atom_si te",
+            "_atom_site_fract_z",
+            "_this_key_does_not_exist",
+        ),
+        file=CifFile(data_file_path + "INTENTIONALLY_BAD_CIF.cif"),
+        manual_keys=(
+            "_cell_length_a",
+            "_cell_length_b",
+            "_cell_length_c",
+            "_cell_angle_alpha",
+            "_cell_angle_beta",
+            "_cell_angle_gamma",
+            "_cod_style_key",
+            "_cif_2.0_string",
+            "_cif_2.0_double_quoted_string",
+            "__________asdf",
+            "_-wasd",
+            "not_a_valid_key",
+        ),
+    )
 
 cif_data_array = [
     aflow_mC24,

@@ -846,7 +846,9 @@ class CifFile:
                 and data_iter.peek("").lstrip()[:1] in "'\""
                 and data_iter.peek(None)
             ):
-                pair = self._cpat["key_value_general"].match(self._strip_comments(line + next(data_iter)))
+                pair = self._cpat["key_value_general"].match(
+                    self._strip_comments(line + next(data_iter))
+                )
 
             if pair is not None:
                 self._pairs.update(
@@ -862,7 +864,9 @@ class CifFile:
                 break  # Exit without StopIteration
 
             # Build up tables by incrementing through the iterator =====================
-            loop = re.match(self._cpat["loop_delimiter"], self._strip_comments(line.lower()))
+            loop = re.match(
+                self._cpat["loop_delimiter"], self._strip_comments(line.lower())
+            )
 
             if loop is not None:
                 loop_keys, loop_data = [], []
@@ -900,14 +904,18 @@ class CifFile:
                     continue  # Skip empty tables
 
                 if n_elements % n_cols != 0:
+                    # print(loop_keys)
+                    # print(loop_data)
                     warnings.warn(
                         f"Parsed data for table {len(self.loops) + 1} cannot be"
                         f" resolved into a table of the expected size and will be "
-                        f"ignored. Got n={n_elements} items, expected c={n_cols} "
-                        f"columns: n%c={n_elements % n_cols}).",
+                        f"ignored. Got n={n_elements} items, which cannot be "
+                        f"distributed evenly into {n_cols} columns with labels "
+                        f"{loop_keys}",
                         category=ParseWarning,
                         stacklevel=2,
                     )
+
                     continue
                 if not all(len(key) == len(loop_keys[0]) for key in loop_keys):
                     loop_data = np.array([*flatten(loop_data)]).reshape(-1, n_cols)
@@ -976,7 +984,7 @@ class CifFile:
             rf"[^';\"\s]{_PROG_STAR}"  # Additional non-bracketed data
             ")"
         ),
-        "comment": "#.*?$" # A comment at the end of a line or string
+        "comment": "#.*?$",  # A comment at the end of a line or string
     }
     """Regex patterns used when parsing files.
 

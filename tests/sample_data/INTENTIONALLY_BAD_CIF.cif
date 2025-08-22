@@ -28,7 +28,7 @@ _cif_2.0_double_quoted_string
 
 # NOTE: Adding comments on loop_ keyword lines breaks the table reader
 loop_ 
-loop_ # This line breaks str.split() on loops_. re.split works though!
+loop_ # We should still get a table here.
 _space_group_symop_id # this is a comment 
 _space_group_symop_operation_xyz  
 _atom_site_fracccccccc_z # Intentionally bad key

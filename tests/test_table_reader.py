@@ -99,9 +99,9 @@ def test_partial_table_read(cif_data, subset):
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
 
 
-@pytest.mark.skip("Would be nice to pass, but we are at least as good as gemmi here.")
+# @pytest.mark.xfail(
+# "Would be nice to pass, but we are at least as good as gemmi here.")
 def test_bad_cif_symop(cif_data=bad_cif):
-    # This file is thouroughly cooked - gemmi will not even read it.
     parsnip_data = cif_data.file.get_from_loops(cif_data.symop_keys)
     correct_data = [
         ["1", "x,y,z"],
