@@ -862,7 +862,7 @@ class CifFile:
                 break  # Exit without StopIteration
 
             # Build up tables by incrementing through the iterator =====================
-            loop = re.match(self._cpat["loop_delimiter"], line.lower())
+            loop = re.match(self._cpat["loop_delimiter"], self._strip_comments(line.lower()))
 
             if loop is not None:
                 loop_keys, loop_data = [], []
