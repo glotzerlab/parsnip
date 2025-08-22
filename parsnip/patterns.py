@@ -167,7 +167,8 @@ def _accumulate_nonsimple_data(data_iter, line=""):
     delimiter_count = 0
     while _line_is_continued(data_iter.peek(None)):
         while data_iter.peek(None) and delimiter_count < 2:
-            buffer = data_iter.peek().split("#")[0].replace(" ", "")
+            # buffer = data_iter.peek().split("#")[0].replace(" ", "")
+            buffer = data_iter.peek().replace(" ", "")
             if buffer[:1] == ";" or any(s in buffer for s in ALLOWED_DELIMITERS):
                 delimiter_count += 1
             line += next(data_iter)
@@ -210,7 +211,11 @@ def _semicolon_to_string(line: str):
 
 
 def _line_is_continued(line: str | None):
-    return line is not None and line.strip()[:1] == ";"
+    if line is None:
+        return False
+    line_prefix = line.lstrip()[:3]
+
+    return line_prefix[:1] == ";" or line_prefix == "'''" or line_prefix == '"""'
 
 
 def _try_cast_to_numeric(s: str):
