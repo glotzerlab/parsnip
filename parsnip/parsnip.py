@@ -82,6 +82,7 @@ from numpy.lib.recfunctions import structured_to_unstructured
 
 from parsnip._errors import ParseWarning
 from parsnip.patterns import (
+    _CIF_KEY,
     _PROG_PLUS,
     _PROG_STAR,
     _WHITESPACE,
@@ -948,10 +949,10 @@ class CifFile:
         return f"CifFile(fn={self._fn}) : {n_pairs} data entries, {n_tabs} data loops"
 
     PATTERNS: ClassVar = {
-        "key_value_general": rf"^(_[\w\.\-/\d\[\]]+?)\s{_PROG_PLUS}([^#]{_PROG_PLUS})",
+        "key_value_general": rf"^(_{_CIF_KEY}+?)\s{_PROG_PLUS}([^#]{_PROG_PLUS})",
         "loop_delimiter": rf"(loop_){_WHITESPACE}{_PROG_STAR}([^\n]{_PROG_STAR})",
         "block_delimiter": rf"(data_){_WHITESPACE}{_PROG_STAR}([^\n]{_PROG_STAR})",
-        "key_list": rf"_[\w_\.]{_PROG_PLUS}[\d\[\]]{_PROG_STAR}",
+        "key_list": rf"_{_CIF_KEY}{_PROG_STAR}",
         "space_delimited_data": (
             "("
             rf";[^;]*?;|"  # Non-semicolon data bracketed by semicolons

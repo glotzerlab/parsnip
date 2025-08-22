@@ -29,6 +29,12 @@ _PROG_STAR = "*+" if sys.version_info >= (3, 11) else "*"
 _PROG_PLUS = "++" if sys.version_info >= (3, 11) else "+"
 """Progressively match prefix+ if available, else greedily match."""
 
+_CIF_KEY = r"[\w\.\-/\d\[\]]"
+"""Match any of the valid characters in a CIF key or loop label.
+
+This includes the additional numerics and square brackets required to read mmCIF tables.
+"""
+
 _WHITESPACE = "[\t ]"
 """Officially recognized whitespace characters according to the CIF 1.1 and 2.0 specs.
 
