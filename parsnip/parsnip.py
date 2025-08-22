@@ -943,12 +943,12 @@ class CifFile:
         "block_delimiter": rf"(data_){_WHITESPACE}{_PROG_STAR}([^\n]{_PROG_STAR})",
         "key_list": rf"_[\w_\.]{_PROG_PLUS}[\d\[\]]{_PROG_STAR}",
         "space_delimited_data": (
-            r"("
+            "("
             rf"\;[^\;]{_PROG_STAR}\;|"  # Non-semicolon data bracketed by semicolons
             r"\'(?:'\S|[^'])*\'|"  # Data with single quotes not followed by \s
-            rf"\"[^\"]{_PROG_STAR}\"|"  # Data with double quotes
+            # rf"\"[^\"]{_PROG_STAR}\"|"  # Data with double quotes
             rf"[^\'\"\;\s]{_PROG_STAR}"  # Additional non-bracketed data
-            rf")"
+            ")"
         ),
     }
     """Regex patterns used when parsing files.
