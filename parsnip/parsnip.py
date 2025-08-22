@@ -925,7 +925,17 @@ class CifFile:
                         f"\n  Processed data: {loop_data}"
                     ) if "setting an array element with a sequence" in str(e) else e
                     raise ValueError(msg) from e
-                rectable.dtype = [*zip(loop_keys, [dt] * n_cols)]
+                labeled_type = [*zip(loop_keys, [dt] * n_cols)]
+                try:
+                    rectable.dtype = labeled_type
+                except ValueError as e:
+                    msg = (
+                        "Loop labels do not match the structure of parsed data.\n"
+                        f"  loop_labels:   {labeled_type}\n"
+                        "  data[:3, ...]: "
+                        f"{np.array2string(rectable[:2, :],prefix=' '*17)}\n"
+                    )
+                    raise ValueError(msg) from e
                 rectable = rectable.reshape(rectable.shape, order="F")
                 self.loops.append(rectable)
 
