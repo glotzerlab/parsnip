@@ -960,7 +960,7 @@ class CifFile:
         "key_value_general": rf"^(_{_CIF_KEY}+?)\s{_PROG_PLUS}([^#]{_PROG_PLUS})",
         "loop_delimiter": rf"(loop_){_WHITESPACE}{_PROG_STAR}([^\n]{_PROG_STAR})",
         "block_delimiter": rf"(data_){_WHITESPACE}{_PROG_STAR}([^\n]{_PROG_STAR})",
-        "key_list": rf"_{_CIF_KEY}+?(?=\s|$)", # Match space or endline-separated keys
+        "key_list": rf"_{_CIF_KEY}+?(?=\s|$)",  # Match space or endline-separated keys
         "space_delimited_data": (
             "("
             rf";[^;]*?;|"  # Non-semicolon data bracketed by semicolons
