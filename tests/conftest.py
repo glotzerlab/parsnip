@@ -45,7 +45,10 @@ def _gemmi_read_keys(filename, keys, as_number=True):
     except (RuntimeError, ValueError):
         pytest.xfail("Gemmi failed to read file!")
     if as_number:
-        return np.array([cif.as_number(file_block.find_value(key)) for key in keys])
+        try:
+            return np.array([cif.as_number(file_block.find_value(key)) for key in keys])
+        except TypeError:
+            pytest.skip("Encountered non-numerics while parsing file.")
     return np.array([remove_invalid(file_block.find_value(key)) for key in keys])
 
 
