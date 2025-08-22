@@ -167,7 +167,6 @@ def _accumulate_nonsimple_data(data_iter, line=""):
     delimiter_count = 0
     while _line_is_continued(data_iter.peek(None)):
         while data_iter.peek(None) and delimiter_count < 2:
-            # buffer = data_iter.peek().split("#")[0].replace(" ", "")
             buffer = data_iter.peek().replace(" ", "")
             if buffer[:1] == ";" or any(s in buffer for s in ALLOWED_DELIMITERS):
                 delimiter_count += 1

@@ -8,7 +8,7 @@ _cell_angle_beta  -10.12345
 _cell_angle_gamma 210.00000
 
 _cod_style_key
-'This should not be a part of the spec imo.'
+'This should not be a part of the spec imo.' # And let's add a comment as well
 
 __________asdf  123 
 __________asdf \t _1.234-56789
@@ -24,7 +24,7 @@ _cif_2.0_double_quoted_string
 """
 
 	The CIF 2.0 specification added multiline strings.
-"""
+""" # With comment?
 
 # NOTE: Adding comments on loop_ keyword lines breaks the table reader
 loop_ 

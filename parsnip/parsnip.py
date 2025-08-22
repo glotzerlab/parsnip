@@ -829,7 +829,7 @@ class CifFile:
             line = _accumulate_nonsimple_data(data_iter, line)
 
             # Skip processing if the line contains no data =============================
-            if line == "" or _strip_comments(line) == "":
+            if line == "" or self._strip_comments(line) == "":
                 continue
 
             # TODO: could support multi-block files in the future ======================
@@ -838,7 +838,7 @@ class CifFile:
                 continue
 
             # Extract key-value pairs and save to the internal state ===================
-            pair = self._cpat["key_value_general"].match(line)
+            pair = self._cpat["key_value_general"].match(self._strip_comments(line))
 
             # If we have a COD-style _key\n'long_value'
             if (
@@ -846,7 +846,7 @@ class CifFile:
                 and data_iter.peek("").lstrip()[:1] in "'\""
                 and data_iter.peek(None)
             ):
-                pair = self._cpat["key_value_general"].match(line + next(data_iter))
+                pair = self._cpat["key_value_general"].match(self._strip_comments(line + next(data_iter)))
 
             if pair is not None:
                 self._pairs.update(
@@ -870,7 +870,7 @@ class CifFile:
                 # First, extract table headers. Must be prefixed with underscore
                 line_groups = loop.groups()
                 if line_groups[-1] != "":  # Extract loop keys from the _loop line
-                    fragment = _strip_comments(line_groups[-1].strip())
+                    fragment = self._strip_comments(line_groups[-1].strip())
                     if fragment[:1] == "_":
                         keys = self._cpat["key_list"].findall(fragment)
                         loop_keys.extend(keys if keys is not None else [])
@@ -955,13 +955,16 @@ class CifFile:
             if data_iter.peek(None) is None:
                 break
 
+    def _strip_comments(self, line: str) -> str:
+        return self._cpat["comment"].sub("", line)
+
     def __repr__(self):
         n_pairs = len(self.pairs)
         n_tabs = len(self.loops)
         return f"CifFile(fn={self._fn}) : {n_pairs} data entries, {n_tabs} data loops"
 
     PATTERNS: ClassVar = {
-        "key_value_general": rf"^(_{_CIF_KEY}+?)\s{_PROG_PLUS}([^#]{_PROG_PLUS})",
+        "key_value_general": rf"^(_{_CIF_KEY}+?)\s{_PROG_PLUS}([\s\S]+?)$",
         "loop_delimiter": rf"(loop_){_WHITESPACE}{_PROG_STAR}([^\n]{_PROG_STAR})",
         "block_delimiter": rf"(data_){_WHITESPACE}{_PROG_STAR}([^\n]{_PROG_STAR})",
         "key_list": rf"_{_CIF_KEY}+?(?=\s|$)",  # Match space or endline-separated keys
@@ -973,6 +976,7 @@ class CifFile:
             rf"[^';\"\s]{_PROG_STAR}"  # Additional non-bracketed data
             ")"
         ),
+        "comment": "#.*?$" # A comment at the end of a line or string
     }
     """Regex patterns used when parsing files.
 
