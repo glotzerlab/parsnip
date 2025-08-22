@@ -934,6 +934,7 @@ class CifFile:
                         else e
                     )
                     raise ValueError(msg) from e
+
                 labeled_type = [*zip(loop_keys, [dt] * n_cols)]
                 try:
                     rectable.dtype = labeled_type
@@ -960,7 +961,7 @@ class CifFile:
         "key_value_general": rf"^(_{_CIF_KEY}+?)\s{_PROG_PLUS}([^#]{_PROG_PLUS})",
         "loop_delimiter": rf"(loop_){_WHITESPACE}{_PROG_STAR}([^\n]{_PROG_STAR})",
         "block_delimiter": rf"(data_){_WHITESPACE}{_PROG_STAR}([^\n]{_PROG_STAR})",
-        "key_list": rf"_{_CIF_KEY}{_PROG_STAR}",
+        "key_list": rf"_{_CIF_KEY}+?(?=\s|$)", # Match space or endline-separated keys
         "space_delimited_data": (
             "("
             rf";[^;]*?;|"  # Non-semicolon data bracketed by semicolons
