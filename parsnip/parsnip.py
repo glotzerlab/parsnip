@@ -911,6 +911,10 @@ class CifFile:
                     continue
                 if not all(len(key) == len(loop_keys[0]) for key in loop_keys):
                     loop_data = np.array([*flatten(loop_data)]).reshape(-1, n_cols)
+
+                if len(loop_data) == 0:
+                    msg = "Loop data is empy, but n_cols > 0: check CIF file syntax."
+                    raise ValueError(msg)
                 dt = _dtype_from_int(max(max(len(s) for s in l) for l in loop_data))
 
                 if len(set(loop_keys)) < len(loop_keys):
