@@ -825,9 +825,6 @@ class CifFile:
     def _parse(self, data_iter: peekable):
         """Parse the cif file into python objects."""
         for line in data_iter:
-            if data_iter.peek(None) is None:
-                break  # Exit without StopIteration
-
             # Combine nonsimple data entries into a single, parseable line =============
             line = _accumulate_nonsimple_data(data_iter, line)
 
@@ -850,6 +847,7 @@ class CifFile:
                 and data_iter.peek(None)
             ):
                 pair = self._cpat["key_value_general"].match(line + next(data_iter))
+
             if pair is not None:
                 self._pairs.update(
                     {
@@ -860,6 +858,8 @@ class CifFile:
                         else pair.groups()[1].rstrip()  # Skip trailing newlines
                     }
                 )
+            if data_iter.peek(None) is None:
+                break  # Exit without StopIteration
 
             # Build up tables by incrementing through the iterator =====================
             loop = re.match(self._cpat["loop_delimiter"], line.lower())
