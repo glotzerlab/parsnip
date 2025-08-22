@@ -84,6 +84,7 @@ from parsnip._errors import ParseWarning
 from parsnip.patterns import (
     _PROG_PLUS,
     _PROG_STAR,
+    _WHITESPACE,
     _accumulate_nonsimple_data,
     _box_from_lengths_and_angles,
     _bracket_pattern,
@@ -938,9 +939,9 @@ class CifFile:
 
     PATTERNS: ClassVar = {
         "key_value_general": rf"^(_[\w\.\-/\[\d\]]+)\s{_PROG_PLUS}([^#]{_PROG_PLUS})",
-        "loop_delimiter": rf"(loop_)[ |\t]{_PROG_STAR}([^\n]{_PROG_STAR})",
-        "block_delimiter": rf"(data_)[ |\t]{_PROG_STAR}([^\n]{_PROG_STAR})",
-        "key_list": rf"_[\w_\.{_PROG_STAR}]{_PROG_PLUS}[\[\d\]]{_PROG_STAR}",
+        "loop_delimiter": rf"(loop_){_WHITESPACE}{_PROG_STAR}([^\n]{_PROG_STAR})",
+        "block_delimiter": rf"(data_){_WHITESPACE}{_PROG_STAR}([^\n]{_PROG_STAR})",
+        "key_list": rf"_[\w_\.]{_PROG_PLUS}[\d\[\]]{_PROG_STAR}",
         "space_delimited_data": (
             r"("
             rf"\;[^\;]{_PROG_STAR}\;|"  # Non-semicolon data bracketed by semicolons

@@ -29,6 +29,11 @@ _PROG_STAR = "*+" if sys.version_info >= (3, 11) else "*"
 _PROG_PLUS = "++" if sys.version_info >= (3, 11) else "+"
 """Progressively match prefix+ if available, else greedily match."""
 
+_WHITESPACE = "[\t ]"
+"""Officially recognized whitespace characters according to the CIF 1.1 and 2.0 specs.
+
+See section 3.2 of http://dx.doi.org/10.1107/S1600576715021871 for clarification.
+"""
 
 _bracket_pattern = re.compile(r"(\[|\])")
 
