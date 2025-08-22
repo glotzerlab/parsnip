@@ -903,7 +903,7 @@ class CifFile:
                     warnings.warn(
                         f"Parsed data for table {len(self.loops) + 1} cannot be"
                         f" resolved into a table of the expected size and will be"
-                        f"ignored. Got n={n_elements} items, expected c={n_cols}"
+                        f"ignored. Got n={n_elements} items, expected c={n_cols} "
                         f"columns: n%c={n_elements % n_cols}).",
                         category=ParseWarning,
                         stacklevel=2,
