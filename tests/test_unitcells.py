@@ -26,7 +26,7 @@ def _gemmi_read_table(filename, keys):
     try:
         return np.array(cif.read_file(filename).sole_block().find(keys))
     except (RuntimeError, ValueError):
-        pytest.xfail("Gemmi failed to read file!")
+        pytest.skip("Gemmi failed to read file!")
 
 
 @all_files_mark  # TODO: test with conversions to numeric as well
