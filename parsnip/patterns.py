@@ -141,7 +141,7 @@ def _write_debug_output(unique_indices, unique_counts, pos, check="Initial"):
     print()
 
 
-def cast_array_to_float(arr: ArrayLike, dtype: type = np.float32):
+def cast_array_to_float(arr: ArrayLike | None, dtype: type = np.float32):
     """Cast a Numpy array to a dtype, pruning significant digits from numerical values.
 
     Args:
@@ -154,6 +154,8 @@ def cast_array_to_float(arr: ArrayLike, dtype: type = np.float32):
     -------
         np.array[dtype]: Array with new dtype and no significant digit information.
     """
+    if arr is None:
+        return np.array("nan", dtype=dtype)
     arr = [(el if el is not None else "nan") for el in arr]
     # if any(el is None for el in arr):
     #     raise TypeError("Input array contains `None` and cannot be cast!")
