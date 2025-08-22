@@ -12,8 +12,8 @@ of string data extracted from CIF files by methods in ``parsnip.parse``.
 from __future__ import annotations
 
 import re
-import warnings
 import sys
+import warnings
 
 import numpy as np
 from numpy.typing import ArrayLike
@@ -29,16 +29,16 @@ _PROG_STAR = "*+" if sys.version_info >= (3, 11) else "*"
 _PROG_PLUS = "++" if sys.version_info >= (3, 11) else "+"
 """Progressively match prefix+ if available, else greedily match."""
 
-_CIF_KEY = r"[\w\.\-/\d\[\]]"
+_CIF_KEY = r"\S"
 """Match any of the valid characters in a CIF key or loop label.
 
-This includes the additional numerics and square brackets required to read mmCIF tables.
+See Table 1, entry "data-name" of dx.doi.org/10.1107/S1600576715021871
 """
 
 _WHITESPACE = "[\t ]"
 """Officially recognized whitespace characters according to the CIF 1.1 and 2.0 specs.
 
-See section 3.2 of http://dx.doi.org/10.1107/S1600576715021871 for clarification.
+See section 3.2 of dx.doi.org/10.1107/S1600576715021871 for clarification.
 """
 
 _bracket_pattern = re.compile(r"(\[|\])")

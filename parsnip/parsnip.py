@@ -844,8 +844,12 @@ class CifFile:
             pair = self._cpat["key_value_general"].match(line)
 
             # If we have a COD-style _key\n'long_value'
-            if pair is None and data_iter.peek("").lstrip()[:1] in "'\"" and data_iter.peek(None):
-                pair = self._cpat["key_value_general"].match(line+data_iter.peek(""))
+            if (
+                pair is None
+                and data_iter.peek("").lstrip()[:1] in "'\""
+                and data_iter.peek(None)
+            ):
+                pair = self._cpat["key_value_general"].match(line + data_iter.peek(""))
                 next(data_iter)
             if pair is not None:
                 self._pairs.update(
@@ -920,11 +924,15 @@ class CifFile:
                 try:
                     rectable = np.atleast_2d(loop_data)
                 except ValueError as e:
-                    msg =(
-                        "Ragged array identified: please check the loops' syntax."
-                        f"\n  Loop keys:      {loop_keys}"
-                        f"\n  Processed data: {loop_data}"
-                    ) if "setting an array element with a sequence" in str(e) else e
+                    msg = (
+                        (
+                            "Ragged array identified: please check the loops' syntax."
+                            f"\n  Loop keys:      {loop_keys}"
+                            f"\n  Processed data: {loop_data}"
+                        )
+                        if "setting an array element with a sequence" in str(e)
+                        else e
+                    )
                     raise ValueError(msg) from e
                 labeled_type = [*zip(loop_keys, [dt] * n_cols)]
                 try:
@@ -934,7 +942,7 @@ class CifFile:
                         "Loop labels do not match the structure of parsed data.\n"
                         f"  loop_labels:   {labeled_type}\n"
                         "  data[:3, ...]: "
-                        f"{np.array2string(rectable[:2, :],prefix=' '*17)}\n"
+                        f"{np.array2string(rectable[:2, :], prefix=' ' * 17)}\n"
                     )
                     raise ValueError(msg) from e
                 rectable = rectable.reshape(rectable.shape, order="F")
