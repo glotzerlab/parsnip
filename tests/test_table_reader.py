@@ -67,11 +67,6 @@ def test_read_atom_sites(cif_data):
     if not any(
         s in cif_data.filename for s in ["CCDC", "PDB", "AMCSD", "zeolite", "no42"]
     ):
-        import sys
-
-        if sys.version_info < (3, 8):
-            return
-
         warnings.filterwarnings("ignore", category=UserWarning)
 
         atoms = asecif.read_cif(cif_data.filename)
@@ -100,9 +95,9 @@ def test_partial_table_read(cif_data, subset):
 
 
 @pytest.mark.skip("Would be nice to pass, but we are at least as good as gemmi here.")
-def test_bad_cif_symop(cif_data=bad_cif):
+def test_bad_cif_symop():
     # This file is thouroughly cooked - gemmi will not even read it.
-    parsnip_data = cif_data.file.get_from_loops(cif_data.symop_keys)
+    parsnip_data = bad_cif.file.get_from_loops(bad_cif.symop_keys)
     correct_data = [
         ["1", "x,y,z"],
         ["2", "-x,y,-z*1/2"],
@@ -115,26 +110,3 @@ def test_bad_cif_symop(cif_data=bad_cif):
     ]
 
     np.testing.assert_array_equal(parsnip_data, correct_data)
-
-
-@pytest.mark.skip("Too corrupted to be read")
-def test_bad_cif_atom_sites(cif_data=bad_cif):
-    parsnip_data = cif_data.file[cif_data.atom_site_keys]
-    np.testing.assert_array_equal(
-        parsnip_data[:, 0],
-        np.array(["Aa(3)", "SL", "Oo", "O0f"]),
-    )
-    # "_atom_site_type_symbol"
-    np.testing.assert_array_equal(parsnip_data[:, 1], ["Bb", "SM", "O", "O"])
-
-    # "_atom_site_symmetry_multiplicity"
-    np.testing.assert_array_equal(parsnip_data[:, 2], ["1", "3", "5", "7"])
-
-    # "_atom_si te"
-    np.testing.assert_array_equal(
-        parsnip_data[:, 3], ["0.00000(1)", "0.00000", "0.19180", "0.09390"]
-    )
-    # "_atom_site_fract_z"
-    np.testing.assert_array_equal(
-        parsnip_data[:, 4], ["0.25000", "0.(28510)", "0.05170", "0.41220"]
-    )
