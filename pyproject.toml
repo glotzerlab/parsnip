@@ -90,9 +90,9 @@ known-first-party = ["parsnip"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["D", "B018", "F811"]
-"tests/conftest.py" = ["N816", "N806"]
 "parsnip/*" = ["E741"]
 "__init__.py" = ["F401"] # Do not remove "unused" imports in __init__.py files
+"tests/conftest.py" = ["N806", "N816"] # Allow mixed-case globals
 
 [tool.ruff.format]
 quote-style = "double"
