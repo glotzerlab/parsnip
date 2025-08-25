@@ -47,6 +47,7 @@ jobs:
         name: python-package-distributions
         path: dist/
     - name: Publish to TestPyPI
+      # TODO: udpate to use a pinned version rather than a single commit
       uses: pypa/gh-action-pypi-publish/ed01280d14b6f9a0edaa1a5494d8f7ffed709083
       with:
         repository-url: https://test.pypi.org/legacy/
@@ -73,4 +74,5 @@ jobs:
         path: dist/
 
     - name: Publish to PyPI
+      # TODO: udpate to use a pinned version rather than a single commit
       uses: pypa/gh-action-pypi-publish/ed01280d14b6f9a0edaa1a5494d8f7ffed709083
