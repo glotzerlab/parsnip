@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "parsnip-cif"
 version = "0.3.0"
-requires-python = ">=3.7"
+requires-python = ">=3.9"
 description = "Minimal library for parsing CIF & mmCIF files in Python."
 readme = "README.rst"
 license-files = ["LICENSE"]
@@ -90,6 +90,7 @@ known-first-party = ["parsnip"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["D", "B018", "F811"]
+"tests/conftest.py" = ["N816", "N806"]
 "parsnip/*" = ["E741"]
 "__init__.py" = ["F401"] # Do not remove "unused" imports in __init__.py files
 "tests/conftest.py" = ["N806", "N816"] # Allow mixed-case globals
