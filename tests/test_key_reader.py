@@ -1,5 +1,6 @@
 import numpy as np
 from conftest import (
+    _array_assertion_verbose,
     _gemmi_read_keys,
     all_files_mark,
     bad_cif,
@@ -7,18 +8,6 @@ from conftest import (
     random_keys_mark,
 )
 from more_itertools import flatten
-
-
-def _array_assertion_verbose(keys, test_data, real_data):
-    keys = np.asarray(keys)
-    test_data = np.asarray(test_data)
-    real_data = np.asarray(real_data)
-    msg = (
-        f"Key(s) {keys[test_data != real_data]} did not match:\n"
-        f"{test_data[test_data != real_data]}!="
-        f"{real_data[test_data != real_data]}\n"
-    )
-    np.testing.assert_equal(test_data, real_data, err_msg=msg)
 
 
 @all_files_mark
@@ -47,8 +36,8 @@ def test_read_key_value_pairs_random(cif_data, keys):
     _array_assertion_verbose(keys, parsnip_data, gemmi_data)
 
 
-def test_read_key_value_pairs_badcif(cif_data=bad_cif):
-    parsnip_data = cif_data.file[cif_data.manual_keys]
+def test_read_key_value_pairs_badcif():
+    parsnip_data = bad_cif.file[bad_cif.manual_keys]
     correct_data = [
         "1.000000(x)",
         "4.32343242",
@@ -63,4 +52,4 @@ def test_read_key_value_pairs_badcif(cif_data=bad_cif):
         r"45.6a/\s",
         None,
     ]
-    _array_assertion_verbose(cif_data.manual_keys, parsnip_data, correct_data)
+    _array_assertion_verbose(bad_cif.manual_keys, parsnip_data, correct_data)

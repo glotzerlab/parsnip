@@ -144,9 +144,9 @@ def test_semicolon_to_string(line):
             ParseWarning, match="String contains single and double quotes"
         ):
             fixed = _semicolon_to_string(line)
-            assert (fixed == line) if ";" not in line else (";" not in fixed)
-            return
-    elif ";" not in line:
+        assert (fixed == line) if ";" not in line else (";" not in fixed)
+        return
+    if ";" not in line:
         assert _semicolon_to_string(line) == line
         return
     fixed = _semicolon_to_string(line)

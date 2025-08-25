@@ -41,7 +41,8 @@ def test_read_wyckoff_positions(cif_data):
 
 
 @all_files_mark
-def test_read_cell_params(cif_data, keys=box_keys):
+def test_read_cell_params(cif_data):
+    keys = box_keys
     if "PDB_4INS_head.cif" in cif_data.filename:
         keys = (key[0] + key[1:].replace("_", ".", 1) for key in keys)
     parsnip_data = cif_data.file.read_cell_params()
