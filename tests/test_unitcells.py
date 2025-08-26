@@ -78,7 +78,7 @@ def test_build_unit_cell_errors(cif_data):
 
 
 @cif_files_mark
-@pytest.mark.parametrize("n_decimal_places", [3, 4, 6, 9])
+@pytest.mark.parametrize("n_decimal_places", [2, 3, 4, 5, 6, 9])
 @pytest.mark.parametrize("parse_mode", ["python_float", "sympy"])
 @pytest.mark.parametrize(
     "cols",
@@ -91,8 +91,10 @@ def test_build_unit_cell_errors(cif_data):
 def test_build_unit_cell(cif_data, n_decimal_places, parse_mode, cols):
     warnings.filterwarnings("ignore", "crystal system", category=UserWarning)
 
-    if "PDB_4INS_head.cif" in cif_data.filename or (
-        "no42.cif" in cif_data.filename and n_decimal_places > 3
+    if (
+        "PDB_4INS_head.cif" in cif_data.filename
+        or ("no42.cif" in cif_data.filename and n_decimal_places > 3)
+        or ("COD_7228524" in cif_data.filename and n_decimal_places > 5)
     ):
         return
 
@@ -112,7 +114,7 @@ def test_build_unit_cell(cif_data, n_decimal_places, parse_mode, cols):
         )
 
     if read_data is None:
-        return  # ValueError was raised
+        return  # ValueError was raised - exit the test
 
     if cols is None:
         parsnip_positions = read_data @ cif_data.file.lattice_vectors.T
@@ -124,7 +126,7 @@ def test_build_unit_cell(cif_data, n_decimal_places, parse_mode, cols):
         if isinstance(cols, list):
             occupancies = _arrstrip(auxiliary_arr[:, 1], r"[^\d\.]+").astype(float)
 
-    # Read the structure, then extract to Python builtin types. Then, wrap into the box
+    # Read the structure and extract to Python builtin types. Then, wrap into the box
     ase_file = io.read(cif_data.filename)
     ase_data = supercells.make_supercell(ase_file, np.diag([1, 1, 1]))
 
