@@ -844,16 +844,16 @@ class CifFile:
         """Parse the cif file into python objects."""
         for line in data_iter:
             # Combine nonsimple data entries into a single, parseable line =============
-            line = _accumulate_nonsimple_data(data_iter, line)
+            line = _accumulate_nonsimple_data(data_iter, self._strip_comments(line))
 
             # Skip processing if the line contains no data =============================
-            if line == "" or self._strip_comments(line) == "":
+            if line == "":
                 continue
 
-            # TODO: could support multi-block files in the future ======================
-            block = re.match(self._cpat["block_delimiter"], line.lower())
-            if block is not None:
-                continue
+            # TODO: could separate multi-block files in the future =====================
+            # block = re.match(self._cpat["block_delimiter"], line.lower())
+            # if block is not None:
+            #     continue
 
             # Extract key-value pairs and save to the internal state ===================
             pair = self._cpat["key_value_general"].match(self._strip_comments(line))
@@ -861,7 +861,7 @@ class CifFile:
             # If we have a COD-style _key\n'long_value'
             if (
                 pair is None
-                and data_iter.peek("").lstrip()[:1] in "'\""
+                and data_iter.peek("").lstrip()[:1] in {"'", '"'}
                 and data_iter.peek(None)
             ):
                 pair = self._cpat["key_value_general"].match(
