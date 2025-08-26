@@ -170,7 +170,7 @@ cod_aP16 = CifData(
 )
 cod_hP3 = CifData(
     filename=data_file_path + "COD_7228524.cif",
-    symop_keys=("_symmetry_equiv_pos_as_xyz",),
+    symop_keys=("_space_group_symop_operation_xyz",),
     atom_site_keys=atom_site_keys,
     file=CifFile(data_file_path + "COD_7228524.cif"),
 )
