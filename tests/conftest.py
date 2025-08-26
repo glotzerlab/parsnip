@@ -170,6 +170,13 @@ cod_aP16 = CifData(
     file=CifFile(data_file_path + "COD_1540955_aP16.cif"),
     failing=("_journal_name_full",),
 )
+cod_hP3 = CifData(
+    filename=data_file_path + "COD_7228524.cif",
+    symop_keys=("_symmetry_equiv_pos_as_xyz",),
+    atom_site_keys=atom_site_keys,
+    file=CifFile(data_file_path + "COD_7228524.cif"),
+    failing=("_journal_name_full",),
+)
 
 izasc_gismondine = CifData(
     filename=data_file_path + "zeolite_clo.cif",
@@ -236,6 +243,7 @@ cif_data_array = [
     bisd_Ccmm,
     ccdc_Pm3m,
     cod_aP16,
+    cod_hP3,
     izasc_gismondine,
     pdb_4INS,
     structure_issue_42,
