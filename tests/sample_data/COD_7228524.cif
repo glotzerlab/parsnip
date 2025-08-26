@@ -306,7 +306,7 @@ _atom_site_calc_flag
 _atom_site_refinement_flags_posn
 _atom_site_refinement_flags_adp
 _atom_site_refinement_flags_occupancy
-Se1 Se 1.0000 0.2287(3) 0.66667 0.0156(9) Uani 1 2 d S T P # Added decimal place to 2/3
+Se1 Se 1.0000 0.228733 0.666667 0.0156 Uani 1 2 d S T P # See '_shelx_res_file'
 loop_
 _atom_site_aniso_label
 _atom_site_aniso_U_11
