@@ -259,7 +259,9 @@ additional_data_array = [
         file=CifFile(fn),
         symop_keys=("_space_group_symop_operation_xyz", "_symmetry_equiv_pos_as_xyz"),
     )
-    for fn in glob(ADDITIONAL_TEST_FILES_PATH)
+    for fn in [
+        *glob(ADDITIONAL_TEST_FILES_PATH),
+    ]
 ]
 additional_files_mark = pytest.mark.parametrize(
     argnames="cif_data",

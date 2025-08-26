@@ -1,7 +1,6 @@
 import re
 import warnings
 from contextlib import nullcontext
-from glob import glob
 from importlib.util import find_spec
 
 import numpy as np
@@ -9,9 +8,9 @@ import pytest
 from ase import io
 from ase.build import supercells
 from conftest import (
-    ADDITIONAL_TEST_FILES_PATH,
     _arrstrip,
     _gemmi_read_keys,
+    additional_data_array,
     all_files_mark,
     box_keys,
     cif_files_mark,
@@ -174,8 +173,13 @@ def test_invalid_unit_cell(cif_data):
     # cif_data.file._pairs["_cell_angle_alpha"] = previous_alpha
 
 
-@pytest.mark.skipif(ADDITIONAL_TEST_FILES_PATH == "", reason="No test path provided.")
-@pytest.mark.parametrize("filename", glob(ADDITIONAL_TEST_FILES_PATH))
+@pytest.mark.parametrize(
+    "filename",
+    [
+        *[cif.filename for cif in cif_files_mark.kwargs["argvalues"]],
+        *[cif.filename for cif in additional_data_array],
+    ],
+)
 @pytest.mark.parametrize("n_decimal_places", [3, 4])
 def test_build_accuracy(filename, n_decimal_places):
     if "A5B10C8D4_mC108_15_a2ef_5f_4f_2f.cif" in filename or (
