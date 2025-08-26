@@ -12,6 +12,7 @@ Added
 - Support for reading files via a context manager, text buffer, or string.
 - Support for CIF2.0 ``"""`` and ``'''`` strings
 - Support for COD-style ``_key \n 'value'`` strings
+- Tests for a wider variety of edge case syntax features
 
 Changed
 ~~~~~~~
