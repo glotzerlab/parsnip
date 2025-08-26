@@ -1,4 +1,3 @@
-# ruff: noqa: SIM115
 import re
 from pathlib import Path
 
@@ -34,19 +33,23 @@ def test_cast_values(cif_data):
     assert cif_data.file.pairs == uncast_pairs
 
 
+def _read(fn, lines=True):
+    with open(fn) as f:
+        return f.readlines() if lines else f.read()
+
+
 @pytest.mark.parametrize(
     ("input_preprocessor", "expect_warning"),
     [
-        (lambda fn: open(fn), None),  # IOBase
-        (lambda fn: fn, None),  # string file path
-        (lambda fn: Path(fn), None),  # Path
-        (lambda fn: open(fn).readlines(), None),  # list[str]
-        (lambda fn: open(fn).read(), RuntimeWarning),  # raw string
+        (lambda fn: fn, None),
+        (lambda fn: Path(fn), None),
+        (lambda fn: _read(fn, lines=True), None),
+        (lambda fn: _read(fn, lines=False), RuntimeWarning),
     ],
+    ids=["fn_string", "fn_path", "readlines", "read"],
 )
 @cif_files_mark
 def test_open_methods(cif_data, input_preprocessor, expect_warning):
-    print(type(input_preprocessor(cif_data.filename)))
     keys = [*cif_data.file.pairs.keys()]
     stored_data = np.asarray([*cif_data.file.pairs.values()])
 
@@ -55,5 +58,16 @@ def test_open_methods(cif_data, input_preprocessor, expect_warning):
             cif = CifFile(input_preprocessor(cif_data.filename))
     else:
         cif = CifFile(input_preprocessor(cif_data.filename))
+
+    _array_assertion_verbose(keys, cif.get_from_pairs(keys), stored_data)
+
+
+@cif_files_mark
+def test_open_buffered(cif_data):
+    # (lambda fn: open(fn), None),  # IOBase
+    keys = [*cif_data.file.pairs.keys()]
+    stored_data = np.asarray([*cif_data.file.pairs.values()])
+    with open(cif_data.filename) as f:
+        cif = CifFile(f)
 
     _array_assertion_verbose(keys, cif.get_from_pairs(keys), stored_data)
