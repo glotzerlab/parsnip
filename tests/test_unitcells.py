@@ -189,7 +189,7 @@ def test_build_accuracy(filename, n_decimal_places):
         return (p.strip("'")[:2] == "hR", int(re.sub(r"[^\w]", "", p)[2:]))
 
     cif = CifFile(filename)
-    if cif["*Person"] is None:
+    if cif["*Pearson"] is None:
         pytest.skip(reason="Test not valid if Pearson symbol is unknown")
     (is_rhombohedral, n), uc = (
         parse_pearson(cif["*Pearson"]),
