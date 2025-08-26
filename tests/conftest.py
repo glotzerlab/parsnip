@@ -160,7 +160,6 @@ ccdc_Pm3m = CifData(
     symop_keys=("_space_group_symop_operation_xyz",),
     atom_site_keys=(*sorted(atom_site_keys),),
     file=CifFile(data_file_path + "CCDC_1446529_Pm-3m.cif"),
-    failing=("_refine_ls_weighting_details",),
 )
 
 cod_aP16 = CifData(

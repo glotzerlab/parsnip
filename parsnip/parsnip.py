@@ -856,7 +856,9 @@ class CifFile:
             #     continue
 
             # Extract key-value pairs and save to the internal state ===================
-            pair = self._cpat["key_value_general"].match(self._strip_comments(line))
+            pair = self._cpat["key_value_general"].match(
+                self._strip_comments(line).rstrip()
+            )
 
             # If we have a COD-style _key\n'long_value'
             if (
