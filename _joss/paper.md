@@ -24,13 +24,15 @@ Crystallographic Information Files (CIFs).
 
 # Statement of need
 
-Materials scientists performing experimental or simulation research are fundementally
-exploring many of the same research questions. However, the two parties differ in the
-preferred structure and analysis techniques, requi <!--TODO -->. While many excellent
-libraries provide high-level interfaces and strongly typed class hierarchies for
+Materials scientists performing experimental or simulation research are fundamentally
+exploring many of the same research questions. However, the two parties benefit from
+specialized software tailored to the needs of research techniques. While many excellent
+libraries provide high-level interfaces and strict class hierarchies for
 crystallographic data, the general nature of simulation science drives a need for
 array-formatted data with intuitive memory layouts that easily translate between
-simulation frameworks.
+simulation frameworks. This shift in design focus provides a simple, intuitive software
+frontend that integrates tightly with existing standards for molecular simulation and
+analysis.
 
 `parsnip` is targeted at colloidal and mesoscale materials research, rather than the
 atomic and protein datasets that the CIF and mmCIF specifications were originally
@@ -50,54 +52,54 @@ incorporated into the **Freud** analysis library, which uses `parsnip` to extrac
 cell data for use as reference structures in high-throughput simulation analysis.
 Although other CIF libraries like **Gemmi** have minimal dependency sets, the compiled
 nature of the underlying library means that integration with other libraries may be
-nontrivial. `parsnip` uses Numpy structured arrays to provide a stable, in memory data
-layout for cross-language access without modifying the build system of downstream
-projects. As a result, users get the benefits of copyless data transfer to compiled
-languages without any additional complexity.
+nontrivial. `parsnip` uses Numpy structured arrays to provide a stable data layout for
+cross-language access without modifying the build system of downstream projects. As a
+result, users get the benefits of copyless data transfer to compiled languages without
+any additional complexity.
 
-<!-- TODO: symbolic parsing -->
+<!-- TODO: mention symbolic parsing -->
 
-# Examples
+<!-- # Examples -->
 
-# Mathematics
+<!-- # Mathematics -->
 
-Single dollars ($) are required for inline mathematics e.g. $f(x) = e^{\pi/x}$
+<!-- Single dollars ($) are required for inline mathematics e.g. $f(x) = e^{\pi/x}$ -->
 
-Double dollars make self-standing equations:
+<!-- Double dollars make self-standing equations: -->
 
-$$\Theta(x) = \left\{\begin{array}{l}
-0\textrm{ if } x < 0\cr
-1\textrm{ else}
-\end{array}\right.$$
+<!-- $$\Theta(x) = \left\{\begin{array}{l} -->
+<!-- 0\textrm{ if } x < 0\cr -->
+<!-- 1\textrm{ else} -->
+<!-- \end{array}\right.$$ -->
 
-You can also use plain \LaTeX for equations \begin{equation}\label{eq:fourier} \hat
-f(\omega) = \int_{-\infty}^{\infty} f(x) e^{i\omega x} dx \end{equation} and refer to
-\autoref{eq:fourier} from text.
+<!-- You can also use plain \LaTeX for equations \begin{equation}\label{eq:fourier} \hat -->
+<!-- f(\omega) = \int_{-\infty}^{\infty} f(x) e^{i\omega x} dx \end{equation} and refer to -->
+<!-- \autoref{eq:fourier} from text. -->
 
-# Citations
+<!-- # Citations -->
 
-Citations to entries in paper.bib should be in
-[rMarkdown](http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html)
-format.
+<!-- Citations to entries in paper.bib should be in -->
+<!-- [rMarkdown](http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html) -->
+<!-- format. -->
 
-If you want to cite a software repository URL (e.g. something on GitHub without a
-preferred citation) then you can do it with the example BibTeX entry below for @fidgit.
+<!-- If you want to cite a software repository URL (e.g. something on GitHub without a -->
+<!-- preferred citation) then you can do it with the example BibTeX entry below for @fidgit. -->
 
-For a quick reference, the following citation commands can be used:
+<!-- For a quick reference, the following citation commands can be used: -->
 
-- `@author:2001` -> "Author et al. (2001)"
-- `[@author:2001]` -> "(Author et al., 2001)"
-- `[@author1:2001; @author2:2001]` -> "(Author1 et al., 2001; Author2 et al., 2002)"
+<!-- - `@author:2001` -> "Author et al. (2001)" -->
+<!-- - `[@author:2001]` -> "(Author et al., 2001)" -->
+<!-- - `[@author1:2001; @author2:2001]` -> "(Author1 et al., 2001; Author2 et al., 2002)" -->
 
-# Figures
+<!-- # Figures -->
 
-Figures can be included like this:
-![Caption for example figure.\label{fig:example}](figure.png) and referenced from text
-using \autoref{fig:example}.
+<!-- Figures can be included like this: -->
+<!-- ![Caption for example figure.\label{fig:example}](figure.png) and referenced from text -->
+<!-- using \autoref{fig:example}. -->
 
-Figure sizes can be customized by adding an optional second parameter:
-![Caption for example figure.](figure.png){ width=20% }
+<!-- Figure sizes can be customized by adding an optional second parameter: -->
+<!-- ![Caption for example figure.](figure.png){ width=20% } -->
 
-# Acknowledgements
+<!-- # Acknowledgements -->
 
 # References
