@@ -1,6 +1,8 @@
 # Notes on the data
 
-All files for this test suite have been drawn from databases across the web that do not require institutional logins or paid access. Citations are included in the files themselves.
+All files for this test suite have been drawn from databases across the web that do not
+require institutional logins or paid access. Citations are included in the files
+themselves.
 
 ## AFLOW:
 
@@ -21,6 +23,7 @@ All files for this test suite have been drawn from databases across the web that
 ## Crystallographic Open Database (COD):
 
 [aP16](http://www.crystallography.net/cod/1540955.html)
+[hP3](http://www.crystallography.net/cod/7228524.html)
 
 ## IZA-SC Database of Zeolite structures
 
