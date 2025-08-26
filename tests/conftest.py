@@ -13,7 +13,7 @@ from gemmi import cif
 
 from parsnip import CifFile
 
-ADDITIONAL_TEST_FILES_PATH = "/Users/jenna/Downloads/asdf/*.cif"
+ADDITIONAL_TEST_FILES_PATH = ""
 
 rng = np.random.default_rng(seed=161181914916)
 
