@@ -38,7 +38,7 @@ def test_reads_all_keys(cif_data):
     for key in all_keys:
         assert key in found_labels, f"Missing label: {key}"
 
-    if "A2BC_tP16" in cif_data.filename:
+    if "A2BC_tP16_76" in cif_data.filename:  # TODO: this can be supported
         print(cif_data.filename)
         pytest.xfail("Double single quote at EOL is not supported.")
 
@@ -64,10 +64,13 @@ def test_read_atom_sites(cif_data):
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
     assert (key in cif_data.file.loop_labels for key in cif_data.atom_site_keys)
 
-    if not any(
-        s in cif_data.filename for s in ["CCDC", "PDB", "AMCSD", "zeolite", "no42"]
-    ):
-        warnings.filterwarnings("ignore", category=UserWarning)
+    if "CCDC" in cif_data.filename:
+        pytest.xfail("Occupancy data would need to be tiled to match ASE.")
+
+    if cif_data.file["_atom_site_occupancy"] is not None:
+        warnings.filterwarnings(
+            "ignore", category=UserWarning, message="crystal system"
+        )
 
         atoms = asecif.read_cif(cif_data.filename)
 

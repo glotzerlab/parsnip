@@ -20,8 +20,6 @@ def test_cast_values(cif_data):
         cif_data.file.cast_values = False
 
     for key, value in cif_data.file.pairs.items():
-        if value == "":
-            continue
         if isinstance(value, str):
             expected = uncast_pairs[key].replace("'", "").replace('"', "")
             assert re.search(r"[^0-9]|[^\.]", value) is not None

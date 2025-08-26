@@ -30,8 +30,6 @@ def _gemmi_read_table(filename, keys):
 
 @all_files_mark  # TODO: test with conversions to numeric as well
 def test_read_wyckoff_positions(cif_data):
-    if "PDB_4INS_head.cif" in cif_data.filename:
-        return
     keys = ("_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z")
     parsnip_data = cif_data.file.wyckoff_positions
     gemmi_data = _gemmi_read_table(cif_data.filename, keys)
@@ -42,8 +40,6 @@ def test_read_wyckoff_positions(cif_data):
 @all_files_mark
 def test_read_cell_params(cif_data):
     keys = box_keys
-    if "PDB_4INS_head.cif" in cif_data.filename:
-        keys = (key[0] + key[1:].replace("_", ".", 1) for key in keys)
     parsnip_data = cif_data.file.read_cell_params()
     gemmi_data = _gemmi_read_keys(cif_data.filename, keys)
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
@@ -168,11 +164,6 @@ def test_invalid_unit_cell(cif_data):
     with pytest.raises(ValueError, match="outside the valid range"):
         cif_data.file.build_unit_cell()
     cif_data.file._pairs["_cell_angle_alpha"] = previous_alpha
-
-    # cif_data.file._pairs.pop("_cell_angle_alpha")
-    # with pytest.raises(ValueError, match="did not return any data"):
-    #     cif_data.file.build_unit_cell()
-    # cif_data.file._pairs["_cell_angle_alpha"] = previous_alpha
 
 
 @pytest.mark.parametrize(
