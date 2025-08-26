@@ -29,6 +29,9 @@ _PROG_STAR = "*+" if sys.version_info >= (3, 11) else "*"
 _PROG_PLUS = "++" if sys.version_info >= (3, 11) else "+"
 """Progressively match prefix+ if available, else greedily match."""
 
+_ANY = r"(?s:.)"
+"""Match any character, including newlines."""
+
 _CIF_KEY = r"\S"
 """Match any of the valid characters in a CIF key or loop label.
 
