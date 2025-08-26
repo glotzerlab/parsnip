@@ -8,7 +8,7 @@ from conftest import (
     all_files_mark,
     bad_cif,
     cif_files_mark,
-    pycifrw_or_xfail,
+    pycifrw_or_skip,
 )
 from gemmi import cif
 from more_itertools import flatten
@@ -25,12 +25,12 @@ def _gemmi_read_table(filename, keys):
     try:
         return np.array(cif.read_file(filename).sole_block().find(keys))
     except (RuntimeError, ValueError):
-        pytest.xfail("Gemmi failed to read file!")
+        pytest.skip("Gemmi failed to read file!")
 
 
 @all_files_mark
 def test_reads_all_keys(cif_data):
-    pycif = pycifrw_or_xfail(cif_data)
+    pycif = pycifrw_or_skip(cif_data)
     loop_keys = [*flatten(pycif.loops.values())]
     all_keys = [key for key in pycif.true_case.values() if key.lower() in loop_keys]
 
@@ -38,7 +38,7 @@ def test_reads_all_keys(cif_data):
     for key in all_keys:
         assert key in found_labels, f"Missing label: {key}"
 
-    if "A2BC_tP16" in cif_data.filename:
+    if "A2BC_tP16_76" in cif_data.filename:  # TODO: this can be supported
         print(cif_data.filename)
         pytest.xfail("Double single quote at EOL is not supported.")
 
@@ -64,10 +64,13 @@ def test_read_atom_sites(cif_data):
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
     assert (key in cif_data.file.loop_labels for key in cif_data.atom_site_keys)
 
-    if not any(
-        s in cif_data.filename for s in ["CCDC", "PDB", "AMCSD", "zeolite", "no42"]
-    ):
-        warnings.filterwarnings("ignore", category=UserWarning)
+    if "CCDC" in cif_data.filename:
+        pytest.xfail("Occupancy data would need to be tiled to match ASE.")
+
+    if cif_data.file["_atom_site_occupancy"] is not None:
+        warnings.filterwarnings(
+            "ignore", category=UserWarning, message="crystal system"
+        )
 
         atoms = asecif.read_cif(cif_data.filename)
 
@@ -96,7 +99,6 @@ def test_partial_table_read(cif_data, subset):
 
 @pytest.mark.skip("Would be nice to pass, but we are at least as good as gemmi here.")
 def test_bad_cif_symop():
-    # This file is thouroughly cooked - gemmi will not even read it.
     parsnip_data = bad_cif.file.get_from_loops(bad_cif.symop_keys)
     correct_data = [
         ["1", "x,y,z"],

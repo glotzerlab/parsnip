@@ -12,6 +12,7 @@ of string data extracted from CIF files by methods in ``parsnip.parse``.
 from __future__ import annotations
 
 import re
+import sys
 import warnings
 
 import numpy as np
@@ -22,6 +23,26 @@ from parsnip._errors import ParseWarning
 ALLOWED_DELIMITERS = [";\n", "'''", '"""']
 """Delimiters allowed for nonsimple (multi-line) data entries."""
 
+
+_PROG_STAR = "*+" if sys.version_info >= (3, 11) else "*"
+"""Progressively match prefix* if available, else greedily match."""
+_PROG_PLUS = "++" if sys.version_info >= (3, 11) else "+"
+"""Progressively match prefix+ if available, else greedily match."""
+
+_ANY = r"(?s:.)"
+"""Match any character, including newlines."""
+
+_CIF_KEY = r"\S"
+"""Match any of the valid characters in a CIF key or loop label.
+
+See Table 1, entry "data-name" of dx.doi.org/10.1107/S1600576715021871
+"""
+
+_WHITESPACE = "[\t ]"
+"""Officially recognized whitespace characters according to the CIF 1.1 and 2.0 specs.
+
+See section 3.2 of dx.doi.org/10.1107/S1600576715021871 for clarification.
+"""
 
 _bracket_pattern = re.compile(r"(\[|\])")
 
@@ -123,7 +144,7 @@ def _write_debug_output(unique_indices, unique_counts, pos, check="Initial"):
     print()
 
 
-def cast_array_to_float(arr: ArrayLike, dtype: type = np.float32):
+def cast_array_to_float(arr: ArrayLike | None, dtype: type = np.float32):
     """Cast a Numpy array to a dtype, pruning significant digits from numerical values.
 
     Args:
@@ -136,6 +157,8 @@ def cast_array_to_float(arr: ArrayLike, dtype: type = np.float32):
     -------
         np.array[dtype]: Array with new dtype and no significant digit information.
     """
+    if arr is None:
+        return np.array("nan", dtype=dtype)
     arr = [(el if el is not None else "nan") for el in arr]
     # if any(el is None for el in arr):
     #     raise TypeError("Input array contains `None` and cannot be cast!")
@@ -147,7 +170,7 @@ def _accumulate_nonsimple_data(data_iter, line=""):
     delimiter_count = 0
     while _line_is_continued(data_iter.peek(None)):
         while data_iter.peek(None) and delimiter_count < 2:
-            buffer = data_iter.peek().split("#")[0].replace(" ", "")
+            buffer = data_iter.peek().replace(" ", "")
             if buffer[:1] == ";" or any(s in buffer for s in ALLOWED_DELIMITERS):
                 delimiter_count += 1
             line += next(data_iter)
@@ -190,7 +213,11 @@ def _semicolon_to_string(line: str):
 
 
 def _line_is_continued(line: str | None):
-    return line is not None and line.strip()[:1] == ";"
+    if line is None:
+        return False
+    line_prefix = line.lstrip()[:3]
+
+    return line_prefix[:1] == ";" or line_prefix == "'''" or line_prefix == '"""'
 
 
 def _try_cast_to_numeric(s: str):

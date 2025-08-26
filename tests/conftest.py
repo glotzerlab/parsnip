@@ -8,7 +8,7 @@ from glob import glob
 import numpy as np
 import pytest
 from CifFile import CifFile as pycifRW
-from CifFile import StarError
+from CifFile import CifSyntaxError, StarError
 from gemmi import cif
 
 from parsnip import CifFile
@@ -20,11 +20,13 @@ rng = np.random.default_rng(seed=161181914916)
 data_file_path = os.path.dirname(__file__) + "/sample_data/"
 
 
-def pycifrw_or_xfail(cif_data):
+def pycifrw_or_skip(cif_data):
     try:
         return pycifRW(cif_data.filename).first_block()
     except StarError:
-        pytest.xfail("pycifRW failed to read the file!")
+        pytest.skip("pycifRW raised a StarError!")
+    except CifSyntaxError:
+        pytest.skip("pycifRW raised a CifSyntaxError!")
 
 
 def remove_invalid(s):
@@ -52,9 +54,12 @@ def _gemmi_read_keys(filename, keys, as_number=True):
     try:
         file_block = cif.read_file(filename).sole_block()
     except (RuntimeError, ValueError):
-        pytest.xfail("Gemmi failed to read file!")
+        pytest.skip("Gemmi failed to read file!")
     if as_number:
-        return np.array([cif.as_number(file_block.find_value(key)) for key in keys])
+        try:
+            return np.array([cif.as_number(file_block.find_value(key)) for key in keys])
+        except TypeError:
+            pytest.skip("Encountered non-numerics while parsing file.")
     return np.array([remove_invalid(file_block.find_value(key)) for key in keys])
 
 
@@ -155,7 +160,6 @@ ccdc_Pm3m = CifData(
     symop_keys=("_space_group_symop_operation_xyz",),
     atom_site_keys=(*sorted(atom_site_keys),),
     file=CifFile(data_file_path + "CCDC_1446529_Pm-3m.cif"),
-    failing=("_refine_ls_weighting_details",),
 )
 
 cod_aP16 = CifData(
@@ -163,7 +167,12 @@ cod_aP16 = CifData(
     symop_keys=("_symmetry_equiv_pos_as_xyz",),
     atom_site_keys=atom_site_keys,
     file=CifFile(data_file_path + "COD_1540955_aP16.cif"),
-    failing=("_journal_name_full",),
+)
+cod_hP3 = CifData(
+    filename=data_file_path + "COD_7228524.cif",
+    symop_keys=("_space_group_symop_operation_xyz",),
+    atom_site_keys=atom_site_keys,
+    file=CifFile(data_file_path + "COD_7228524.cif"),
 )
 
 izasc_gismondine = CifData(
@@ -196,30 +205,34 @@ structure_issue_42 = CifData(
     file=CifFile(data_file_path + "no42.cif"),
 )
 
-bad_cif = CifData(
-    filename=data_file_path + "INTENTIONALLY_BAD_CIF.cif",
-    symop_keys=("_space_group_symop_id", "_space_group_symop_operation_xyz"),
-    atom_site_keys=(
-        "_atom_site",
-        "_atom_site_type_symbol",
-        "_atom_site_symmetry_multiplicity",
-        "_atom_si te",
-        "_atom_site_fract_z",
-        "_this_key_does_not_exist",
-    ),
-    file=CifFile(data_file_path + "INTENTIONALLY_BAD_CIF.cif"),
-    manual_keys=(
-        "_cell_length_a",
-        "_cell_length_b",
-        "_cell_length_c",
-        "_cell_angle_alpha",
-        "_cell_angle_beta",
-        "_cell_angle_gamma",
-        "__________asdf",
-        "_-wasd",
-        "not_a_valid_key",
-    ),
-)
+with pytest.warns():
+    bad_cif = CifData(
+        filename=data_file_path + "INTENTIONALLY_BAD_CIF.cif",
+        symop_keys=("_space_group_symop_id", "_space_group_symop_operation_xyz"),
+        atom_site_keys=(
+            "_atom_site",
+            "_atom_site_type_symbol",
+            "_atom_site_symmetry_multiplicity",
+            "_atom_si te",
+            "_atom_site_fract_z",
+            "_this_key_does_not_exist",
+        ),
+        file=CifFile(data_file_path + "INTENTIONALLY_BAD_CIF.cif"),
+        manual_keys=(
+            "_cell_length_a",
+            "_cell_length_b",
+            "_cell_length_c",
+            "_cell_angle_alpha",
+            "_cell_angle_beta",
+            "_cell_angle_gamma",
+            "_cod_style_key",
+            "_cif_2.0_string",
+            "_cif_2.0_double_quoted_string",
+            "__________asdf",
+            "_-wasd",
+            "not_a_valid_key",
+        ),
+    )
 
 cif_data_array = [
     aflow_mC24,
@@ -227,6 +240,7 @@ cif_data_array = [
     bisd_Ccmm,
     ccdc_Pm3m,
     cod_aP16,
+    cod_hP3,
     izasc_gismondine,
     pdb_4INS,
     structure_issue_42,
@@ -242,7 +256,9 @@ additional_data_array = [
         file=CifFile(fn),
         symop_keys=("_space_group_symop_operation_xyz", "_symmetry_equiv_pos_as_xyz"),
     )
-    for fn in glob(ADDITIONAL_TEST_FILES_PATH)
+    for fn in [
+        *glob(ADDITIONAL_TEST_FILES_PATH),
+    ]
 ]
 additional_files_mark = pytest.mark.parametrize(
     argnames="cif_data",

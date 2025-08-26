@@ -4,7 +4,7 @@ from conftest import (
     _gemmi_read_keys,
     all_files_mark,
     bad_cif,
-    pycifrw_or_xfail,
+    pycifrw_or_skip,
     random_keys_mark,
 )
 from more_itertools import flatten
@@ -12,7 +12,7 @@ from more_itertools import flatten
 
 @all_files_mark
 def test_read_key_value_pairs(cif_data):
-    pycif = pycifrw_or_xfail(cif_data)
+    pycif = pycifrw_or_skip(cif_data)
 
     invalid = [*flatten(pycif.loops.values()), *cif_data.failing]
     all_keys = [key for key in pycif.true_case.values() if key.lower() not in invalid]
@@ -45,6 +45,9 @@ def test_read_key_value_pairs_badcif():
         "90.00000",
         "-10.12345",
         "210.00000",
+        "'This should not be a part of the spec imo.'",
+        """'''\n\n\tThe CIF 2.0 specification added multiline strings.\n'''""",
+        '''"""\n\n\tThe CIF 2.0 specification added multiline strings.\n"""''',
         "\\t _1.234-56789",
         r"45.6a/\s",
         None,

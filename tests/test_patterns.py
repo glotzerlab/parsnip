@@ -228,9 +228,8 @@ def test_box(cif_data):
     np.testing.assert_allclose(
         parsnip_box[3:], [freud_box.xy, freud_box.xz, freud_box.yz], atol=BOX_ATOL
     )
-    if "PDB" not in cif_data.filename:
-        np.testing.assert_allclose(
-            [*freud_box.L, freud_box.xy, freud_box.xz, freud_box.yz],
-            [*freud_box_2.L, freud_box_2.xy, freud_box_2.xz, freud_box_2.yz],
-            atol=BOX_ATOL,
-        )
+    np.testing.assert_allclose(
+        [*freud_box.L, freud_box.xy, freud_box.xz, freud_box.yz],
+        [*freud_box_2.L, freud_box_2.xy, freud_box_2.xz, freud_box_2.yz],
+        atol=BOX_ATOL,
+    )
