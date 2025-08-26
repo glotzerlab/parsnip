@@ -10,6 +10,22 @@ v0.4.0 - xxxx-xx-xx
 Added
 ~~~~~
 - Support for reading files via a context manager, text buffer, or string.
+- Support for CIF2.0 ``"""`` and ``'''`` strings
+- Support for COD-style ``_key \n 'value'`` strings
+
+Changed
+~~~~~~~
+- Regular expression parsing steps no longer need to backtrack, except in whitespace
+  containing strings in loop tables
+- Progressive and lazy Kleene star/plus operators are used where possible
+- Key names now support the full range of characters specified in the CIF2.0 spec
+- Regular expressions components now link to relevant portions of the CIF spec where
+  possible
+
+Fixed
+~~~~~
+- Data entries containing non-comment pound signs are no longer truncated
+- Comments on ``loop_`` keyword lines no longer cause parse errors
 
 
 v0.3.1 - 2025-07-16
