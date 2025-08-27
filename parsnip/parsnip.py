@@ -852,7 +852,7 @@ class CifFile:
                 continue
 
             # TODO: could separate multi-block files in the future =====================
-            # block = re.match(self._cpat["block_delimiter"], line.lower())
+            # block = re.match(self._cpat["block_delimiter"], line.lower().lstrip())
             # if block is not None:
             #     continue
 
@@ -886,7 +886,8 @@ class CifFile:
 
             # Build up tables by incrementing through the iterator =====================
             loop = re.match(
-                self._cpat["loop_delimiter"], self._strip_comments(line.lower())
+                self._cpat["loop_delimiter"],
+                self._strip_comments(line.lower()).lstrip(),
             )
 
             if loop is not None:
