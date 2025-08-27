@@ -74,14 +74,19 @@ from fnmatch import filter as fnfilter
 from fnmatch import fnmatch
 from importlib.util import find_spec
 from pathlib import Path
-from typing import ClassVar
+from typing import ClassVar, TextIO
 
 import numpy as np
 from more_itertools import flatten, peekable
 from numpy.lib.recfunctions import structured_to_unstructured
 
-from parsnip._errors import ParseWarning
+from parsnip._errors import ParseWarning, _is_potentially_valid_path
 from parsnip.patterns import (
+    _ANY,
+    _CIF_KEY,
+    _PROG_PLUS,
+    _PROG_STAR,
+    _WHITESPACE,
     _accumulate_nonsimple_data,
     _box_from_lengths_and_angles,
     _bracket_pattern,
@@ -111,7 +116,7 @@ class CifFile:
     >>> from parsnip import CifFile
     >>> cif = CifFile("example_file.cif")
     >>> print(cif)
-    CifFile(fn=example_file.cif) : 12 data entries, 2 data loops
+    CifFile(file=example_file.cif) : 12 data entries, 2 data loops
 
     Data entries are accessible via the :attr:`~.pairs` and :attr:`~.loops` attributes:
 
@@ -141,21 +146,38 @@ class CifFile:
             Default value = ``False``
     """
 
-    def __init__(self, fn: str | Path, cast_values: bool = False):
-        """Create a CifFile object from a filename.
+    def __init__(
+        self, file: str | Path | TextIO | Iterable[str], cast_values: bool = False
+    ):
+        """Create a CifFile object from a filename, file object, or iterator over `str`.
 
         On construction, the entire file is parsed into key-value pairs and data loops.
         Comment lines are ignored.
 
         """
-        self._fn = fn
+        self._fn = file
         self._pairs = {}
         self._loops = []
 
         self._cpat = {k: re.compile(pattern) for (k, pattern) in self.PATTERNS.items()}
         self._cast_values = cast_values
 
-        with open(fn) as file:
+        if (isinstance(file, str) and _is_potentially_valid_path(file)) or isinstance(
+            file, Path
+        ):
+            with open(file) as file:
+                self._parse(peekable(file))
+        # We expect a TextIO | IOBase, but allow users to pass any Iterable[string_like]
+        # This includes a str that does not point to a file!
+        elif isinstance(file, str):
+            msg = (
+                "\nFile input was parsed as a raw CIF data block. "
+                "If you intended to read the input string as a file path, please "
+                "ensure it is validly formatted."
+            )
+            warnings.warn(msg, RuntimeWarning, stacklevel=2)
+            self._parse(peekable(file.splitlines(True)))
+        else:
             self._parse(peekable(file))
 
     _SYMPY_AVAILABLE = find_spec("sympy") is not None
@@ -818,26 +840,36 @@ class CifFile:
         """
         return structured_to_unstructured(arr, copy=True)
 
-    def _parse(self, data_iter: Iterable):
+    def _parse(self, data_iter: peekable):
         """Parse the cif file into python objects."""
         for line in data_iter:
-            if data_iter.peek(None) is None:
-                break  # Exit without StopIteration
-
             # Combine nonsimple data entries into a single, parseable line =============
-            line = _accumulate_nonsimple_data(data_iter, line)
+            line = _accumulate_nonsimple_data(data_iter, self._strip_comments(line))
 
             # Skip processing if the line contains no data =============================
-            if line == "" or _strip_comments(line) == "":
+            if line == "":
                 continue
 
-            # TODO: could support multi-block files in the future ======================
-            block = re.match(self._cpat["block_delimiter"], line)
-            if block is not None:
-                continue
+            # TODO: could separate multi-block files in the future =====================
+            # block = re.match(self._cpat["block_delimiter"], line.lower())
+            # if block is not None:
+            #     continue
 
             # Extract key-value pairs and save to the internal state ===================
-            pair = self._cpat["key_value_general"].match(line)
+            pair = self._cpat["key_value_general"].match(
+                self._strip_comments(line).rstrip()
+            )
+
+            # If we have a COD-style _key\n'long_value'
+            if (
+                pair is None
+                and data_iter.peek("").lstrip()[:1] in {"'", '"'}
+                and data_iter.peek(None)
+            ):
+                pair = self._cpat["key_value_general"].match(
+                    self._strip_comments(line + next(data_iter))
+                )
+
             if pair is not None:
                 self._pairs.update(
                     {
@@ -848,9 +880,13 @@ class CifFile:
                         else pair.groups()[1].rstrip()  # Skip trailing newlines
                     }
                 )
+            if data_iter.peek(None) is None:
+                break  # Exit without StopIteration
 
             # Build up tables by incrementing through the iterator =====================
-            loop = re.match(self._cpat["loop_delimiter"], line)
+            loop = re.match(
+                self._cpat["loop_delimiter"], self._strip_comments(line.lower())
+            )
 
             if loop is not None:
                 loop_keys, loop_data = [], []
@@ -858,7 +894,7 @@ class CifFile:
                 # First, extract table headers. Must be prefixed with underscore
                 line_groups = loop.groups()
                 if line_groups[-1] != "":  # Extract loop keys from the _loop line
-                    fragment = _strip_comments(line_groups[-1].strip())
+                    fragment = self._strip_comments(line_groups[-1].strip())
                     if fragment[:1] == "_":
                         keys = self._cpat["key_list"].findall(fragment)
                         loop_keys.extend(keys if keys is not None else [])
@@ -888,17 +924,25 @@ class CifFile:
                     continue  # Skip empty tables
 
                 if n_elements % n_cols != 0:
+                    # print(loop_keys)
+                    # print(loop_data)
                     warnings.warn(
                         f"Parsed data for table {len(self.loops) + 1} cannot be"
-                        f" resolved into a table of the expected size and will be"
-                        f"ignored. Got n={n_elements} items, expected c={n_cols}"
-                        f"columns: n%c={n_elements % n_cols}).",
+                        f" resolved into a table of the expected size and will be "
+                        f"ignored. Got n={n_elements} items, which cannot be "
+                        f"distributed evenly into {n_cols} columns with labels "
+                        f"{loop_keys}",
                         category=ParseWarning,
                         stacklevel=2,
                     )
+
                     continue
                 if not all(len(key) == len(loop_keys[0]) for key in loop_keys):
                     loop_data = np.array([*flatten(loop_data)]).reshape(-1, n_cols)
+
+                if len(loop_data) == 0:
+                    msg = "Loop data is empy, but n_cols > 0: check CIF file syntax."
+                    raise ValueError(msg)
                 dt = _dtype_from_int(max(max(len(s) for s in l) for l in loop_data))
 
                 if len(set(loop_keys)) < len(loop_keys):
@@ -908,32 +952,59 @@ class CifFile:
                         stacklevel=2,
                     )
                     continue
-                rectable = np.atleast_2d(loop_data)
-                rectable.dtype = [*zip(loop_keys, [dt] * n_cols)]
+                try:
+                    rectable = np.atleast_2d(loop_data)
+                except ValueError as e:
+                    msg = (
+                        (
+                            "Ragged array identified: please check the loops' syntax."
+                            f"\n  Loop keys:      {loop_keys}"
+                            f"\n  Processed data: {loop_data}"
+                        )
+                        if "setting an array element with a sequence" in str(e)
+                        else e
+                    )
+                    raise ValueError(msg) from e
+
+                labeled_type = [*zip(loop_keys, [dt] * n_cols)]
+                try:
+                    rectable.dtype = labeled_type
+                except ValueError as e:
+                    msg = (
+                        "Loop labels do not match the structure of parsed data.\n"
+                        f"  loop_labels:   {labeled_type}\n"
+                        "  data[:3, ...]: "
+                        f"{np.array2string(rectable[:2, :], prefix=' ' * 17)}\n"
+                    )
+                    raise ValueError(msg) from e
                 rectable = rectable.reshape(rectable.shape, order="F")
                 self.loops.append(rectable)
 
             if data_iter.peek(None) is None:
                 break
 
+    def _strip_comments(self, line: str) -> str:
+        return self._cpat["comment"].sub("", line)
+
     def __repr__(self):
         n_pairs = len(self.pairs)
         n_tabs = len(self.loops)
-        return f"CifFile(fn={self._fn}) : {n_pairs} data entries, {n_tabs} data loops"
+        return f"CifFile(file={self._fn}) : {n_pairs} data entries, {n_tabs} data loops"
 
     PATTERNS: ClassVar = {
-        "key_value_general": r"^(_[\w\.\-/\[\d\]]+)\s+([^#]+)",
-        "loop_delimiter": r"([Ll][Oo][Oo][Pp]_)[ |\t]*([^\n]*)",
-        "block_delimiter": r"([Dd][Aa][Tt][Aa]_)[ |\t]*([^\n]*)",
-        "key_list": r"_[\w_\.*]+[\[\d\]]*",
+        "key_value_general": rf"^(_{_CIF_KEY}+?)\s{_PROG_PLUS}({_ANY}+?)$",
+        "loop_delimiter": rf"(loop_){_WHITESPACE}{_PROG_STAR}([^\n]{_PROG_STAR})",
+        "block_delimiter": rf"(data_){_WHITESPACE}{_PROG_STAR}([^\n]{_PROG_STAR})",
+        "key_list": rf"_{_CIF_KEY}+?(?=\s|$)",  # Match space or endline-separated keys
         "space_delimited_data": (
-            r"("
-            r"\;[^\;]*\;|"  # Non-semicolon data bracketed by semicolons
-            r"\'(?:'[^\s]|[^'])*\'|"  # Data with single quotes not followed by \s
-            r"\"[^\"]*\"|"  # Data with double quotes
-            r"[^\'\"\;\s]*"  # Additional non-bracketed data
-            r")[\s]*"
+            "("
+            r";[^;]*?;|"  # Non-semicolon data bracketed by semicolons
+            r"'(?:'\S|[^'])*'|"  # Data with single quotes not followed by \s
+            # rf"\"[^\"]{_PROG_STAR}\"|"  # Data with double quotes
+            rf"[^';\"\s]{_PROG_STAR}"  # Additional non-bracketed data
+            ")"
         ),
+        "comment": "#.*?$",  # A comment at the end of a line or string
     }
     """Regex patterns used when parsing files.
 

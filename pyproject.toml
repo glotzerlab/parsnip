@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "parsnip-cif"
 version = "0.3.0"
-requires-python = ">=3.7"
+requires-python = ">=3.9"
 description = "Minimal library for parsing CIF & mmCIF files in Python."
 readme = "README.rst"
 license-files = ["LICENSE"]
@@ -41,7 +41,7 @@ optional-dependencies.sympy = { file = ["requirements-sympy.txt"] }
 
 [tool.pytest.ini_options]
 testpaths = ["tests", "parsnip", "doc"]
-addopts = ["--doctest-plus", "--doctest-glob='*.rst'"]
+addopts = ["--doctest-plus", "--doctest-glob='*.rst'", "-W", "error::Warning"]
 doctest_rst = true
 doctest_optionflags = ["NORMALIZE_WHITESPACE", "ELLIPSIS", "FLOAT_CMP"]
 console_output_style = "progress"
@@ -92,6 +92,7 @@ known-first-party = ["parsnip"]
 "tests/*" = ["D", "B018", "F811"]
 "parsnip/*" = ["E741"]
 "__init__.py" = ["F401"] # Do not remove "unused" imports in __init__.py files
+"tests/conftest.py" = ["N806", "N816"] # Allow mixed-case globals
 
 [tool.ruff.format]
 quote-style = "double"

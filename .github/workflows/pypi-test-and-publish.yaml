@@ -15,20 +15,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4.2.2
+    - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       with:
         persist-credentials: false
-    - name: Set up Python
-      uses: actions/setup-python@v5.4.0
+    - name: Install uv
+      uses: astral-sh/setup-uv@d9e0f98d3fc6adb07d1e3d37f3043649ddad06a1 # v6.5.0
       with:
-        python-version: "3.x"
-
-    - name: Install pypa/build
-      run: python3 -m pip install build --user
-    - name: Build a binary wheel and a source tarball
-      run: PYTHONWARNINGS=error python3 -m build
+        version: "0.8.11"
+    - name: uv build
+      run: uv build --verbose -o dist
     - name: Store the distribution packages
-      uses: actions/upload-artifact@v4.4.3
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
       with:
         name: python-package-distributions
         path: dist/
@@ -45,12 +42,13 @@ jobs:
 
     steps:
     - name: Download all the dists
-      uses: actions/download-artifact@v4.1.8
+      uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
       with:
         name: python-package-distributions
         path: dist/
-    - name: Publish distribution to TestPyPI
-      uses: pypa/gh-action-pypi-publish@release/v1
+    - name: Publish to TestPyPI
+      # TODO: udpate to use a pinned version rather than a single commit
+      uses: pypa/gh-action-pypi-publish/ed01280d14b6f9a0edaa1a5494d8f7ffed709083
       with:
         repository-url: https://test.pypi.org/legacy/
         verbose: true
@@ -70,9 +68,11 @@ jobs:
 
     steps:
     - name: Download all the dists
-      uses: actions/download-artifact@v4.1.8
+      uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
       with:
         name: python-package-distributions
         path: dist/
+
     - name: Publish to PyPI
-      uses: pypa/gh-action-pypi-publish@v1.12.4
+      # TODO: udpate to use a pinned version rather than a single commit
+      uses: pypa/gh-action-pypi-publish/ed01280d14b6f9a0edaa1a5494d8f7ffed709083

@@ -144,9 +144,9 @@ def test_semicolon_to_string(line):
             ParseWarning, match="String contains single and double quotes"
         ):
             fixed = _semicolon_to_string(line)
-            assert (fixed == line) if ";" not in line else (";" not in fixed)
-            return
-    elif ";" not in line:
+        assert (fixed == line) if ";" not in line else (";" not in fixed)
+        return
+    if ";" not in line:
         assert _semicolon_to_string(line) == line
         return
     fixed = _semicolon_to_string(line)
@@ -228,9 +228,8 @@ def test_box(cif_data):
     np.testing.assert_allclose(
         parsnip_box[3:], [freud_box.xy, freud_box.xz, freud_box.yz], atol=BOX_ATOL
     )
-    if "PDB" not in cif_data.filename:
-        np.testing.assert_allclose(
-            [*freud_box.L, freud_box.xy, freud_box.xz, freud_box.yz],
-            [*freud_box_2.L, freud_box_2.xy, freud_box_2.xz, freud_box_2.yz],
-            atol=BOX_ATOL,
-        )
+    np.testing.assert_allclose(
+        [*freud_box.L, freud_box.xy, freud_box.xz, freud_box.yz],
+        [*freud_box_2.L, freud_box_2.xy, freud_box_2.xz, freud_box_2.yz],
+        atol=BOX_ATOL,
+    )

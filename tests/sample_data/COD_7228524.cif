@@ -1,0 +1,340 @@
+# This file was selected as it contains two instances of data containing `#`, includes
+# excaped quotes, html tags, and various unicode characters. I have added comments and
+# breaking syntax in a few places to make this a real worst-case.
+
+
+
+#------------------------------------------------------------------------------
+#$Date: 2017-06-21 04:27:45 +0300 (Wed, 21 Jun 2017) $
+#$Revision: 198021 $
+#$URL: file:///home/coder/svn-repositories/cod/cif/7/22/85/7228524.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/
+#
+# All data on this site have been placed in the public domain by the
+# contributors.
+#
+data_7228524 # A comment
+loop_ # A comment on the loop_ line
+_publ_author_name
+'Boer\'e, Ren\'e' #Note the excaped quotation mark
+'Hill, Nathan D. D.'
+_publ_section_title # There are two comments on this key-value pair
+;
+ High Z&#x2019; structures of 1,2,3,5-dithiadiazolyls and of
+ 1,2,3,5-diselenadiazolyls containing the first structurally characterized
+ monomeric diselenadiazolyls
+; # This block contains a pound sign
+_Pearson hP3 # Key manually added to enable testing
+_journal_name_full               CrystEngComm # One more comment on a standard kv pair
+_journal_paper_doi               10.1039/C7CE00863E
+_journal_year                    2017
+_chemical_absolute_configuration unk
+_chemical_formula_moiety         Se
+_chemical_formula_sum            Se
+_chemical_formula_weight         78.96
+_chemical_melting_point          494
+_chemical_name_common            'Grey selenium'
+_chemical_name_systematic        Selenium
+_space_group_crystal_system      trigonal
+_space_group_IT_number           152
+_space_group_name_Hall           'P 31 2"' # Double quote inside single quotes
+_space_group_name_H-M_alt        'P 31 2 1'
+_symmetry_space_group_name_Hall  'P 31 2"'
+_symmetry_space_group_name_H-M   'P 31 2 1'
+_atom_sites_solution_primary     iterative
+_audit_creation_date             2016-10-26
+_audit_creation_method
+;
+Olex2 1.2
+(compiled 2016.09.09 svn.r3337 for OlexSys, GUI svn.r5227)
+;
+_audit_update_record # back-to-back multiline strings in the CIF 1.1 style
+;
+2017-06-19 deposited with the CCDC.
+2017-06-20 downloaded from the CCDC.
+;
+_cell_angle_alpha                90
+_cell_angle_beta                 90
+_cell_angle_gamma                120
+_cell_formula_units_Z            3
+_cell_length_a                   4.3125(3)
+_cell_length_b                   4.3125(3)
+_cell_length_c                   4.9711(4)
+_cell_measurement_reflns_used    757
+_cell_measurement_temperature    99.99(14)
+_cell_measurement_theta_max      75.6520
+_cell_measurement_theta_min      11.8060
+_cell_volume                     80.065(10)
+_computing_cell_refinement       'CrysAlisPro 1.171.38.41r (Rigaku OD, 2015)'
+_computing_data_collection       'CrysAlisPro 1.171.38.41r (Rigaku OD, 2015)'
+_computing_data_reduction        'CrysAlisPro 1.171.38.41r (Rigaku OD, 2015)'
+_computing_molecular_graphics    'Mercury (Macrae <i>et al.</i>, 2006)' # HTML tags
+_computing_publication_material  'Olex2 (Dolomanov et al., 2009)'
+_computing_structure_refinement  'ShelXL (Sheldrick, 2015)'
+_computing_structure_solution    'ShelXT (Sheldrick, 2015)'
+_diffrn_ambient_environment      N~2~ # Tilde characters in unquoted string
+_diffrn_ambient_temperature      100(1)
+_diffrn_detector                 'CCD plate'
+_diffrn_detector_type            'Pilatus 200/300K'
+_diffrn_measured_fraction_theta_full 1.000
+_diffrn_measured_fraction_theta_max 1.000
+_diffrn_measurement_details
+;
+List of Runs (angles in degrees, time in seconds):
+
+  # Type    Start    End  Width  t~exp~   \w     \q     \k     \f   Frames
+#--------------------------------------------------------------------------
+  1  \w     -1.00  74.00   0.50    0.50    --    4.52  19.00  90.00  150
+  2  \w      1.00  71.00   0.50    0.50    --    4.52  38.00-180.00  140
+  3  \w     36.00 175.00   0.50    0.91    --  105.46   0.00  90.00  278
+  4  \w     97.00 174.00   0.50    0.91    --  105.46  15.00-180.00  154
+  5  \w     41.00 110.00   0.50    0.91    --  105.46 -45.00 -90.00  138
+  6  \w      1.00  71.00   0.50    0.50    --    4.52  38.00-120.00  140
+  7  \w     -1.00  74.00   0.50    0.50    --    4.52  19.00   0.00  150
+  8  \w     37.00 109.00   0.50    0.91    --  105.46 -94.00-180.00  144
+  9  \w     43.00 119.00   0.50    0.91    --  105.46 -61.00   0.00  152
+ 10  \w     37.00 109.00   0.50    0.91    --  105.46 -30.00-150.00  144
+ 11  \w     92.00 168.00   0.50    0.91    --  105.46  61.00 -90.00  152
+ 12  \w    -45.00  14.00   0.50    0.50    --   -4.52 106.00  40.00  118
+ 13  \w    -28.00  28.00   0.50    0.50    --    4.52  92.00 144.00  112
+ 14  \w     97.00 174.00   0.50    0.91    --  105.46  15.00-120.00  154
+ 15  \w     40.00 122.00   0.50    0.91    --  105.46-125.00  90.00  164
+ 16  \w    101.00 170.00   0.50    0.91    --  105.46  45.00 120.00  138
+ 17  \w    102.00 174.00   0.50    0.91    --  105.46  30.00 -60.00  144
+ 18  \w    -68.00   7.00   0.50    0.50    --   -4.52 -57.00-150.00  150
+ 19  \w      1.00  71.00   0.50    0.50    --    4.52  36.00  19.00  140
+ 20  \w     92.00 168.00   0.50    0.91    --  105.46  61.00 -30.00  152
+ 21  \w     82.00 170.00   0.50    0.91    --  105.46  77.00-150.00  176
+ 22  \w     97.00 174.00   0.50    0.91    --  105.46  15.00  30.00  154
+ 23  \w     43.00 119.00   0.50    0.91    --  105.46 -61.00-180.00  152
+ 24  \w    -25.00  29.00   0.50    0.50    --    4.52 -79.00 -79.00  108
+ 25  \w    -62.00   8.00   0.50    0.50    --    4.52 -38.00 -60.00  140
+ 26  \w     82.00 170.00   0.50    0.91    --  105.46  77.00 150.00  176
+ 27  \w    102.00 174.00   0.50    0.91    --  105.46  30.00  90.00  144
+ 28  \w     92.00 168.00   0.50    0.91    --  105.46  61.00-120.00  152
+ 29  \w     40.00 122.00   0.50    0.91    --  105.46-125.00-150.00  164
+ 30  \w    -64.00  10.00   0.50    0.50    --    4.52 -19.00 120.00  148
+;
+_diffrn_measurement_device       'four-circle diffractometer'
+_diffrn_measurement_device_type
+'SuperNova, Dual, Cu at zero, Pilatus 200/300K'
+_diffrn_measurement_method       '\w scans'
+_diffrn_orient_matrix_type
+'CrysAlisPro convention (1999,Acta A55,543-557)'
+_diffrn_orient_matrix_UB_11      0.0956512000
+_diffrn_orient_matrix_UB_12      0.3951188000
+_diffrn_orient_matrix_UB_13      -0.0125151000
+_diffrn_orient_matrix_UB_21      -0.1614171000
+_diffrn_orient_matrix_UB_22      -0.0611764000
+_diffrn_orient_matrix_UB_23      -0.2847260000
+_diffrn_orient_matrix_UB_31      -0.3670447000
+_diffrn_orient_matrix_UB_32      -0.1018102000
+_diffrn_orient_matrix_UB_33      0.1220775000
+_diffrn_radiation_monochromator  mirror
+_diffrn_radiation_probe          x-ray
+_diffrn_radiation_type           CuK\a
+_diffrn_radiation_wavelength     1.54184
+_diffrn_reflns_av_R_equivalents  0.0911
+_diffrn_reflns_av_unetI/netI     0.0315
+_diffrn_reflns_Laue_measured_fraction_full 1.000
+_diffrn_reflns_Laue_measured_fraction_max 1.000
+_diffrn_reflns_limit_h_max       4
+_diffrn_reflns_limit_h_min       -5
+_diffrn_reflns_limit_k_max       5
+_diffrn_reflns_limit_k_min       -5
+_diffrn_reflns_limit_l_max       6
+_diffrn_reflns_limit_l_min       -6
+_diffrn_reflns_number            1066
+_diffrn_reflns_point_group_measured_fraction_full 1.000
+_diffrn_reflns_point_group_measured_fraction_max 1.000
+_diffrn_reflns_theta_full        67.684
+_diffrn_reflns_theta_max         75.668
+_diffrn_reflns_theta_min         11.913
+_diffrn_source                   'micro-focus sealed X-ray tube'
+_diffrn_source_type              'SuperNova (Cu) X-ray Source'
+_exptl_absorpt_coefficient_mu    39.344
+_exptl_absorpt_correction_T_max  1.00000
+_exptl_absorpt_correction_T_min  0.21042
+_exptl_absorpt_correction_type   multi-scan
+_exptl_absorpt_process_details
+;
+CrysAlisPro 1.171.38.41r (Rigaku Oxford Diffraction, 2015)
+Empirical absorption correction using spherical harmonics,
+ implemented in SCALE3 ABSPACK scaling algorithm.
+;
+_exptl_crystal_colour            Black
+_exptl_crystal_density_diffrn    4.913
+_exptl_crystal_description       Needle
+_exptl_crystal_F_000             102
+_exptl_crystal_recrystallization_method Sublimation
+_exptl_crystal_size_max          0.12
+_exptl_crystal_size_mid          0.02
+_exptl_crystal_size_min          0.02
+_refine_diff_density_max         1.423
+_refine_diff_density_min         -1.183
+_refine_diff_density_rms         0.365
+_refine_ls_extinction_coef       0.018(10)
+_refine_ls_extinction_expression Fc^*^=kFc[1+0.001xFc^2^\l^3^/sin(2\q)]^-1/4^
+_refine_ls_extinction_method     'SHELXL-2014/7 (Sheldrick 2014'
+_refine_ls_goodness_of_fit_ref   1.381
+_refine_ls_matrix_type           full
+_refine_ls_number_parameters     7
+_refine_ls_number_reflns         120
+_refine_ls_number_restraints     0
+_refine_ls_restrained_S_all      1.381
+_refine_ls_R_factor_all          0.0409
+_refine_ls_R_factor_gt           0.0409
+_refine_ls_shift/su_max          0.000
+_refine_ls_shift/su_mean         0.000
+_refine_ls_structure_factor_coef Fsqd
+_refine_ls_weighting_details
+'w=1/[\s^2^(Fo^2^)+(0.0711P)^2^] where P=(Fo^2^+2Fc^2^)/3'
+_refine_ls_weighting_scheme      calc
+_refine_ls_wR_factor_gt          0.1090
+_refine_ls_wR_factor_ref         0.1090
+_reflns_Friedel_coverage         0.481
+_reflns_Friedel_fraction_full    1.000
+_reflns_Friedel_fraction_max     1.000
+_reflns_number_gt                120
+_reflns_number_total             120
+_reflns_threshold_expression     'I > 2\s(I)'
+_cod_data_source_file            c7ce00863e2.cif
+_cod_data_source_block           Se
+_cod_original_cell_volume        80.064(11)
+_cod_database_code               7228524
+_chemical_oxdiff_formula         Se
+_chemical_oxdiff_usercomment
+'Clumps of black needles from "3x sublimed 5tBu Se diradical" sealed tube'
+_shelx_space_group_comment
+;
+The symmetry employed for this shelxl refinement is uniquely defined
+by the following loop, which should always be used as a source of
+symmetry information in preference to the above space-group names.
+They are only intended as comments.
+;
+_reflns_odcompleteness_completeness 100.00
+_reflns_odcompleteness_iscentric 1
+_reflns_odcompleteness_theta     66.97
+_olex2_refinement_description
+;
+;
+_shelx_res_file
+;
+    rb16081.res created by SHELXL-2014/7
+
+TITL rb16081_a.res in P3(1)21
+REM Old TITL RB16081 in P3121 #152
+REM SHELXT solution in P3(1)21
+REM R1 0.058, Rweak 0.076, Alpha 0.088, Orientation as input
+REM Flack x = -9.990 ( 9.990 ) from Parsons' quotients
+REM Formula found by SHELXT: Se
+CELL 1.54184 4.312469 4.312469 4.971101 90 90 120
+ZERR 2 0.000252 0.000252 0.000355 0 0 0
+LATT -1
+SYMM -Y,+X-Y,0.333+Z
+SYMM +Y-X,-X,0.667+Z
+SYMM +Y,+X,-Z
+SYMM -Y+X,-Y,0.667-Z
+SYMM -X,-X+Y,0.333-Z
+SFAC Se
+UNIT 2
+
+L.S. 20
+PLAN  2
+BOND $H
+LIST 6
+MORE -1
+CONF
+fmap 2
+acta
+REM <olex2.extras>
+REM <HklSrc "%.\\RB16081.hkl">
+REM </olex2.extras>
+
+WGHT    0.071100
+EXTI    0.017697
+FVAR       1.51477
+SE1   1    1.000000    0.228733    0.666667    10.50000    0.01908    0.01818 =
+         0.00979   -0.00056   -0.00111    0.00954
+HKLF 4
+
+REM  rb16081_a.res in P3(1)21
+REM R1 =  0.0409 for     120 Fo > 4sig(Fo)  and  0.0409 for all     120 data
+REM      7 parameters refined using      0 restraints
+
+END
+
+WGHT      0.0711      0.0000
+
+REM Highest difference peak  1.423,  deepest hole -1.183,  1-sigma level  0.365
+Q1    1   0.8396 -0.0859  0.7522  11.00000  0.05    1.42
+Q2    1   1.0000  0.5146  0.6667  10.50000  0.05    1.18
+;
+_shelx_res_checksum              62866
+_shelx_shelxl_version_number     2014/7
+_olex2_submission_special_instructions 'No special instructions were received'
+_oxdiff_exptl_absorpt_empirical_details
+;
+Empirical correction (ABSPACK) includes:
+- Absorption correction using spherical harmonics
+- Frame scaling
+;
+_oxdiff_exptl_absorpt_empirical_full_max 3.982
+_oxdiff_exptl_absorpt_empirical_full_min 0.611
+loop_
+_space_group_symop_operation_xyz
+'x, y, z'
+'-y, x-y, z+1/3'
+'-x+y, -x, z+2/3'
+'y, x, -z'
+'x-y, -y, -z+2/3'
+'-x, -x+y, -z+1/3'
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_adp_type
+_atom_site_occupancy
+_atom_site_site_symmetry_order
+_atom_site_calc_flag
+_atom_site_refinement_flags_posn
+_atom_site_refinement_flags_adp
+_atom_site_refinement_flags_occupancy
+Se1 Se 1.0000 0.228733 0.666667 0.0156 Uani 1 2 d S T P # See '_shelx_res_file'
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+Se1 0.0191(11) 0.0182(10) 0.0098(12) -0.0006(2) -0.0011(4) 0.0095(5)
+loop_
+_atom_type_symbol
+_atom_type_description
+_atom_type_scat_dispersion_real
+_atom_type_scat_dispersion_imag
+_atom_type_scat_source
+Se Se -0.7943 1.1372 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+loop_
+_geom_angle_atom_site_label_1
+_geom_angle_atom_site_label_2
+_geom_angle_atom_site_label_3
+_geom_angle
+_geom_angle_site_symmetry_1
+_geom_angle_site_symmetry_3
+Se1 Se1 Se1 103.12(5) 2_645 3_764
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_distance
+_geom_bond_site_symmetry_2
+Se1 Se1 2.3801(15) 2_645
+Se1 Se1 2.3801(15) 3_764
