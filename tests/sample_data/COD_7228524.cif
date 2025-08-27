@@ -17,7 +17,7 @@
 # contributors.
 #
 data_7228524 # A comment
-loop_ # A comment on the loop_ line
+   loop_ # A comment on the loop_ line, which begins with a space
 _publ_author_name
 'Boer\'e, Ren\'e' #Note the excaped quotation mark
 'Hill, Nathan D. D.'
