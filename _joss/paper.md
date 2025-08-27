@@ -42,9 +42,11 @@ reconstruct a particular structure unless otherwise queried. This generality all
 users unfamiliar with the CIF specification to process crystallographic information
 files, as dedicated lookup methods automatically locate the correct queries that return
 unit cell and basis site information. We also support Unix-style wildcard queries, a
-feature that is not included in the Python APIs of any similar package. This feature
+feature that is not included in the Python APIs of any other CIF library. This feature
 allows for rapid access to "slices" of the CIF keyword specification, simplifying common
 complex lookups to much simpler queries.
+
+<!-- TODO: show example code block as figure? -->
 
 `parsnip` is designed and optimized for use as a dependency in larger materials science
 codes, requiring only Numpy as a dependency. For this reason, it has already been
@@ -57,7 +59,7 @@ cross-language access without modifying the build system of downstream projects.
 result, users get the benefits of copyless data transfer to compiled languages without
 any additional complexity.
 
-<!-- TODO: mention symbolic parsing -->
+<!-- TODO: mention symbolic parsing : 'a primary challenge...'-->
 
 <!-- # Examples -->
 
