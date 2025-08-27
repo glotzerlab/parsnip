@@ -599,6 +599,7 @@ class CifFile:
             raise ValueError(f"Parse mode '{parse_mode}' not in {valid_modes}.")
 
         symops = self.symops
+        symops = symops if symops is not None else "x, y, z"
 
         if additional_columns is not None:
             # Find the table of Wyckoff positions and compare to keys in additional_data
@@ -619,7 +620,7 @@ class CifFile:
         cell_matrix = _matrix_from_lengths_and_angles(*cell)
 
         symops_str = np.array2string(
-            symops, separator=",", threshold=np.inf, floatmode="unique"
+            np.array(symops), separator=",", threshold=np.inf, floatmode="unique"
         )
 
         frac_strs = self.get_from_loops(self.__class__._WYCKOFF_KEYS)
