@@ -13,11 +13,11 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14-rc.2"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14.0-rc.2"]
         runs-on: ["ubuntu-latest"]
         include:
           - runs-on: "macos-latest"
-            python-version: "3.14-rc.2"
+            python-version: "3.14.0-rc.2"
           - runs-on: "macos-latest"
             python-version: "3.13"
           - runs-on: "macos-latest"
@@ -47,7 +47,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9", "3.13", "3.14-rc.2"]
+        python-version: ["3.9", "3.13", "3.14.0-rc.2"]
         runs-on: ["windows-latest"]
     uses: ./.github/workflows/run_tests.yaml
     with:
