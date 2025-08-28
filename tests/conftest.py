@@ -87,6 +87,16 @@ class CifData:
             file=CifFile(data_file_path + file),
         )
 
+    @classmethod
+    def from_file_and_symops(cls, file: str, symop_keys: str) -> CifData:
+        """Create a CifData object from a filename and the default keys."""
+        return cls(
+            filename=data_file_path + file,
+            symop_keys=(symop_keys,),
+            atom_site_keys=atom_site_keys,
+            file=CifFile(data_file_path + file),
+        )
+
 
 # Assorted keys to select from
 assorted_keys = np.loadtxt(data_file_path + "cif_file_keys.txt", dtype=str)
@@ -192,11 +202,8 @@ pdb_4INS = CifData(
     file=CifFile(data_file_path + "PDB_4INS_head.cif"),
 )
 
-structure_issue_42 = CifData(
-    filename=data_file_path + "no42.cif",
-    symop_keys=("_symmetry_equiv_pos_as_xyz",),
-    atom_site_keys=atom_site_keys[:-1],
-    file=CifFile(data_file_path + "no42.cif"),
+structure_issue_42 = CifData.from_file_and_symops(
+    "no42.cif", "_symmetry_equiv_pos_as_xyz"
 )
 
 with pytest.warns():
@@ -232,6 +239,7 @@ with pytest.warns():
         (CifData.from_file("/".join(fn.split("/")[-2:])))
         for fn in glob(data_file_path + "mbuild_cifs/*.cif")
     ]
+
 
 cif_data_array = [
     aflow_mC24,
