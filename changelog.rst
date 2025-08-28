@@ -27,6 +27,7 @@ Fixed
 ~~~~~
 - Data entries containing non-comment pound signs are no longer truncated
 - Comments on ``loop_`` keyword lines no longer cause parse errors
+- Unit cells for files without symmetry operations are now parsed correctly
 
 
 v0.3.1 - 2025-07-16
