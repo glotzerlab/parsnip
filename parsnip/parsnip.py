@@ -80,7 +80,7 @@ import numpy as np
 from more_itertools import flatten, peekable
 from numpy.lib.recfunctions import structured_to_unstructured
 
-from parsnip._errors import ParseWarning, _is_potentially_valid_path
+from parsnip._errors import ParseError, ParseWarning, _is_potentially_valid_path
 from parsnip.patterns import (
     _ANY,
     _CIF_KEY,
@@ -627,7 +627,7 @@ class CifFile:
             np.array(symops), separator=",", threshold=np.inf, floatmode="unique"
         )
 
-        frac_strs = self.get_from_loops(self.__class__._WYCKOFF_KEYS)
+        frac_strs = self._read_wyckoff_positions()
 
         all_frac_positions = [
             _safe_eval(symops_str, *xyz, parse_mode=parse_mode) for xyz in frac_strs
@@ -779,6 +779,21 @@ class CifFile:
         # Only one key is valid in each standard, so we only ever get one match.
         return self.get_from_loops(self.__class__._SYMOP_KEYS)
 
+    def _read_wyckoff_positions(self):
+        """Extract symmetry-irreducible, fractional `x,y,z` coordinates as raw strings.
+
+        This is an internal method called in `~.wyckoff_positions` and
+        `~.build_unit_cell`.
+        """
+        wyckoff_position_data = [
+            self.get_from_loops(key) for key in self.__class__._WYCKOFF_KEYS
+        ]
+        if self._strict:
+            msg = "No wyckoff position data was found!"
+            if all(x is None for x in wyckoff_position_data):
+                raise ParseError(msg)
+        return np.hstack([x for x in wyckoff_position_data if x is not None] or [[]])
+
     @property
     def wyckoff_positions(self):
         r"""Extract symmetry-irreducible, fractional `x,y,z` coordinates.
@@ -790,10 +805,7 @@ class CifFile:
 
         .. _`fractional coordinates`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html
         """
-        # TODO: add additional checking in get_from_loops to verify correctness
-        return cast_array_to_float(
-            arr=self.get_from_loops(self.__class__._WYCKOFF_KEYS), dtype=float
-        )
+        return cast_array_to_float(self._read_wyckoff_positions(), dtype=float)
 
     @property
     def cast_values(self):
