@@ -77,6 +77,16 @@ class CifData:
     """Test cases that DO NOT read properly."""
     manual_keys: tuple[str, ...] = ()
 
+    @classmethod
+    def from_file(cls, file: str) -> CifData:
+        """Create a CifData object from a filename and the default keys."""
+        return cls(
+            filename=data_file_path + file,
+            symop_keys=("_space_group_symop_operation_xyz",),
+            atom_site_keys=atom_site_keys,
+            file=CifFile(data_file_path + file),
+        )
+
 
 # Assorted keys to select from
 assorted_keys = np.loadtxt(data_file_path + "cif_file_keys.txt", dtype=str)
@@ -130,12 +140,7 @@ atom_site_keys = (
     "_atom_site_occupancy",
 )
 
-aflow_mC24 = CifData(
-    filename=data_file_path + "AFLOW_mC24.cif",
-    symop_keys=("_space_group_symop_operation_xyz",),
-    atom_site_keys=atom_site_keys,
-    file=CifFile(data_file_path + "AFLOW_mC24.cif"),
-)
+aflow_mC24 = CifData.from_file("AFLOW_mC24.cif")
 
 amcsd_seifertite = CifData(
     filename=data_file_path + "AMCSD_meteorite.cif",
@@ -155,25 +160,15 @@ bisd_Ccmm = CifData(
     file=CifFile(data_file_path + "B-IncStrDb_Ccmm.cif"),
 )
 
-ccdc_Pm3m = CifData(
-    filename=data_file_path + "CCDC_1446529_Pm-3m.cif",
-    symop_keys=("_space_group_symop_operation_xyz",),
-    atom_site_keys=(*sorted(atom_site_keys),),
-    file=CifFile(data_file_path + "CCDC_1446529_Pm-3m.cif"),
-)
+ccdc_Pm3m = CifData.from_file("CCDC_1446529_Pm-3m.cif")
 
 cod_aP16 = CifData(
     filename=data_file_path + "COD_1540955_aP16.cif",
     symop_keys=("_symmetry_equiv_pos_as_xyz",),
-    atom_site_keys=atom_site_keys,
+    atom_site_keys=(*sorted(atom_site_keys),),
     file=CifFile(data_file_path + "COD_1540955_aP16.cif"),
 )
-cod_hP3 = CifData(
-    filename=data_file_path + "COD_7228524.cif",
-    symop_keys=("_space_group_symop_operation_xyz",),
-    atom_site_keys=atom_site_keys,
-    file=CifFile(data_file_path + "COD_7228524.cif"),
-)
+cod_hP3 = CifData.from_file("COD_7228524.cif")
 
 izasc_gismondine = CifData(
     filename=data_file_path + "zeolite_clo.cif",
@@ -182,7 +177,6 @@ izasc_gismondine = CifData(
     file=CifFile(data_file_path + "zeolite_clo.cif"),
 )
 
-# with pytest.warns(ParseWarning, match="cannot be resolved into a table"):
 pdb_4INS = CifData(
     filename=data_file_path + "PDB_4INS_head.cif",
     symop_keys=("_pdbx_struct_oper_list.symmetry_operation",),
@@ -233,6 +227,11 @@ with pytest.warns():
             "not_a_valid_key",
         ),
     )
+with pytest.warns():
+    mbuild_test_files = [
+        (CifData.from_file("/".join(fn.split("/")[-2:])))
+        for fn in glob(data_file_path + "mbuild_cifs/*.cif")
+    ]
 
 cif_data_array = [
     aflow_mC24,
@@ -244,6 +243,7 @@ cif_data_array = [
     izasc_gismondine,
     pdb_4INS,
     structure_issue_42,
+    *mbuild_test_files,
 ]
 cif_files_mark = pytest.mark.parametrize(
     argnames="cif_data",
