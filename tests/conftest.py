@@ -12,6 +12,7 @@ from CifFile import CifSyntaxError, StarError
 from gemmi import cif
 
 from parsnip import CifFile
+from parsnip._errors import ParseWarning
 
 ADDITIONAL_TEST_FILES_PATH = ""
 
@@ -145,44 +146,16 @@ atom_site_keys = (
     "_atom_site_fract_y",
     "_atom_site_fract_z",
     "_atom_site_occupancy",
+    "_atom_site_U_iso_or_equiv",
 )
 
 aflow_mC24 = CifData.from_file("AFLOW_mC24.cif")
-
-amcsd_seifertite = CifData(
-    filename=data_file_path + "AMCSD_meteorite.cif",
-    symop_keys=("_space_group_symop_operation_xyz",),
-    atom_site_keys=(
-        atom_site_keys[0],
-        *atom_site_keys[2:5],
-        "_atom_site_U_iso_or_equiv",
-    ),
-    file=CifFile(data_file_path + "AMCSD_meteorite.cif"),
-)
-
-bisd_Ccmm = CifData(
-    filename=data_file_path + "B-IncStrDb_Ccmm.cif",
-    symop_keys=("_space_group_symop_operation_xyz",),
-    atom_site_keys=(atom_site_keys[0], atom_site_keys[-1], *atom_site_keys[2:-1]),
-    file=CifFile(data_file_path + "B-IncStrDb_Ccmm.cif"),
-)
-
+amcsd_seifertite = CifData.from_file("AMCSD_meteorite.cif")
+bisd_Ccmm = CifData.from_file("B-IncStrDb_Ccmm.cif")
 ccdc_Pm3m = CifData.from_file("CCDC_1446529_Pm-3m.cif")
-
-cod_aP16 = CifData(
-    filename=data_file_path + "COD_1540955_aP16.cif",
-    symop_keys=("_symmetry_equiv_pos_as_xyz",),
-    atom_site_keys=(*sorted(atom_site_keys),),
-    file=CifFile(data_file_path + "COD_1540955_aP16.cif"),
-)
+cod_aP16 = CifData.from_file("COD_1540955_aP16.cif")
 cod_hP3 = CifData.from_file("COD_7228524.cif")
-
-izasc_gismondine = CifData(
-    filename=data_file_path + "zeolite_clo.cif",
-    symop_keys=("_symmetry_equiv_pos_as_xyz",),
-    atom_site_keys=atom_site_keys[:-1],
-    file=CifFile(data_file_path + "zeolite_clo.cif"),
-)
+izasc_gismondine = CifData.from_file("zeolite_clo.cif")
 
 pdb_4INS = CifData(
     filename=data_file_path + "PDB_4INS_head.cif",
@@ -229,7 +202,7 @@ with pytest.warns():
             "not_a_valid_key",
         ),
     )
-with pytest.warns():
+with pytest.warns(ParseWarning):
     mbuild_test_files = [
         (CifData.from_file("/".join(fn.split("/")[-2:])))
         for fn in glob(data_file_path + "mbuild_cifs/*.cif")
