@@ -157,7 +157,7 @@ def cast_array_to_float(arr: ArrayLike | None, dtype: type = np.float32):
     -------
         np.array[dtype]: Array with new dtype and no significant digit information.
     """
-    if arr is None:
+    if arr is None or np.array(arr).shape == (0,):
         return np.array("nan", dtype=dtype)
     arr = [(el if el is not None else "nan") for el in arr]
     # if any(el is None for el in arr):
