@@ -19,6 +19,7 @@ from gemmi import cif
 from more_itertools import flatten
 
 from parsnip import CifFile
+from parsnip._errors import ParseWarning
 
 
 def _gemmi_read_table(filename, keys):
@@ -59,7 +60,9 @@ def test_read_symmetry_operations(cif_data):
         _gemmi_read_table(filename=cif_data.filename, keys=[k])
         for k in cif_data.symop_keys
     ]
-    gemmi_data = gemmi_data[0] if len(gemmi_data[0]) != 0 else gemmi_data[1]
+    # Extract the correct data chunk from gemmi
+    if not (len(gemmi_data[0]) == 0 and len(gemmi_data) == 1):
+        gemmi_data = gemmi_data[0] if len(gemmi_data[0]) != 0 else gemmi_data[1]
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
 
 
@@ -185,7 +188,9 @@ def test_build_accuracy(filename, n_decimal_places):
             return (False, -1)
         return (p.strip("'")[:2] == "hR", int(re.sub(r"[^\w]", "", p)[2:]))
 
+    warnings.filterwarnings("ignore", message="Duplicate key", category=ParseWarning)
     cif = CifFile(filename)
+
     if cif["*Pearson"] is None:
         pytest.skip(reason="Test not valid if Pearson symbol is unknown")
     (is_rhombohedral, n), uc = (

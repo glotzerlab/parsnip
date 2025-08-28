@@ -87,7 +87,7 @@ def test_read_atom_sites(cif_data):
 
 @cif_files_mark
 @pytest.mark.parametrize(
-    "subset", [[0], [1, 2, 3], [4, 0]], ids=["single_el", "slice", "end_and_beginning"]
+    "subset", [[0], [1, 2, 3], [-1, 0]], ids=["single_el", "slice", "end_and_beginning"]
 )
 def test_partial_table_read(cif_data, subset):
     subset_of_keys = tuple(np.array(cif_data.atom_site_keys)[subset])
