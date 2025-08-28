@@ -80,22 +80,19 @@ class CifData:
     @classmethod
     def from_file(cls, file: str) -> CifData:
         """Create a CifData object from a filename and the default keys."""
-        return cls(
+        cif = cls(
             filename=data_file_path + file,
-            symop_keys=("_space_group_symop_operation_xyz",),
-            atom_site_keys=atom_site_keys,
             file=CifFile(data_file_path + file),
         )
-
-    @classmethod
-    def from_file_and_symops(cls, file: str, symop_keys: str) -> CifData:
-        """Create a CifData object from a filename and the default keys."""
-        return cls(
-            filename=data_file_path + file,
-            symop_keys=(symop_keys,),
-            atom_site_keys=atom_site_keys,
-            file=CifFile(data_file_path + file),
+        cif.symop_keys = (
+            ("_space_group_symop_operation_xyz",)
+            if cif.file["_space_group_symop_operation_xyz"] is not None
+            else ("_symmetry_equiv_pos_as_xyz",)
         )
+        cif.atom_site_keys = (
+            *(key for key in atom_site_keys if cif.file[key] is not None),
+        )
+        return cif
 
 
 # Assorted keys to select from
@@ -202,9 +199,7 @@ pdb_4INS = CifData(
     file=CifFile(data_file_path + "PDB_4INS_head.cif"),
 )
 
-structure_issue_42 = CifData.from_file_and_symops(
-    "no42.cif", "_symmetry_equiv_pos_as_xyz"
-)
+structure_issue_42 = CifData.from_file("no42.cif")
 
 with pytest.warns():
     bad_cif = CifData(
