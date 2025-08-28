@@ -147,7 +147,10 @@ class CifFile:
     """
 
     def __init__(
-        self, file: str | Path | TextIO | Iterable[str], cast_values: bool = False
+        self,
+        file: str | Path | TextIO | Iterable[str],
+        cast_values: bool = False,
+        strict: bool = False,
     ):
         """Create a CifFile object from a filename, file object, or iterator over `str`.
 
@@ -158,6 +161,7 @@ class CifFile:
         self._fn = file
         self._pairs = {}
         self._loops = []
+        self._strict = strict
 
         self._cpat = {k: re.compile(pattern) for (k, pattern) in self.PATTERNS.items()}
         self._cast_values = cast_values
@@ -872,13 +876,24 @@ class CifFile:
                 )
 
             if pair is not None:
+                key, val = pair.groups()
+                if self._pairs.get(key, None) is not None:
+                    msg = (
+                        f"Duplicate key `{key}` found:"
+                        f"\n (old -> new) : (`{self._pairs[key]}` -> `{val}`)"
+                    )
+                    if self._strict:
+                        raise ValueError(msg)
+                    warnings.warn(
+                        msg.replace("\n", ""),
+                        category=ParseWarning,
+                        stacklevel=2,
+                    )
                 self._pairs.update(
                     {
-                        pair.groups()[0]: _try_cast_to_numeric(
-                            _strip_quotes(pair.groups()[1])
-                        )
+                        key: _try_cast_to_numeric(_strip_quotes(val))
                         if self.cast_values
-                        else pair.groups()[1].rstrip()  # Skip trailing newlines
+                        else val.rstrip()  # Skip trailing newlines
                     }
                 )
             if data_iter.peek(None) is None:
@@ -926,14 +941,17 @@ class CifFile:
                     continue  # Skip empty tables
 
                 if n_elements % n_cols != 0:
-                    # print(loop_keys)
-                    # print(loop_data)
-                    warnings.warn(
+                    msg = (
                         f"Parsed data for table {len(self.loops) + 1} cannot be"
                         f" resolved into a table of the expected size and will be "
-                        f"ignored. Got n={n_elements} items, which cannot be "
-                        f"distributed evenly into {n_cols} columns with labels "
-                        f"{loop_keys}",
+                        f"ignored. \nGot n={n_elements} items, which cannot be "
+                        f"distributed evenly into {n_cols} columns with labels: "
+                        f"\n{loop_keys}"
+                    )
+                    if self._strict:
+                        raise ValueError(msg)
+                    warnings.warn(
+                        msg.replace("\n", ""),
                         category=ParseWarning,
                         stacklevel=2,
                     )
@@ -948,8 +966,11 @@ class CifFile:
                 dt = _dtype_from_int(max(max(len(s) for s in l) for l in loop_data))
 
                 if len(set(loop_keys)) < len(loop_keys):
+                    msg = "Duplicate loop keys detected - table will not be processed."
+                    if self._strict:
+                        raise ValueError(msg)
                     warnings.warn(
-                        "Duplicate keys detected - table will not be processed.",
+                        msg,
                         category=ParseWarning,
                         stacklevel=2,
                     )
