@@ -174,6 +174,9 @@ def _accumulate_nonsimple_data(data_iter, line=""):
             if buffer[:1] == ";" or any(s in buffer for s in ALLOWED_DELIMITERS):
                 delimiter_count += 1
             line += next(data_iter)
+
+        if delimiter_count == 2:
+            break  # Exit the context
     return line
 
 
