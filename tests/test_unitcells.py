@@ -47,10 +47,7 @@ def test_read_wyckoff_positions(cif_data):
 def test_read_cell_params(cif_data):
     parsnip_data = cif_data.file.read_cell_params()
     cell_keys = cif_data.file._cell_keys
-    print(cell_keys)
     gemmi_data = _gemmi_read_keys(cif_data.filename, cell_keys)
-    print(parsnip_data)
-    print(_gemmi_read_keys(cif_data.filename, cell_keys, as_number=False))
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
 
     normalized = cif_data.file.read_cell_params(normalize=True)

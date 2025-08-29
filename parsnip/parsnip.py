@@ -272,14 +272,14 @@ class CifFile:
         return output[0] if len(output) == 1 else output
 
     def _process_wildcard(
-        self, wildcard_key: str, raw_key: str | Iterable[str], val: str | int | float
+        self, wildcard_key: str, raw_keys: str | Iterable[str], val: str | int | float
     ) -> str | int | float:
         """Save the raws key associated with a wildcard lookup and save the value."""
         if _contains_wildcard(wildcard_key):
-            if isinstance(raw_key, str):
-                raw_key = [raw_key]
-            for key in raw_key:
-                if raw_key not in self._wildcard_mapping_data[wildcard_key]:
+            if isinstance(raw_keys, str):
+                raw_keys = [raw_keys]
+            for key in raw_keys:
+                if raw_keys not in self._wildcard_mapping_data[wildcard_key]:
                     self._wildcard_mapping_data[wildcard_key].append(key)
 
         return val
@@ -451,6 +451,7 @@ class CifFile:
             for table, labels in zip(self.loops, self.loop_labels):
                 matching_keys = fnfilter(labels, index)
                 match = table[matching_keys]
+
                 if match.size > 0:
                     result.append(
                         self._process_wildcard(

@@ -23,7 +23,7 @@ data_file_path = os.path.dirname(__file__) + "/sample_data/"
 
 def pycifrw_or_skip(cif_data):
     try:
-        return pycifRW(cif_data.filename).first_block()
+        return pycifRW(cif_data.filename, strict=0, permissive=True).first_block()
     except StarError:
         pytest.skip("pycifRW raised a StarError!")
     except CifSyntaxError:
@@ -60,15 +60,31 @@ def _value_or_nan(val):
 def _gemmi_read_keys(filename, keys, as_number=True):
     try:
         file_block = cif.read_file(filename, check_level=0).sole_block()
-    except ValueError:
-        pytest.skip("Gemmi failed to read file!")
+    except ValueError as e:
+        if "parse error" in str(e) or "unterminated 'string'" in str(e):
+            pytest.skip(f"Gemmi failed to read file: {e}")
+        raise ValueError(f"Unexpected error found: {e}") from e
     if as_number:
         return np.array(
             [cif.as_number(_value_or_nan(file_block.find_value(key))) for key in keys]
         )
-        # except TypeError:
-        #     pytest.skip("Encountered non-numerics while parsing file.")
     return np.array([remove_invalid(file_block.find_value(key)) for key in keys])
+
+
+def _gemmi_read_table(filename, keys):
+    try:
+        return np.array(
+            [
+                [remove_invalid(x) for x in row]
+                for row in cif.read_file(filename, check_level=0)
+                .sole_block()
+                .find(keys)
+            ]
+        )
+    except ValueError as e:
+        if "unterminated 'string'" in str(e):
+            pytest.skip(f"Gemmi failed to read file: {e}")
+        raise ValueError(f"Unexpected error found: {e}") from e
 
 
 def _arrstrip(arr: np.ndarray, pattern: str):

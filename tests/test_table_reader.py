@@ -5,12 +5,12 @@ import pytest
 from ase.io import cif as asecif
 from conftest import (
     _arrstrip,
+    _gemmi_read_table,
     all_files_mark,
     bad_cif,
     cif_files_mark,
     pycifrw_or_skip,
 )
-from gemmi import cif
 from more_itertools import flatten
 
 STR_WIDTH_MAX = 128
@@ -19,13 +19,6 @@ Used to simplify processing of structured arrays.
 """
 
 # TODO: update to verify the number and shape of tables is correct
-
-
-def _gemmi_read_table(filename, keys):
-    try:
-        return np.array(cif.read_file(filename).sole_block().find(keys))
-    except (RuntimeError, ValueError):
-        pytest.skip("Gemmi failed to read file!")
 
 
 @all_files_mark
@@ -83,6 +76,42 @@ def test_read_atom_sites(cif_data):
             .astype(float),
             ase_data,
         )
+
+
+@cif_files_mark
+@pytest.mark.parametrize(
+    "keys",
+    [
+        "*",
+        "**",
+        "*?*",
+        "?" * 18,  # Length of '_atom_site_fract_?'
+        "_space*",
+        "*space*",
+        "_atom_site?",
+        "_atom?site*",
+        "_atom_site*_?",
+    ],
+)
+def test_wildcard_keys_loops(cif_data, keys):
+    print(keys)
+
+    parsnip_data = cif_data.file[keys]
+    raw_keys = cif_data.file._wildcard_mapping.get(keys, [keys])
+    print(len(raw_keys))
+
+    if not isinstance(parsnip_data, list):
+        gemmi_data = _gemmi_read_table(cif_data.filename, raw_keys)
+        np.testing.assert_array_equal(parsnip_data, gemmi_data)
+        return
+
+    start_idx = 0
+    for sublist in parsnip_data:
+        sublist_length = sublist.shape[1] if isinstance(sublist, np.ndarray) else 1
+        keys_slice = raw_keys[start_idx : start_idx + sublist_length]
+        start_idx += len(keys_slice)
+        gemmi_data = _gemmi_read_table(cif_data.filename, keys_slice)
+        np.testing.assert_array_equal(sublist, gemmi_data)
 
 
 @cif_files_mark
