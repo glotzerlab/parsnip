@@ -282,7 +282,7 @@ class CifFile:
         """Save the raws key associated with a wildcard lookup and save the value."""
         if _contains_wildcard(wildcard_key):
             for key in [raw_keys] if isinstance(raw_keys, str) else raw_keys:
-                if raw_keys not in self._wildcard_mapping_data[wildcard_key]:
+                if key not in self._wildcard_mapping_data[wildcard_key]:
                     self._wildcard_mapping_data[wildcard_key].append(key)
 
         return val
