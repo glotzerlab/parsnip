@@ -69,6 +69,7 @@ from __future__ import annotations
 
 import re
 import warnings
+from collections import defaultdict
 from collections.abc import Iterable
 from fnmatch import filter as fnfilter
 from fnmatch import fnmatch
@@ -161,6 +162,8 @@ class CifFile:
         self._pairs = {}
         self._loops = []
         self._strict = strict
+        self._symop_key = None
+        self._wildcard_mapping = defaultdict(list)
 
         self._cpat = {k: re.compile(pattern) for (k, pattern) in self.PATTERNS.items()}
         self._cast_values = cast_values

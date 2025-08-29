@@ -29,6 +29,16 @@ def _gemmi_read_table(filename, keys):
         pytest.skip("Gemmi failed to read file!")
 
 
+@all_files_mark
+def test_read_symops(cif_data):
+    parsnip_symops = cif_data.file.symops
+    gemmi_symops = _gemmi_read_table(
+        cif_data.filename,
+        [cif_data.file._symop_key or ""],  # Could be None
+    )
+    np.testing.assert_array_equal(parsnip_symops, gemmi_symops)
+
+
 @all_files_mark  # TODO: test with conversions to numeric as well
 def test_read_wyckoff_positions(cif_data):
     keys = ("_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z")
