@@ -32,7 +32,6 @@ def test_reads_all_keys(cif_data):
         assert key in found_labels, f"Missing label: {key}"
 
     if "A2BC_tP16_76" in cif_data.filename:  # TODO: this can be supported
-        print(cif_data.filename)
         pytest.xfail("Double single quote at EOL is not supported.")
 
     for loop in pycif.loops.values():
@@ -94,11 +93,8 @@ def test_read_atom_sites(cif_data):
     ],
 )
 def test_wildcard_keys_loops(cif_data, keys):
-    print(keys)
-
     parsnip_data = cif_data.file[keys]
     raw_keys = cif_data.file._wildcard_mapping.get(keys, [keys])
-    print(len(raw_keys))
 
     if not isinstance(parsnip_data, list):
         gemmi_data = _gemmi_read_table(cif_data.filename, raw_keys)
