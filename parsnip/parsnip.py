@@ -281,9 +281,7 @@ class CifFile:
     ) -> str | int | float:
         """Save the raws key associated with a wildcard lookup and save the value."""
         if _contains_wildcard(wildcard_key):
-            if isinstance(raw_keys, str):
-                raw_keys = [raw_keys]
-            for key in raw_keys:
+            for key in [raw_keys] if isinstance(raw_keys, str) else raw_keys:
                 if raw_keys not in self._wildcard_mapping_data[wildcard_key]:
                     self._wildcard_mapping_data[wildcard_key].append(key)
 
@@ -451,8 +449,9 @@ class CifFile:
                 input keys. If the resulting list would have length 1, the data is
                 returned directly instead. See the note above for data ordering.
         """
+        result = []
         if isinstance(index, str):
-            result, index = [], self._cpat["bracket"].sub(r"[\1]", index)
+            index = self._cpat["bracket"].sub(r"[\1]", index)
             for table, labels in zip(self.loops, self.loop_labels):
                 matching_keys = fnfilter(labels, index)
                 match = table[matching_keys]
@@ -472,7 +471,7 @@ class CifFile:
         if isinstance(index, (set, frozenset)):
             index = list(index)
 
-        result, index = [], np.atleast_1d(index)
+        index = np.atleast_1d(index)
         for table in self.loops:
             matches = index[np.any(index[:, None] == table.dtype.names, axis=1)]
             if len(matches) == 0:
@@ -522,10 +521,10 @@ class CifFile:
         def angle_is_invalid(x: float):
             return x <= 0.0 or x >= 180.0
 
-        # if any(value is None for value in cell_data):
-        #     missing = [k for k, v in zip(box_keys, cell_data) if v is None]
-        #     msg = f"Keys {missing} did not return any data!"
-        #     raise ValueError(msg) # TODO: reincorporate this error
+        if any(value is None for value in cell_data):
+            missing = [k for k, v in zip(box_keys, cell_data) if v is None]
+            msg = f"Keys {missing} did not return any data!"
+            raise ValueError(msg)
 
         if any(angle_is_invalid(value) for value in cell_data[3:]):
             invalid = [
@@ -642,9 +641,12 @@ class CifFile:
         if additional_columns is not None:
             # Find the table of Wyckoff positions and compare to keys in additional_data
             invalid_keys = next(
-                set(map(str, np.atleast_1d(additional_columns))) - set(labels)
-                for labels in self.loop_labels
-                if set(labels) & set(self._wyckoff_site_keys)
+                (
+                    set(map(str, np.atleast_1d(additional_columns))) - set(labels)
+                    for labels in self.loop_labels
+                    if set(labels) & set(self._wyckoff_site_keys)
+                ),
+                None,
             )
             if invalid_keys:
                 msg = (
@@ -938,11 +940,7 @@ class CifFile:
             )
 
             # If we have a COD-style _key\n'long_value'
-            if (
-                pair is None
-                and data_iter.peek("").lstrip()[:1] in {"'", '"'}
-                and data_iter.peek(None)
-            ):
+            if pair is None and data_iter.peek("").lstrip()[:1] in {"'", '"'}:
                 pair = self._cpat["key_value_general"].match(
                     self._strip_comments(line + next(data_iter))
                 )
@@ -1023,12 +1021,12 @@ class CifFile:
 
                 if len(loop_data) == 0:
                     msg = "Loop data is empy, but n_cols > 0: check CIF file syntax."
-                    raise ValueError(msg)
-                dt = _dtype_from_int(max(max(len(s) for s in l) for l in loop_data))
+                    _warn_or_err(msg, self._strict)
+                    continue
+                dt = _dtype_from_int(max(len(s) for l in loop_data for s in l))
 
                 if len(set(loop_keys)) < len(loop_keys):
                     msg = "Duplicate loop keys detected - table will not be processed."
-
                     _warn_or_err(msg, self._strict)
                     continue
 
