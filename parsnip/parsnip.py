@@ -269,7 +269,7 @@ class CifFile:
         return output[0] if len(output) == 1 else output
 
     def _process_wildcard(
-        self, raw_key: str | Iterable[str], wildcard_key: str, val: str | int | float
+        self, wildcard_key: str, raw_key: str | Iterable[str], val: str | int | float
     ) -> str | int | float:
         """Save the raws key associated with a wildcard lookup and save the value."""
         if "?" in wildcard_key or "*" in wildcard_key:
@@ -331,7 +331,7 @@ class CifFile:
             index = self._cpat["bracket"].sub(r"[\1]", index)
             return _flatten_or_none(
                 [
-                    self._process_wildcard(k, index, v)
+                    self._process_wildcard(index, k, v)
                     for (k, v) in self.pairs.items()
                     if fnmatch(k.lower(), index.lower())
                 ]
@@ -343,7 +343,7 @@ class CifFile:
             [
                 _flatten_or_none(
                     [
-                        self._process_wildcard(k, pat, v)
+                        self._process_wildcard(pat, k, v)
                         for (k, v) in self.pairs.items()
                         if fnmatch(k.lower(), pat.lower())
                     ]
@@ -440,13 +440,10 @@ class CifFile:
                 matching_keys = fnfilter(labels, index)
                 match = table[matching_keys]
                 if match.size > 0:
-                    # print(match)
-                    # print(index)
-                    # print(fnfilter(labels, index))
                     result.append(
                         self._process_wildcard(
-                            matching_keys,
                             index,
+                            matching_keys,
                             self.structured_to_unstructured(match).squeeze(axis=1),
                         )
                     )
@@ -798,7 +795,6 @@ class CifFile:
             symops = self.get_from_loops(key)
             if symops is not None:
                 self._symop_key = self._wildcard_mapping[key]
-                print(key, self._wildcard_mapping[key])
                 return symops
         return None
 
