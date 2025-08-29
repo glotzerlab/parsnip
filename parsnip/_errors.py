@@ -1,6 +1,7 @@
 # Copyright (c) 2025, The Regents of the University of Michigan
 # This file is from the parsnip project, released under the BSD 3-Clause License.
 
+import warnings
 from pathlib import Path
 
 
@@ -37,3 +38,13 @@ class ParseError(RuntimeError):
 
     def __str__(self):
         return repr(self.message)
+
+
+def _warn_or_err(msg, strict):
+    if strict:
+        raise ValueError(msg)
+    warnings.warn(
+        msg.replace("\n", ""),
+        category=ParseWarning,
+        stacklevel=2,
+    )

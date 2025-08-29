@@ -81,7 +81,12 @@ import numpy as np
 from more_itertools import flatten, peekable
 from numpy.lib.recfunctions import structured_to_unstructured
 
-from parsnip._errors import ParseError, ParseWarning, _is_potentially_valid_path
+from parsnip._errors import (
+    ParseError,
+    ParseWarning,
+    _is_potentially_valid_path,
+    _warn_or_err,
+)
 from parsnip.patterns import (
     _ANY,
     _CIF_KEY,
@@ -836,10 +841,11 @@ class CifFile:
         wyckoff_position_data = [
             self.get_from_loops(key) for key in self.__class__._WYCKOFF_KEYS
         ]
-        if self._strict:
+
+        if all(x is None for x in wyckoff_position_data) and self._strict:
             msg = "No wyckoff position data was found!"
-            if all(x is None for x in wyckoff_position_data):
-                raise ParseError(msg)
+            raise ParseError(msg)
+
         self._raw_wyckoff_keys = [
             self._wildcard_mapping[k]
             for (k, v) in zip(self.__class__._WYCKOFF_KEYS, wyckoff_position_data)
@@ -948,13 +954,7 @@ class CifFile:
                         f"Duplicate key `{key}` found:"
                         f"\n (old -> new) : (`{self._pairs[key]}` -> `{val}`)"
                     )
-                    if self._strict:
-                        raise ValueError(msg)
-                    warnings.warn(
-                        msg.replace("\n", ""),
-                        category=ParseWarning,
-                        stacklevel=2,
-                    )
+                    _warn_or_err(msg, self._strict)
                     continue
                 self._pairs.update(
                     {
@@ -1015,15 +1015,9 @@ class CifFile:
                         f"distributed evenly into {n_cols} columns with labels: "
                         f"\n{loop_keys}"
                     )
-                    if self._strict:
-                        raise ValueError(msg)
-                    warnings.warn(
-                        msg.replace("\n", ""),
-                        category=ParseWarning,
-                        stacklevel=2,
-                    )
-
+                    _warn_or_err(msg, self._strict)
                     continue
+
                 if not all(len(key) == len(loop_keys[0]) for key in loop_keys):
                     loop_data = np.array([*flatten(loop_data)]).reshape(-1, n_cols)
 
@@ -1034,14 +1028,10 @@ class CifFile:
 
                 if len(set(loop_keys)) < len(loop_keys):
                     msg = "Duplicate loop keys detected - table will not be processed."
-                    if self._strict:
-                        raise ValueError(msg)
-                    warnings.warn(
-                        msg,
-                        category=ParseWarning,
-                        stacklevel=2,
-                    )
+
+                    _warn_or_err(msg, self._strict)
                     continue
+
                 try:
                     rectable = np.atleast_2d(loop_data)
                 except ValueError as e:
