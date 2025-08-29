@@ -772,7 +772,12 @@ class CifFile:
         .. _`parsable algebraic form`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Ispace_group_symop_operation_xyz.html
         """
         # Only one key is valid in each standard, so we only ever get one match.
-        return self.get_from_loops(self.__class__._SYMOP_KEYS)
+        for key in self.__class__._SYMOP_KEYS:
+            symops = self.get_from_loops(key)
+            if symops is not None:
+                self._symop_key = key
+                return symops
+        return None
 
     def _read_wyckoff_positions(self):
         """Extract symmetry-irreducible, fractional `x,y,z` coordinates as raw strings.
