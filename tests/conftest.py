@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import re
+import sys
 from dataclasses import dataclass
 from glob import glob
 
@@ -59,7 +60,10 @@ def _value_or_nan(val):
 
 def _gemmi_read_keys(filename, keys, as_number=True):
     try:
-        file_block = cif.read_file(filename, check_level=0).sole_block()
+        if sys.version_info < (3, 10):
+            file_block = cif.read_file(filename).sole_block()
+        else:
+            file_block = cif.read_file(filename, check_level=0).sole_block()
     except ValueError as e:
         if "parse error" in str(e) or "unterminated 'string'" in str(e):
             pytest.skip(f"Gemmi failed to read file: {e}")
