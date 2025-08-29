@@ -125,7 +125,7 @@ class CifData:
 
 
 # Assorted keys to select from
-assorted_keys = np.loadtxt(data_file_path + "cif_file_keys.txt", dtype=str)
+assorted_keys = np.loadtxt(os.path.join(data_file_path, "cif_file_keys.txt"), dtype=str)
 
 
 def combine_marks(*marks, argnames="cif_data"):
@@ -206,7 +206,7 @@ cod_hP3 = CifData.from_file("COD_7228524.cif")
 izasc_gismondine = CifData.from_file("zeolite_clo.cif")
 
 pdb_4INS = CifData(
-    filename=data_file_path + "PDB_4INS_head.cif",
+    filename=os.path.join(data_file_path, "PDB_4INS_head.cif"),
     symop_keys=("_pdbx_struct_oper_list.symmetry_operation",),
     atom_site_keys=(
         "_chem_comp.id",
@@ -217,14 +217,14 @@ pdb_4INS = CifData(
         "_chem_comp.formula",
         "_chem_comp.formula_weight",
     ),
-    file=CifFile(data_file_path + "PDB_4INS_head.cif"),
+    file=CifFile(os.path.join(data_file_path, "PDB_4INS_head.cif")),
 )
 
 structure_issue_42 = CifData.from_file("no42.cif")
 
 with pytest.warns():
     bad_cif = CifData(
-        filename=data_file_path + "INTENTIONALLY_BAD_CIF.cif",
+        filename=os.path.join(data_file_path, "INTENTIONALLY_BAD_CIF.cif"),
         symop_keys=("_space_group_symop_id", "_space_group_symop_operation_xyz"),
         atom_site_keys=(
             "_atom_site",
@@ -234,7 +234,7 @@ with pytest.warns():
             "_atom_site_fract_z",
             "_this_key_does_not_exist",
         ),
-        file=CifFile(data_file_path + "INTENTIONALLY_BAD_CIF.cif"),
+        file=CifFile(os.path.join(data_file_path, "INTENTIONALLY_BAD_CIF.cif")),
         manual_keys=(
             "_cell_length_a",
             "_cell_length_b",
