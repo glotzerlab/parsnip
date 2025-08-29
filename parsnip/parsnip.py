@@ -269,8 +269,7 @@ class CifFile:
                 An item key or list of keys.
         """
         output = []
-        index = [index] if isinstance(index, str) else index
-        for key in index:
+        for key in [index] if isinstance(index, str) else index:
             pairs_match = self.get_from_pairs(key)
             loops_match = self.get_from_loops(key)
             output.append(pairs_match if pairs_match is not None else loops_match)
