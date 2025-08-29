@@ -80,7 +80,7 @@ def _gemmi_read_table(filename, keys):
         return np.array(
             [
                 [remove_invalid(x) for x in row]
-                for row in cif.read_file(filename, check_level=0)
+                for row in cif.read_file(filename)
                 .sole_block()
                 .find(keys)
             ]
@@ -89,6 +89,10 @@ def _gemmi_read_table(filename, keys):
         if "unterminated 'string'" in str(e):
             pytest.skip(f"Gemmi failed to read file: {e}")
         raise ValueError(f"Unexpected error found: {e}") from e
+    except RuntimeError as e:
+        if "duplicate tag" in str(e):
+            pytest.skip(f"Gemmi failed to read file: {e}")
+        raise RuntimeError(f"Unexpected error found: {e}") from e
 
 
 def _arrstrip(arr: np.ndarray, pattern: str):
