@@ -162,8 +162,9 @@ class CifFile:
         self._pairs = {}
         self._loops = []
         self._strict = strict
-        self._symop_key = [""]
-        self._wildcard_mapping = defaultdict(list)
+        self._symops_key = [""]
+        self._raw_wyckoff_keys = []
+        self._wildcard_mapping_data = defaultdict(set)
 
         self._cpat = {k: re.compile(pattern) for (k, pattern) in self.PATTERNS.items()}
         self._cast_values = cast_values
@@ -276,8 +277,18 @@ class CifFile:
             # if type(raw_key) is str:
             #     self._wildcard_mapping[wildcard_key].append(raw_key)
             # else:
-            self._wildcard_mapping[wildcard_key].extend(raw_key)
+            self._wildcard_mapping_data[wildcard_key].update(
+                (raw_key,) if isinstance(raw_key, str) else raw_key
+            )
         return val
+
+    @property
+    def _wildcard_mapping(self):
+        """Return the mappings associated with attempted wildcard queries."""
+        return {
+            wildcard: sorted(matches)
+            for (wildcard, matches) in self._wildcard_mapping_data.items()
+        }
 
     def get_from_pairs(self, index: str | Iterable[str]):
         """Return an item or items from the dictionary of key-value pairs.
@@ -624,7 +635,7 @@ class CifFile:
             invalid_keys = next(
                 set(map(str, np.atleast_1d(additional_columns))) - set(labels)
                 for labels in self.loop_labels
-                if set(labels) & set(self.__class__._WYCKOFF_KEYS)
+                if set(labels) & set(self._wyckoff_site_keys)
             )
             if invalid_keys:
                 msg = (
@@ -794,9 +805,16 @@ class CifFile:
         for key in self.__class__._SYMOP_KEYS:
             symops = self.get_from_loops(key)
             if symops is not None:
-                self._symop_key = self._wildcard_mapping[key]
+                self._symops_key = self._wildcard_mapping[key]
                 return symops
         return None
+
+    @property
+    def _wyckoff_site_keys(self):
+        """Get or compute the non-wildcard keys associated with the coordinate data."""
+        if self._raw_wyckoff_keys == []:
+            self._read_wyckoff_positions()
+        return [*flatten(self._raw_wyckoff_keys)]
 
     def _read_wyckoff_positions(self):
         """Extract symmetry-irreducible, fractional `x,y,z` coordinates as raw strings.
@@ -811,6 +829,11 @@ class CifFile:
             msg = "No wyckoff position data was found!"
             if all(x is None for x in wyckoff_position_data):
                 raise ParseError(msg)
+        self._raw_wyckoff_keys = [
+            self._wildcard_mapping[k]
+            for (k, v) in zip(self.__class__._WYCKOFF_KEYS, wyckoff_position_data)
+            if v is not None
+        ]
         return np.hstack([x for x in wyckoff_position_data if x is not None] or [[]])
 
     @property
@@ -1073,10 +1096,10 @@ class CifFile:
         "_space_group_symop?operation_xyz",
     )
     _WYCKOFF_KEYS = (
-        "_atom_site_fract_x",
-        "_atom_site_fract_y",
-        "_atom_site_fract_z",
-        "_atom_site_Cartn_x",
-        "_atom_site_Cartn_y",
-        "_atom_site_Cartn_z",
+        "_atom_site?fract_x",
+        "_atom_site?fract_y",
+        "_atom_site?fract_z",
+        "_atom_site?Cartn_x",
+        "_atom_site?Cartn_y",
+        "_atom_site?Cartn_z",
     )  # Only one set should be stored at a time

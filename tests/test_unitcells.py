@@ -32,18 +32,18 @@ def _gemmi_read_table(filename, keys):
 @all_files_mark
 def test_read_symops(cif_data):
     parsnip_symops = cif_data.file.symops
-    gemmi_symops = _gemmi_read_table(
-        cif_data.filename,
-        [cif_data.file._symop_key or ""],  # Could be None
-    )
+    gemmi_symops = _gemmi_read_table(cif_data.filename, cif_data.file._symops_key)
     np.testing.assert_array_equal(parsnip_symops, gemmi_symops)
+
+
+# @all_files_mark
+# def test_read_wyckoff_site_keys
 
 
 @all_files_mark  # TODO: test with conversions to numeric as well
 def test_read_wyckoff_positions(cif_data):
-    keys = ("_atom_site_fract_x", "_atom_site_fract_y", "_atom_site_fract_z")
     parsnip_data = cif_data.file.wyckoff_positions
-    gemmi_data = _gemmi_read_table(cif_data.filename, keys)
+    gemmi_data = _gemmi_read_table(cif_data.filename, cif_data.file._wyckoff_site_keys)
     gemmi_data = [[cif.as_number(val) for val in row] for row in gemmi_data]
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
 
@@ -58,22 +58,6 @@ def test_read_cell_params(cif_data):
     normalized = cif_data.file.read_cell_params(normalize=True)
     assert normalized[3:] == parsnip_data[3:]  # Should not change the angles
     assert min(normalized[:3]) == 1
-
-
-@all_files_mark
-def test_read_symmetry_operations(cif_data):
-    if "PDB_4INS_head.cif" in cif_data.filename:
-        return  # Excerpt of PDB file does not contain symmetry information
-
-    parsnip_data = cif_data.file.symops
-    gemmi_data = [
-        _gemmi_read_table(filename=cif_data.filename, keys=[k])
-        for k in cif_data.symop_keys
-    ]
-    # Extract the correct data chunk from gemmi
-    if not (len(gemmi_data[0]) == 0 and len(gemmi_data) == 1):
-        gemmi_data = gemmi_data[0] if len(gemmi_data[0]) != 0 else gemmi_data[1]
-    np.testing.assert_array_equal(parsnip_data, gemmi_data)
 
 
 @cif_files_mark
