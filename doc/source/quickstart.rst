@@ -19,6 +19,7 @@ information regarding the origin of the data.
 .. testsetup::
 
     >>> import os
+    >>> import numpy as np
     >>> if "doc/source" not in os.getcwd(): os.chdir("doc/source")
 
 .. doctest::

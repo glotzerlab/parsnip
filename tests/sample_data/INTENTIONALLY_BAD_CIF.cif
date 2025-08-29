@@ -10,8 +10,9 @@ _cell_angle_gamma 210.00000
 _cod_style_key
 'This should not be a part of the spec imo.' # And let's add a comment as well
 
-__________asdf  123 
+
 __________asdf \t _1.234-56789
+__________asdf  123 
 _-wasd          45.6a/\s # This is a comment
 not_a_valid_key valid_data
 

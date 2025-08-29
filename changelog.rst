@@ -13,6 +13,7 @@ Added
 - Support for CIF2.0 ``"""`` and ``'''`` strings
 - Support for COD-style ``_key \n 'value'`` strings
 - Tests for a wider variety of edge case syntax features
+- ``CifFile._wildcard_mapping`` lookup table for easier testing of wildcard keys.
 
 Changed
 ~~~~~~~
@@ -28,6 +29,7 @@ Fixed
 - Data entries containing non-comment pound signs are no longer truncated
 - Comments on ``loop_`` keyword lines no longer cause parse errors
 - Unit cells for files without symmetry operations are now parsed correctly
+- An infinite looping bug resulting from multiline strings with a particular structure
 
 
 v0.3.1 - 2025-07-16
