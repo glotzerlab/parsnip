@@ -12,13 +12,12 @@ from CifFile import CifSyntaxError, StarError
 from gemmi import cif
 
 from parsnip import CifFile
-from parsnip._errors import ParseWarning
 
 ADDITIONAL_TEST_FILES_PATH = ""
 
 rng = np.random.default_rng(seed=161181914916)
 
-data_file_path = os.path.dirname(__file__) + "/sample_data/"
+data_file_path = os.path.join(os.path.dirname(__file__), "sample_data")
 
 
 def pycifrw_or_skip(cif_data):
@@ -111,8 +110,8 @@ class CifData:
     def from_file(cls, file: str) -> CifData:
         """Create a CifData object from a filename and the default keys."""
         cif = cls(
-            filename=data_file_path + file,
-            file=CifFile(data_file_path + file),
+            filename=os.path.join(data_file_path, file),
+            file=CifFile(os.path.join(data_file_path, file)),
         )
         cif.symop_keys = (
             ("_space_group_symop_operation_xyz",)
@@ -251,11 +250,10 @@ with pytest.warns():
             "not_a_valid_key",
         ),
     )
-with pytest.warns(ParseWarning):
-    mbuild_test_files = [
-        CifData.from_file(os.path.join(*fn.split(os.sep)[-2:]))
-        for fn in glob(os.path.join(data_file_path, "mbuild_cifs", "*.cif"))
-    ]
+mbuild_test_files = [
+    CifData.from_file(os.path.join(*fn.split(os.sep)[-2:]))
+    for fn in glob(os.path.join(data_file_path, "mbuild_cifs", "*.cif"))
+]
 
 
 cif_data_array = [
