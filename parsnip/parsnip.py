@@ -89,7 +89,6 @@ from parsnip.patterns import (
     _WHITESPACE,
     _accumulate_nonsimple_data,
     _box_from_lengths_and_angles,
-    _bracket_pattern,
     _dtype_from_int,
     _flatten_or_none,
     _is_data,
@@ -315,7 +314,7 @@ class CifFile:
                 instead.
         """
         if isinstance(index, str):  # Escape brackets with []
-            index = re.sub(_bracket_pattern, r"[\1]", index)
+            index = self._cpat["bracket"].sub(r"[\1]", index)
             return _flatten_or_none(
                 [
                     v
@@ -325,7 +324,7 @@ class CifFile:
             )
 
         # Escape all brackets in all indices
-        index = [re.sub(_bracket_pattern, r"[\1]", i) for i in index]
+        index = [self._cpat["bracket"].sub(r"[\1]", i) for i in index]
         matches = [
             [
                 _flatten_or_none(
@@ -422,7 +421,7 @@ class CifFile:
                 returned directly instead. See the note above for data ordering.
         """
         if isinstance(index, str):
-            result, index = [], re.sub(_bracket_pattern, r"[\1]", index)
+            result, index = [], self._cpat["bracket"].sub(r"[\1]", index)
             for table, labels in zip(self.loops, self.loop_labels):
                 match = table[fnfilter(labels, index)]
                 if match.size > 0:
@@ -1040,6 +1039,7 @@ class CifFile:
             ")"
         ),
         "comment": "#.*?$",  # A comment at the end of a line or string
+        "bracket": r"(\[|\])",
     }
     """Regex patterns used when parsing files.
 
