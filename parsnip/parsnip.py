@@ -90,6 +90,7 @@ from parsnip.patterns import (
     _WHITESPACE,
     _accumulate_nonsimple_data,
     _box_from_lengths_and_angles,
+    _contains_wildcard,
     _dtype_from_int,
     _flatten_or_none,
     _is_data,
@@ -163,8 +164,9 @@ class CifFile:
         self._loops = []
         self._strict = strict
         self._symops_key = [""]
+        self._raw_cell_keys = []
         self._raw_wyckoff_keys = []
-        self._wildcard_mapping_data = defaultdict(set)
+        self._wildcard_mapping_data = defaultdict(list)
 
         self._cpat = {k: re.compile(pattern) for (k, pattern) in self.PATTERNS.items()}
         self._cast_values = cast_values
@@ -273,22 +275,19 @@ class CifFile:
         self, wildcard_key: str, raw_key: str | Iterable[str], val: str | int | float
     ) -> str | int | float:
         """Save the raws key associated with a wildcard lookup and save the value."""
-        if "?" in wildcard_key or "*" in wildcard_key:
-            # if type(raw_key) is str:
-            #     self._wildcard_mapping[wildcard_key].append(raw_key)
-            # else:
-            self._wildcard_mapping_data[wildcard_key].update(
-                (raw_key,) if isinstance(raw_key, str) else raw_key
-            )
+        if _contains_wildcard(wildcard_key):
+            if isinstance(raw_key, str):
+                raw_key = [raw_key]
+            for key in raw_key:
+                if raw_key not in self._wildcard_mapping_data[wildcard_key]:
+                    self._wildcard_mapping_data[wildcard_key].append(key)
+
         return val
 
     @property
     def _wildcard_mapping(self):
         """Return the mappings associated with attempted wildcard queries."""
-        return {
-            wildcard: sorted(matches)
-            for (wildcard, matches) in self._wildcard_mapping_data.items()
-        }
+        return self._wildcard_mapping_data
 
     def get_from_pairs(self, index: str | Iterable[str]):
         """Return an item or items from the dictionary of key-value pairs.
@@ -298,7 +297,9 @@ class CifFile:
             This method supports a few unix-style wildcards. Use ``*`` to match any
             number of any character, and ``?`` to match any single character. If a
             wildcard matches more than one key, a list is returned for that index.
-            Lookups using this method are case-insensitive, per the CIF spec.
+            The ordering of array data resulting from wildcard queries matches the
+            ordering of the matching keys in the file. Lookups using this method are
+            case-insensitive, per the CIF specification.
 
         Indexing with a string returns the value from the :meth:`~.pairs` dict. Indexing
         with an Iterable of strings returns a list of values, with ``None`` as a
@@ -509,6 +510,8 @@ class CifFile:
             cell_data = np.asarray([float(x) for x in self[box_keys]])
         else:
             cell_data = cast_array_to_float(arr=self[box_keys], dtype=np.float64)
+
+        self._raw_cell_keys = [self._wildcard_mapping[key] for key in box_keys]
 
         def angle_is_invalid(x: float):
             return x <= 0.0 or x >= 180.0
@@ -810,6 +813,13 @@ class CifFile:
         return None
 
     @property
+    def _cell_keys(self):
+        """Get or compute the non-wildcard keys associated with the cell data."""
+        if self._raw_cell_keys == []:
+            self.read_cell_params()
+        return [*flatten(self._raw_cell_keys)]
+
+    @property
     def _wyckoff_site_keys(self):
         """Get or compute the non-wildcard keys associated with the coordinate data."""
         if self._raw_wyckoff_keys == []:
@@ -944,6 +954,7 @@ class CifFile:
                         category=ParseWarning,
                         stacklevel=2,
                     )
+                    continue
                 self._pairs.update(
                     {
                         key: _try_cast_to_numeric(_strip_quotes(val))

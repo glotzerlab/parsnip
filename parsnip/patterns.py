@@ -44,11 +44,13 @@ _WHITESPACE = "[\t ]"
 See section 3.2 of dx.doi.org/10.1107/S1600576715021871 for clarification.
 """
 
-_bracket_pattern = re.compile(r"(\[|\])")
-
 
 def _reformat_sublist(s: str) -> str:
     return f"[{s.lstrip('[').rstrip(']')}]"
+
+
+def _contains_wildcard(s: str) -> bool:
+    return "?" in s or "*" in s
 
 
 def _flatten_or_none(ls: list):

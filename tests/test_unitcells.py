@@ -12,7 +12,6 @@ from conftest import (
     _gemmi_read_keys,
     additional_data_array,
     all_files_mark,
-    box_keys,
     cif_files_mark,
 )
 from gemmi import cif
@@ -36,10 +35,6 @@ def test_read_symops(cif_data):
     np.testing.assert_array_equal(parsnip_symops, gemmi_symops)
 
 
-# @all_files_mark
-# def test_read_wyckoff_site_keys
-
-
 @all_files_mark  # TODO: test with conversions to numeric as well
 def test_read_wyckoff_positions(cif_data):
     parsnip_data = cif_data.file.wyckoff_positions
@@ -50,9 +45,12 @@ def test_read_wyckoff_positions(cif_data):
 
 @all_files_mark
 def test_read_cell_params(cif_data):
-    keys = box_keys
     parsnip_data = cif_data.file.read_cell_params()
-    gemmi_data = _gemmi_read_keys(cif_data.filename, keys)
+    cell_keys = cif_data.file._cell_keys
+    print(cell_keys)
+    gemmi_data = _gemmi_read_keys(cif_data.filename, cell_keys)
+    print(parsnip_data)
+    print(_gemmi_read_keys(cif_data.filename, cell_keys, as_number=False))
     np.testing.assert_array_equal(parsnip_data, gemmi_data)
 
     normalized = cif_data.file.read_cell_params(normalize=True)

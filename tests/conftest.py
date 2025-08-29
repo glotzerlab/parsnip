@@ -34,7 +34,7 @@ def remove_invalid(s):
     """Our parser strips newlines and carriage returns.
     TODO: newlines should be retained
     """
-    if s is None:
+    if s is None or s == "":
         return None
     return s.replace("\r", "")
 
@@ -51,16 +51,23 @@ def _array_assertion_verbose(keys, test_data, real_data):
     np.testing.assert_equal(test_data, real_data, err_msg=msg)
 
 
+def _value_or_nan(val):
+    if val is None:
+        return "_"
+    return val
+
+
 def _gemmi_read_keys(filename, keys, as_number=True):
     try:
-        file_block = cif.read_file(filename).sole_block()
-    except (RuntimeError, ValueError):
+        file_block = cif.read_file(filename, check_level=0).sole_block()
+    except ValueError:
         pytest.skip("Gemmi failed to read file!")
     if as_number:
-        try:
-            return np.array([cif.as_number(file_block.find_value(key)) for key in keys])
-        except TypeError:
-            pytest.skip("Encountered non-numerics while parsing file.")
+        return np.array(
+            [cif.as_number(_value_or_nan(file_block.find_value(key))) for key in keys]
+        )
+        # except TypeError:
+        #     pytest.skip("Encountered non-numerics while parsing file.")
     return np.array([remove_invalid(file_block.find_value(key)) for key in keys])
 
 
@@ -114,8 +121,19 @@ def combine_marks(*marks, argnames="cif_data"):
     )
 
 
-def generate_random_key_sequences(arr, n_samples, seed=42):
+def generate_random_key_sequences(arr, n_samples, seed=42, wildcard_probability=0):
     rng = np.random.default_rng(seed)
+    wildcards = ["?", "*"]
+    if wildcard_probability > 0:
+        result = []
+        for size in rng.integers(1, len(arr), n_samples):
+            sample = rng.choice(arr, size=size, replace=False)
+            for i, s in enumerate(sample):
+                if rng.uniform() < wildcard_probability:
+                    idx = rng.integers(0, len(s))
+                    sample[i] = s[:idx] + rng.choice(wildcards) + s[idx + 1 :]
+            result.append(sample)
+        return result
     return [
         rng.choice(arr, size=size, replace=False)
         for size in rng.integers(1, len(arr), n_samples)
@@ -126,6 +144,15 @@ def random_keys_mark(n_samples=10):
     return pytest.mark.parametrize(
         argnames="keys",
         argvalues=generate_random_key_sequences(assorted_keys, n_samples=n_samples),
+    )
+
+
+def random_wildcard_keys_mark(n_samples=10):
+    return pytest.mark.parametrize(
+        argnames="keys",
+        argvalues=generate_random_key_sequences(
+            assorted_keys, n_samples=n_samples, wildcard_probability=0.9
+        ),
     )
 
 
