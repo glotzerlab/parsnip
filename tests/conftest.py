@@ -80,9 +80,7 @@ def _gemmi_read_table(filename, keys):
         return np.array(
             [
                 [remove_invalid(x) for x in row]
-                for row in cif.read_file(filename)
-                .sole_block()
-                .find(keys)
+                for row in cif.read_file(filename).sole_block().find(keys)
             ]
         )
     except ValueError as e:
@@ -255,8 +253,8 @@ with pytest.warns():
     )
 with pytest.warns(ParseWarning):
     mbuild_test_files = [
-        (CifData.from_file("/".join(fn.split("/")[-2:])))
-        for fn in glob(data_file_path + "mbuild_cifs/*.cif")
+        CifData.from_file(os.path.join(*fn.split(os.sep)[-2:]))
+        for fn in glob(os.path.join(data_file_path, "mbuild_cifs", "*.cif"))
     ]
 
 
