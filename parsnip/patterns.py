@@ -13,12 +13,9 @@ from __future__ import annotations
 
 import re
 import sys
-import warnings
 
 import numpy as np
 from numpy.typing import ArrayLike
-
-from parsnip._errors import ParseWarning
 
 ALLOWED_DELIMITERS = [";\n", "'''", '"""']
 """Delimiters allowed for nonsimple (multi-line) data entries."""
@@ -43,10 +40,6 @@ _WHITESPACE = "[\t ]"
 
 See section 3.2 of dx.doi.org/10.1107/S1600576715021871 for clarification.
 """
-
-
-def _reformat_sublist(s: str) -> str:
-    return f"[{s.lstrip('[').rstrip(']')}]"
 
 
 def _contains_wildcard(s: str) -> bool:
@@ -202,21 +195,6 @@ def _strip_quotes(s: str):
 
 def _dtype_from_int(i: int):
     return f"<U{i}"
-
-
-def _semicolon_to_string(line: str):
-    if "'" in line and '"' in line:
-        warnings.warn(
-            (
-                "String contains single and double quotes - "
-                "line may be parsed incorrectly"
-            ),
-            ParseWarning,
-            stacklevel=2,
-        )
-    # WARNING: because we split our string, we strip "\n" implicitly
-    # This is technically against spec, but is almost never meaningful
-    return line.replace(";", "'" if "'" not in line else '"')
 
 
 def _line_is_continued(line: str | None):
