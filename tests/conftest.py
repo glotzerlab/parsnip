@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import os
 import re
-import sys
 from dataclasses import dataclass
 from glob import glob
 
@@ -60,14 +59,15 @@ def _value_or_nan(val):
 
 def _gemmi_read_keys(filename, keys, as_number=True):
     try:
-        if sys.version_info < (3, 10):
-            file_block = cif.read_file(filename).sole_block()
-        else:
-            file_block = cif.read_file(filename, check_level=0).sole_block()
+        file_block = cif.read_file(filename).sole_block()
     except ValueError as e:
         if "parse error" in str(e) or "unterminated 'string'" in str(e):
             pytest.skip(f"Gemmi failed to read file: {e}")
         raise ValueError(f"Unexpected error found: {e}") from e
+    except RuntimeError as e:
+        if "duplicate tag" in str(e):
+            pytest.skip(f"Gemmi failed to read file: {e}")
+        raise RuntimeError(f"Unexpected error found: {e}") from e
     if as_number:
         return np.array(
             [cif.as_number(_value_or_nan(file_block.find_value(key))) for key in keys]
