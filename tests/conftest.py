@@ -66,7 +66,7 @@ def _gemmi_read_keys(filename, keys, as_number=True):
             pytest.skip(f"Gemmi failed to read file: {e}")
         raise ValueError(f"Unexpected error found: {e}") from e
     except RuntimeError as e:
-        if "duplicate tag" in str(e):
+        if "duplicate tag" in str(e) or "has no value" in str(e):
             pytest.skip(f"Gemmi failed to read file: {e}")
         raise RuntimeError(f"Unexpected error found: {e}") from e
     if as_number:
@@ -89,7 +89,7 @@ def _gemmi_read_table(filename, keys):
             pytest.skip(f"Gemmi failed to read file: {e}")
         raise ValueError(f"Unexpected error found: {e}") from e
     except RuntimeError as e:
-        if "duplicate tag" in str(e):
+        if "duplicate tag" in str(e) or "has no value" in str(e):
             pytest.skip(f"Gemmi failed to read file: {e}")
         raise RuntimeError(f"Unexpected error found: {e}") from e
 
