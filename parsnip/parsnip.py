@@ -426,9 +426,7 @@ class CifFile:
                 match = table[fnfilter(labels, index)]
                 if match.size > 0:
                     result.append(
-                        structured_to_unstructured(
-                            match, copy=True, casting="safe"
-                        ).squeeze(axis=1)
+                        self.structured_to_unstructured(match).squeeze(axis=1)
                     )
             if result == [] or (len(result) == 1 and len(result[0]) == 0):
                 return None
@@ -444,9 +442,7 @@ class CifFile:
                 continue
 
             result.append(
-                structured_to_unstructured(
-                    table[matches], copy=True, casting="safe"
-                ).squeeze(axis=1)
+                self.structured_to_unstructured(table[matches]).squeeze(axis=1)
             )
         return _flatten_or_none(result)
 
@@ -837,9 +833,10 @@ class CifFile:
         """Convert a structured (column-labeled) array to a standard unstructured array.
 
         This is useful when extracting entire loops from :attr:`~.loops` for use in
-        other programs. This classmethod simply calls
+        other programs. This classmethod calls
         :code:`np.lib.recfunctions.structured_to_unstructured` on the input data to
-        ensure the resulting array is properly laid out in memory. See
+        ensure the resulting array is properly laid out in memory, with additional
+        checks to ensure the output properly reflects the underlying data. See
         `this page in the structured array docs`_ for more information.
 
         .. _`this page in the structured array docs`: https://numpy.org/doc/stable/user/basics.rec.html
@@ -854,7 +851,7 @@ class CifFile:
             :class:`numpy.ndarray`:
                 An *unstructured* array containing a copy of the data from the input.
         """
-        return structured_to_unstructured(arr, copy=True)
+        return structured_to_unstructured(arr, copy=True, casting="safe")
 
     def _parse(self, data_iter: peekable):
         """Parse the cif file into python objects."""
