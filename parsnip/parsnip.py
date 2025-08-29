@@ -162,7 +162,7 @@ class CifFile:
         self._pairs = {}
         self._loops = []
         self._strict = strict
-        self._symop_key = None
+        self._symop_key = [""]
         self._wildcard_mapping = defaultdict(list)
 
         self._cpat = {k: re.compile(pattern) for (k, pattern) in self.PATTERNS.items()}
@@ -268,6 +268,17 @@ class CifFile:
             output.append(pairs_match if pairs_match is not None else loops_match)
         return output[0] if len(output) == 1 else output
 
+    def _process_wildcard(
+        self, raw_key: str | Iterable[str], wildcard_key: str, val: str | int | float
+    ) -> str | int | float:
+        """Save the raws key associated with a wildcard lookup and save the value."""
+        if "?" in wildcard_key or "*" in wildcard_key:
+            # if type(raw_key) is str:
+            #     self._wildcard_mapping[wildcard_key].append(raw_key)
+            # else:
+            self._wildcard_mapping[wildcard_key].extend(raw_key)
+        return val
+
     def get_from_pairs(self, index: str | Iterable[str]):
         """Return an item or items from the dictionary of key-value pairs.
 
@@ -320,7 +331,7 @@ class CifFile:
             index = self._cpat["bracket"].sub(r"[\1]", index)
             return _flatten_or_none(
                 [
-                    v
+                    self._process_wildcard(k, index, v)
                     for (k, v) in self.pairs.items()
                     if fnmatch(k.lower(), index.lower())
                 ]
@@ -332,7 +343,7 @@ class CifFile:
             [
                 _flatten_or_none(
                     [
-                        v
+                        self._process_wildcard(k, pat, v)
                         for (k, v) in self.pairs.items()
                         if fnmatch(k.lower(), pat.lower())
                     ]
@@ -426,10 +437,18 @@ class CifFile:
         if isinstance(index, str):
             result, index = [], self._cpat["bracket"].sub(r"[\1]", index)
             for table, labels in zip(self.loops, self.loop_labels):
-                match = table[fnfilter(labels, index)]
+                matching_keys = fnfilter(labels, index)
+                match = table[matching_keys]
                 if match.size > 0:
+                    # print(match)
+                    # print(index)
+                    # print(fnfilter(labels, index))
                     result.append(
-                        self.structured_to_unstructured(match).squeeze(axis=1)
+                        self._process_wildcard(
+                            matching_keys,
+                            index,
+                            self.structured_to_unstructured(match).squeeze(axis=1),
+                        )
                     )
             if result == [] or (len(result) == 1 and len(result[0]) == 0):
                 return None
@@ -778,7 +797,8 @@ class CifFile:
         for key in self.__class__._SYMOP_KEYS:
             symops = self.get_from_loops(key)
             if symops is not None:
-                self._symop_key = key
+                self._symop_key = self._wildcard_mapping[key]
+                print(key, self._wildcard_mapping[key])
                 return symops
         return None
 
@@ -1053,8 +1073,8 @@ class CifFile:
     """
 
     _SYMOP_KEYS = (
-        "_symmetry_equiv_pos_as_xyz",
-        "_space_group_symop_operation_xyz",
+        "_symmetry_equiv?pos_as_xyz",
+        "_space_group_symop?operation_xyz",
     )
     _WYCKOFF_KEYS = (
         "_atom_site_fract_x",
