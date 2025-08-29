@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import re
+import warnings
 from dataclasses import dataclass
 from glob import glob
 
@@ -12,6 +13,7 @@ from CifFile import CifSyntaxError, StarError
 from gemmi import cif
 
 from parsnip import CifFile
+from parsnip._errors import ParseWarning
 
 ADDITIONAL_TEST_FILES_PATH = ""
 
@@ -250,6 +252,11 @@ with pytest.warns():
             "not_a_valid_key",
         ),
     )
+warnings.filterwarnings(
+    "ignore",
+    message="Duplicate key ",
+    category=ParseWarning,
+)
 mbuild_test_files = [
     CifData.from_file(os.path.join(*fn.split(os.sep)[-2:]))
     for fn in glob(os.path.join(data_file_path, "mbuild_cifs", "*.cif"))
