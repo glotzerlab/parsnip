@@ -49,13 +49,7 @@ def test_read_key_value_pairs(cif_data):
 def test_wildcard_keys_pairs(cif_data, keys):
     parsnip_data = np.atleast_1d(cif_data.file.get_from_pairs(keys))
     raw_keys = cif_data.file._wildcard_mapping.get(keys, [keys])
-    print(np.array(raw_keys), (len(raw_keys),))
-    print()
     gemmi_data = _gemmi_read_keys(cif_data.filename, raw_keys, as_number=False)
-    print(parsnip_data, parsnip_data.shape)
-    print()
-    print(gemmi_data, gemmi_data.shape)
-    print()
     _array_assertion_verbose(raw_keys, parsnip_data, gemmi_data)
 
 
