@@ -13,12 +13,9 @@ from __future__ import annotations
 
 import re
 import sys
-import warnings
 
 import numpy as np
 from numpy.typing import ArrayLike
-
-from parsnip._errors import ParseWarning
 
 ALLOWED_DELIMITERS = [";\n", "'''", '"""']
 """Delimiters allowed for nonsimple (multi-line) data entries."""
@@ -44,11 +41,9 @@ _WHITESPACE = "[\t ]"
 See section 3.2 of dx.doi.org/10.1107/S1600576715021871 for clarification.
 """
 
-_bracket_pattern = re.compile(r"(\[|\])")
 
-
-def _reformat_sublist(s: str) -> str:
-    return f"[{s.lstrip('[').rstrip(']')}]"
+def _contains_wildcard(s: str) -> bool:
+    return "?" in s or "*" in s
 
 
 def _flatten_or_none(ls: list):
@@ -159,6 +154,8 @@ def cast_array_to_float(arr: ArrayLike | None, dtype: type = np.float32):
     """
     if arr is None:
         return np.array("nan", dtype=dtype)
+    if np.array(arr).shape == (0,):
+        return np.array((), dtype=dtype)
     arr = [(el if el is not None else "nan") for el in arr]
     # if any(el is None for el in arr):
     #     raise TypeError("Input array contains `None` and cannot be cast!")
@@ -174,6 +171,9 @@ def _accumulate_nonsimple_data(data_iter, line=""):
             if buffer[:1] == ";" or any(s in buffer for s in ALLOWED_DELIMITERS):
                 delimiter_count += 1
             line += next(data_iter)
+
+        if delimiter_count == 2:
+            break  # Exit the context
     return line
 
 
@@ -195,21 +195,6 @@ def _strip_quotes(s: str):
 
 def _dtype_from_int(i: int):
     return f"<U{i}"
-
-
-def _semicolon_to_string(line: str):
-    if "'" in line and '"' in line:
-        warnings.warn(
-            (
-                "String contains single and double quotes - "
-                "line may be parsed incorrectly"
-            ),
-            ParseWarning,
-            stacklevel=2,
-        )
-    # WARNING: because we split our string, we strip "\n" implicitly
-    # This is technically against spec, but is almost never meaningful
-    return line.replace(";", "'" if "'" not in line else '"')
 
 
 def _line_is_continued(line: str | None):
