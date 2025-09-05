@@ -36,8 +36,8 @@ packages=["parsnip"]
 
 [tool.setuptools.dynamic]
 optional-dependencies.tests = { file = ["tests/requirements.in"] }
-optional-dependencies.doc = { file = ["doc/requirements.txt"] }
-optional-dependencies.sympy = { file = ["requirements-sympy.txt"] }
+optional-dependencies.doc = { file = ["doc/requirements.in"] }
+optional-dependencies.sympy = { file = ["requirements-sympy.in"] }
 
 [tool.pytest.ini_options]
 testpaths = ["tests", "parsnip", "doc"]
