@@ -64,6 +64,8 @@ python-dateutil==2.9.0.post0
     # via matplotlib
 scipy==1.15.3
     # via ase
+setuptools==80.9.0
+    # via -r tests/requirements.in
 six==1.17.0
     # via python-dateutil
 sympy==1.14.0
@@ -76,3 +78,5 @@ typing-extensions==4.15.0
     # via exceptiongroup
 wcwidth==0.2.13
     # via prettytable
+wheel==0.45.1
+    # via -r tests/requirements.in
