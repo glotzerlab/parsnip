@@ -3,7 +3,7 @@
 alabaster==1.0.0
     # via sphinx
 autodocsumm==0.2.14
-    # via -r requirements.in
+    # via -r doc/requirements.in
 babel==2.17.0
     # via sphinx
 beautifulsoup4==4.13.4
@@ -15,7 +15,7 @@ charset-normalizer==3.4.2
 docutils==0.21.2
     # via sphinx
 furo==2024.8.6
-    # via -r requirements.in
+    # via -r doc/requirements.in
 idna==3.10
     # via requests
 imagesize==1.4.1
@@ -26,8 +26,15 @@ jinja2==3.1.6
     # via sphinx
 markupsafe==3.0.2
     # via jinja2
+more-itertools==10.8.0
+    # via
+    #   -r requirements.in
+    #   parsnip-cif (pyproject.toml)
 numpy==2.3.1
-    # via -r requirements.in
+    # via
+    #   -r doc/requirements.in
+    #   -r requirements.in
+    #   parsnip-cif (pyproject.toml)
 packaging==25.0
     # via
     #   pytest
@@ -43,7 +50,7 @@ pygments==2.19.2
 pytest==8.4.1
     # via pytest-doctestplus
 pytest-doctestplus==1.4.0
-    # via -r requirements.in
+    # via -r doc/requirements.in
 requests==2.32.4
     # via sphinx
 roman-numerals-py==3.1.0
@@ -54,7 +61,7 @@ soupsieve==2.7
     # via beautifulsoup4
 sphinx==8.2.3
     # via
-    #   -r requirements.in
+    #   -r doc/requirements.in
     #   autodocsumm
     #   furo
     #   sphinx-basic-ng
@@ -63,9 +70,9 @@ sphinx==8.2.3
 sphinx-basic-ng==1.0.0b2
     # via furo
 sphinx-copybutton==0.5.2
-    # via -r requirements.in
+    # via -r doc/requirements.in
 sphinx-notfound-page==1.1.0
-    # via -r requirements.in
+    # via -r doc/requirements.in
 sphinxcontrib-applehelp==2.0.0
     # via sphinx
 sphinxcontrib-devhelp==2.0.0
