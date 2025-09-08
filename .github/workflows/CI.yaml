@@ -41,7 +41,6 @@ jobs:
   #     requirements-file: ".github/requirements-${{ matrix.python-version }}.txt"
 
   run-tests-windows:
-    needs: run-tests-modern-python
     strategy:
       fail-fast: false
       matrix:
@@ -52,3 +51,15 @@ jobs:
       python-version: ${{ matrix.python-version }}
       runs-on: ${{ matrix.runs-on }}
       requirements-file: ".github/requirements-${{ matrix.python-version }}.txt"
+
+  # This job is used to provide a single requirement for branch merge conditions.
+  tests_complete:
+    name: Unit test
+    if: always()
+    needs: [run-tests-modern-python, run-tests-windows]
+    runs-on: ubuntu-latest
+
+    steps:
+    - run: jq --exit-status 'all(.result == "success")' <<< '${{ toJson(needs) }}'
+    - name: Done
+      run: exit 0
