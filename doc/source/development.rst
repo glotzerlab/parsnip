@@ -29,25 +29,10 @@ Style Guidelines
 ----------------
 
 The **parsnip** package adheres to a reasonably strict set of style guidelines.
-All code in **parsnip** should be formatted using `ruff`_ via pre-commit. This provides an easy workflow to enforce a number of style and syntax rules that have been configured for the project.
-
-.. tip::
-
-    `pre-commit`_ has been configured to run a number of linting and formatting tools. It is recommended to set up pre-commit to run automatically:
-
-    .. code-block:: bash
-
-        python -m pip install pre-commit
-        pre-commit install # Set up git hook scripts
-
-    Alternatively, the tools can be run manually with the following command:
-
-    .. code-block:: bash
-
-        git add .; pre-commit run
+All code in **parsnip** should be formatted using `ruff`_ via `prek`_. This provides an easy workflow to enforce a number of style and syntax rules that have been configured for the project.
 
 .. _ruff: https://docs.astral.sh/ruff/
-.. _pre-commit: https://pre-commit.com/
+.. _prek: https://prek.j178.dev/
 
 
 Documentation
@@ -55,7 +40,7 @@ Documentation
 
 API documentation should be written as part of the docstrings of the package in the `Numpy style <https://numpydoc.readthedocs.io/en/latest/format.html>`__.
 
-Docstrings are automatically validated using `pydocstyle <http://www.pydocstyle.org/>`_ whenever the ruff pre-commit hooks are run.
+Docstrings are automatically validated using `pydocstyle <http://www.pydocstyle.org/>`_ whenever the ruff prek hooks are run.
 The `official documentation <https://parsnip.readthedocs.io/>`_ is generated from the docstrings using `Sphinx <http://www.sphinx-doc.org/en/stable/index.html>`_.
 
 In addition to API documentation, inline comments are strongly encouraged.
