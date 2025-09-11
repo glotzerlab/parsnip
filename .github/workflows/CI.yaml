@@ -57,7 +57,7 @@ jobs:
     name: Unit test
     if: always()
     needs: [run-tests-modern-python, run-tests-windows]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
     - run: jq --exit-status 'all(.result == "success")' <<< '${{ toJson(needs) }}'
