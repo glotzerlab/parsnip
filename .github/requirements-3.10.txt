@@ -49,7 +49,7 @@ pycifrw==5.0.1
     # via -r tests/requirements.in
 pygments==2.19.2
     # via pytest
-pyparsing==3.2.3
+pyparsing==3.2.4
     # via matplotlib
 pytest==8.4.2
     # via
