@@ -17,7 +17,6 @@ date: XX November 2025
 bibliography: paper.bib
 ---
 
-<!-- Stronger than lightweight/well documented ->: accurate! (rational arithm.) (leightweight good. meat should be fn), correct? -->
 <!-- empasize: still works for atomistic systems, but works well for non-atomistic systems .-->
 
 <!-- easily queryable? intuitive?-->
@@ -38,6 +37,16 @@ combination of decimal and floating-point arithmetic, we achieve class-leading a
 in reconstructing large and complex structures. The detailed processing of structural
 data yields better alignment with reported space group and point group symmetries than
 existing tools, providing an ideal foundation for studies centered on material design.
+
+`parsnip` supports a dictionary-like lookup format for both scalar and tabular data,
+both of which can be expanded with globbing wildcards to simplify complex queries.
+Convenience methods for unit cell parameters, particle positions, and site symmetry data
+are exposed to streamline common workflows in materials data science, with clear
+documentation of conventions and units that eliminates ambiguities common to
+interdisciplinary research. Finally, our utilization of Numpy structured arrays for data
+storage ensures that Python, C, and Fortran libraries can all easily interoperate with
+`parsnip`, resulting in a stable, scalable dependency for scientific codebases ranging
+from nanoscience to the macroscale [@Freud2020].
 
 <!-- TODO: explain list of features, with code block example. one more paragraph-->
 
@@ -73,13 +82,13 @@ be re-parsed in its entirety [@Wojdyr:2022].
 `parsnip` is designed and optimized for use as a dependency in larger materials science
 codes, requiring only Numpy as a dependency. For this reason, it has already been
 incorporated into the **Freud** analysis library, which uses `parsnip` to extract unit
-cell data for use as reference structures in high-throughput simulation analysis.
-Although other CIF libraries like **Gemmi** have minimal dependency sets, the compiled
-nature of the underlying library means that integration with other libraries may be
-nontrivial. `parsnip` uses Numpy structured arrays to provide a stable data layout for
-cross-language access without modifying the build system of downstream projects. As a
-result, users get the benefits of copyless data transfer to compiled languages without
-any additional complexity.
+cell data for use as reference structures in high-throughput simulation analysis
+[@Freud2020]. Although other CIF libraries like **Gemmi** also have minimal dependency
+sets, the compiled nature of the underlying library means that integration with other
+libraries may be nontrivial. `parsnip` uses Numpy structured arrays to provide a stable
+data layout for cross-language access without modifying the build system of downstream
+projects. As a result, users get the benefits of copy-free data transfer to compiled
+languages without any additional complexity.
 
 <!-- TODO: show example code block as figure? -->
 <!-- TODO: mention symbolic parsing : 'a primary challenge...'-->
