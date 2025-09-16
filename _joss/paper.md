@@ -19,12 +19,35 @@ bibliography: paper.bib
 
 # Summary
 
-Parsnip provides a lightweight and well-documented interface for reading
-Crystallographic Information Files (CIFs).
+<!-- Stronger than lightweight/well documented ->: accurate! (rational arithm.) (leightweight good. meat should be fn), correct? -->
+<!-- empasize: still works for atomistic systems, but works well for non-atomistic systems .-->
+
+<!-- easily queryable? intuitive?-->
+
+`parsnip` provides a lightweight and well-documented interface for reading
+Crystallographic Information Files (CIFs). Designed for programmatic analyses of
+crystalline systems, `parsnip` provides fast, accurate and array-structured access to
+
+<!--mesoscale -> crystalline--> CIF encoded data and serves as a building block for
+
+several existing libraries in the molecular simulation ecosystem.
+
+<!-- INCLUDING mesoscale - this is new, emphasize it!-->
+
+`parsnip`'s primary functionality lies in its ability to accurately reconstruct unit
+cells from only a few decimal places of recorded experimental data. Through a
+combination of decimal and floating-point arithmetic, we achieve class-leading accuracy
+in reconstructing large and complex structures. The detailed processing of structural
+data yields better alignment with reported space group and point group symmetries than
+existing tools, providing an ideal foundation for studies centered on material design.
+
+<!-- TODO: explain list of features, with code block example. one more paragraph-->
+
+<!-- UNIFIED Interface -->
 
 # Statement of need
 
-Materials scientists performing experimental or simulation research are fundamentally
+Materials scientists performing experimental and simulation research are fundamentally
 exploring many of the same research questions. However, the two parties benefit from
 specialized software tailored to the needs of research techniques. While many excellent
 libraries provide high-level interfaces and strict class hierarchies for
@@ -34,17 +57,23 @@ simulation frameworks. This shift in design focus provides a simple, intuitive s
 frontend that integrates tightly with existing standards for molecular simulation and
 analysis.
 
-`parsnip` is targeted at colloidal and mesoscale materials research, rather than the
+`parsnip` is targeted at colloidal and mesoscale materials research in addition to the
 atomic and protein datasets that the CIF and mmCIF specifications were originally
-targeted at. Rather than associating pure crystallographic data with atomic symbols or
-valence states by default, `parsnip` provides only the information required to
-reconstruct a particular structure unless otherwise queried. This generality allows
-users unfamiliar with the CIF specification to process crystallographic information
-files, as dedicated lookup methods automatically locate the correct queries that return
-unit cell and basis site information. We also support Unix-style wildcard queries, a
-feature that is not included in the Python APIs of any other CIF library. This feature
-allows for rapid access to "slices" of the CIF keyword specification, simplifying common
-complex lookups to much simpler queries.
+designed for.
+
+<!-- EVEN THOUGH this is our target, we doAdditional things on top-->
+
+Rather than associating pure crystallographic data with atomic symbols or valence states
+by default, `parsnip` provides only the information required to reconstruct a particular
+structure unless otherwise queried. This generality allows users unfamiliar with the CIF
+specification to process crystallographic information files, as dedicated lookup methods
+automatically locate the correct queries that return unit cell and basis site
+information. We also support Unix-style wildcard queries, a feature that is not included
+in the Python APIs of any other CIF library. This feature allows for rapid access to
+"slices" of the CIF keyword specification, simplifying common complex lookups to much
+simpler queries.
+
+<!-- Emphasize wildcard query -->
 
 <!-- TODO: show example code block as figure? -->
 
