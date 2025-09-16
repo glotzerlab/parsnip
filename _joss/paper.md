@@ -24,11 +24,18 @@ bibliography: paper.bib
 
 <!-- easily queryable? intuitive?-->
 
-`parsnip` provides a lightweight and well-documented interface for reading
-Crystallographic Information Files (CIFs). Designed for programmatic analyses of
-crystalline systems, `parsnip` provides fast, accurate and array-structured access to
+`parsnip` provides a lightweight, highly precise, and domain agnostic interface for
+reading both the Crystallographic Information File (CIF) and Macromolecular CIF (mmCIF)
+formats. Designed for programmatic analyses of crystalline systems, `parsnip` provides
+fast, array structured access to crystallographic data and offers a suite of convenient
+lookup methods for automated queries for structural information. Its minimal dependency
+set and high-level interface has allowed for the rapid incorporation of `parsnip` into
+several existing libraries in the molecular simulation ecosystem.
 
-<!--mesoscale -> crystalline--> CIF encoded data and serves as a building block for
+<!-- and highly accurate interface for reading Crystallographic Information Files (CIFs). -->
+<!-- Designed for programmatic analyses of crystalline systems, `parsnip` provides fast, -->
+<!-- accurate and array-structured access to CIF encoded data and serves as a building block -->
+<!-- for -->
 
 several existing libraries in the molecular simulation ecosystem.
 
