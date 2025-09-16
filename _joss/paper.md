@@ -41,7 +41,7 @@ existing tools, providing an ideal foundation for studies centered on material d
 
 <!-- TODO: explain list of features, with code block example. one more paragraph-->
 
-# Statement of need
+# Statement of Need
 
 Materials scientists performing experimental and simulation research are fundamentally
 exploring many of the same research questions. However, the two parties benefit from
@@ -51,7 +51,9 @@ crystallographic data, the general nature of simulation science drives a need fo
 array-formatted data with intuitive memory layouts that easily translate between
 simulation frameworks. This shift in design focus provides a simple, intuitive software
 frontend that integrates tightly with existing standards for molecular simulation and
-analysis.
+analysis. This marks a contrast in design between `parsnip` and existing crystallography
+libraries like **ASE**, which provides wrapper types specific to elemental systems and
+**PyCIFRW**, which lays out data in a noncontiguous manner [@Larsen2017; @Hester2006].
 
 `parsnip` targets colloidal and mesoscale materials research in addition to the atomic
 and protein datasets that the CIF and mmCIF specifications were originally designed for.
@@ -82,7 +84,7 @@ any additional complexity.
 <!-- TODO: show example code block as figure? -->
 <!-- TODO: mention symbolic parsing : 'a primary challenge...'-->
 
-# Citations
+<!-- # Citations -->
 
 <!-- Citations to entries in paper.bib should be in -->
 <!-- [rMarkdown](http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html) -->
@@ -108,4 +110,4 @@ any additional complexity.
 
 <!-- # Acknowledgements -->
 
-<!-- # References -->
+# References
