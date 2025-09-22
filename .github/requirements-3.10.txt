@@ -10,7 +10,7 @@ exceptiongroup==1.3.0
     # via pytest
 execnet==2.1.1
     # via pytest-xdist
-fonttools==4.59.2
+fonttools==4.60.0
     # via matplotlib
 gemmi==0.7.3
     # via -r tests/requirements.in
@@ -49,7 +49,7 @@ pycifrw==5.0.1
     # via -r tests/requirements.in
 pygments==2.19.2
     # via pytest
-pyparsing==3.2.4
+pyparsing==3.2.5
     # via matplotlib
 pytest==8.4.2
     # via
