@@ -70,7 +70,7 @@ sympy==1.14.0
     # via
     #   -r requirements-sympy.in
     #   -r tests/requirements.in
-wcwidth==0.2.13
+wcwidth==0.2.14
     # via prettytable
 wheel==0.45.1
     # via -r tests/requirements.in
