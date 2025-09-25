@@ -78,7 +78,7 @@ tomli==2.2.1
     # via pytest
 typing-extensions==4.15.0
     # via exceptiongroup
-wcwidth==0.2.13
+wcwidth==0.2.14
     # via prettytable
 wheel==0.45.1
     # via -r tests/requirements.in
