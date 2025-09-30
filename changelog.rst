@@ -9,6 +9,7 @@ v0.4.0 - xxxx-xx-xx
 
 Added
 ~~~~~
+- Support for Python 3.14
 - Support for reading files via a context manager, text buffer, or string.
 - Support for CIF2.0 ``"""`` and ``'''`` strings
 - Support for COD-style ``_key \n 'value'`` strings
