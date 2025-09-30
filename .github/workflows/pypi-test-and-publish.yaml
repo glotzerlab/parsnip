@@ -12,16 +12,16 @@ on:
 jobs:
   build:
     name: Build Distribution
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
     - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       with:
         persist-credentials: false
     - name: Install uv
-      uses: astral-sh/setup-uv@d9e0f98d3fc6adb07d1e3d37f3043649ddad06a1 # v6.5.0
+      uses: astral-sh/setup-uv@b75a909f75acd358c2196fb9a5f1299a9a8868a4 # v6.7.0
       with:
-        version: "0.8.11"
+        version: "0.8.22"
     - name: uv build
       run: uv build --verbose -o dist
     - name: Store the distribution packages
@@ -33,7 +33,7 @@ jobs:
   publish-to-testpypi:
     name: Publish to TestPyPI
     needs: [build]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment:
       name: testpypi
       url: https://test.pypi.org/p/parsnip-cif
@@ -48,7 +48,7 @@ jobs:
         path: dist/
     - name: Publish to TestPyPI
       # TODO: https://github.com/pypa/gh-action-pypi-publish/pull/378
-      uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc # v1.12.4
+      uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e # v1.13.0
       with:
         repository-url: https://test.pypi.org/legacy/
         verbose: true
@@ -59,7 +59,7 @@ jobs:
     name: Publish to PyPI
     if: startsWith(github.ref, 'refs/tags/v')
     needs: [build]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment:
       name: pypi
       url: https://pypi.org/p/parsnip-cif
@@ -75,4 +75,4 @@ jobs:
 
     - name: Publish to PyPI
       # TODO: https://github.com/pypa/gh-action-pypi-publish/pull/378
-      uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc # v1.12.4
+      uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e # v1.13.0
