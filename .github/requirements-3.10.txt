@@ -18,7 +18,7 @@ iniconfig==2.1.0
     # via pytest
 kiwisolver==1.4.9
     # via matplotlib
-matplotlib==3.10.6
+matplotlib==3.10.7
     # via ase
 more-itertools==10.8.0
     # via parsnip-cif (pyproject.toml)
@@ -72,7 +72,7 @@ sympy==1.14.0
     # via
     #   -r requirements-sympy.in
     #   -r tests/requirements.in
-tomli==2.2.1
+tomli==2.3.0
     # via pytest
 typing-extensions==4.15.0
     # via exceptiongroup
