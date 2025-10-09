@@ -74,7 +74,7 @@ sympy==1.14.0
     # via
     #   -r requirements-sympy.in
     #   -r tests/requirements.in
-tomli==2.2.1
+tomli==2.3.0
     # via pytest
 typing-extensions==4.15.0
     # via exceptiongroup
