@@ -37,7 +37,7 @@ packaging==25.0
     #   matplotlib
     #   pytest
     #   pytest-doctestplus
-pillow==11.3.0
+pillow==12.0.0
     # via matplotlib
 pluggy==1.6.0
     # via pytest

@@ -12,13 +12,13 @@ beautifulsoup4==4.14.2
     # via furo
 certifi==2025.10.5
     # via requests
-charset-normalizer==3.4.3
+charset-normalizer==3.4.4
     # via requests
 docutils==0.21.2
     # via sphinx
 furo==2025.9.25
     # via -r doc/requirements.in
-idna==3.10
+idna==3.11
     # via requests
 imagesize==1.4.1
     # via sphinx
@@ -30,7 +30,7 @@ markupsafe==3.0.3
     # via jinja2
 more-itertools==10.8.0
     # via parsnip-cif (pyproject.toml)
-numpy==2.3.3
+numpy==2.3.4
     # via
     #   -r doc/requirements.in
     #   parsnip-cif (pyproject.toml)
