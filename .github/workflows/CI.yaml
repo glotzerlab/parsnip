@@ -13,8 +13,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        python-version:
-          ["3.9", "3.10", "3.11", "3.12", "3.13", "3.13t", "3.14", "3.14t"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.13t", "3.14", "3.14t"]
         runs-on: ["ubuntu-24.04"]
         include:
           - runs-on: "macos-15"
@@ -28,8 +27,9 @@ jobs:
     with:
       python-version: ${{ matrix.python-version }}
       runs-on: ${{ matrix.runs-on }}
-      # requirements-file: ".github/requirements-${{ matrix.python-version | replace('t', '') }}.txt"
-      requirements-file: ".github/requirements-${{ matrix.python-version != '' && endsWith(matrix.python-version, 't') && format('{0}', matrix.python-version[0:-1]) || matrix.python-version }}.txt"
+      # requirements-file: ".github/requirements-${{ matrix.python-version }}.txt"
+      requirements-file: ".github/requirements-${{ replace(matrix.python-version, 't$', '') }}.txt"
+
 
   # run-tests-legacy-python:
   #   needs: run-tests-modern-python # Wait until tests pass on python 3.9+
@@ -64,6 +64,6 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-      - run: jq --exit-status 'all(.result == "success")' <<< '${{ toJson(needs) }}'
-      - name: Done
-        run: exit 0
+    - run: jq --exit-status 'all(.result == "success")' <<< '${{ toJson(needs) }}'
+    - name: Done
+      run: exit 0
