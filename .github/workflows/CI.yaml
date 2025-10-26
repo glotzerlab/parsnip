@@ -27,7 +27,7 @@ jobs:
     with:
       python-version: ${{ matrix.python-version }}
       runs-on: ${{ matrix.runs-on }}
-      requirements-file: ".github/requirements-${{ matrix.python-version }}.txt"
+      requirements-file: ".github/requirements-${{ matrix.python-version | replace('t', '') }}.txt"
 
   # run-tests-legacy-python:
   #   needs: run-tests-modern-python # Wait until tests pass on python 3.9+
