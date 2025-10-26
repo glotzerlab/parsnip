@@ -27,7 +27,6 @@ jobs:
             freethreaded: true
           - runs-on: "macos-15"
             python-version: "3.14"
-            freethreaded: true
           - runs-on: "macos-15"
             python-version: "3.9"
     # Pull in the test script from run_tests and distribute python from matrix versions
