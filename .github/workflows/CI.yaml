@@ -13,11 +13,13 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.13t", "3.14", "3.14t"]
         runs-on: ["ubuntu-24.04"]
         include:
           - runs-on: "macos-15"
-            python-version: "3.13"
+            python-version: "3.14"
+          - runs-on: "macos-15"
+            python-version: "3.14t"
           - runs-on: "macos-15"
             python-version: "3.9"
     # Pull in the test script from run_tests and distribute python from matrix versions
