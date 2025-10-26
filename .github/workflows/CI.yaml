@@ -13,13 +13,21 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.13t", "3.14", "3.14t"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
         runs-on: ["ubuntu-24.04"]
         include:
+          - runs-on: "ubuntu-24.04"
+            python-version: "3.13"
+            freethreaded: true
+          - runs-on: "ubuntu-24.04"
+            python-version: "3.14"
+            freethreaded: true
           - runs-on: "macos-15"
             python-version: "3.14"
+            freethreaded: true
           - runs-on: "macos-15"
-            python-version: "3.14t"
+            python-version: "3.14"
+            freethreaded: true
           - runs-on: "macos-15"
             python-version: "3.9"
     # Pull in the test script from run_tests and distribute python from matrix versions
@@ -27,9 +35,8 @@ jobs:
     with:
       python-version: ${{ matrix.python-version }}
       runs-on: ${{ matrix.runs-on }}
-      # requirements-file: ".github/requirements-${{ matrix.python-version }}.txt"
-      requirements-file: ".github/requirements-${{ replace(matrix.python-version, 't$', '') }}.txt"
-
+      requirements-file: ".github/requirements-${{ matrix.python-version }}.txt"
+      freethreaded: ${{ matrix.freethreaded }}
 
   # run-tests-legacy-python:
   #   needs: run-tests-modern-python # Wait until tests pass on python 3.9+
