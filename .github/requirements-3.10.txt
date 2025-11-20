@@ -43,7 +43,7 @@ pluggy==1.6.0
     # via pytest
 ply==3.11
     # via pycifrw
-prettytable==3.16.0
+prettytable==3.17.0
     # via pycifrw
 pycifrw==5.0.1
     # via -r tests/requirements.in
