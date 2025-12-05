@@ -17,10 +17,6 @@ date: XX November 2025
 bibliography: paper.bib
 ---
 
-<!-- empasize: still works for atomistic systems, but works well for non-atomistic systems .-->
-
-<!-- easily queryable? intuitive?-->
-
 # Summary
 
 `parsnip` provides a lightweight, highly precise, and domain agnostic interface for
@@ -41,10 +37,10 @@ existing tools, providing an ideal foundation for studies centered on material d
 `parsnip` supports a dictionary-like lookup format for both scalar and tabular data,
 both of which can be expanded with globbing wildcards to simplify complex queries.
 Convenience methods for unit cell parameters, particle positions, and site symmetry data
-are exposed to streamline common workflows in materials data science, with clear
+are exposed to streamline common workflows in materials data science with clear
 documentation of conventions and units that eliminates ambiguities common to
-interdisciplinary research. Finally, our utilization of Numpy structured arrays for data
-storage ensures that Python, C, and Fortran libraries can all easily interoperate with
+interdisciplinary research. Finally, our utilization of NumPy structured arrays for data
+storage ensures that Python, C, and FORTRAN libraries can all easily interoperate with
 `parsnip`, resulting in a stable, scalable dependency for scientific codebases ranging
 from nanoscience to the macroscale [@Freud2020].
 
@@ -53,9 +49,11 @@ from nanoscience to the macroscale [@Freud2020].
 # Statement of Need
 
 Materials scientists performing experimental and simulation research are fundamentally
-exploring many of the same research questions. However, the two parties benefit from
-specialized software tailored to the needs of research techniques. While many excellent
-libraries provide high-level interfaces and strict class hierarchies for
+exploring many of the same research questions. However, crystallographic software
+designed for experimental data often does not scale well to automated workflows --- a
+particularly significant problem in interdisciplinary research where the building blocks
+of crystal structures include atoms, macromolecules, and nanoparticles. While many
+excellent libraries provide high-level interfaces and strict class hierarchies for
 crystallographic data, the general nature of simulation science drives a need for
 array-formatted data with intuitive memory layouts that easily translate between
 simulation frameworks. This shift in design focus provides a simple, intuitive software
@@ -76,16 +74,16 @@ patterns like cell parameter extraction (6 keys) and space group identification
 specification-compliant queries into heterogeneous databases of both CIF and mmCIF
 files, further accelerating programmatic materials exploration. Although the Gemmi
 library does support a similar style of wildcard in their `gemmi grep` command-line
-tool, it's use is limited to bash scripting and each wildcard query requires the file to
+tool, its use is limited to bash scripting and each wildcard query requires the file to
 be re-parsed in its entirety [@Wojdyr:2022].
 
 `parsnip` is designed and optimized for use as a dependency in larger materials science
-codes, requiring only Numpy as a dependency. For this reason, it has already been
+codes, requiring only NumPy as a dependency. For this reason, it has already been
 incorporated into the **Freud** analysis library, which uses `parsnip` to extract unit
 cell data for use as reference structures in high-throughput simulation analysis
 [@Freud2020]. Although other CIF libraries like **Gemmi** also have minimal dependency
 sets, the compiled nature of the underlying library means that integration with other
-libraries may be nontrivial. `parsnip` uses Numpy structured arrays to provide a stable
+libraries may be nontrivial. `parsnip` uses NumPy structured arrays to provide a stable
 data layout for cross-language access without modifying the build system of downstream
 projects. As a result, users get the benefits of copy-free data transfer to compiled
 languages without any additional complexity.
