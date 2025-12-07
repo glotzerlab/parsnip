@@ -6,13 +6,13 @@ contourpy==1.3.0
     # via matplotlib
 cycler==0.12.1
     # via matplotlib
-exceptiongroup==1.3.0
+exceptiongroup==1.3.1
     # via pytest
-execnet==2.1.1
+execnet==2.1.2
     # via pytest-xdist
 fonttools==4.60.1
     # via matplotlib
-gemmi==0.7.3
+gemmi==0.7.4
     # via -r tests/requirements.in
 importlib-resources==6.5.2
     # via matplotlib
@@ -58,7 +58,7 @@ pytest==8.4.2
     #   -r tests/requirements.in
     #   pytest-doctestplus
     #   pytest-xdist
-pytest-doctestplus==1.4.0
+pytest-doctestplus==1.6.0
     # via -r tests/requirements.in
 pytest-xdist==3.8.0
     # via -r tests/requirements.in
