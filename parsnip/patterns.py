@@ -13,9 +13,12 @@ from __future__ import annotations
 
 import re
 import sys
+from typing import Literal, TypeVar
 
 import numpy as np
 from numpy.typing import ArrayLike
+
+T = TypeVar("T")
 
 ALLOWED_DELIMITERS = [";\n", "'''", '"""']
 """Delimiters allowed for nonsimple (multi-line) data entries."""
@@ -46,7 +49,7 @@ def _contains_wildcard(s: str) -> bool:
     return "?" in s or "*" in s
 
 
-def _flatten_or_none(ls: list):
+def _flatten_or_none(ls: list[T]):
     """Return the sole element from a list of l=1, None if l=0, else l."""
     return None if not ls else ls[0] if len(ls) == 1 else ls
 
@@ -69,8 +72,9 @@ def _safe_eval(
     x: int | float,
     y: int | float,
     z: int | float,
-    parse_mode: str = "python_float",
-):
+    *,
+    parse_mode: Literal["python_float", "sympy"] = "python_float",
+) -> list[list[float]]:
     """Attempt to safely evaluate a string of symmetry equivalent positions.
 
     Python's ``eval`` is notoriously unsafe. While we could evaluate the entire list at
@@ -162,7 +166,7 @@ def cast_array_to_float(arr: ArrayLike | None, dtype: type = np.float32):
     return np.char.partition(arr, "(")[..., 0].astype(dtype)
 
 
-def _accumulate_nonsimple_data(data_iter, line=""):
+def _accumulate_nonsimple_data(data_iter, line: str = ""):
     """Accumulate nonsimmple (multi-line) data entries into a single string."""
     delimiter_count = 0
     while _line_is_continued(data_iter.peek(None)):

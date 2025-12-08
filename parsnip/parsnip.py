@@ -75,7 +75,7 @@ from fnmatch import filter as fnfilter
 from fnmatch import fnmatch
 from importlib.util import find_spec
 from pathlib import Path
-from typing import ClassVar, TextIO
+from typing import ClassVar, Literal, TextIO
 
 import numpy as np
 from more_itertools import flatten, peekable
@@ -543,7 +543,7 @@ class CifFile:
         self,
         n_decimal_places: int = 4,
         additional_columns: str | Iterable[str] | None = None,
-        parse_mode: str = "python_float",
+        parse_mode: Literal["python_float", "sympy"] = "python_float",
         verbose: bool = False,
     ):
         """Reconstruct fractional atomic positions from Wyckoff sites and symops.
