@@ -1107,7 +1107,7 @@ class CifFile:
     }
     """Regex patterns used when parsing files.
 
-    .. note::
+    .. attention::
 
         This dictionary can be modified to change parsing behavior, although doing
         is not recommended. Changes to this variable are shared across all
