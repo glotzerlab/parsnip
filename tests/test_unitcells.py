@@ -24,8 +24,8 @@ from parsnip._errors import ParseWarning
 def _gemmi_read_table(filename, keys):
     try:
         return np.array(cif.read_file(filename).sole_block().find(keys))
-    except (RuntimeError, ValueError):
-        pytest.skip("Gemmi failed to read file!")
+    except (RuntimeError, ValueError) as e:
+        pytest.skip(f"Gemmi failed to read file: {e}")
 
 
 @all_files_mark
