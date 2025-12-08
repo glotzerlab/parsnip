@@ -141,7 +141,6 @@ in LAMMPS.
     ...
     ...     return data
 
-    >>> # Or, simply print the output:
     >>> print(write_lammps_data(cif))
     (LAMMPS Data File, written with parsnip)
     <BLANKLINE>
