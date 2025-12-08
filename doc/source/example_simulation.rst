@@ -86,3 +86,77 @@ entries that correspond with other type labels.
     ['Cu']
 
     >>> assert len(snapshot.particles.types) == len(cif["_atom_site_type_symbol"])
+
+
+LAMMPS
+^^^^^^
+
+In contrast to HOOMD-Blue, LAMMPS typically requires us to write out structure data to
+a `LAMMPS Data File`_ before simulations can begin. Although topology data is not
+commonly stored in CIF files, **parsnip** makes it simple to reconstruct atomic crystals
+in LAMMPS.
+
+
+.. _`LAMMPS Data File`: https://docs.lammps.org/2001/data_format.html
+
+.. doctest-requires:: lammps
+
+    >>> from collections import defaultdict
+
+    >>> def write_lammps_data(cif: CifFile):
+    ...     """Convert a CIF file into a LAMMPS data file."""
+    ...     data = "(LAMMPS Data File, written with `parsnip`)\n\n"
+    ...
+    ...     atomic_positions = cif.build_unit_cell()
+    ...     atom_types = cif["_atom_site_type_symbol"]
+    ...     particle_type_map = defaultdict(list)
+    ...
+    ...     # Write out the number of atoms and atom types
+    ...     data += f"{len(atomic_positions)} atoms\n"
+    ...     data += f"{len(atom_types)} atom types\n\n"
+    ...
+    ...     # Write out the box, including the (zero, in this case) tilt factors
+    ...     lx, ly, lz, xy, xz, yz = cif.box
+    ...     data += f"0.0 {lx:.12f} xlo xhi\n"
+    ...     data += f"0.0 {ly:.12f} ylo yhi\n"
+    ...     data += f"0.0 {lz:.12f} zlo zhi\n"
+    ...     data += f"{xy:.12f} {xz:.12f} {yz:.12f} xy xz yz\n\n"
+    ...
+    ...     # Write out the atomic position data -- note the similarities with typeid!
+    ...     data += f"Atoms # atomic\n"
+    ...
+    ...     for i, label in enumerate(labels.squeeze(axis=1)):
+    ...         particle_type_map[label].append(i)
+    ...
+    ...     # Construct the TypeIDs that map our atomic symbol to an index
+    ...     atom_type_array = np.ones(len(atomic_positions), dtype=int)
+    ...     for typeid, label in enumerate(particle_type_map.keys()):
+    ...         atom_type_array[particle_type_map[label]] = typeid
+    ...
+    ...     for i, coordinate in enumerate(atomic_positions):
+    ...         coord_str = " ".join([f"{xyz:.12f}" for xyz in coordinate])
+    ...         data += f"  {i}   {atom_type_array[i]}  {coord_str}\n"
+    ...
+    ...     return data
+
+    >>> with open("fcc.data") as f:  # doctest: +SKIP
+    ...     f.write(write_lammps_data(cif)) # doctest: +SKIP
+
+    >>> # Or, simply print the output:
+    >>> print(write_lammps_data(cif))
+    (LAMMPS Data File, written with `parsnip`)
+    <BLANKLINE>
+    4 atoms
+    1 atom types
+    <BLANKLINE>
+    0.0 3.600000000000 xlo xhi
+    0.0 3.600000000000 ylo yhi
+    0.0 3.600000000000 zlo zhi
+    0.000000000000 0.000000000000 0.000000000000 xy xz yz
+    <BLANKLINE>
+    Atoms # atomic
+      0   0  0.000000000000 0.000000000000 0.000000000000
+      1   0  0.000000000000 0.500000000000 0.500000000000
+      2   0  0.500000000000 0.000000000000 0.500000000000
+      3   0  0.500000000000 0.500000000000 0.000000000000
+
