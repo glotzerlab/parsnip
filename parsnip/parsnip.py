@@ -141,7 +141,7 @@ class CifFile:
     .. tip::
 
         See the docs for :attr:`__getitem__` and :attr:`get_from_loops` to query
-        for data by key or column label!
+        for data by key or column label.
 
     Parameters
     ----------
