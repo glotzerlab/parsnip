@@ -157,3 +157,16 @@ in LAMMPS.
       1   0  0.000000000000 1.800000000000 1.800000000000
       2   0  1.800000000000 0.000000000000 1.800000000000
       3   0  1.800000000000 1.800000000000 0.000000000000
+
+.. Validate our output data is (1) valid LAMMPS data and (2) reconstructs our system.
+.. testcleanup::
+
+    >>> from io import StringIO
+    >>> from ase.io import read
+    >>> atoms = read(StringIO(write_lammps_data(cif)), format='lammps-data')
+
+    >>> fractional_coordinates = cif.build_unit_cell()
+    >>> atomic_positions = fractional_coordinates @ cif.lattice_vectors.T
+    >>> assert len(atomic_positions) == 4
+    >>> np.testing.assert_array_equal(atoms.get_atomic_numbers(), [0,0,0,0])
+    >>> np.testing.assert_array_equal(np.diag([3.6, 3.6, 3.6]), atoms.get_cell())
