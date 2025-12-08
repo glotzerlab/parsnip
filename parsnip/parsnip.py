@@ -122,7 +122,7 @@ class CifFile:
     >>> from parsnip import CifFile
     >>> cif = CifFile("example_file.cif")
     >>> print(cif)
-    CifFile(file=example_file.cif) : 12 data entries, 2 data loops
+    CifFile(file='example_file.cif') : 12 data entries, 2 data loops
 
     Data entries are accessible via the :attr:`~.pairs` and :attr:`~.loops` attributes:
 
