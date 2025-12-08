@@ -1,5 +1,5 @@
-Initializing Molecular Simulations with ``parsnip``
-===================================================
+Initializing Molecular Simulations
+==================================
 
 When performing molecular simulations of solid materials, it is often useful to
 initialize your system in a crystal structure. **parsnip** makes this extremely easy!

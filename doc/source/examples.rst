@@ -16,3 +16,4 @@ structures from existing data.
    :maxdepth: 2
 
    example_simulation
+   example_noisy
