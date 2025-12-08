@@ -1022,7 +1022,7 @@ class CifFile:
                     loop_data = np.array([*flatten(loop_data)]).reshape(-1, n_cols)
 
                 if len(loop_data) == 0:
-                    msg = "Loop data is empy, but n_cols > 0: check CIF file syntax."
+                    msg = "Loop data is empty, but n_cols > 0: check CIF file syntax."
                     _warn_or_err(msg, self._strict)
                     continue
                 dt = _dtype_from_int(max(len(s) for l in loop_data for s in l))
