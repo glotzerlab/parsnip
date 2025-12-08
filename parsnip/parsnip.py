@@ -113,7 +113,7 @@ NONTABLE_LINE_PREFIXES = ("_", "#")
 
 
 class CifFile:
-    """Lightweight, performant parser for CIF files.
+    """Parser for CIF files.
 
     Example
     -------
@@ -1066,34 +1066,57 @@ class CifFile:
     def __repr__(self):
         n_pairs = len(self.pairs)
         n_tabs = len(self.loops)
-        return f"CifFile(file={self._fn}) : {n_pairs} data entries, {n_tabs} data loops"
+        return (
+            f"CifFile(file='{self._fn}') : {n_pairs} data entries, {n_tabs} data loops"
+        )
 
+    # PATTERNS dict is based on the [CIF grammar] specification, adapted to be formally
+    # regular for performance. Context-free parts of the grammar are handled by
+    # the `_accumulate_nonsimple_data` pattern, which builds balanced blocks of tokens.
+    # Context-sensitive components -- primarily relationships between <LoopHeader>
+    # column labels and <LoopBody> columnar data -- are handled directly in the parser.
+    #
+    # [CIF grammar](https://www.iucr.org/resources/cif/spec/version1.1/cifsyntax#bnf)
     PATTERNS: ClassVar = {
+        # Matcher for <DataItems> syntactic units
         "key_value_general": rf"^(_{_CIF_KEY}+?)\s{_PROG_PLUS}({_ANY}+?)$",
+        # Matcher for the first token of <LoopHeader> syntactic units
         "loop_delimiter": rf"(loop_){_WHITESPACE}{_PROG_STAR}([^\n]{_PROG_STAR})",
+        # Matcher for <DataBlock> syntactic units. Currently, these are ignored.
         "block_delimiter": rf"(data_){_WHITESPACE}{_PROG_STAR}([^\n]{_PROG_STAR})",
-        "key_list": rf"_{_CIF_KEY}+?(?=\s|$)",  # Match space or endline-separated keys
+        # Matcher for the column labels of a <LoopHeader> syntactic unit
+        "key_list": rf"_{_CIF_KEY}+?(?=\s|$)",
+        # Matcher for <LoopBody> syntactic units, which may span multiple lines.
+        # Note that this allows for backtracking, as <SingleQuotedString> and
+        # <DoubleQuotedString> values may contain whitespace and quotation marks.
         "space_delimited_data": (
             "("
             r";[^;]*?;|"  # Non-semicolon data bracketed by semicolons
             r"'(?:'\S|[^'])*'|"  # Data with single quotes not followed by \s
-            # rf"\"[^\"]{_PROG_STAR}\"|"  # Data with double quotes
             rf"[^';\"\s]{_PROG_STAR}"  # Additional non-bracketed data
             ")"
         ),
-        "comment": "#.*?$",  # A comment at the end of a line or string
+        # Matcher for <Comments> syntactic units
+        "comment": "#.*?$",
+        # Matcher for CIF 2.0 <list>-related tokens
+        # https://www.iucr.org/__data/assets/text_file/0009/112131/CIF2-ENBF.txt
         "bracket": r"(\[|\])",
     }
     """Regex patterns used when parsing files.
 
     This dictionary can be modified to change parsing behavior, although doing is not
     recommended. Changes to this variable are shared across all instances of the class.
+
+    Please refer to the
+    [CIF grammar](https://www.iucr.org/resources/cif/spec/version1.1/cifsyntax#bnf) for
+    further details.
     """
 
     _SYMOP_KEYS = (
         "_symmetry_equiv?pos_as_xyz",
         "_space_group_symop?operation_xyz",
     )
+    """Keys required to extract symmetry operations from CIF & mmCIF files."""
     _WYCKOFF_KEYS = (
         "_atom_site?fract_x",
         "_atom_site?fract_y",
@@ -1101,4 +1124,9 @@ class CifFile:
         "_atom_site?Cartn_x",
         "_atom_site?Cartn_y",
         "_atom_site?Cartn_z",
-    )  # Only one set should be stored at a time
+    )
+    """Keys required to extract Wyckoff site data from CIF & mmCIF files.
+
+    Note that per the specification, only the *fract_? or *Cartn_? keys may be included
+    but not both.
+    """
