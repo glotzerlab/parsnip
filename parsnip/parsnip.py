@@ -296,7 +296,7 @@ class CifFile:
 
         .. tip::
 
-            This method supports a few unix-style wildcards. Use ``*`` to match any
+            This method supports unix-style wildcards. Use ``*`` to match any
             number of any character, and ``?`` to match any single character. If a
             wildcard matches more than one key, a list is returned for that index.
             The ordering of array data resulting from wildcard queries matches the
