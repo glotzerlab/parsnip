@@ -873,7 +873,7 @@ class CifFile:
     def cast_values(self):
         """Bool : Whether to cast "number-like" values to ints & floats.
 
-        .. note::
+        .. caution::
 
             When set to `True` after construction, the values are modified in-place.
             This action cannot be reversed.
