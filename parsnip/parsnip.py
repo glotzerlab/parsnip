@@ -930,7 +930,8 @@ class CifFile:
             if line == "":
                 continue
 
-            # TODO: could separate multi-block files in the future =====================
+            # While we could separate multi-block files in the future, its actually
+            # beneficial for us to flatten the file into one block.
             # block = re.match(self._cpat["block_delimiter"], line.lower().lstrip())
             # if block is not None:
             #     continue
