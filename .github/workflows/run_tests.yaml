@@ -12,6 +12,10 @@ on:
       requirements-file:
         required: true
         type: string
+      freethreaded:
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   run_test:
@@ -32,6 +36,8 @@ jobs:
         python --version
         uv pip install . -r ${{ inputs.requirements-file }} -v --reinstall --system
         python -c "import parsnip; print('parsnip', parsnip.__version__)"
+
+        python -c "import sys; print('GIL:', getattr(sys, '_is_gil_enabled', lambda: 'unknown')())"
 
     - name: Test with pytest
       run: python -m ${{ runner.os != 'Windows' && 'pytest' || 'pytest tests' }} -v -n auto
