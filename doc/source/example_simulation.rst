@@ -99,15 +99,17 @@ in LAMMPS.
 
 .. _`LAMMPS Data File`: https://docs.lammps.org/2001/data_format.html
 
-.. doctest-requires:: lammps
+.. doctest::
 
     >>> from collections import defaultdict
 
     >>> def write_lammps_data(cif: CifFile):
     ...     """Convert a CIF file into a LAMMPS data file."""
-    ...     data = "(LAMMPS Data File, written with `parsnip`)\n\n"
+    ...     data = "(LAMMPS Data File, written with parsnip)\n\n"
     ...
-    ...     atomic_positions = cif.build_unit_cell()
+    ...     fractional_coordinates = cif.build_unit_cell()
+    ...     atomic_positions = fractional_coordinates @ cif.lattice_vectors.T
+    ...
     ...     atom_types = cif["_atom_site_type_symbol"]
     ...     particle_type_map = defaultdict(list)
     ...
@@ -123,7 +125,7 @@ in LAMMPS.
     ...     data += f"{xy:.12f} {xz:.12f} {yz:.12f} xy xz yz\n\n"
     ...
     ...     # Write out the atomic position data -- note the similarities with typeid!
-    ...     data += f"Atoms # atomic\n"
+    ...     data += f"Atoms # atomic\n\n"
     ...
     ...     for i, label in enumerate(labels.squeeze(axis=1)):
     ...         particle_type_map[label].append(i)
@@ -139,12 +141,9 @@ in LAMMPS.
     ...
     ...     return data
 
-    >>> with open("fcc.data") as f:  # doctest: +SKIP
-    ...     f.write(write_lammps_data(cif)) # doctest: +SKIP
-
     >>> # Or, simply print the output:
     >>> print(write_lammps_data(cif))
-    (LAMMPS Data File, written with `parsnip`)
+    (LAMMPS Data File, written with parsnip)
     <BLANKLINE>
     4 atoms
     1 atom types
@@ -156,7 +155,6 @@ in LAMMPS.
     <BLANKLINE>
     Atoms # atomic
       0   0  0.000000000000 0.000000000000 0.000000000000
-      1   0  0.000000000000 0.500000000000 0.500000000000
-      2   0  0.500000000000 0.000000000000 0.500000000000
-      3   0  0.500000000000 0.500000000000 0.000000000000
-
+      1   0  0.000000000000 1.800000000000 1.800000000000
+      2   0  1.800000000000 0.000000000000 1.800000000000
+      3   0  1.800000000000 1.800000000000 0.000000000000
