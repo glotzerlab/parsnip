@@ -32,9 +32,7 @@ def pycifrw_or_skip(cif_data):
 
 
 def remove_invalid(s):
-    """Our parser strips newlines and carriage returns.
-    TODO: newlines should be retained
-    """
+    """Our parser strips newlines and carriage returns."""
     if s is None or s == "":
         return None
     return s.replace("\r", "")
