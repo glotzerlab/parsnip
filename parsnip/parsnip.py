@@ -1104,12 +1104,15 @@ class CifFile:
     }
     """Regex patterns used when parsing files.
 
-    This dictionary can be modified to change parsing behavior, although doing is not
-    recommended. Changes to this variable are shared across all instances of the class.
+    .. note::
 
-    Please refer to the
-    [CIF grammar](https://www.iucr.org/resources/cif/spec/version1.1/cifsyntax#bnf) for
-    further details.
+        This dictionary can be modified to change parsing behavior, although doing
+        is not recommended. Changes to this variable are shared across all
+        instances of the class.
+
+    Please refer to the `CIF grammar`_ for further details.
+
+    .. _`CIF grammar`: https://www.iucr.org/resources/cif/spec/version1.1/cifsyntax#bnf
     """
 
     _SYMOP_KEYS = (
