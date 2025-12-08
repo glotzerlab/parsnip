@@ -745,7 +745,7 @@ class CifFile:
         return _box_from_lengths_and_angles(*self.read_cell_params(degrees=False))
 
     @property
-    def lattice_vectors(self):
+    def lattice_vectors(self) -> np.ndarray[(3, 3), np.float64]:
         r"""The lattice vectors of the unit cell, with :math:`\vec{a_1}\perp[100]`.
 
         .. important::
@@ -777,23 +777,25 @@ class CifFile:
             The lattice vectors of the unit cell :math:`\vec{a_1}, \vec{a_2},\vec{a_3}`.
         """
         lx, ly, lz, xy, xz, yz = self.box
-        return np.asarray([[lx, xy * ly, xz * lz], [0, ly, lz * yz], [0, 0, lz]])
+        return np.asarray(
+            [[lx, xy * ly, xz * lz], [0, ly, lz * yz], [0, 0, lz]], dtype=np.float64
+        )
 
     @property
-    def loop_labels(self):
+    def loop_labels(self) -> list[tuple[str, ...]]:
         """A list of column labels for each data array.
 
         This property is equivalent to :code:`[arr.dtype.names for arr in self.loops]`.
 
         Returns
         -------
-        list[list[str]]:
+        list[tuple[str, ...]]:
             Column labels for :attr:`~.loops`, stored as a nested list of strings.
         """
         return [arr.dtype.names for arr in self.loops]
 
     @property
-    def symops(self):
+    def symops(self) -> np.ndarray | None:
         r"""Extract the symmetry operations in a `parsable algebraic form`_.
 
         Example
@@ -807,13 +809,13 @@ class CifFile:
         Returns
         -------
             :math:`(N,1)` numpy.ndarray[str]:
-                An array containing the symmetry operations.
+                An array containing the symmetry operations, or None if none are found.
 
         .. _`parsable algebraic form`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Ispace_group_symop_operation_xyz.html
         """
         # Only one key is valid in each standard, so we only ever get one match.
         for key in self.__class__._SYMOP_KEYS:
-            symops = self.get_from_loops(key)
+            symops: np.ndarray | None = self.get_from_loops(key)
             if symops is not None:
                 self._symops_key = self._wildcard_mapping[key]
                 return symops
