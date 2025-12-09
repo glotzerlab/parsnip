@@ -4,12 +4,11 @@ Changelog
 The format is based on `Keep a Changelog <http://keepachangelog.com/en/1.1.0/>`__.
 This project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`__.
 
-v0.4.1 - 2025-10-08
+v0.X.X - 20XX-XX-XX
 -------------------
 
 Added
 ~~~~~
-- Support for Python 3.14
 - Tutorial on loading CIF files in HOOMD-Blue
 - Tutorial on loading CIF files in LAMMPS
 - Tutorial on reconstructing CIF files with limited numerical precision
@@ -19,6 +18,13 @@ Added
 Changed
 ~~~~~~~
 - ``CifFile.__repr__`` now includes a copy-pasteable section for reproducibility
+
+v0.4.1 - 2025-10-08
+-------------------
+
+Added
+~~~~~
+- Support for Python 3.14
 
 v0.4.0 - 2025-09-03
 -------------------
