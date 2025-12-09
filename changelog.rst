@@ -10,6 +10,15 @@ v0.4.1 - 2025-10-08
 Added
 ~~~~~
 - Support for Python 3.14
+- Tutorial on loading CIF files in HOOMD-Blue
+- Tutorial on loading CIF files in LAMMPS
+- Tutorial on reconstructing CIF files with limited numerical precision
+- Documentation for the ``CifFile.PATTERNS`` dict and its relation to the formal CIF
+  grammar
+
+Changed
+~~~~~~~
+- ``CifFile.__repr__`` now includes a copy-pasteable section for reproducibility
 
 v0.4.0 - 2025-09-03
 -------------------
