@@ -13,7 +13,7 @@ more uniform variant described by `O'Keefe and Andersson`_.
 These are the Wyckoff positions for elemental Beta-Manganese:
 
 .. literalinclude:: betamn.cif
-   :lines: 50-52
+   :lines: 51-52
 
 
 .. testsetup::
