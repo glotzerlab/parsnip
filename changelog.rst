@@ -4,6 +4,21 @@ Changelog
 The format is based on `Keep a Changelog <http://keepachangelog.com/en/1.1.0/>`__.
 This project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`__.
 
+v0.X.X - 20XX-XX-XX
+-------------------
+
+Added
+~~~~~
+- Tutorial on loading CIF files in HOOMD-Blue
+- Tutorial on loading CIF files in LAMMPS
+- Tutorial on reconstructing CIF files with limited numerical precision
+- Documentation for the ``CifFile.PATTERNS`` dict and its relation to the formal CIF
+  grammar
+
+Changed
+~~~~~~~
+- ``CifFile.__repr__`` now includes a copy-pasteable section for reproducibility
+
 v0.4.1 - 2025-10-08
 -------------------
 

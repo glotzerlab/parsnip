@@ -8,7 +8,7 @@ from pathlib import Path
 def _is_potentially_valid_path(file: str) -> bool:
     """Check whether a file string could possibly be intended as a path.
 
-    This method returns true if the provided string is a valid path, whther the suffix
+    This method returns true if the provided string is a valid path, whether the suffix
     ".cif" is contained in the path, if the path links to a file, or if the path's
     parent is a directory.
     """

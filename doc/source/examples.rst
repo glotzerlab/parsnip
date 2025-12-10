@@ -15,4 +15,6 @@ structures from existing data.
 .. toctree::
    :maxdepth: 2
 
+   example_simulation
+   example_noisy
    example_new_structures

@@ -24,8 +24,8 @@ from parsnip._errors import ParseWarning
 def _gemmi_read_table(filename, keys):
     try:
         return np.array(cif.read_file(filename).sole_block().find(keys))
-    except (RuntimeError, ValueError):
-        pytest.skip("Gemmi failed to read file!")
+    except (RuntimeError, ValueError) as e:
+        pytest.skip(f"Gemmi failed to read file: {e}")
 
 
 @all_files_mark
@@ -35,7 +35,7 @@ def test_read_symops(cif_data):
     np.testing.assert_array_equal(parsnip_symops, gemmi_symops)
 
 
-@all_files_mark  # TODO: test with conversions to numeric as well
+@all_files_mark
 def test_read_wyckoff_positions(cif_data):
     parsnip_data = cif_data.file.wyckoff_positions
     gemmi_data = _gemmi_read_table(cif_data.filename, cif_data.file._wyckoff_site_keys)
