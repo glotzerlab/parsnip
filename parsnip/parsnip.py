@@ -893,8 +893,8 @@ class CifFile:
 
         Parameters
         ----------
-        wyckoff_sites : np.ndarray[(None, 3), np.float64]
-            A NumPy array of shape (N, 3) containing the new Wyckoff sites.
+        wyckoff_sites : :math:`(N, 3)` :class:`numpy.ndarray`:
+            The new Wyckoff site data.
 
         Raises
         ------
