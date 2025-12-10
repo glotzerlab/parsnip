@@ -874,7 +874,6 @@ class CifFile:
         r"""Set the Wyckoff sites in the CIF file data.
 
         This method updates the values of the Wyckoff position coordinates
-        (e.g., ``_atom_site_fract_x``, ``_atom_site_fract_y``, ``_atom_site_fract_z``)
         in the corresponding loop structure. The input is a NumPy array of floating
         point values, which will be converted to strings for storage.
 
@@ -882,6 +881,15 @@ class CifFile:
         data, the loop will be resized. When adding new sites, placeholder
         data ("?") will be used for non-coordinate columns. When removing sites,
         rows are removed from the end of the loop.
+
+        .. danger::
+
+            Changing the Wyckoff positions may invalidate other keys in the original
+            file, most commonly by changing the ``_chemical_formula_sum`` and space
+            group data. Correct structures will be built when using
+            :meth:`~.build_unit_cell` , but use of keys related to structural or
+            chemical data is discouraged once the basis has been modified. Refer to
+            :ref:`setbasis` for further details.
 
         Parameters
         ----------

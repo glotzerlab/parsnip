@@ -1,3 +1,5 @@
+.. _setbasis:
+
 Refining and Experimenting with Structures
 ==========================================
 
