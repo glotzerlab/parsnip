@@ -852,7 +852,10 @@ class CifFile:
             for (k, v) in zip(self.__class__._WYCKOFF_KEYS, wyckoff_position_data)
             if v is not None
         ]
-        return np.hstack([x for x in wyckoff_position_data if x is not None] or [[]])
+        data_to_stack = [x for x in wyckoff_position_data if x is not None]
+        if not data_to_stack:
+            return np.array([])
+        return np.column_stack(data_to_stack)
 
     @property
     def wyckoff_positions(self):
@@ -866,6 +869,86 @@ class CifFile:
         .. _`fractional coordinates`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html
         """
         return cast_array_to_float(self._read_wyckoff_positions(), dtype=float)
+
+    def set_wyckoff_positions(self, wyckoff_sites: np.ndarray[(None, 3), np.float64]):
+        r"""Set the Wyckoff sites in the CIF file data.
+
+        This method updates the values of the Wyckoff position coordinates
+        (e.g., ``_atom_site_fract_x``, ``_atom_site_fract_y``, ``_atom_site_fract_z``)
+        in the corresponding loop structure. The input is a NumPy array of floating
+        point values, which will be converted to strings for storage.
+
+        If the provided array has a different number of rows than the existing
+        data, the loop will be resized. When adding new sites, placeholder
+        data ("?") will be used for non-coordinate columns. When removing sites,
+        rows are removed from the end of the loop.
+
+        Parameters
+        ----------
+        wyckoff_sites : np.ndarray[(None, 3), np.float64]
+            A NumPy array of shape (N, 3) containing the new Wyckoff sites.
+
+        Raises
+        ------
+        ValueError
+            If the Wyckoff position keys cannot be found in any loop, or if the
+            input array does not have 3 columns.
+        """
+        wyckoff_sites = np.asarray(wyckoff_sites)
+        if len(self._raw_wyckoff_keys) == 0:
+            self._read_wyckoff_positions()
+
+        keys_to_set = self._wyckoff_site_keys
+
+        # If we have both fractional and cartesian, only use the first three (fract)
+        if len(keys_to_set) > 3:
+            keys_to_set = keys_to_set[:3]
+
+        if len(keys_to_set) != 3:
+            raise ValueError(f"Found {len(keys_to_set)} Wyckoff keys, expected 3.")
+
+        target_loop_idx = -1
+        for i, loop in enumerate(self._loops):
+            if all(key in loop.dtype.names for key in keys_to_set):
+                target_loop_idx = i
+                break
+
+        if target_loop_idx == -1:
+            raise ValueError(
+                f"Could not find a loop containing all Wyckoff keys: {keys_to_set}"
+            )
+
+        if wyckoff_sites.ndim != 2 or wyckoff_sites.shape[1] != 3:
+            raise ValueError(
+                "Input `wyckoff_sites` must have shape (N, 3), but has shape"
+                f"{wyckoff_sites.shape}."
+            )
+
+        target_loop = self._loops[target_loop_idx]
+        n_current = len(target_loop)
+        n_new = len(wyckoff_sites)
+
+        new_loop = np.empty(n_new, dtype=target_loop.dtype)
+
+        # Copy over existing data for columns that are not being set
+        other_keys = [
+            name for name in target_loop.dtype.names if name not in keys_to_set
+        ]
+        n_to_copy = min(n_current, n_new)
+        for key in other_keys:
+            new_loop[key][:n_to_copy] = target_loop[key][:n_to_copy].squeeze()
+
+        # Set new coordinates
+        for i, key in enumerate(keys_to_set):
+            new_loop[key] = [f"{val:.8f}" for val in wyckoff_sites[:, i]]
+
+        # Fill in default values for added rows
+        if n_new > n_current:
+            for key in other_keys:
+                new_loop[key][n_current:] = "?"
+
+        self._loops[target_loop_idx] = new_loop
+        return self  # Allow for chaining.
 
     @property
     def cast_values(self):
