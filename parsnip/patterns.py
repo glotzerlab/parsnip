@@ -44,6 +44,8 @@ _WHITESPACE = "[\t ]"
 See section 3.2 of dx.doi.org/10.1107/S1600576715021871 for clarification.
 """
 
+_SAFE_STRING_RE = re.compile(r"(\(\d+\))|[^\d\[\]\,\+\-\/\*\.]")
+
 
 def _contains_wildcard(s: str) -> bool:
     return "?" in s or "*" in s
@@ -105,22 +107,17 @@ def _safe_eval(
             :math:`(N,3)` list of fractional coordinates.
 
     """
-    ordered_inputs = {"x": "{0}", "y": "{1}", "z": "{2}"}
-    # Replace any x, y, or z with the same character surrounded by curly braces. Then,
-    # perform substitutions to insert the actual values.
+    # Replace x, y, and z with positional format specifiers and then format in values
     substituted_string = (
-        re.sub(r"([xyz])", r"{\1}", str_input).format(**ordered_inputs).format(x, y, z)
+        str_input.replace("x", "{0}")
+        .replace("y", "{1}")
+        .replace("z", "{2}")
+        .format(x, y, z)
     )
 
     # Remove any unexpected characters from the string, including precision specifiers.
-    safe_string = re.sub(r"(\(\d+\))|[^\d\[\]\,\+\-\/\*\.]", "", substituted_string)
+    safe_string = _SAFE_STRING_RE.sub("", substituted_string)
 
-    # Double check to be sure:
-    assert all(char in ",.0123456789+-/*[]" for char in safe_string), (
-        "Evaluation aborted. Check that symmetry operation string only contains "
-        "numerics or characters in { [],.+-/ } and adjust `regex_filter` param "
-        "accordingly."
-    )
     if parse_mode == "sympy":
         return _sympy_evaluate_array(safe_string)
     if parse_mode == "python_float":
