@@ -114,6 +114,11 @@ or the center of the cell) can result in differences.
     >>> cif["_symmetry_Int_Tables_number"] # Data from the initial file.
     '213'
 
+Placing a Wyckoff position on a high-symmetry site results in a change in the space
+group.
+
+.. doctest-requires:: spglib
+
     >>> cif = CifFile("betamn.cif").set_wyckoff_positions([[0.0, 0.0, 0.0]])
     >>> different_uc = cif.build_unit_cell()
     >>> spglib.get_spacegroup((box, different_uc, [0] * len(different_uc)))
