@@ -47,7 +47,7 @@ pygments==2.19.2
     #   furo
     #   pytest
     #   sphinx
-pytest==9.0.1
+pytest==9.0.2
     # via pytest-doctestplus
 pytest-doctestplus==1.6.0
     # via -r doc/requirements.in
@@ -87,5 +87,5 @@ sphinxcontrib-serializinghtml==2.0.0
     # via sphinx
 typing-extensions==4.15.0
     # via beautifulsoup4
-urllib3==2.6.0
+urllib3==2.6.1
     # via requests
