@@ -29,12 +29,12 @@ the rapid incorporation of `parsnip` into existing libraries within the molecula
 simulation ecosystem [@Freud2020].
 
 `parsnip`'s primary functionality lies in its ability to accurately reconstruct unit
-cells from only a few decimal places of recorded experimental data. Through a
-combination of rational and floating-point arithmetic, we achieve class-leading accuracy
-in reconstructing large and complex structures. **parsnip's** detailed processing of
-structural data yields better alignment with reported space group and point group
-symmetries than existing tools, providing an ideal foundation for studies centered on
-material design.
+cells from experimental data recorded with limited precision, often with only a few
+decimal places. Through a combination of rational and floating-point arithmetic, we
+achieve class-leading accuracy when reconstructing large and complex structures.
+**parsnip's** detailed processing of structural data yields better alignment with
+reported space group and point group symmetries than existing tools, providing an ideal
+foundation for studies centered on material design.
 
 `parsnip` supports a dictionary-like lookup format for both scalar and tabular data,
 both of which can be expanded with Unix-style wildcards to simplify complex queries.
@@ -88,9 +88,6 @@ for cross-language access without modifying the build system of downstream proje
 a result, users get the benefits of copy-free data transfer to compiled languages
 without any additional complexity.
 
-<!-- TODO: show example code block as figure? -->
-<!-- TODO: mention symbolic parsing : 'a primary challenge...'-->
-
 <!-- # Citations -->
 
 <!-- Citations to entries in paper.bib should be in -->
@@ -115,6 +112,6 @@ without any additional complexity.
 <!-- Figure sizes can be customized by adding an optional second parameter: -->
 <!-- ![Caption for example figure.](figure.png){ width=20% } -->
 
-<!-- # Acknowledgements -->
+# Acknowledgments
 
 # References
