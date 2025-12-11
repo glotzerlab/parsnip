@@ -20,31 +20,30 @@ bibliography: paper.bib
 # Summary
 
 `parsnip` provides a lightweight, precise, and domain agnostic interface for parsing
-data encoded in the Crystallographic Information File (CIF) [@Brown:an0595] and
-Macromolecular CIF (mmCIF) [@bourne30MacromolecularCrystallographic1997] formats.
-Designed for programmatic analysis of crystalline systems, `parsnip` offers a scriptable
-query API and a suite of convenient data retrieval methods for automated lookups of
-structural information. Its minimal dependency set and high-level interface allows for
-the rapid incorporation of `parsnip` into existing libraries within the molecular
-simulation ecosystem [@Freud2020].
+data encoded in the Crystallographic Information File (CIF) [@CIF] and Macromolecular
+CIF (mmCIF) [@mmCIF] formats. Designed for programmatic analysis of crystalline systems,
+`parsnip` offers a scriptable query API and a suite of convenient data retrieval methods
+for automated lookups of structural information. Its minimal dependency set and
+high-level interface allows for the rapid incorporation of `parsnip` into existing
+libraries within the molecular simulation ecosystem [@Freud2020].
 
 `parsnip`'s primary functionality lies in its ability to accurately reconstruct unit
 cells from experimental data recorded with limited precision, often with only a few
 decimal places. Through a combination of rational and floating-point arithmetic, we
 achieve class-leading accuracy when reconstructing large and complex structures.
-**parsnip's** detailed processing of structural data yields better alignment with
-reported space group and point group symmetries than existing tools, providing an ideal
-foundation for studies centered on material design.
+`parsnip`'s detailed processing of structural data yields better alignment with reported
+space group and point group symmetries than existing tools [@ASE; @PyCIFRW; @GEMMI],
+providing an ideal foundation for studies centered on material design.
 
 `parsnip` supports a dictionary-like lookup format for both scalar and tabular data,
 both of which can be expanded with Unix-style wildcards to simplify complex queries.
 Convenient methods for parsing unit cell parameters, reconstructing particle positions,
 and identifying site symmetry data are exposed to streamline common workflows in
-materials data science, with clear documentation of conventions and units that
-eliminates ambiguities common to interdisciplinary research. Using NumPy structured
-arrays for data storage allows Python, C, and FORTRAN libraries to work with `parsnip`,
-resulting in a stable, scalable dependency for scientific codebases in materials
-research at the atomic, molecular, and colloidal scales [@Freud2020].
+materials data science with clear documentation of conventions and units that eliminates
+ambiguities common to interdisciplinary research. Using NumPy structured arrays for data
+storage allows Python, C, and FORTRAN libraries to work with `parsnip`, resulting in a
+stable, scalable dependency for scientific codebases in materials research at the
+atomic, molecular, and colloidal scales [@Freud2020].
 
 # Statement of Need
 
@@ -55,12 +54,13 @@ particularly significant problem in interdisciplinary research where the buildin
 of crystal structures include atoms, macromolecules, and nanoparticles. While many
 excellent libraries provide high-level interfaces and strict class hierarchies for
 crystallographic data, the general nature of simulation science drives a need for
-array-formatted storage with memory layouts that easily translate between simulation
-frameworks. This shift in design focus provides a simple, intuitive software frontend
-that integrates tightly with existing standards for molecular simulation and analysis.
-This marks a contrast in design between `parsnip` and existing crystallography libraries
-like **ASE**, which provides wrapper types specific to elemental systems and
-**PyCIFRW**, which lays out data in a noncontiguous manner [@Larsen2017; @Hester2006].
+array-formatted storage that easily translates across simulation frameworks and system
+length-scales. Parsnip addresses this need by providing a simple, intuitive, and
+well-documented software frontend that integrates tightly with existing standards for
+molecular simulation and analysis. This marks a contrast in design between `parsnip` and
+existing crystallography libraries like **ASE**, which provides wrapper types specific
+to elemental systems and **PyCIFRW**, which lacks public documentation and lays out data
+in a non-contiguous manner [@ASE; @PyCIFRW].
 
 `parsnip` supports colloidal and mesoscale materials research in addition to the atomic
 and protein datasets for which the CIF and mmCIF specifications were originally designed
@@ -77,16 +77,16 @@ library does support a similar style of wildcard in their `gemmi grep` command-l
 tool, its use is limited to bash scripting and each wildcard query requires the file to
 be re-parsed in its entirety [@Wojdyr:2022].
 
-`parsnip` is designed and optimized for use as a dependency in larger materials science
-codes, requiring only NumPy as a dependency. This has facilitated its incorporation into
-the **freud** analysis library, which uses `parsnip` to extract unit cell data for use
-as reference structures in high-throughput simulation analysis [@Freud2020]. Although
-other CIF libraries like **Gemmi** also have minimal dependency sets, the compiled
-nature of the package means that integration with other libraries may not be
-straightforward. `parsnip` uses NumPy structured arrays to provide a stable data layout
-for cross-language access without modifying the build system of downstream projects. As
-a result, users get the benefits of copy-free data transfer to compiled languages
-without any additional complexity.
+`parsnip` is designed and optimized for integration with larger materials science codes,
+with a minimal dependency set and pure Python interface. This has facilitated its
+incorporation into the **freud** analysis library, which uses `parsnip` to extract unit
+cell data for use as reference structures in high-throughput simulation analysis
+[@Freud2020]. Although other CIF libraries like **Gemmi** also require a few
+dependencies, the compiled nature of the package means that integration with other
+libraries may not be straightforward. `parsnip` uses NumPy structured arrays to provide
+a stable data layout for cross-language access without modifying the build system of
+downstream projects. As a result, users get the benefits of copy-free data transfer to
+compiled languages without any additional complexity.
 
 <!-- # Citations -->
 
