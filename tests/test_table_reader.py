@@ -18,8 +18,6 @@ STR_WIDTH_MAX = 128
 Used to simplify processing of structured arrays.
 """
 
-# TODO: update to verify the number and shape of tables is correct
-
 
 @all_files_mark
 def test_reads_all_keys(cif_data):

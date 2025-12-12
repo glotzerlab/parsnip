@@ -14,6 +14,8 @@ fonttools==4.61.0
     # via matplotlib
 gemmi==0.7.4
     # via -r tests/requirements.in
+gsd==4.0.0
+    # via -r tests/requirements.in
 iniconfig==2.3.0
     # via pytest
 kiwisolver==1.4.9
@@ -29,6 +31,7 @@ numpy==2.2.6
     #   parsnip-cif (pyproject.toml)
     #   ase
     #   contourpy
+    #   gsd
     #   matplotlib
     #   pycifrw
     #   scipy

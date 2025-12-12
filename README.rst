@@ -6,9 +6,6 @@
 
 .. _header:
 
-..
-  TODO: set up Readthedocs, PyPI, and conda-forge
-
 |ReadTheDocs|
 |PyPI|
 |conda-forge|

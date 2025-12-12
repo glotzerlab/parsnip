@@ -75,7 +75,7 @@ from fnmatch import filter as fnfilter
 from fnmatch import fnmatch
 from importlib.util import find_spec
 from pathlib import Path
-from typing import ClassVar, TextIO
+from typing import ClassVar, Literal, TextIO
 
 import numpy as np
 from more_itertools import flatten, peekable
@@ -113,7 +113,7 @@ NONTABLE_LINE_PREFIXES = ("_", "#")
 
 
 class CifFile:
-    """Lightweight, performant parser for CIF files.
+    """Parser for CIF files.
 
     Example
     -------
@@ -122,7 +122,7 @@ class CifFile:
     >>> from parsnip import CifFile
     >>> cif = CifFile("example_file.cif")
     >>> print(cif)
-    CifFile(file=example_file.cif) : 12 data entries, 2 data loops
+    CifFile(file='example_file.cif') : 12 data entries, 2 data loops
 
     Data entries are accessible via the :attr:`~.pairs` and :attr:`~.loops` attributes:
 
@@ -141,7 +141,7 @@ class CifFile:
     .. tip::
 
         See the docs for :attr:`__getitem__` and :attr:`get_from_loops` to query
-        for data by key or column label!
+        for data by key or column label.
 
     Parameters
     ----------
@@ -296,7 +296,7 @@ class CifFile:
 
         .. tip::
 
-            This method supports a few unix-style wildcards. Use ``*`` to match any
+            This method supports unix-style wildcards. Use ``*`` to match any
             number of any character, and ``?`` to match any single character. If a
             wildcard matches more than one key, a list is returned for that index.
             The ordering of array data resulting from wildcard queries matches the
@@ -543,7 +543,7 @@ class CifFile:
         self,
         n_decimal_places: int = 4,
         additional_columns: str | Iterable[str] | None = None,
-        parse_mode: str = "python_float",
+        parse_mode: Literal["python_float", "sympy"] = "python_float",
         verbose: bool = False,
     ):
         """Reconstruct fractional atomic positions from Wyckoff sites and symops.
@@ -745,7 +745,7 @@ class CifFile:
         return _box_from_lengths_and_angles(*self.read_cell_params(degrees=False))
 
     @property
-    def lattice_vectors(self):
+    def lattice_vectors(self) -> np.ndarray[(3, 3), np.float64]:
         r"""The lattice vectors of the unit cell, with :math:`\vec{a_1}\perp[100]`.
 
         .. important::
@@ -777,23 +777,25 @@ class CifFile:
             The lattice vectors of the unit cell :math:`\vec{a_1}, \vec{a_2},\vec{a_3}`.
         """
         lx, ly, lz, xy, xz, yz = self.box
-        return np.asarray([[lx, xy * ly, xz * lz], [0, ly, lz * yz], [0, 0, lz]])
+        return np.asarray(
+            [[lx, xy * ly, xz * lz], [0, ly, lz * yz], [0, 0, lz]], dtype=np.float64
+        )
 
     @property
-    def loop_labels(self):
+    def loop_labels(self) -> list[tuple[str, ...]]:
         """A list of column labels for each data array.
 
         This property is equivalent to :code:`[arr.dtype.names for arr in self.loops]`.
 
         Returns
         -------
-        list[list[str]]:
+        list[tuple[str, ...]]:
             Column labels for :attr:`~.loops`, stored as a nested list of strings.
         """
         return [arr.dtype.names for arr in self.loops]
 
     @property
-    def symops(self):
+    def symops(self) -> np.ndarray | None:
         r"""Extract the symmetry operations in a `parsable algebraic form`_.
 
         Example
@@ -807,13 +809,13 @@ class CifFile:
         Returns
         -------
             :math:`(N,1)` numpy.ndarray[str]:
-                An array containing the symmetry operations.
+                An array containing the symmetry operations, or None if none are found.
 
         .. _`parsable algebraic form`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Ispace_group_symop_operation_xyz.html
         """
         # Only one key is valid in each standard, so we only ever get one match.
         for key in self.__class__._SYMOP_KEYS:
-            symops = self.get_from_loops(key)
+            symops: np.ndarray | None = self.get_from_loops(key)
             if symops is not None:
                 self._symops_key = self._wildcard_mapping[key]
                 return symops
@@ -871,7 +873,7 @@ class CifFile:
     def cast_values(self):
         """Bool : Whether to cast "number-like" values to ints & floats.
 
-        .. note::
+        .. caution::
 
             When set to `True` after construction, the values are modified in-place.
             This action cannot be reversed.
@@ -928,7 +930,8 @@ class CifFile:
             if line == "":
                 continue
 
-            # TODO: could separate multi-block files in the future =====================
+            # While we could separate multi-block files in the future, its actually
+            # beneficial for us to flatten the file into one block.
             # block = re.match(self._cpat["block_delimiter"], line.lower().lstrip())
             # if block is not None:
             #     continue
@@ -1019,7 +1022,7 @@ class CifFile:
                     loop_data = np.array([*flatten(loop_data)]).reshape(-1, n_cols)
 
                 if len(loop_data) == 0:
-                    msg = "Loop data is empy, but n_cols > 0: check CIF file syntax."
+                    msg = "Loop data is empty, but n_cols > 0: check CIF file syntax."
                     _warn_or_err(msg, self._strict)
                     continue
                 dt = _dtype_from_int(max(len(s) for l in loop_data for s in l))
@@ -1066,34 +1069,60 @@ class CifFile:
     def __repr__(self):
         n_pairs = len(self.pairs)
         n_tabs = len(self.loops)
-        return f"CifFile(file={self._fn}) : {n_pairs} data entries, {n_tabs} data loops"
+        return (
+            f"CifFile(file='{self._fn}') : {n_pairs} data entries, {n_tabs} data loops"
+        )
 
+    # PATTERNS dict is based on the [CIF grammar] specification, adapted to be formally
+    # regular for performance. Context-free parts of the grammar are handled by
+    # the `_accumulate_nonsimple_data` pattern, which builds balanced blocks of tokens.
+    # Context-sensitive components -- primarily relationships between <LoopHeader>
+    # column labels and <LoopBody> columnar data -- are handled directly in the parser.
+    #
+    # [CIF grammar](https://www.iucr.org/resources/cif/spec/version1.1/cifsyntax#bnf)
     PATTERNS: ClassVar = {
+        # Matcher for <DataItems> syntactic units
         "key_value_general": rf"^(_{_CIF_KEY}+?)\s{_PROG_PLUS}({_ANY}+?)$",
+        # Matcher for the first token of <LoopHeader> syntactic units
         "loop_delimiter": rf"(loop_){_WHITESPACE}{_PROG_STAR}([^\n]{_PROG_STAR})",
+        # Matcher for <DataBlock> syntactic units. Currently, these are ignored.
         "block_delimiter": rf"(data_){_WHITESPACE}{_PROG_STAR}([^\n]{_PROG_STAR})",
-        "key_list": rf"_{_CIF_KEY}+?(?=\s|$)",  # Match space or endline-separated keys
+        # Matcher for the column labels of a <LoopHeader> syntactic unit
+        "key_list": rf"_{_CIF_KEY}+?(?=\s|$)",
+        # Matcher for <LoopBody> syntactic units, which may span multiple lines.
+        # Note that this allows for backtracking, as <SingleQuotedString> and
+        # <DoubleQuotedString> values may contain whitespace and quotation marks.
         "space_delimited_data": (
             "("
             r";[^;]*?;|"  # Non-semicolon data bracketed by semicolons
             r"'(?:'\S|[^'])*'|"  # Data with single quotes not followed by \s
-            # rf"\"[^\"]{_PROG_STAR}\"|"  # Data with double quotes
             rf"[^';\"\s]{_PROG_STAR}"  # Additional non-bracketed data
             ")"
         ),
-        "comment": "#.*?$",  # A comment at the end of a line or string
+        # Matcher for <Comments> syntactic units
+        "comment": "#.*?$",
+        # Matcher for CIF 2.0 <list>-related tokens
+        # https://www.iucr.org/__data/assets/text_file/0009/112131/CIF2-ENBF.txt
         "bracket": r"(\[|\])",
     }
     """Regex patterns used when parsing files.
 
-    This dictionary can be modified to change parsing behavior, although doing is not
-    recommended. Changes to this variable are shared across all instances of the class.
+    .. caution::
+
+        This dictionary can be modified to change parsing behavior, although doing
+        is not recommended. Changes to this variable are shared across all
+        instances of the class.
+
+    Please refer to the `CIF grammar`_ for further details.
+
+    .. _`CIF grammar`: https://www.iucr.org/resources/cif/spec/version1.1/cifsyntax#bnf
     """
 
     _SYMOP_KEYS = (
         "_symmetry_equiv?pos_as_xyz",
         "_space_group_symop?operation_xyz",
     )
+    """Keys required to extract symmetry operations from CIF & mmCIF files."""
     _WYCKOFF_KEYS = (
         "_atom_site?fract_x",
         "_atom_site?fract_y",
@@ -1101,4 +1130,9 @@ class CifFile:
         "_atom_site?Cartn_x",
         "_atom_site?Cartn_y",
         "_atom_site?Cartn_z",
-    )  # Only one set should be stored at a time
+    )
+    """Keys required to extract Wyckoff site data from CIF & mmCIF files.
+
+    Note that per the specification, only the *fract_? or *Cartn_? keys may be included
+    but not both.
+    """

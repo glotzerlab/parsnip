@@ -14,6 +14,8 @@ fonttools==4.60.2
     # via matplotlib
 gemmi==0.7.4
     # via -r tests/requirements.in
+gsd==4.0.0
+    # via -r tests/requirements.in
 importlib-resources==6.5.2
     # via matplotlib
 iniconfig==2.1.0
@@ -31,6 +33,7 @@ numpy==2.0.2
     #   parsnip-cif (pyproject.toml)
     #   ase
     #   contourpy
+    #   gsd
     #   matplotlib
     #   pycifrw
     #   scipy
