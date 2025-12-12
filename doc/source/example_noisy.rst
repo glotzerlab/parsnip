@@ -15,8 +15,6 @@ with complicated geometries, using alpha-Selenium as an example.
     >>> if "doc/source" not in os.getcwd(): os.chdir("doc/source")
 
 
-
-
 .. literalinclude:: hP3.cif
 
 Note that the basis positions for alpha-Selenium are provided to five decimal
