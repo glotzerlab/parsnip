@@ -45,14 +45,150 @@ Formatted more nicely, we see the following:
      - 0.20224
      - 0.45224
 
-The key notes are the symmetry multiplicity (8 for Mn1 and 12 for Mn2), which indicates
-how many atomic positions arise from each Wyckoff site, and the Wyckoff label. While
-this tutorial will not delve too deeply into crystallography, it is sufficient to note
-that this label provides a mapping to the International Tables for each space group.
-For β-Manganese, we will use this mapping to identify one coordinate equation that
-describes each site. For Mn1, this yields ``[x, x, x]`` and for Mn2, we select
-``[1 / 8, y, y + 1 / 4]`` to match the CIF data from above.
+First, we note the symmetry multiplicity (8 for :math:`Mn_1` and 12 for
+:math:`Mn_2`), which indicates how many atomic positions arise from each Wyckoff
+site, and the Wyckoff label. Second, we can identify that each Wyckoff position is
+labeled by a letter that differentiates it from other sites. While this tutorial will
+not delve too deeply into crystallography, it is sufficient to note that this Wyckoff
+letter provides a mapping to the `International Tables`_ for each space group. For
+β-Manganese, we will use this mapping to identify one coordinate equation that describes
+each site. The correct table for β-Mn is included in the tabs below, with the coordinate
+equations that match the CIF data (:math:`(x, x, x)` and :math:`(1/8, y, y + 1/4)`)
+highlighted in bold on their corresponding tabs.
 
+.. _`International Tables`: https://web.archive.org/web/20170430110556/http://www.cryst.ehu.es/cgi-bin/cryst/programs/nph-wp-list?gnum=213
+
+.. tab:: 4a
+
+   .. list-table::
+      :widths: 30 70
+      :header-rows: 0
+
+      * - **Multiplicity**
+        - 4
+      * - **Site Symmetry**
+        - ``.32``
+      * - **Coordinates**
+        - .. list-table::
+             :header-rows: 0
+             :widths: 50 50
+
+             * - :math:`(3/8, 3/8, 3/8)`
+               - :math:`(1/8, 5/8, 7/8)`
+             * - :math:`(5/8, 7/8, 1/8)`
+               - :math:`(7/8, 1/8, 5/8)`
+
+.. tab:: 4b
+
+   .. list-table::
+      :widths: 30 70
+      :header-rows: 0
+
+      * - **Multiplicity**
+        - 4
+      * - **Site Symmetry**
+        - ``.32``
+      * - **Coordinates**
+        - .. list-table::
+             :header-rows: 0
+             :widths: 50 50
+
+             * - :math:`(7/8, 7/8, 7/8)`
+               - :math:`(5/8, 1/8, 3/8)`
+             * - :math:`(1/8, 3/8, 5/8)`
+               - :math:`(3/8, 5/8, 1/8)`
+
+.. tab:: 8c
+
+   .. list-table::
+      :widths: 30 70
+      :header-rows: 0
+
+      * - **Multiplicity**
+        - 8
+      * - **Site Symmetry**
+        - ``.3.``
+      * - **Coordinates**
+        - .. list-table::
+             :header-rows: 0
+             :widths: 50 50
+
+             * - :math:`\mathbf{(x, x, x)}`
+               - :math:`(-x+1/2, -x, x+1/2)`
+             * - :math:`(-x, x+1/2, -x+1/2)`
+               - :math:`(x+1/2, -x+1/2, -x)`
+             * - :math:`(x+3/4, x+1/4, -x+1/4)`
+               - :math:`(-x+3/4, -x+3/4, -x+3/4)`
+             * - :math:`(x+1/4, -x+1/4, x+3/4)`
+               - :math:`(-x+1/4, x+3/4, x+1/4)`
+
+.. tab:: 12d
+
+   .. list-table::
+      :widths: 30 70
+      :header-rows: 0
+
+      * - **Multiplicity**
+        - 12
+      * - **Site Symmetry**
+        - ``..2``
+      * - **Coordinates**
+        - .. list-table::
+             :header-rows: 0
+             :widths: 50 50
+
+             * - :math:`\mathbf{(1/8, y, y+1/4)}`
+               - :math:`(3/8, -y, y+3/4)`
+             * - :math:`(7/8, y+1/2, -y+1/4)`
+               - :math:`(5/8, -y+1/2, -y+3/4)`
+             * - :math:`(y+1/4, 1/8, y)`
+               - :math:`(y+3/4, 3/8, -y)`
+             * - :math:`(-y+1/4, 7/8, y+1/2)`
+               - :math:`(-y+3/4, 5/8, -y+1/2)`
+             * - :math:`(y, y+1/4, 1/8)`
+               - :math:`(-y, y+3/4, 3/8)`
+             * - :math:`(y+1/2, -y+1/4, 7/8)`
+               - :math:`(-y+1/2, -y+3/4, 5/8)`
+
+.. tab:: 24e
+
+   .. list-table::
+      :widths: 30 70
+      :header-rows: 0
+
+      * - **Multiplicity**
+        - 24
+      * - **Site Symmetry**
+        - ``1``
+      * - **Coordinates**
+        - .. list-table::
+             :header-rows: 0
+             :widths: 50 50
+
+             * - :math:`(x, y, z)`
+               - :math:`(-x+1/2, -y, z+1/2)`
+             * - :math:`(-x, y+1/2, -z+1/2)`
+               - :math:`(x+1/2, -y+1/2, -z)`
+             * - :math:`(z, x, y)`
+               - :math:`(z+1/2, -x+1/2, -y)`
+             * - :math:`(-z+1/2, -x, y+1/2)`
+               - :math:`(-z, x+1/2, -y+1/2)`
+             * - :math:`(y, z, x)`
+               - :math:`(-y, z+1/2, -x+1/2)`
+             * - :math:`(y+1/2, -z+1/2, -x)`
+               - :math:`(-y+1/2, -z, x+1/2)`
+             * - :math:`(y+3/4, x+1/4, -z+1/4)`
+               - :math:`(-y+3/4, -x+3/4, -z+3/4)`
+             * - :math:`(y+1/4, -x+1/4, z+3/4)`
+               - :math:`(-y+1/4, x+3/4, z+1/4)`
+             * - :math:`(x+3/4, z+1/4, -y+1/4)`
+               - :math:`(-x+1/4, z+3/4, y+1/4)`
+             * - :math:`(-x+3/4, -z+3/4, -y+3/4)`
+               - :math:`(x+1/4, -z+1/4, y+3/4)`
+             * - :math:`(z+3/4, y+1/4, -x+1/4)`
+               - :math:`(z+1/4, -y+1/4, x+3/4)`
+             * - :math:`(-z+1/4, y+3/4, x+1/4)`
+               - :math:`(-z+3/4, -y+3/4, -x+3/4)`
 
 .. testsetup::
 
@@ -83,8 +219,8 @@ And of course, the Wyckoff position data reflects the data tabulated above:
     >>> np.testing.assert_allclose(mn2[2], y + 1 / 4)
     >>> np.testing.assert_allclose(mn2[0], 1 / 8)
 
-Introducing β-Manganese
-^^^^^^^^^^^^^^^^^^^^^^^
+Exploring β-Manganese
+^^^^^^^^^^^^^^^^^^^^^
 
 β-Manganese is a `tetrahedrally close-packed`_ (TCP) structure, a class of complex
 phases whose geometry minimizes the distance between atoms in a manner that prevents the
@@ -200,127 +336,10 @@ the same in the atomic and ideal crystals:
 
 
 A more general choice of the basis will often result in different point symmetry.
-Referring to the `symmetry tables`_ for space group 213 shows the ``a`` and ``b``
+Referring to the `International Tables`_ for space group 213 shows the ``a`` and ``b``
 Wyckoff positions, which have higher symmetry and a lower multiplicity. Selecting any
 value from the "coordinates" table for the 4a position yields the expected 4-particle
-unit cell with a site symmetry of ``'.32'``. For convenience, we include the table for
-space group #213 here. Each tab is titled by its multiplicity and Wyckoff letter, with
-the coordinate used in these examples highlighted in bold.
-
-.. tab:: 4a
-
-   .. list-table::
-      :widths: 30 70
-      :header-rows: 0
-
-      * - **Multiplicity**
-        - 4
-      * - **Site Symmetry**
-        - ``.32``
-      * - **Coordinates**
-        - | **(3/8, 3/8, 3/8)**
-          | (1/8, 5/8, 7/8)
-          | (5/8, 7/8, 1/8)
-          | (7/8, 1/8, 5/8)
-
-.. tab:: 4b
-
-   .. list-table::
-      :widths: 30 70
-      :header-rows: 0
-
-      * - **Multiplicity**
-        - 4
-      * - **Site Symmetry**
-        - ``.32``
-      * - **Coordinates**
-        - | **(7/8, 7/8, 7/8)**
-          | (5/8, 1/8, 3/8)
-          | (1/8, 3/8, 5/8)
-          | (3/8, 5/8, 1/8)
-
-.. tab:: 8c
-
-   .. list-table::
-      :widths: 30 70
-      :header-rows: 0
-
-      * - **Multiplicity**
-        - 8
-      * - **Site Symmetry**
-        - ``.3.``
-      * - **Coordinates**
-        - | **(x, x, x)**
-          | (-x+1/2, -x, x+1/2)
-          | (-x, x+1/2, -x+1/2)
-          | (x+1/2, -x+1/2, -x)
-          | (x+3/4, x+1/4, -x+1/4)
-          | (-x+3/4, -x+3/4, -x+3/4)
-          | (x+1/4, -x+1/4, x+3/4)
-          | (-x+1/4, x+3/4, x+1/4)
-
-.. tab:: 12d
-
-   .. list-table::
-      :widths: 30 70
-      :header-rows: 0
-
-      * - **Multiplicity**
-        - 12
-      * - **Site Symmetry**
-        - ``..2``
-      * - **Coordinates**
-        - | **(1/8, y, y+1/4)**
-          | (3/8, -y, y+3/4)
-          | (7/8, y+1/2, -y+1/4)
-          | (5/8, -y+1/2, -y+3/4)
-          | (y+1/4, 1/8, y)
-          | (y+3/4, 3/8, -y)
-          | (-y+1/4, 7/8, y+1/2)
-          | (-y+3/4, 5/8, -y+1/2)
-          | (y, y+1/4, 1/8)
-          | (-y, y+3/4, 3/8)
-          | (y+1/2, -y+1/4, 7/8)
-          | (-y+1/2, -y+3/4, 5/8)
-
-.. tab:: 16e
-
-   .. list-table::
-      :widths: 30 70
-      :header-rows: 0
-
-      * - **Multiplicity**
-        - 24
-      * - **Site Symmetry**
-        - ``1``
-      * - **Coordinates**
-        - | (x, y, z)
-          | (-x+1/2, -y, z+1/2)
-          | (-x, y+1/2, -z+1/2)
-          | (x+1/2, -y+1/2, -z)
-          | (z, x, y)
-          | (z+1/2, -x+1/2, -y)
-          | (-z+1/2, -x, y+1/2)
-          | (-z, x+1/2, -y+1/2)
-          | (y, z, x)
-          | (-y, z+1/2, -x+1/2)
-          | (y+1/2, -z+1/2, -x)
-          | (-y+1/2, -z, x+1/2)
-          | (y+3/4, x+1/4, -z+1/4)
-          | (-y+3/4, -x+3/4, -z+3/4)
-          | (y+1/4, -x+1/4, z+3/4)
-          | (-y+1/4, x+3/4, z+1/4)
-          | (x+3/4, z+1/4, -y+1/4)
-          | (-x+1/4, z+3/4, y+1/4)
-          | (-x+3/4, -z+3/4, -y+3/4)
-          | (x+1/4, -z+1/4, y+3/4)
-          | (z+3/4, y+1/4, -x+1/4)
-          | (z+1/4, -y+1/4, x+3/4)
-          | (-z+1/4, y+3/4, x+1/4)
-          | (-z+3/4, -y+3/4, -x+3/4)
-
-
-.. _`symmetry tables`: https://web.archive.org/web/20170430110556/http://www.cryst.ehu.es/cgi-bin/cryst/programs/nph-wp-list?gnum=213
+unit cell with a site symmetry of ``'.32'``.
 
 
 .. doctest-requires:: spglib
@@ -368,7 +387,7 @@ one or more degrees of freedom. In β-Manganese, the 8c and 12d Wyckoff sites ea
 have one degree of freedom -- the ``x`` and ``y`` variables assigned above. If we set
 these degrees of freedom such that Wyckoff positions are no longer independent, we also
 alter the space group of the structure. In this case, we solve the system of equations
-that arises from setting the coordinates ``[x, x, x] = [1 / 8, y, y + 1 / 4]`` and
+that arises from setting the coordinates :math:`[x, x, x] = [1 / 8, y, y + 1 / 4]` and
 assign that value to both ``x`` and ``y``. The resulting points end up reconstructing
 the 16d Wyckoff position in the space group #227!
 
@@ -386,6 +405,28 @@ the 16d Wyckoff position in the space group #227!
     'Fd-3m (227)'
     >>> get_particle_point_groups(box, not_beta_mn_uc)
     (['d'], ['.-3m'])
+
+.. tab:: #227 16d
+
+   .. list-table::
+      :widths: 30 70
+      :header-rows: 0
+
+      * - **Space Group**
+        - #227
+      * - **Multiplicity**
+        - 16
+      * - **Site Symmetry**
+        - ``.-3m``
+      * - **Coordinates**
+        - .. list-table::
+             :header-rows: 0
+             :widths: 50 50
+
+             * - :math:`(5/8, 5/8, 5/8)`
+               - :math:`(3/8, 7/8, 1/8)`
+             * - :math:`(7/8, 1/8, 3/8)`
+               - :math:`(1/8, 3/8, 7/8)`
 
 Takeaways
 ^^^^^^^^^
