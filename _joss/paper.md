@@ -7,13 +7,17 @@ tags:
 authors:
   - name: Jenna Bradley
     orcid: 0009-0007-2443-2982
-    equal-contrib: true
     affiliation: 1
+  - name: Sharon Glotzer
+    orcid: 0000-0002-7197-0085
+    affiliation: [1, 2]
 affiliations:
  - name: Materials Science and Engineering, University of Michigan, United States
    index: 1
    ror: 00jmfr291
-date: XX November 2025
+ - name: Department of Chemical Engineering, University of Michigan
+   index: 2
+date: XX December 2025
 bibliography: paper.bib
 ---
 
