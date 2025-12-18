@@ -98,8 +98,6 @@ any additional complexity.
 
 This research was supported by a Vannevar Bush Faculty Fellowship sponsored by the
 Department of the Navy, Office of Naval Research under ONR award number
-N00014-22-1-2821. Any opinions, findings, and conclusions or recommendations expressed
-in this material are those of the authors and do not necessarily reflect the views of
-the Office of Naval Research.
+N00014-22-1-2821.
 
 # References
