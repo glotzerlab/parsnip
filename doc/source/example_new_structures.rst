@@ -47,14 +47,14 @@ Formatted more nicely, we see the following:
 
 First, we note the symmetry multiplicity (8 for :math:`Mn_1` and 12 for
 :math:`Mn_2`), which indicates how many atomic positions arise from each Wyckoff
-site, and the Wyckoff label. Second, we can identify that each Wyckoff position is
-labeled by a letter that differentiates it from other sites. While this tutorial will
-not delve too deeply into crystallography, it is sufficient to note that this Wyckoff
-letter provides a mapping to the `International Tables`_ for each space group. For
-β-Manganese, we will use this mapping to identify one coordinate equation that describes
-each site. The correct table for β-Mn is included in the tabs below, with the coordinate
-equations that match the CIF data (:math:`(x, x, x)` and :math:`(1/8, y, y + 1/4)`)
-highlighted in bold on their corresponding tabs.
+site. Second, we can identify that each Wyckoff position is labeled by a letter that
+differentiates it from other sites. While this tutorial will not delve too deeply into
+crystallography, it is sufficient to note that this Wyckoff letter provides a mapping
+to the `International Tables`_ for each space group. For β-Manganese, we will use this
+mapping to identify one coordinate equation that describes each site. The correct table
+for β-Mn is included in the tabs below, with the coordinate equations that match the
+CIF data (:math:`(x, x, x)` and :math:`(1/8, y, y + 1/4)`) highlighted in bold on their
+corresponding tabs.
 
 .. _`International Tables`: https://web.archive.org/web/20170430110556/http://www.cryst.ehu.es/cgi-bin/cryst/programs/nph-wp-list?gnum=213
 
