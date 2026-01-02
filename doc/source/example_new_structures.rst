@@ -231,8 +231,8 @@ required amount of distortion imposed by the requirement that the structure tile
 It turns out that natural β-Manganese actually has *more* variation in bond lengths
 than is strictly required for this topology of structure. `O'Keefe and Andersson`_
 noticed that moving the ``Mn1`` and ``Mn2`` Wyckoff positions by just ``0.0011`` and
-``0.0042`` fractional units results in a TCP structure composed of bonds whose maximum
-relative distance is lower than experiments predicted.
+``0.0042`` fractional units results in a TCP structure composed of only five unique bond
+lengths, rather than the seven observed in experimental β-Manganese.
 
 .. _`tetrahedrally close-packed`: https://www.chemie-biologie.uni-siegen.de/ac/hjd/lehre/ss08/vortraege/mehboob_tetrahedrally_close_packing_corr_.pdf
 
