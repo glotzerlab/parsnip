@@ -43,7 +43,7 @@ providing an ideal foundation for studies centered on material design.
 both of which can be expanded with Unix-style wildcards to simplify complex queries.
 Convenient methods for parsing unit cell parameters, reconstructing particle positions,
 and identifying site symmetry data are exposed to streamline common workflows in
-materials data science. Parsnip's clear documentation of conventions and units
+materials data science. `parsnip`'s clear documentation of conventions and units
 eliminates ambiguities common to interdisciplinary research. Using NumPy structured
 arrays for data storage allows Python, C, and FORTRAN libraries to work with `parsnip`,
 resulting in a stable, scalable dependency for scientific codebases in materials
