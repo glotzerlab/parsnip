@@ -282,7 +282,7 @@ A Note on Symmetry
 ^^^^^^^^^^^^^^^^^^
 
 Modifying the Wyckoff positions of a crystal (without changing the symmetry operations)
-cannot reduce the symmetry of the structure -- however, some choices of sites can
+cannot reduce the symmetry of the structure --- however, some choices of sites can
 result in *additional* symmetry operations that are not present in the input space
 group. While the example provided above preserved the space group of our crystal,
 choosing a fractional coordinate that lies on a high symmetry point (like the origin,
