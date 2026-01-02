@@ -103,7 +103,7 @@ in LAMMPS.
 
     >>> from collections import defaultdict
 
-    >>> def write_lammps_data(cif: CifFile):
+    >>> def write_lammps_data(cif: CifFile, atom_type_labels: bool = True):
     ...     """Convert a CIF file into a LAMMPS data file."""
     ...     data = "(LAMMPS Data File, written with parsnip)\n\n"
     ...
@@ -124,20 +124,30 @@ in LAMMPS.
     ...     data += f"0.0 {lz:.12f} zlo zhi\n"
     ...     data += f"{xy:.12f} {xz:.12f} {yz:.12f} xy xz yz\n\n"
     ...
-    ...     # Write out the atomic position data -- note the similarities with typeid!
-    ...     data += f"Atoms # atomic\n\n"
-    ...
     ...     for i, label in enumerate(labels.squeeze(axis=1)):
     ...         particle_type_map[label].append(i)
     ...
+    ...     # Write out atom type labels
+    ...     if atom_type_labels:
+    ...         data += "Atom Type Labels\n\n"
+    ...         for i, unique_labels in enumerate(particle_type_map):
+    ...             data += f"{i} {label}\n"
+    ...         data += "\n"
+    ...
+    ...     # Write out the atomic position data -- note the similarities with typeid!
+    ...     data += f"Atoms # atomic\n\n"
+    ...
     ...     # Construct the TypeIDs that map our atomic symbol to an index
-    ...     atom_type_array = np.ones(len(atomic_positions), dtype=int)
+    ...     atom_typeid_array = np.ones(len(atomic_positions), dtype=int)
+    ...     atom_type_array = np.ones(len(atomic_positions), dtype="U4")
     ...     for typeid, label in enumerate(particle_type_map.keys()):
-    ...         atom_type_array[particle_type_map[label]] = typeid
+    ...         atom_typeid_array[particle_type_map[label]] = typeid
+    ...         atom_type_array[particle_type_map[label]] = label
     ...
     ...     for i, coordinate in enumerate(atomic_positions):
     ...         coord_str = " ".join([f"{xyz:.12f}" for xyz in coordinate])
-    ...         data += f"  {i}   {atom_type_array[i]}  {coord_str}\n"
+    ...         label = atom_type_array[i] if atom_type_labels else atom_typeid_array[i]
+    ...         data += f"  {i}   {label}  {coord_str}\n"
     ...
     ...     return data
 
@@ -151,22 +161,28 @@ in LAMMPS.
     0.0 3.600000000000 ylo yhi
     0.0 3.600000000000 zlo zhi
     0.000000000000 0.000000000000 0.000000000000 xy xz yz
+    Atom Type Labels
+    <BLANKLINE>
+    0 Cu
     <BLANKLINE>
     Atoms # atomic
-      0   0  0.000000000000 0.000000000000 0.000000000000
-      1   0  0.000000000000 1.800000000000 1.800000000000
-      2   0  1.800000000000 0.000000000000 1.800000000000
-      3   0  1.800000000000 1.800000000000 0.000000000000
+      0   Cu  0.000000000000 0.000000000000 0.000000000000
+      1   Cu  0.000000000000 1.800000000000 1.800000000000
+      2   Cu  1.800000000000 0.000000000000 1.800000000000
+      3   Cu  1.800000000000 1.800000000000 0.000000000000
 
 .. Validate our output data is (1) valid LAMMPS data and (2) reconstructs our system.
 .. testcleanup::
 
     >>> from io import StringIO
+    >>> from packaging import version
+    >>> import ase
     >>> from ase.io import read
-    >>> atoms = read(StringIO(write_lammps_data(cif)), format='lammps-data')
-
+    >>> write_type = version.parse(ase.__version__) >= version.parse("3.27.0")
+    >>> atoms = read(StringIO(write_lammps_data(cif, write_type)), format='lammps-data')
     >>> fractional_coordinates = cif.build_unit_cell()
     >>> atomic_positions = fractional_coordinates @ cif.lattice_vectors.T
     >>> assert len(atomic_positions) == 4
-    >>> np.testing.assert_array_equal(atoms.get_atomic_numbers(), [0,0,0,0])
+    >>> num = 29 if write_type else 0
+    >>> np.testing.assert_array_equal(atoms.get_atomic_numbers(), [num, num, num, num])
     >>> np.testing.assert_array_equal(np.diag([3.6, 3.6, 3.6]), atoms.get_cell())
