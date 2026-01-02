@@ -5,8 +5,8 @@ Refining and Experimenting with Structures
 
 **parsnip** allows users to set the Wyckoff positions of a crystal, enabling the
 construction of modified (or entirely new) structures. In this example, we show
-how an experimental β-Manganese (cP20-Mn) structure can be refined into the
-more uniform variant described by `O'Keefe and Andersson`_.
+how an experimental β-Manganese structure can be refined into the more uniform variant
+ described by `O'Keefe and Andersson`_.
 
 .. _`O'Keefe and Andersson`: https://doi.org/10.1107/S0567739477002228
 
