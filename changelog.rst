@@ -4,7 +4,7 @@ Changelog
 The format is based on `Keep a Changelog <http://keepachangelog.com/en/1.1.0/>`__.
 This project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`__.
 
-v0.X.X - 20XX-XX-XX
+v0.5.0 - 2026-01-02
 -------------------
 
 Added
