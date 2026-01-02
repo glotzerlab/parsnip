@@ -1,5 +1,5 @@
 ---
-title: "Parsnip: Streamlined Crystallographic Data Parsing for Simulation Science"
+title: "parsnip: Streamlined Crystallographic Data Parsing for Simulation Science"
 tags:
   - Python
   - crystallography
@@ -17,7 +17,7 @@ affiliations:
    ror: 00jmfr291
  - name: Department of Chemical Engineering, University of Michigan
    index: 2
-date: XX December 2025
+date: 2 January 2026
 bibliography: paper.bib
 ---
 
