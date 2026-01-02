@@ -52,7 +52,7 @@ research at the atomic, molecular, and colloidal scales [@Freud2020].
 # Statement of Need
 
 Materials scientists performing experimental and simulation research are fundamentally
-exploring many of the same research questions. However, crystallographic software
+investigating many of the same research questions. However, crystallographic software
 designed for experimental data often does not scale well to automated workflows — a
 particularly significant problem in interdisciplinary research where the building blocks
 of crystal structures include atoms, macromolecules, and nanoparticles. While many
