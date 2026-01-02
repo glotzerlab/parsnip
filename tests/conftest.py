@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import re
+import warnings
 from dataclasses import dataclass
 from glob import glob
 
@@ -12,17 +13,18 @@ from CifFile import CifSyntaxError, StarError
 from gemmi import cif
 
 from parsnip import CifFile
+from parsnip._errors import ParseWarning
 
 ADDITIONAL_TEST_FILES_PATH = ""
 
 rng = np.random.default_rng(seed=161181914916)
 
-data_file_path = os.path.dirname(__file__) + "/sample_data/"
+data_file_path = os.path.join(os.path.dirname(__file__), "sample_data")
 
 
 def pycifrw_or_skip(cif_data):
     try:
-        return pycifRW(cif_data.filename).first_block()
+        return pycifRW(cif_data.filename, strict=0, permissive=True).first_block()
     except StarError:
         pytest.skip("pycifRW raised a StarError!")
     except CifSyntaxError:
@@ -30,10 +32,8 @@ def pycifrw_or_skip(cif_data):
 
 
 def remove_invalid(s):
-    """Our parser strips newlines and carriage returns.
-    TODO: newlines should be retained
-    """
-    if s is None:
+    """Our parser strips newlines and carriage returns."""
+    if s is None or s == "":
         return None
     return s.replace("\r", "")
 
@@ -50,17 +50,46 @@ def _array_assertion_verbose(keys, test_data, real_data):
     np.testing.assert_equal(test_data, real_data, err_msg=msg)
 
 
+def _value_or_nan(val):
+    if val is None:
+        return "_"
+    return val
+
+
 def _gemmi_read_keys(filename, keys, as_number=True):
     try:
         file_block = cif.read_file(filename).sole_block()
-    except (RuntimeError, ValueError):
-        pytest.skip("Gemmi failed to read file!")
+    except ValueError as e:
+        if "parse error" in str(e) or "unterminated 'string'" in str(e):
+            pytest.skip(f"Gemmi failed to read file: {e}")
+        raise ValueError(f"Unexpected error found: {e}") from e
+    except RuntimeError as e:
+        if "duplicate tag" in str(e) or "has no value" in str(e):
+            pytest.skip(f"Gemmi failed to read file: {e}")
+        raise RuntimeError(f"Unexpected error found: {e}") from e
     if as_number:
-        try:
-            return np.array([cif.as_number(file_block.find_value(key)) for key in keys])
-        except TypeError:
-            pytest.skip("Encountered non-numerics while parsing file.")
+        return np.array(
+            [cif.as_number(_value_or_nan(file_block.find_value(key))) for key in keys]
+        )
     return np.array([remove_invalid(file_block.find_value(key)) for key in keys])
+
+
+def _gemmi_read_table(filename, keys):
+    try:
+        return np.array(
+            [
+                [remove_invalid(x) for x in row]
+                for row in cif.read_file(filename).sole_block().find(keys)
+            ]
+        )
+    except ValueError as e:
+        if "unterminated 'string'" in str(e):
+            pytest.skip(f"Gemmi failed to read file: {e}")
+        raise ValueError(f"Unexpected error found: {e}") from e
+    except RuntimeError as e:
+        if "duplicate tag" in str(e) or "has no value" in str(e):
+            pytest.skip(f"Gemmi failed to read file: {e}")
+        raise RuntimeError(f"Unexpected error found: {e}") from e
 
 
 def _arrstrip(arr: np.ndarray, pattern: str):
@@ -77,9 +106,26 @@ class CifData:
     """Test cases that DO NOT read properly."""
     manual_keys: tuple[str, ...] = ()
 
+    @classmethod
+    def from_file(cls, file: str) -> CifData:
+        """Create a CifData object from a filename and the default keys."""
+        cif = cls(
+            filename=os.path.join(data_file_path, file),
+            file=CifFile(os.path.join(data_file_path, file)),
+        )
+        cif.symop_keys = (
+            ("_space_group_symop_operation_xyz",)
+            if cif.file["_space_group_symop_operation_xyz"] is not None
+            else ("_symmetry_equiv_pos_as_xyz",)
+        )
+        cif.atom_site_keys = (
+            *(key for key in atom_site_keys if cif.file[key] is not None),
+        )
+        return cif
+
 
 # Assorted keys to select from
-assorted_keys = np.loadtxt(data_file_path + "cif_file_keys.txt", dtype=str)
+assorted_keys = np.loadtxt(os.path.join(data_file_path, "cif_file_keys.txt"), dtype=str)
 
 
 def combine_marks(*marks, argnames="cif_data"):
@@ -96,8 +142,19 @@ def combine_marks(*marks, argnames="cif_data"):
     )
 
 
-def generate_random_key_sequences(arr, n_samples, seed=42):
+def generate_random_key_sequences(arr, n_samples, seed=42, wildcard_probability=0):
     rng = np.random.default_rng(seed)
+    wildcards = ["?", "*"]
+    if wildcard_probability > 0:
+        result = []
+        for size in rng.integers(1, len(arr), n_samples):
+            sample = rng.choice(arr, size=size, replace=False)
+            for i, s in enumerate(sample):
+                if rng.uniform() < wildcard_probability:
+                    idx = rng.integers(0, len(s))
+                    sample[i] = s[:idx] + rng.choice(wildcards) + s[idx + 1 :]
+            result.append(sample)
+        return result
     return [
         rng.choice(arr, size=size, replace=False)
         for size in rng.integers(1, len(arr), n_samples)
@@ -108,6 +165,15 @@ def random_keys_mark(n_samples=10):
     return pytest.mark.parametrize(
         argnames="keys",
         argvalues=generate_random_key_sequences(assorted_keys, n_samples=n_samples),
+    )
+
+
+def random_wildcard_keys_mark(n_samples=10):
+    return pytest.mark.parametrize(
+        argnames="keys",
+        argvalues=generate_random_key_sequences(
+            assorted_keys, n_samples=n_samples, wildcard_probability=0.9
+        ),
     )
 
 
@@ -128,63 +194,19 @@ atom_site_keys = (
     "_atom_site_fract_y",
     "_atom_site_fract_z",
     "_atom_site_occupancy",
+    "_atom_site_U_iso_or_equiv",
 )
 
-aflow_mC24 = CifData(
-    filename=data_file_path + "AFLOW_mC24.cif",
-    symop_keys=("_space_group_symop_operation_xyz",),
-    atom_site_keys=atom_site_keys,
-    file=CifFile(data_file_path + "AFLOW_mC24.cif"),
-)
+aflow_mC24 = CifData.from_file("AFLOW_mC24.cif")
+amcsd_seifertite = CifData.from_file("AMCSD_meteorite.cif")
+bisd_Ccmm = CifData.from_file("B-IncStrDb_Ccmm.cif")
+ccdc_Pm3m = CifData.from_file("CCDC_1446529_Pm-3m.cif")
+cod_aP16 = CifData.from_file("COD_1540955_aP16.cif")
+cod_hP3 = CifData.from_file("COD_7228524.cif")
+izasc_gismondine = CifData.from_file("zeolite_clo.cif")
 
-amcsd_seifertite = CifData(
-    filename=data_file_path + "AMCSD_meteorite.cif",
-    symop_keys=("_space_group_symop_operation_xyz",),
-    atom_site_keys=(
-        atom_site_keys[0],
-        *atom_site_keys[2:5],
-        "_atom_site_U_iso_or_equiv",
-    ),
-    file=CifFile(data_file_path + "AMCSD_meteorite.cif"),
-)
-
-bisd_Ccmm = CifData(
-    filename=data_file_path + "B-IncStrDb_Ccmm.cif",
-    symop_keys=("_space_group_symop_operation_xyz",),
-    atom_site_keys=(atom_site_keys[0], atom_site_keys[-1], *atom_site_keys[2:-1]),
-    file=CifFile(data_file_path + "B-IncStrDb_Ccmm.cif"),
-)
-
-ccdc_Pm3m = CifData(
-    filename=data_file_path + "CCDC_1446529_Pm-3m.cif",
-    symop_keys=("_space_group_symop_operation_xyz",),
-    atom_site_keys=(*sorted(atom_site_keys),),
-    file=CifFile(data_file_path + "CCDC_1446529_Pm-3m.cif"),
-)
-
-cod_aP16 = CifData(
-    filename=data_file_path + "COD_1540955_aP16.cif",
-    symop_keys=("_symmetry_equiv_pos_as_xyz",),
-    atom_site_keys=atom_site_keys,
-    file=CifFile(data_file_path + "COD_1540955_aP16.cif"),
-)
-cod_hP3 = CifData(
-    filename=data_file_path + "COD_7228524.cif",
-    symop_keys=("_space_group_symop_operation_xyz",),
-    atom_site_keys=atom_site_keys,
-    file=CifFile(data_file_path + "COD_7228524.cif"),
-)
-
-izasc_gismondine = CifData(
-    filename=data_file_path + "zeolite_clo.cif",
-    symop_keys=("_symmetry_equiv_pos_as_xyz",),
-    atom_site_keys=atom_site_keys[:-1],
-    file=CifFile(data_file_path + "zeolite_clo.cif"),
-)
-
-# with pytest.warns(ParseWarning, match="cannot be resolved into a table"):
 pdb_4INS = CifData(
-    filename=data_file_path + "PDB_4INS_head.cif",
+    filename=os.path.join(data_file_path, "PDB_4INS_head.cif"),
     symop_keys=("_pdbx_struct_oper_list.symmetry_operation",),
     atom_site_keys=(
         "_chem_comp.id",
@@ -195,19 +217,14 @@ pdb_4INS = CifData(
         "_chem_comp.formula",
         "_chem_comp.formula_weight",
     ),
-    file=CifFile(data_file_path + "PDB_4INS_head.cif"),
+    file=CifFile(os.path.join(data_file_path, "PDB_4INS_head.cif")),
 )
 
-structure_issue_42 = CifData(
-    filename=data_file_path + "no42.cif",
-    symop_keys=("_symmetry_equiv_pos_as_xyz",),
-    atom_site_keys=atom_site_keys[:-1],
-    file=CifFile(data_file_path + "no42.cif"),
-)
+structure_issue_42 = CifData.from_file("no42.cif")
 
 with pytest.warns():
     bad_cif = CifData(
-        filename=data_file_path + "INTENTIONALLY_BAD_CIF.cif",
+        filename=os.path.join(data_file_path, "INTENTIONALLY_BAD_CIF.cif"),
         symop_keys=("_space_group_symop_id", "_space_group_symop_operation_xyz"),
         atom_site_keys=(
             "_atom_site",
@@ -217,7 +234,7 @@ with pytest.warns():
             "_atom_site_fract_z",
             "_this_key_does_not_exist",
         ),
-        file=CifFile(data_file_path + "INTENTIONALLY_BAD_CIF.cif"),
+        file=CifFile(os.path.join(data_file_path, "INTENTIONALLY_BAD_CIF.cif")),
         manual_keys=(
             "_cell_length_a",
             "_cell_length_b",
@@ -233,6 +250,16 @@ with pytest.warns():
             "not_a_valid_key",
         ),
     )
+warnings.filterwarnings(
+    "ignore",
+    message="Duplicate key ",
+    category=ParseWarning,
+)
+mbuild_test_files = [
+    CifData.from_file(os.path.join(*fn.split(os.sep)[-2:]))
+    for fn in glob(os.path.join(data_file_path, "mbuild_cifs", "*.cif"))
+]
+
 
 cif_data_array = [
     aflow_mC24,
@@ -244,6 +271,7 @@ cif_data_array = [
     izasc_gismondine,
     pdb_4INS,
     structure_issue_42,
+    *mbuild_test_files,
 ]
 cif_files_mark = pytest.mark.parametrize(
     argnames="cif_data",

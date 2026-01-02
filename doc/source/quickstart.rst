@@ -19,6 +19,7 @@ information regarding the origin of the data.
 .. testsetup::
 
     >>> import os
+    >>> import numpy as np
     >>> if "doc/source" not in os.getcwd(): os.chdir("doc/source")
 
 .. doctest::
@@ -129,7 +130,7 @@ Building Unit Cells
 
 CIF files are commonly used to reconstruct atomic positions for a particular crystal.
 While the example file shown throughout this tutorial corresponds to FCC copper, it only
-contains a single atomic position, in constrast to the 4 expected for FCC's
+contains a single atomic position, in contrast to the 4 expected for FCC's
 primitive cell. `parsnip` can reconstruct tilable unit cells from symmetry operations
 and symmetry-irreducible (Wyckoff) positions contained in the file.
 

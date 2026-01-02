@@ -12,7 +12,7 @@ CURRENT_YEAR = datetime.date.today().year
 project = "parsnip"
 copyright = f"2024-{CURRENT_YEAR} The Regents of the University of Michigan"
 author = "Jen Bradley"
-release = "0.3.0"
+release = "0.5.0"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

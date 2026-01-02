@@ -13,12 +13,12 @@ from __future__ import annotations
 
 import re
 import sys
-import warnings
+from typing import Literal, TypeVar
 
 import numpy as np
 from numpy.typing import ArrayLike
 
-from parsnip._errors import ParseWarning
+T = TypeVar("T")
 
 ALLOWED_DELIMITERS = [";\n", "'''", '"""']
 """Delimiters allowed for nonsimple (multi-line) data entries."""
@@ -44,14 +44,14 @@ _WHITESPACE = "[\t ]"
 See section 3.2 of dx.doi.org/10.1107/S1600576715021871 for clarification.
 """
 
-_bracket_pattern = re.compile(r"(\[|\])")
+_SAFE_STRING_RE = re.compile(r"(\(\d+\))|[^\d\[\]\,\+\-\/\*\.]")
 
 
-def _reformat_sublist(s: str) -> str:
-    return f"[{s.lstrip('[').rstrip(']')}]"
+def _contains_wildcard(s: str) -> bool:
+    return "?" in s or "*" in s
 
 
-def _flatten_or_none(ls: list):
+def _flatten_or_none(ls: list[T]):
     """Return the sole element from a list of l=1, None if l=0, else l."""
     return None if not ls else ls[0] if len(ls) == 1 else ls
 
@@ -74,8 +74,9 @@ def _safe_eval(
     x: int | float,
     y: int | float,
     z: int | float,
-    parse_mode: str = "python_float",
-):
+    *,
+    parse_mode: Literal["python_float", "sympy"] = "python_float",
+) -> list[list[float]]:
     """Attempt to safely evaluate a string of symmetry equivalent positions.
 
     Python's ``eval`` is notoriously unsafe. While we could evaluate the entire list at
@@ -106,22 +107,17 @@ def _safe_eval(
             :math:`(N,3)` list of fractional coordinates.
 
     """
-    ordered_inputs = {"x": "{0}", "y": "{1}", "z": "{2}"}
-    # Replace any x, y, or z with the same character surrounded by curly braces. Then,
-    # perform substitutions to insert the actual values.
+    # Replace x, y, and z with positional format specifiers and then format in values
     substituted_string = (
-        re.sub(r"([xyz])", r"{\1}", str_input).format(**ordered_inputs).format(x, y, z)
+        str_input.replace("x", "{0}")
+        .replace("y", "{1}")
+        .replace("z", "{2}")
+        .format(x, y, z)
     )
 
     # Remove any unexpected characters from the string, including precision specifiers.
-    safe_string = re.sub(r"(\(\d+\))|[^\d\[\]\,\+\-\/\*\.]", "", substituted_string)
+    safe_string = _SAFE_STRING_RE.sub("", substituted_string)
 
-    # Double check to be sure:
-    assert all(char in ",.0123456789+-/*[]" for char in safe_string), (
-        "Evaluation aborted. Check that symmetry operation string only contains "
-        "numerics or characters in { [],.+-/ } and adjust `regex_filter` param "
-        "accordingly."
-    )
     if parse_mode == "sympy":
         return _sympy_evaluate_array(safe_string)
     if parse_mode == "python_float":
@@ -159,13 +155,15 @@ def cast_array_to_float(arr: ArrayLike | None, dtype: type = np.float32):
     """
     if arr is None:
         return np.array("nan", dtype=dtype)
+    if np.array(arr).shape == (0,):
+        return np.array((), dtype=dtype)
     arr = [(el if el is not None else "nan") for el in arr]
     # if any(el is None for el in arr):
     #     raise TypeError("Input array contains `None` and cannot be cast!")
     return np.char.partition(arr, "(")[..., 0].astype(dtype)
 
 
-def _accumulate_nonsimple_data(data_iter, line=""):
+def _accumulate_nonsimple_data(data_iter, line: str = ""):
     """Accumulate nonsimmple (multi-line) data entries into a single string."""
     delimiter_count = 0
     while _line_is_continued(data_iter.peek(None)):
@@ -174,6 +172,9 @@ def _accumulate_nonsimple_data(data_iter, line=""):
             if buffer[:1] == ";" or any(s in buffer for s in ALLOWED_DELIMITERS):
                 delimiter_count += 1
             line += next(data_iter)
+
+        if delimiter_count == 2:
+            break  # Exit the context
     return line
 
 
@@ -195,21 +196,6 @@ def _strip_quotes(s: str):
 
 def _dtype_from_int(i: int):
     return f"<U{i}"
-
-
-def _semicolon_to_string(line: str):
-    if "'" in line and '"' in line:
-        warnings.warn(
-            (
-                "String contains single and double quotes - "
-                "line may be parsed incorrectly"
-            ),
-            ParseWarning,
-            stacklevel=2,
-        )
-    # WARNING: because we split our string, we strip "\n" implicitly
-    # This is technically against spec, but is almost never meaningful
-    return line.replace(";", "'" if "'" not in line else '"')
 
 
 def _line_is_continued(line: str | None):

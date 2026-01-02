@@ -17,14 +17,14 @@ jobs:
   run_test:
     runs-on: ${{ inputs.runs-on }}
     steps:
-    - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-    - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+    - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6.1.0
       with:
         python-version: ${{ inputs.python-version }}
     - name: Install uv
-      uses: astral-sh/setup-uv@d9e0f98d3fc6adb07d1e3d37f3043649ddad06a1 # v6.5.0
+      uses: astral-sh/setup-uv@681c641aba71e4a1c380be3ab5e12ad51f415867 # v7.1.6
       with:
-        version: "0.8.11"
+        version: "0.9.21"
 
     - name: Install package
       run: |
@@ -34,4 +34,4 @@ jobs:
         python -c "import parsnip; print('parsnip', parsnip.__version__)"
 
     - name: Test with pytest
-      run: python -m ${{ runner.os != 'Windows' && 'pytest' || 'pytest tests' }} -v
+      run: python -m ${{ runner.os != 'Windows' && 'pytest' || 'pytest tests' }} -v -n auto

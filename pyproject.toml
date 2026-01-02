@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "parsnip-cif"
-version = "0.3.0"
+version = "0.5.0"
 requires-python = ">=3.9"
 description = "Minimal library for parsing CIF & mmCIF files in Python."
 readme = "README.rst"
@@ -36,8 +36,8 @@ packages=["parsnip"]
 
 [tool.setuptools.dynamic]
 optional-dependencies.tests = { file = ["tests/requirements.in"] }
-optional-dependencies.doc = { file = ["doc/requirements.txt"] }
-optional-dependencies.sympy = { file = ["requirements-sympy.txt"] }
+optional-dependencies.doc = { file = ["doc/requirements.in"] }
+optional-dependencies.sympy = { file = ["requirements-sympy.in"] }
 
 [tool.pytest.ini_options]
 testpaths = ["tests", "parsnip", "doc"]

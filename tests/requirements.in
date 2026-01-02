@@ -1,6 +1,10 @@
 ase
 gemmi
+gsd
 pycifrw!=5.0.0
 pytest
 pytest-doctestplus
+pytest-xdist
+setuptools
 sympy
+wheel

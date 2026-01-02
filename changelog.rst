@@ -4,7 +4,29 @@ Changelog
 The format is based on `Keep a Changelog <http://keepachangelog.com/en/1.1.0/>`__.
 This project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`__.
 
-v0.4.0 - xxxx-xx-xx
+v0.5.0 - 2026-01-02
+-------------------
+
+Added
+~~~~~
+- Tutorial on loading CIF files in HOOMD-Blue
+- Tutorial on loading CIF files in LAMMPS
+- Tutorial on reconstructing CIF files with limited numerical precision
+- Documentation for the ``CifFile.PATTERNS`` dict and its relation to the formal CIF
+  grammar
+
+Changed
+~~~~~~~
+- ``CifFile.__repr__`` now includes a copy-pasteable section for reproducibility
+
+v0.4.1 - 2025-10-08
+-------------------
+
+Added
+~~~~~
+- Support for Python 3.14
+
+v0.4.0 - 2025-09-03
 -------------------
 
 Added
@@ -13,6 +35,7 @@ Added
 - Support for CIF2.0 ``"""`` and ``'''`` strings
 - Support for COD-style ``_key \n 'value'`` strings
 - Tests for a wider variety of edge case syntax features
+- ``CifFile._wildcard_mapping`` lookup table for easier testing of wildcard keys.
 
 Changed
 ~~~~~~~
@@ -27,6 +50,8 @@ Fixed
 ~~~~~
 - Data entries containing non-comment pound signs are no longer truncated
 - Comments on ``loop_`` keyword lines no longer cause parse errors
+- Unit cells for files without symmetry operations are now parsed correctly
+- An infinite looping bug resulting from multiline strings with a particular structure
 
 
 v0.3.1 - 2025-07-16

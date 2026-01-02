@@ -1,2 +1,0 @@
-more-itertools
-numpy>=1.19.0

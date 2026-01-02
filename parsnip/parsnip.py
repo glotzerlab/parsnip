@@ -69,18 +69,24 @@ from __future__ import annotations
 
 import re
 import warnings
+from collections import defaultdict
 from collections.abc import Iterable
 from fnmatch import filter as fnfilter
 from fnmatch import fnmatch
 from importlib.util import find_spec
 from pathlib import Path
-from typing import ClassVar, TextIO
+from typing import ClassVar, Literal, TextIO
 
 import numpy as np
 from more_itertools import flatten, peekable
 from numpy.lib.recfunctions import structured_to_unstructured
 
-from parsnip._errors import ParseWarning, _is_potentially_valid_path
+from parsnip._errors import (
+    ParseError,
+    ParseWarning,
+    _is_potentially_valid_path,
+    _warn_or_err,
+)
 from parsnip.patterns import (
     _ANY,
     _CIF_KEY,
@@ -89,7 +95,7 @@ from parsnip.patterns import (
     _WHITESPACE,
     _accumulate_nonsimple_data,
     _box_from_lengths_and_angles,
-    _bracket_pattern,
+    _contains_wildcard,
     _dtype_from_int,
     _flatten_or_none,
     _is_data,
@@ -107,7 +113,7 @@ NONTABLE_LINE_PREFIXES = ("_", "#")
 
 
 class CifFile:
-    """Lightweight, performant parser for CIF files.
+    """Parser for CIF files.
 
     Example
     -------
@@ -116,7 +122,7 @@ class CifFile:
     >>> from parsnip import CifFile
     >>> cif = CifFile("example_file.cif")
     >>> print(cif)
-    CifFile(file=example_file.cif) : 12 data entries, 2 data loops
+    CifFile(file='example_file.cif') : 12 data entries, 2 data loops
 
     Data entries are accessible via the :attr:`~.pairs` and :attr:`~.loops` attributes:
 
@@ -135,7 +141,7 @@ class CifFile:
     .. tip::
 
         See the docs for :attr:`__getitem__` and :attr:`get_from_loops` to query
-        for data by key or column label!
+        for data by key or column label.
 
     Parameters
     ----------
@@ -147,7 +153,10 @@ class CifFile:
     """
 
     def __init__(
-        self, file: str | Path | TextIO | Iterable[str], cast_values: bool = False
+        self,
+        file: str | Path | TextIO | Iterable[str],
+        cast_values: bool = False,
+        strict: bool = False,
     ):
         """Create a CifFile object from a filename, file object, or iterator over `str`.
 
@@ -158,6 +167,11 @@ class CifFile:
         self._fn = file
         self._pairs = {}
         self._loops = []
+        self._strict = strict
+        self._symops_key = [""]
+        self._raw_cell_keys = []
+        self._raw_wyckoff_keys = []
+        self._wildcard_mapping_data = defaultdict(list)
 
         self._cpat = {k: re.compile(pattern) for (k, pattern) in self.PATTERNS.items()}
         self._cast_values = cast_values
@@ -255,22 +269,39 @@ class CifFile:
                 An item key or list of keys.
         """
         output = []
-        index = [index] if isinstance(index, str) else index
-        for key in index:
+        for key in [index] if isinstance(index, str) else index:
             pairs_match = self.get_from_pairs(key)
             loops_match = self.get_from_loops(key)
             output.append(pairs_match if pairs_match is not None else loops_match)
         return output[0] if len(output) == 1 else output
+
+    def _process_wildcard(
+        self, wildcard_key: str, raw_keys: str | Iterable[str], val: str | int | float
+    ) -> str | int | float:
+        """Save the raws key associated with a wildcard lookup and save the value."""
+        if _contains_wildcard(wildcard_key):
+            for key in [raw_keys] if isinstance(raw_keys, str) else raw_keys:
+                if key not in self._wildcard_mapping_data[wildcard_key]:
+                    self._wildcard_mapping_data[wildcard_key].append(key)
+
+        return val
+
+    @property
+    def _wildcard_mapping(self):
+        """Return the mappings associated with attempted wildcard queries."""
+        return self._wildcard_mapping_data
 
     def get_from_pairs(self, index: str | Iterable[str]):
         """Return an item or items from the dictionary of key-value pairs.
 
         .. tip::
 
-            This method supports a few unix-style wildcards. Use ``*`` to match any
+            This method supports unix-style wildcards. Use ``*`` to match any
             number of any character, and ``?`` to match any single character. If a
             wildcard matches more than one key, a list is returned for that index.
-            Lookups using this method are case-insensitive, per the CIF spec.
+            The ordering of array data resulting from wildcard queries matches the
+            ordering of the matching keys in the file. Lookups using this method are
+            case-insensitive, per the CIF specification.
 
         Indexing with a string returns the value from the :meth:`~.pairs` dict. Indexing
         with an Iterable of strings returns a list of values, with ``None`` as a
@@ -311,22 +342,22 @@ class CifFile:
                 instead.
         """
         if isinstance(index, str):  # Escape brackets with []
-            index = re.sub(_bracket_pattern, r"[\1]", index)
+            index = self._cpat["bracket"].sub(r"[\1]", index)
             return _flatten_or_none(
                 [
-                    v
+                    self._process_wildcard(index, k, v)
                     for (k, v) in self.pairs.items()
                     if fnmatch(k.lower(), index.lower())
                 ]
             )
 
         # Escape all brackets in all indices
-        index = [re.sub(_bracket_pattern, r"[\1]", i) for i in index]
+        index = [self._cpat["bracket"].sub(r"[\1]", i) for i in index]
         matches = [
             [
                 _flatten_or_none(
                     [
-                        v
+                        self._process_wildcard(pat, k, v)
                         for (k, v) in self.pairs.items()
                         if fnmatch(k.lower(), pat.lower())
                     ]
@@ -417,15 +448,20 @@ class CifFile:
                 input keys. If the resulting list would have length 1, the data is
                 returned directly instead. See the note above for data ordering.
         """
+        result = []
         if isinstance(index, str):
-            result, index = [], re.sub(_bracket_pattern, r"[\1]", index)
+            index = self._cpat["bracket"].sub(r"[\1]", index)
             for table, labels in zip(self.loops, self.loop_labels):
-                match = table[fnfilter(labels, index)]
+                matching_keys = fnfilter(labels, index)
+                match = table[matching_keys]
+
                 if match.size > 0:
                     result.append(
-                        structured_to_unstructured(
-                            match, copy=True, casting="safe"
-                        ).squeeze(axis=1)
+                        self._process_wildcard(
+                            index,
+                            matching_keys,
+                            self.structured_to_unstructured(match).squeeze(axis=1),
+                        )
                     )
             if result == [] or (len(result) == 1 and len(result[0]) == 0):
                 return None
@@ -434,16 +470,14 @@ class CifFile:
         if isinstance(index, (set, frozenset)):
             index = list(index)
 
-        result, index = [], np.atleast_1d(index)
+        index = np.atleast_1d(index)
         for table in self.loops:
             matches = index[np.any(index[:, None] == table.dtype.names, axis=1)]
             if len(matches) == 0:
                 continue
 
             result.append(
-                structured_to_unstructured(
-                    table[matches], copy=True, casting="safe"
-                ).squeeze(axis=1)
+                self.structured_to_unstructured(table[matches]).squeeze(axis=1)
             )
         return _flatten_or_none(result)
 
@@ -481,13 +515,15 @@ class CifFile:
         else:
             cell_data = cast_array_to_float(arr=self[box_keys], dtype=np.float64)
 
+        self._raw_cell_keys = [self._wildcard_mapping[key] for key in box_keys]
+
         def angle_is_invalid(x: float):
             return x <= 0.0 or x >= 180.0
 
-        # if any(value is None for value in cell_data):
-        #     missing = [k for k, v in zip(box_keys, cell_data) if v is None]
-        #     msg = f"Keys {missing} did not return any data!"
-        #     raise ValueError(msg) # TODO: reincorporate this error
+        if any(value is None for value in cell_data):
+            missing = [k for k, v in zip(box_keys, cell_data) if v is None]
+            msg = f"Keys {missing} did not return any data!"
+            raise ValueError(msg)
 
         if any(angle_is_invalid(value) for value in cell_data[3:]):
             invalid = [
@@ -507,7 +543,7 @@ class CifFile:
         self,
         n_decimal_places: int = 4,
         additional_columns: str | Iterable[str] | None = None,
-        parse_mode: str = "python_float",
+        parse_mode: Literal["python_float", "sympy"] = "python_float",
         verbose: bool = False,
     ):
         """Reconstruct fractional atomic positions from Wyckoff sites and symops.
@@ -599,13 +635,17 @@ class CifFile:
             raise ValueError(f"Parse mode '{parse_mode}' not in {valid_modes}.")
 
         symops = self.symops
+        symops = symops if symops is not None else "x, y, z"
 
         if additional_columns is not None:
             # Find the table of Wyckoff positions and compare to keys in additional_data
             invalid_keys = next(
-                set(map(str, np.atleast_1d(additional_columns))) - set(labels)
-                for labels in self.loop_labels
-                if set(labels) & set(self.__class__._WYCKOFF_KEYS)
+                (
+                    set(map(str, np.atleast_1d(additional_columns))) - set(labels)
+                    for labels in self.loop_labels
+                    if set(labels) & set(self._wyckoff_site_keys)
+                ),
+                None,
             )
             if invalid_keys:
                 msg = (
@@ -619,10 +659,10 @@ class CifFile:
         cell_matrix = _matrix_from_lengths_and_angles(*cell)
 
         symops_str = np.array2string(
-            symops, separator=",", threshold=np.inf, floatmode="unique"
+            np.array(symops), separator=",", threshold=np.inf, floatmode="unique"
         )
 
-        frac_strs = self.get_from_loops(self.__class__._WYCKOFF_KEYS)
+        frac_strs = self._read_wyckoff_positions()
 
         all_frac_positions = [
             _safe_eval(symops_str, *xyz, parse_mode=parse_mode) for xyz in frac_strs
@@ -705,7 +745,7 @@ class CifFile:
         return _box_from_lengths_and_angles(*self.read_cell_params(degrees=False))
 
     @property
-    def lattice_vectors(self):
+    def lattice_vectors(self) -> np.ndarray[(3, 3), np.float64]:
         r"""The lattice vectors of the unit cell, with :math:`\vec{a_1}\perp[100]`.
 
         .. important::
@@ -737,23 +777,25 @@ class CifFile:
             The lattice vectors of the unit cell :math:`\vec{a_1}, \vec{a_2},\vec{a_3}`.
         """
         lx, ly, lz, xy, xz, yz = self.box
-        return np.asarray([[lx, xy * ly, xz * lz], [0, ly, lz * yz], [0, 0, lz]])
+        return np.asarray(
+            [[lx, xy * ly, xz * lz], [0, ly, lz * yz], [0, 0, lz]], dtype=np.float64
+        )
 
     @property
-    def loop_labels(self):
+    def loop_labels(self) -> list[tuple[str, ...]]:
         """A list of column labels for each data array.
 
         This property is equivalent to :code:`[arr.dtype.names for arr in self.loops]`.
 
         Returns
         -------
-        list[list[str]]:
+        list[tuple[str, ...]]:
             Column labels for :attr:`~.loops`, stored as a nested list of strings.
         """
         return [arr.dtype.names for arr in self.loops]
 
     @property
-    def symops(self):
+    def symops(self) -> np.ndarray | None:
         r"""Extract the symmetry operations in a `parsable algebraic form`_.
 
         Example
@@ -767,12 +809,52 @@ class CifFile:
         Returns
         -------
             :math:`(N,1)` numpy.ndarray[str]:
-                An array containing the symmetry operations.
+                An array containing the symmetry operations, or None if none are found.
 
         .. _`parsable algebraic form`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Ispace_group_symop_operation_xyz.html
         """
         # Only one key is valid in each standard, so we only ever get one match.
-        return self.get_from_loops(self.__class__._SYMOP_KEYS)
+        for key in self.__class__._SYMOP_KEYS:
+            symops: np.ndarray | None = self.get_from_loops(key)
+            if symops is not None:
+                self._symops_key = self._wildcard_mapping[key]
+                return symops
+        return None
+
+    @property
+    def _cell_keys(self):
+        """Get or compute the non-wildcard keys associated with the cell data."""
+        if self._raw_cell_keys == []:
+            self.read_cell_params()
+        return [*flatten(self._raw_cell_keys)]
+
+    @property
+    def _wyckoff_site_keys(self):
+        """Get or compute the non-wildcard keys associated with the coordinate data."""
+        if self._raw_wyckoff_keys == []:
+            self._read_wyckoff_positions()
+        return [*flatten(self._raw_wyckoff_keys)]
+
+    def _read_wyckoff_positions(self):
+        """Extract symmetry-irreducible, fractional `x,y,z` coordinates as raw strings.
+
+        This is an internal method called in `~.wyckoff_positions` and
+        `~.build_unit_cell`.
+        """
+        wyckoff_position_data = [
+            self.get_from_loops(key) for key in self.__class__._WYCKOFF_KEYS
+        ]
+
+        if all(x is None for x in wyckoff_position_data) and self._strict:
+            msg = "No wyckoff position data was found!"
+            raise ParseError(msg)
+
+        self._raw_wyckoff_keys = [
+            self._wildcard_mapping[k]
+            for (k, v) in zip(self.__class__._WYCKOFF_KEYS, wyckoff_position_data)
+            if v is not None
+        ]
+        return np.hstack([x for x in wyckoff_position_data if x is not None] or [[]])
 
     @property
     def wyckoff_positions(self):
@@ -785,16 +867,13 @@ class CifFile:
 
         .. _`fractional coordinates`: https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html
         """
-        # TODO: add additional checking in get_from_loops to verify correctness
-        return cast_array_to_float(
-            arr=self.get_from_loops(self.__class__._WYCKOFF_KEYS), dtype=float
-        )
+        return cast_array_to_float(self._read_wyckoff_positions(), dtype=float)
 
     @property
     def cast_values(self):
         """Bool : Whether to cast "number-like" values to ints & floats.
 
-        .. note::
+        .. caution::
 
             When set to `True` after construction, the values are modified in-place.
             This action cannot be reversed.
@@ -821,9 +900,10 @@ class CifFile:
         """Convert a structured (column-labeled) array to a standard unstructured array.
 
         This is useful when extracting entire loops from :attr:`~.loops` for use in
-        other programs. This classmethod simply calls
+        other programs. This classmethod calls
         :code:`np.lib.recfunctions.structured_to_unstructured` on the input data to
-        ensure the resulting array is properly laid out in memory. See
+        ensure the resulting array is properly laid out in memory, with additional
+        checks to ensure the output properly reflects the underlying data. See
         `this page in the structured array docs`_ for more information.
 
         .. _`this page in the structured array docs`: https://numpy.org/doc/stable/user/basics.rec.html
@@ -838,7 +918,7 @@ class CifFile:
             :class:`numpy.ndarray`:
                 An *unstructured* array containing a copy of the data from the input.
         """
-        return structured_to_unstructured(arr, copy=True)
+        return structured_to_unstructured(arr, copy=True, casting="safe")
 
     def _parse(self, data_iter: peekable):
         """Parse the cif file into python objects."""
@@ -850,8 +930,9 @@ class CifFile:
             if line == "":
                 continue
 
-            # TODO: could separate multi-block files in the future =====================
-            # block = re.match(self._cpat["block_delimiter"], line.lower())
+            # While we could separate multi-block files in the future, its actually
+            # beneficial for us to flatten the file into one block.
+            # block = re.match(self._cpat["block_delimiter"], line.lower().lstrip())
             # if block is not None:
             #     continue
 
@@ -861,23 +942,25 @@ class CifFile:
             )
 
             # If we have a COD-style _key\n'long_value'
-            if (
-                pair is None
-                and data_iter.peek("").lstrip()[:1] in {"'", '"'}
-                and data_iter.peek(None)
-            ):
+            if pair is None and data_iter.peek("").lstrip()[:1] in {"'", '"'}:
                 pair = self._cpat["key_value_general"].match(
                     self._strip_comments(line + next(data_iter))
                 )
 
             if pair is not None:
+                key, val = pair.groups()
+                if self._pairs.get(key, None) is not None:
+                    msg = (
+                        f"Duplicate key `{key}` found:"
+                        f"\n (old -> new) : (`{self._pairs[key]}` -> `{val}`)"
+                    )
+                    _warn_or_err(msg, self._strict)
+                    continue
                 self._pairs.update(
                     {
-                        pair.groups()[0]: _try_cast_to_numeric(
-                            _strip_quotes(pair.groups()[1])
-                        )
+                        key: _try_cast_to_numeric(_strip_quotes(val))
                         if self.cast_values
-                        else pair.groups()[1].rstrip()  # Skip trailing newlines
+                        else val.rstrip()  # Skip trailing newlines
                     }
                 )
             if data_iter.peek(None) is None:
@@ -885,7 +968,8 @@ class CifFile:
 
             # Build up tables by incrementing through the iterator =====================
             loop = re.match(
-                self._cpat["loop_delimiter"], self._strip_comments(line.lower())
+                self._cpat["loop_delimiter"],
+                self._strip_comments(line.lower()).lstrip(),
             )
 
             if loop is not None:
@@ -924,34 +1008,30 @@ class CifFile:
                     continue  # Skip empty tables
 
                 if n_elements % n_cols != 0:
-                    # print(loop_keys)
-                    # print(loop_data)
-                    warnings.warn(
+                    msg = (
                         f"Parsed data for table {len(self.loops) + 1} cannot be"
                         f" resolved into a table of the expected size and will be "
-                        f"ignored. Got n={n_elements} items, which cannot be "
-                        f"distributed evenly into {n_cols} columns with labels "
-                        f"{loop_keys}",
-                        category=ParseWarning,
-                        stacklevel=2,
+                        f"ignored. \nGot n={n_elements} items, which cannot be "
+                        f"distributed evenly into {n_cols} columns with labels: "
+                        f"\n{loop_keys}"
                     )
-
+                    _warn_or_err(msg, self._strict)
                     continue
+
                 if not all(len(key) == len(loop_keys[0]) for key in loop_keys):
                     loop_data = np.array([*flatten(loop_data)]).reshape(-1, n_cols)
 
                 if len(loop_data) == 0:
-                    msg = "Loop data is empy, but n_cols > 0: check CIF file syntax."
-                    raise ValueError(msg)
-                dt = _dtype_from_int(max(max(len(s) for s in l) for l in loop_data))
+                    msg = "Loop data is empty, but n_cols > 0: check CIF file syntax."
+                    _warn_or_err(msg, self._strict)
+                    continue
+                dt = _dtype_from_int(max(len(s) for l in loop_data for s in l))
 
                 if len(set(loop_keys)) < len(loop_keys):
-                    warnings.warn(
-                        "Duplicate keys detected - table will not be processed.",
-                        category=ParseWarning,
-                        stacklevel=2,
-                    )
+                    msg = "Duplicate loop keys detected - table will not be processed."
+                    _warn_or_err(msg, self._strict)
                     continue
+
                 try:
                     rectable = np.atleast_2d(loop_data)
                 except ValueError as e:
@@ -989,38 +1069,70 @@ class CifFile:
     def __repr__(self):
         n_pairs = len(self.pairs)
         n_tabs = len(self.loops)
-        return f"CifFile(file={self._fn}) : {n_pairs} data entries, {n_tabs} data loops"
+        return (
+            f"CifFile(file='{self._fn}') : {n_pairs} data entries, {n_tabs} data loops"
+        )
 
+    # PATTERNS dict is based on the [CIF grammar] specification, adapted to be formally
+    # regular for performance. Context-free parts of the grammar are handled by
+    # the `_accumulate_nonsimple_data` pattern, which builds balanced blocks of tokens.
+    # Context-sensitive components -- primarily relationships between <LoopHeader>
+    # column labels and <LoopBody> columnar data -- are handled directly in the parser.
+    #
+    # [CIF grammar](https://www.iucr.org/resources/cif/spec/version1.1/cifsyntax#bnf)
     PATTERNS: ClassVar = {
+        # Matcher for <DataItems> syntactic units
         "key_value_general": rf"^(_{_CIF_KEY}+?)\s{_PROG_PLUS}({_ANY}+?)$",
+        # Matcher for the first token of <LoopHeader> syntactic units
         "loop_delimiter": rf"(loop_){_WHITESPACE}{_PROG_STAR}([^\n]{_PROG_STAR})",
+        # Matcher for <DataBlock> syntactic units. Currently, these are ignored.
         "block_delimiter": rf"(data_){_WHITESPACE}{_PROG_STAR}([^\n]{_PROG_STAR})",
-        "key_list": rf"_{_CIF_KEY}+?(?=\s|$)",  # Match space or endline-separated keys
+        # Matcher for the column labels of a <LoopHeader> syntactic unit
+        "key_list": rf"_{_CIF_KEY}+?(?=\s|$)",
+        # Matcher for <LoopBody> syntactic units, which may span multiple lines.
+        # Note that this allows for backtracking, as <SingleQuotedString> and
+        # <DoubleQuotedString> values may contain whitespace and quotation marks.
         "space_delimited_data": (
             "("
             r";[^;]*?;|"  # Non-semicolon data bracketed by semicolons
             r"'(?:'\S|[^'])*'|"  # Data with single quotes not followed by \s
-            # rf"\"[^\"]{_PROG_STAR}\"|"  # Data with double quotes
             rf"[^';\"\s]{_PROG_STAR}"  # Additional non-bracketed data
             ")"
         ),
-        "comment": "#.*?$",  # A comment at the end of a line or string
+        # Matcher for <Comments> syntactic units
+        "comment": "#.*?$",
+        # Matcher for CIF 2.0 <list>-related tokens
+        # https://www.iucr.org/__data/assets/text_file/0009/112131/CIF2-ENBF.txt
+        "bracket": r"(\[|\])",
     }
     """Regex patterns used when parsing files.
 
-    This dictionary can be modified to change parsing behavior, although doing is not
-    recommended. Changes to this variable are shared across all instances of the class.
+    .. caution::
+
+        This dictionary can be modified to change parsing behavior, although doing
+        is not recommended. Changes to this variable are shared across all
+        instances of the class.
+
+    Please refer to the `CIF grammar`_ for further details.
+
+    .. _`CIF grammar`: https://www.iucr.org/resources/cif/spec/version1.1/cifsyntax#bnf
     """
 
     _SYMOP_KEYS = (
-        "_symmetry_equiv_pos_as_xyz",
-        "_space_group_symop_operation_xyz",
+        "_symmetry_equiv?pos_as_xyz",
+        "_space_group_symop?operation_xyz",
     )
+    """Keys required to extract symmetry operations from CIF & mmCIF files."""
     _WYCKOFF_KEYS = (
-        "_atom_site_fract_x",
-        "_atom_site_fract_y",
-        "_atom_site_fract_z",
-        "_atom_site_Cartn_x",
-        "_atom_site_Cartn_y",
-        "_atom_site_Cartn_z",
-    )  # Only one set should be stored at a time
+        "_atom_site?fract_x",
+        "_atom_site?fract_y",
+        "_atom_site?fract_z",
+        "_atom_site?Cartn_x",
+        "_atom_site?Cartn_y",
+        "_atom_site?Cartn_z",
+    )
+    """Keys required to extract Wyckoff site data from CIF & mmCIF files.
+
+    Note that per the specification, only the *fract_? or *Cartn_? keys may be included
+    but not both.
+    """

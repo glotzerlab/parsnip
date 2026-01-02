@@ -2,13 +2,11 @@ import numpy as np
 import pytest
 from conftest import cif_files_mark
 
-from parsnip._errors import ParseWarning
 from parsnip.patterns import (
     _box_from_lengths_and_angles,
     _dtype_from_int,
     _is_data,
     _is_key,
-    _semicolon_to_string,
     _strip_comments,
     _strip_quotes,
     _try_cast_to_numeric,
@@ -133,25 +131,6 @@ def test_strip_quotes(line):
     assert "'" not in stripped
     assert '"' not in stripped
     assert len(stripped) < len(line)
-
-
-@pytest.mark.parametrize("line", TEST_CASES)
-def test_semicolon_to_string(line):
-    if line is None:
-        return
-    if "'" in line and '"' in line:
-        with pytest.warns(
-            ParseWarning, match="String contains single and double quotes"
-        ):
-            fixed = _semicolon_to_string(line)
-        assert (fixed == line) if ";" not in line else (";" not in fixed)
-        return
-    if ";" not in line:
-        assert _semicolon_to_string(line) == line
-        return
-    fixed = _semicolon_to_string(line)
-    assert ";" not in fixed
-    assert "'" in fixed if "'" not in line else '"' in fixed
 
 
 @pytest.mark.parametrize("nchars", range(1, 15))

@@ -1,9 +1,11 @@
 import numpy as np
+import pytest
 from conftest import (
     _array_assertion_verbose,
     _gemmi_read_keys,
     all_files_mark,
     bad_cif,
+    cif_files_mark,
     pycifrw_or_skip,
     random_keys_mark,
 )
@@ -25,6 +27,30 @@ def test_read_key_value_pairs(cif_data):
         )
     gemmi_data = _gemmi_read_keys(cif_data.filename, keys=all_keys, as_number=False)
     _array_assertion_verbose(all_keys, parsnip_data, gemmi_data)
+
+
+@cif_files_mark
+@pytest.mark.parametrize(
+    "keys",
+    [
+        "_diffrn_reflns_limit_?_min",
+        "_journal_*",
+        "*",
+        "**",
+        "*?*",
+        "?????",
+        "?" * 14,  # Length of '_cell_length_?'
+        "?cell*",
+        "*cell*",
+        "_atom_site?",
+        "_atom_site*_?",
+    ],
+)
+def test_wildcard_keys_pairs(cif_data, keys):
+    parsnip_data = np.atleast_1d(cif_data.file.get_from_pairs(keys))
+    raw_keys = cif_data.file._wildcard_mapping.get(keys, [keys])
+    gemmi_data = _gemmi_read_keys(cif_data.filename, raw_keys, as_number=False)
+    _array_assertion_verbose(raw_keys, parsnip_data, gemmi_data)
 
 
 @all_files_mark
