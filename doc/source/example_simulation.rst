@@ -129,7 +129,7 @@ in LAMMPS.
     ...
     ...     # Write out atom type labels
     ...     if atom_type_labels:
-    ...         data += "Atom Type Labels\n\n"
+    ...         data += "\nAtom Type Labels\n\n"
     ...         for i, unique_labels in enumerate(particle_type_map):
     ...             data += f"{i} {label}\n"
     ...         data += "\n"
@@ -161,6 +161,7 @@ in LAMMPS.
     0.0 3.600000000000 ylo yhi
     0.0 3.600000000000 zlo zhi
     0.000000000000 0.000000000000 0.000000000000 xy xz yz
+    <BLANKLINE>
     Atom Type Labels
     <BLANKLINE>
     0 Cu
