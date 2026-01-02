@@ -204,7 +204,7 @@ Loading the file shows the twenty atoms we expect for β-Mn:
     >>> filename = "betamn.cif"
     >>> cif = CifFile(filename)
     >>> uc = cif.build_unit_cell()
-    >>> assert uc.shape == (20, 3)
+    >>> assert uc.shape == (8 + 12, 3)
 
 And of course, the Wyckoff position data reflects the data tabulated above:
 
