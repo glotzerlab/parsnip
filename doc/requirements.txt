@@ -30,7 +30,7 @@ markupsafe==3.0.3
     # via jinja2
 more-itertools==10.8.0
     # via parsnip-cif (pyproject.toml)
-numpy==2.4.0
+numpy==2.4.1
     # via
     #   -r doc/requirements.in
     #   parsnip-cif (pyproject.toml)
