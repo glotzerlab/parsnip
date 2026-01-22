@@ -40,6 +40,7 @@ packaging==25.0
     #   matplotlib
     #   pytest
     #   pytest-doctestplus
+    #   wheel
 pillow==12.1.0
     # via matplotlib
 pluggy==1.6.0
@@ -81,5 +82,5 @@ typing-extensions==4.15.0
     # via exceptiongroup
 wcwidth==0.2.14
     # via prettytable
-wheel==0.45.1
+wheel==0.46.2
     # via -r tests/requirements.in
