@@ -33,7 +33,7 @@ numpy==2.4.1
     #   matplotlib
     #   pycifrw
     #   scipy
-packaging==25.0
+packaging==26.0
     # via
     #   matplotlib
     #   pytest
@@ -51,7 +51,7 @@ pycifrw==5.0.1
     # via -r tests/requirements.in
 pygments==2.19.2
     # via pytest
-pyparsing==3.3.1
+pyparsing==3.3.2
     # via matplotlib
 pytest==9.0.2
     # via
@@ -66,7 +66,7 @@ python-dateutil==2.9.0.post0
     # via matplotlib
 scipy==1.17.0
     # via ase
-setuptools==80.9.0
+setuptools==80.10.1
     # via -r tests/requirements.in
 six==1.17.0
     # via python-dateutil
@@ -74,7 +74,7 @@ sympy==1.14.0
     # via
     #   -r requirements-sympy.in
     #   -r tests/requirements.in
-wcwidth==0.2.14
+wcwidth==0.3.1
     # via prettytable
-wheel==0.46.2
+wheel==0.46.3
     # via -r tests/requirements.in

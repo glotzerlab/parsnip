@@ -37,7 +37,7 @@ numpy==2.0.2
     #   matplotlib
     #   pycifrw
     #   scipy
-packaging==25.0
+packaging==26.0
     # via
     #   matplotlib
     #   pytest
@@ -55,7 +55,7 @@ pycifrw==5.0.1
     # via -r tests/requirements.in
 pygments==2.19.2
     # via pytest
-pyparsing==3.3.1
+pyparsing==3.3.2
     # via matplotlib
 pytest==8.4.2
     # via
@@ -70,7 +70,7 @@ python-dateutil==2.9.0.post0
     # via matplotlib
 scipy==1.13.1
     # via ase
-setuptools==80.9.0
+setuptools==80.10.1
     # via -r tests/requirements.in
 six==1.17.0
     # via python-dateutil
@@ -82,9 +82,9 @@ tomli==2.4.0
     # via pytest
 typing-extensions==4.15.0
     # via exceptiongroup
-wcwidth==0.2.14
+wcwidth==0.3.1
     # via prettytable
-wheel==0.46.2
+wheel==0.46.3
     # via -r tests/requirements.in
 zipp==3.23.0
     # via importlib-resources
