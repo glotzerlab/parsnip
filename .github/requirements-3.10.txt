@@ -60,7 +60,7 @@ pytest==9.0.2
     #   -r tests/requirements.in
     #   pytest-doctestplus
     #   pytest-xdist
-pytest-doctestplus==1.7.0
+pytest-doctestplus==1.7.1
     # via -r tests/requirements.in
 pytest-xdist==3.8.0
     # via -r tests/requirements.in
@@ -80,7 +80,7 @@ tomli==2.4.0
     # via pytest
 typing-extensions==4.15.0
     # via exceptiongroup
-wcwidth==0.4.0
+wcwidth==0.5.0
     # via prettytable
 wheel==0.46.3
     # via -r tests/requirements.in
