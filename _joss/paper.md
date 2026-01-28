@@ -71,11 +71,9 @@ near the leaves of the tree that appear to contain data. This is a departure fro
 standard "validating" parser strategy, but it enables fast and robust data extraction
 without a significant increase in code complexity.
 
-# State of the Field
-
-<!-- (~200 words): A description of how this software compares to other commonly-used packages in the research area. If related tools exist, provide a clear "build vs. contribute" justification explaining your unique scholarly contribution and why existing alternatives are insufficient. -->
-
 # Statement of Need
+
+<!-- A section that clearly illustrates the research purpose of the software and places it in the context of related work. This should clearly state what problems the software is designed to solve, who the target audience is, and its relation to other work. -->
 
 Materials researchers performing experimental and simulation research are fundamentally
 investigating many of the same research questions. However, crystallographic software
@@ -92,22 +90,27 @@ existing crystallography libraries like **ASE**, which provides wrapper types sp
 to elemental systems and **PyCIFRW**, which lacks clear API documentation and lays out
 data in a non-contiguous manner [@ASE; @PyCIFRW].
 
+# State of the Field
+
+<!-- (~200 words): A description of how this software compares to other commonly-used packages in the research area. If related tools exist, provide a clear "build vs. contribute" justification explaining your unique scholarly contribution and why existing alternatives are insufficient. -->
+
 `parsnip` supports colloidal and mesoscale materials research in addition to the atomic
 and protein datasets for which the CIF and mmCIF specifications were originally
-designed. While both `parsnip` and the **gemmi** library both support macromolecular
-data, `parsnip` standardizes the data structures and API to ensure all inputs are
-handled in a consistent, programmatic way [@GEMMI]. Rather than associating pure
-crystallographic data with atomic symbols or valence states by default, `parsnip`
-provides only the information required to reconstruct a particular structure unless
-otherwise queried. This generality enables the application of decades of atomic and
-molecular research data to novel studies of colloidal and soft matter crystallography.
-We also support Unix-style wildcard queries, simplifying common lookup patterns like
-cell parameter extraction and space group identification. Single-character wildcards
-enable specification-compliant queries into heterogeneous databases of both CIF and
-mmCIF files, further accelerating programmatic materials exploration. Although the
-**gemmi** library does support a similar style of wildcard through their `gemmi grep`
-command-line tool, its use is limited to bash scripting and each wildcard query requires
-the file to be re-parsed in its entirety [@GEMMI].
+designed. This is a fundamental change to the scope of the library, and necessitates
+novel tooling to support the greater diversity of systems. For example, while both
+`parsnip` and the **gemmi** [@GEMMI] library support macromolecular data encoded in the
+mmCIF format, `parsnip` standaradizes its API to ensure all inputs are handled in a
+consistent, programmatic way. In contrast, **gemmi** separates the parsing API and data
+structures between the two, improving performance at the expense of generality.
+
+Rather than associating pure crystallographic data with atomic symbols or valence states
+by default, `parsnip` provides only the information required to reconstruct a particular
+structure unless otherwise queried. This generality enables the application of decades
+of atomic and molecular research data to novel studies of colloidal and soft matter
+crystallography. Existing crystallography libraries like **ASE** [@ASE] and **pymatgen**
+[@PYMATGEN] encode atomic information into the data structures and types of parsed
+information, requiring postprocessing for studies where that information is unnecessary
+or incorrect.
 
 # Research Impact Statement
 
@@ -122,6 +125,14 @@ structure of interest. Simplifying access to a massive array of crystal structur
 stored in databases like the Crystallography Open Database (COD) [@COD] enables the
 construction of reference datasets for both classical and machine-learned
 characterization techniques.
+
+`parsnip`also supports Unix-style wildcard queries, simplifying common lookup patterns
+like cell parameter extraction and space group identification. Single-character
+wildcards enable specification-compliant queries into heterogeneous databases of both
+CIF and mmCIF files, further accelerating programmatic materials exploration. Although
+the **gemmi** library does support a similar style of wildcard through their
+`gemmi grep` command-line tool, its use is limited to bash scripting and each wildcard
+query requires the file to be re-parsed in its entirety [@GEMMI].
 
 Tests against 10,099 CIF files from the Crystallography Open Database (COD) shows we are
 able to correctly extract 95.4% of structures, more than any other library we could
