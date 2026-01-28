@@ -71,9 +71,9 @@ near the leaves of the tree that appear to contain data. This is a departure fro
 standard "validating" parser strategy, but it enables fast and robust data extraction
 without a significant increase in code complexity.
 
-# Research Impact Statement
+# State of the Field
 
-<!-- Provide concise evidence of either realized impact (e.g., external use, integrations, enabled results) or credible near-term significance (novel capability with benchmarks, reproducible materials, and community-readiness signals such as documentation, tests, license, releases, and contribution process). -->
+<!-- (~200 words): A description of how this software compares to other commonly-used packages in the research area. If related tools exist, provide a clear "build vs. contribute" justification explaining your unique scholarly contribution and why existing alternatives are insufficient. -->
 
 # Statement of Need
 
