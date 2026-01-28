@@ -44,23 +44,25 @@ both of which can be expanded with Unix-style wildcards to simplify complex quer
 Convenient methods for parsing unit cell parameters, reconstructing particle positions,
 and identifying site symmetry data are exposed to streamline common workflows in
 materials data science. `parsnip`'s clear documentation of conventions and units
-eliminates ambiguities common to interdisciplinary research. Using NumPy structured
+eliminates ambiguities common to interdisciplinary research. Our use of NumPy structured
 arrays for data storage allows Python, C, and FORTRAN libraries to work with `parsnip`,
 resulting in a stable, scalable dependency for scientific codebases in materials
-research at the atomic, molecular, and colloidal scales [@Freud2020].
+research at the atomic, molecular, and colloidal scales.
 
 # Software Design
 
 <!-- Explain the trade-offs you weighed, the design/architecture you settled on, and why it matters. If other packages exist in this space, you must include an explicit "build vs. contribute" justification explaining why you created new software rather than contributing to existing projects. -->
 
-`parsnip` is designed to accommodate use in studies of colloidal matter, a functionality
+`parsnip`'s design enables studies of crystallinity in colloidal matter, a feature set
 that is not met by any existing tools in the field. By separating units and atomic data
 from pure structural information, we are able to provide a domain-agnostic interface for
-the study of structure in general. We also abstract away some portions of the CIF syntax
-to simplify the API -- most notable, we aggregate across `data_` blocks to ensure all
-relevant information is accessible through a uniform grammar of queries.
+the study of crystalline order in general. We also abstract away some portions of the
+CIF syntax to simplify the API -- most notable, we aggregate across `data_` blocks to
+ensure all relevant information is accessible through a uniform grammar of queries. This
+choice enables a user interface that more closely resembles other structural data
+formats like *XYZ*, *MOL*, and *VTP* [@molIUPAC; @vtkBook].
 
-Our unique handling to the CIF specification extends to the design of our parser as
+Our unique approach to the CIF specification extends to the design of our parser as
 well. While most existing tools in the space use parser generators based on the IUCR's
 formal grammar, we identified a non-neglible subset of CIF files that break the formal
 specification but nevertheless contain useful data. To overcome this, `parsnip` does not
