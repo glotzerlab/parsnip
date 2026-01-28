@@ -54,7 +54,7 @@ research at the atomic, molecular, and colloidal scales.
 <!-- Explain the trade-offs you weighed, the design/architecture you settled on, and why it matters. If other packages exist in this space, you must include an explicit "build vs. contribute" justification explaining why you created new software rather than contributing to existing projects. -->
 
 `parsnip`'s design enables studies of crystallinity in colloidal matter, a feature set
-that is not met by any existing tools in the field. By separating units and atomic data
+that is not met by any available tools in the field. By separating units and atomic data
 from pure structural information, we are able to provide a domain-agnostic interface for
 the study of crystalline order in general. We also abstract away some portions of the
 CIF syntax to simplify the API -- most notable, we aggregate across `data_` blocks to
@@ -123,16 +123,15 @@ stored in databases like the Crystallography Open Database (COD) [@COD] enables 
 construction of reference datasets for both classical and machine-learned
 characterization techniques.
 
-Tests against over ten thousand CIF files from the Crystallography Open Database (COD)
-shows we are able to correctly extract 95.4% of structures, more than any other library
-we could find. Table \ref{accuracyCOD} shows `parsnip`'s excellent performance compared
-to its contemporaries: **parnsnip**'s symbolic parsing mode is the most accurate of all
-tested CIF libraries, and is able to correctly reconstruct more files than the next best
+Tests against 10,099 CIF files from the Crystallography Open Database (COD) shows we are
+able to correctly extract 95.4% of structures, more than any other library we could
+find. Table \ref{accuracyCOD} shows `parsnip`'s excellent performance compared to its
+contemporaries: **parnsnip**'s symbolic parsing mode is the most accurate of all tested
+CIF libraries, and is able to correctly reconstruct more files than the next best
 alternative, **ASE**. We note that our results use a single, fixed parsing precision for
-all 10,099 files: however, as discussed in the
-["Reconstructing Noisy Unit Cells"](parsnip-cif.readthedocs.io/en/latest/example_noisy.html)
-tutorial in our documentation, tailoring the parse precision to match the precision of
-the data in the file yields even better results.
+all 10,099 files: however, as discussed `in parsnip`'s documentation, tailoring the
+parse precision to match the precision of the data in the file yields even better
+results.
 
 : Comparison of unit-cell reconstruction accuracy for 10099 CIF files from the
 COD.\label{accuracyCOD}
