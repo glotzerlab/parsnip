@@ -109,21 +109,60 @@ library does support a similar style of wildcard through their `gemmi grep` comm
 tool, its use is limited to bash scripting and each wildcard query requires the file to
 be re-parsed in its entirety [@GEMMI].
 
+# Research Impact Statement
+
+<!-- Provide concise evidence of either realized impact (e.g., external use, integrations, enabled results) or credible near-term significance (novel capability with benchmarks, reproducible materials, and community-readiness signals such as documentation, tests, license, releases, and contribution process). -->
+
 `parsnip` is designed and optimized for integration with larger materials science codes,
 with a minimal dependency set and pure Python interface. This has facilitated its
-incorporation into the **freud** analysis library, which uses `parsnip` to extract unit
-cell data for use as reference structures in high-throughput simulation analysis
-[@Freud2020]. Although **gemmi** also requires few dependencies, the compiled nature of
-the package means that integration with other libraries may not be straightforward.
-`parsnip` uses NumPy structured arrays to provide a stable data layout for
-cross-language access without modifying the build system of downstream projects. As a
-result, users get the benefits of copy-free data transfer to compiled languages without
-any additional complexity.
+incorporation into the **freud** analysis library, which uses `parsnip` to build
+reference structures for high-throughput simulation analysis [@Freud2020]. When studying
+complex crystals, standard characterization techniques often fail to uniquely resolve a
+structure of interest. Simplifying access to a massive array of crystal structures
+stored in databases like the Crystallography Open Database (COD) [@COD] enables the
+construction of reference datasets for both classical and machine-learned
+characterization techniques.
+
+Tests against over ten thousand CIF files from the Crystallography Open Database (COD)
+shows we are able to correctly extract 95.4% of structures, more than any other library
+we could find. Table \ref{accuracyCOD} shows `parsnip`'s excellent performance compared
+to its contemporaries: **parnsnip**'s symbolic parsing mode is the most accurate of all
+tested CIF libraries, and is able to correctly reconstruct more files than the next best
+alternative, **ASE**. We note that our results use a single, fixed parsing precision for
+all 10,099 files: however, as discussed in the
+["Reconstructing Noisy Unit Cells"](parsnip-cif.readthedocs.io/en/latest/example_noisy.html)
+tutorial in our documentation, tailoring the parse precision to match the precision of
+the data in the file yields even better results.
+
+: Comparison of unit-cell reconstruction accuracy for 10099 CIF files from the COD.
+[]{label="accuracyCOD"}
+
+| Library                   | Incorrect Structure | Failed Parses | Total Errors |
+| ------------------------- | :-----------------: | :-----------: | :----------: |
+| `parsnip (sympy, prec=3)` |       **84**        |      385      |   **469**    |
+| `parsnip (prec=3)`        |         203         |      385      |     588      |
+| ASE                       |         125         |      810      |     935      |
+| gemmi                     |        2343         |     **0**     |     2343     |
+
+<!-- `parsnip` is also extremely well documented, with tutorials building from a simple API -->
+<!-- introduction all the way to a detailed guide on using the code with the `HOOMD-Blue` and -->
+<!-- `LAMMPS` simulation engines. We also illustrate the use of `parsnip`'s symbolic parsing -->
+<!-- functionality, with examples on how to ensure the correctness of structures built from -->
+<!-- low-quality data. This is a notable improvement from older libraries like `pycodcif` -->
+<!-- [@CITE] and `PyCIFRW` [@PyCIFRW], which have limited Python API documentation and few -->
+<!-- examples. -->
 
 # Acknowledgments
 
 This research was supported by a Vannevar Bush Faculty Fellowship sponsored by the
 Department of the Navy, Office of Naval Research under ONR award number
 N00014-22-1-2821.
+
+# AI Usage Disclosure
+
+GitHub Copilot’s automated PR review was evaluated for use with this project, but was
+disabled due to the unhelpful nature of the output. No generative AI tools were used in
+the development of this software, the writing of this manuscript, or the preparation of
+supporting materials.
 
 # References
