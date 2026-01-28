@@ -10,7 +10,7 @@ authors:
     affiliation: 1
   - name: Sharon Glotzer
     orcid: 0000-0002-7197-0085
-    affiliation: [1, 2]
+    affiliation: "[1, 2]"
 affiliations:
  - name: Materials Science and Engineering, University of Michigan, United States
    index: 1
