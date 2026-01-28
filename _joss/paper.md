@@ -26,10 +26,10 @@ bibliography: paper.bib
 `parsnip` provides a lightweight, precise, and domain agnostic interface for parsing
 data encoded in the Crystallographic Information File (CIF) [@CIF] and Macromolecular
 CIF (mmCIF) [@mmCIF] formats. Designed for programmatic analysis of crystalline systems,
-`parsnip` offers a scriptable query API and a suite of convenient data retrieval methods
-for automated lookups of structural information. Its minimal dependency set and
-high-level interface allows for the rapid incorporation of `parsnip` into existing
-libraries within the molecular simulation ecosystem [@Freud2020].
+`parsnip` offers a scriptable API and a suite of convenient data retrieval methods for
+automated lookups of structural information. Its minimal dependency set and high-level
+interface allows for the rapid incorporation of `parsnip` into existing libraries within
+the molecular simulation ecosystem [@Freud2020].
 
 `parsnip`'s primary functionality lies in its ability to accurately reconstruct unit
 cells from experimental data recorded with limited precision, often with only a few
