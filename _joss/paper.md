@@ -8,7 +8,7 @@ authors:
   - name: Jenna Bradley
     orcid: 0009-0007-2443-2982
     affiliation: 1
-  - name: Sharon Glotzer
+  - name: Sharon C. Glotzer
     orcid: 0000-0002-7197-0085
     affiliation: "[1, 2]"
 affiliations:
