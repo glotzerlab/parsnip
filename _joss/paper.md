@@ -94,20 +94,20 @@ data in a non-contiguous manner [@ASE; @PyCIFRW].
 
 `parsnip` supports colloidal and mesoscale materials research in addition to the atomic
 and protein datasets for which the CIF and mmCIF specifications were originally
-designed. While the **gemmi** library also supports macromolecular data, `parsnip`
-standardizes the data structures and API to ensure all inputs are handled in a
-consistent, programmatic way [@GEMMI]. Rather than associating pure crystallographic
-data with atomic symbols or valence states by default, `parsnip` provides only the
-information required to reconstruct a particular structure unless otherwise queried.
-This generality enables the application of decades of atomic and molecular research data
-to novel studies of colloidal and soft matter crystallography. We also support
-Unix-style wildcard queries, simplifying common lookup patterns like cell parameter
-extraction and space group identification. Single-character wildcards enable
-specification-compliant queries into heterogeneous databases of both CIF and mmCIF
-files, further accelerating programmatic materials exploration. Although the **gemmi**
-library does support a similar style of wildcard through their `gemmi grep` command-line
-tool, its use is limited to bash scripting and each wildcard query requires the file to
-be re-parsed in its entirety [@GEMMI].
+designed. While both `parsnip` and the **gemmi** library both support macromolecular
+data, `parsnip` standardizes the data structures and API to ensure all inputs are
+handled in a consistent, programmatic way [@GEMMI]. Rather than associating pure
+crystallographic data with atomic symbols or valence states by default, `parsnip`
+provides only the information required to reconstruct a particular structure unless
+otherwise queried. This generality enables the application of decades of atomic and
+molecular research data to novel studies of colloidal and soft matter crystallography.
+We also support Unix-style wildcard queries, simplifying common lookup patterns like
+cell parameter extraction and space group identification. Single-character wildcards
+enable specification-compliant queries into heterogeneous databases of both CIF and
+mmCIF files, further accelerating programmatic materials exploration. Although the
+**gemmi** library does support a similar style of wildcard through their `gemmi grep`
+command-line tool, its use is limited to bash scripting and each wildcard query requires
+the file to be re-parsed in its entirety [@GEMMI].
 
 # Research Impact Statement
 
