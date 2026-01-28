@@ -134,8 +134,8 @@ all 10,099 files: however, as discussed in the
 tutorial in our documentation, tailoring the parse precision to match the precision of
 the data in the file yields even better results.
 
-: Comparison of unit-cell reconstruction accuracy for 10099 CIF files from the COD.
-[]{label="accuracyCOD"}
+: Comparison of unit-cell reconstruction accuracy for 10099 CIF files from the
+COD.\label{accuracyCOD}
 
 | Library                   | Incorrect Structure | Failed Parses | Total Errors |
 | ------------------------- | :-----------------: | :-----------: | :----------: |
