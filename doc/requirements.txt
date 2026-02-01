@@ -6,7 +6,7 @@ alabaster==1.0.0
     # via sphinx
 autodocsumm==0.2.14
     # via -r doc/requirements.in
-babel==2.17.0
+babel==2.18.0
     # via sphinx
 beautifulsoup4==4.14.3
     # via furo
