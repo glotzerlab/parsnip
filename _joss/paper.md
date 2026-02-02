@@ -132,7 +132,7 @@ evaluating expressions in floating point arithmetic like other CIF libraries, `p
 actually evaluates unit cell positions in the correct rational form. We then convert to
 back to floating point values for a tolerance-based deduplication check, which catches
 edge cases in recorded data where values are not rounded consistently (e.g.
-$\left(1/3, 2/3\right)=\left(0.3333, 0.6666\right)$).
+$\left(1/3, 2/3\right) \to \left(0.3333, 0.6666\right)$).
 
 # Research Impact Statement
 
