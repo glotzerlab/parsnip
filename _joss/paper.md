@@ -56,37 +56,26 @@ research at the atomic, molecular, and colloidal scales.
 More than thirty years of material data of is encoded in the CIF file format, with
 terabytes of elemental and protein structures freely available to researchers
 [@MATERIALSPROJECT; @PDB]. While early CIF parsers were predominantly written in C and
-Fortran, the advent of Python opened new opportunities for simple, scriptable access to
+Fortran, the growth of Python opened new opportunities for simple, scriptable access to
 crystallographic data. **PyCifRW** is one of the earliest such tools, offering a
-complete and specification complicant parsers for the CIF format [@PyCIFRW]. **ASE**, a
-tool designed to initialize atomistic simulations, added support for CIF files as an
-alternative to their NetCDF initialization for DFT simulations [@ASE_ORIG; @ASE]. This
-marked a transition from pure IO libraries to combined IO and analysis tools, with both
-**ASE** and later projects like **pymatgen** including code to characterize and
+complete and specification complicant parser for the CIF format [@PyCIFRW]. Soon
+thereafter, **ASE**, a tool designed to initialize atomistic simulations, added support
+for CIF files as an alternative to NetCDF inputs for DFT simulations [@ASE_ORIG; @ASE].
+This marked a transition from pure IO libraries to mixed IO and analysis tools, with
+both **ASE** and later projects like **pymatgen** including code to characterize and
 manipulate structures [@pymatgen]. One of the most recent CIF libraries, **gemmi**, also
 follows this trend, although significant amounts of code are committed to quickly and
 accurately parsing the CIF grammar.
 
-<!-- TODO: figure? -->
-
-Materials researchers performing experimental and simulation research are fundamentally
-investigating many of the same research questions. However, crystallographic software
-designed for experimental data often does not scale well to automated workflows — a
-particularly significant problem in interdisciplinary research where the building blocks
-of crystal structures include atoms, macromolecules, and nanoparticles.
-
-Regardless of discipline, the accuracy with which structures can be encoded and decoded
-is paramount to the CIF formalk
-
-While many excellent crystallography libraries provide high-level interfaces and class
-hierarchies for crystallographic data, the general nature of simulation science drives a
-need for array-formatted storage that easily translates across simulation frameworks and
-system length-scales. `parsnip` addresses this need by providing a simple, intuitive,
-and well-documented software frontend that integrates tightly with existing standards
-for molecular simulation and analysis. This marks a contrast in design between `parsnip`
-and existing crystallography libraries like **ASE**, which provides wrapper types
-specific to elemental systems and **PyCIFRW**, which lacks clear API documentation and
-lays out data in a non-contiguous manner [@ASE; @PyCIFRW].
+While all of these tools provide excellent interfaces for researchers working with
+atomic materials, the structure and typing of alternative libraries is ill-suited to
+interdisciplinary research, where the building blocks of crystal structures include
+atoms, macromolecules, and nanoparticles. The explosion of simulation research in
+superatomic systems has driven a need for scalable, array-formatted crystallographic
+data that easily translates across simulation frameworks and system length-scales.
+`parsnip` addresses this need by providing a simple, intuitive, and well-documented
+software frontend that integrates tightly with existing standards for molecular
+simulation and analysis [@HOOMD; @LAMMPS].
 
 # State of the Field
 
@@ -101,14 +90,14 @@ mmCIF format, `parsnip` standardizes its API to ensure all inputs are handled in
 consistent, programmatic way. In contrast, **gemmi** separates the parsing API and data
 structures between the two, improving performance at the expense of generality.
 
+Existing crystallography libraries like **ASE** [@ASE] and **pymatgen** [@pymatgen]
+encode atomic information into the data structures and types of parsed information,
+requiring postprocessing for studies where that information is unnecessary or incorrect.
 Rather than associating pure crystallographic data with atomic symbols or valence states
 by default, `parsnip` provides only the information required to reconstruct a particular
-structure unless otherwise queried. This generality enables the application of decades
-of atomic and molecular research data to novel studies of colloidal and soft matter
-crystallography. Existing crystallography libraries like **ASE** [@ASE] and **pymatgen**
-[@PYMATGEN] encode atomic information into the data structures and types of parsed
-information, requiring postprocessing for studies where that information is unnecessary
-or incorrect.
+structure unless otherwise queried. This approach offers benefits for users who do
+require atomic information, as we are able to provide access to arbirary data associated
+with the basis positions, rather than fixed keys as required by other tools.
 
 # Software Design
 
@@ -131,6 +120,19 @@ validate the entire syntax tree of the CIF grammar: rather, we eagerly consume n
 near the leaves of the tree that appear to contain data. This is a departure from the
 standard "validating" parser strategy, but it enables fast and robust data extraction
 without a significant increase in code complexity.
+
+While this parsing technique alone provides significant accuracy benefits, there are
+still many files that cannot be accurately reconstructed by other tools. Standard,
+"symmetrized" CIF data requires the application of symmetry operations to reconstruct a
+lattice. These operations have the form of the form $(x \pm \mathbb{Q}) \mod 1$, where
+$x$ is experimentally determined. While Wyckoff positions can have arbitrary real
+values, the data stored in CIF files is necessarily finite. For this reason, the actual
+set of valid, parseable positions is the group $\mathbb{Q} \mod 1$. Rather than
+evaluating expressions in floating point arithmetic like other CIF libraries, `parsnip`
+actually evaluates unit cell positions in the correct rational form. We then convert to
+back to floating point values for a tolerance-based deduplication check, which catches
+edge cases in recorded data where values are not rounded consistently (e.g.
+$\left(1/3, 2/3\right)=\left(0.3333, 0.6666\right)$).
 
 # Research Impact Statement
 
