@@ -162,7 +162,7 @@ find. Table \ref{accuracyCOD} shows `parsnip`'s excellent performance compared t
 contemporaries: **parnsnip**'s symbolic parsing mode is the most accurate of all tested
 CIF libraries, and is able to correctly reconstruct more files than the next best
 alternative, **ASE**. We note that our results use a single, fixed parsing precision for
-all 10,099 files: however, as discussed `in parsnip`'s documentation, tailoring the
+all 10,099 files: however, as discussed in `parsnip`'s documentation, tailoring the
 parse precision to match the precision of the data in the file yields even better
 results.
 
