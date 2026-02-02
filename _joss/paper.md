@@ -166,23 +166,18 @@ all 10,099 files: however, as discussed `in parsnip`'s documentation, tailoring 
 parse precision to match the precision of the data in the file yields even better
 results.
 
-: Comparison of unit-cell reconstruction accuracy for 10099 CIF files from the
-COD.\label{accuracyCOD}
+: Comparison of unit-cell reconstruction accuracy for 10099 CIF files from the COD.
+"Total Corrrect" indicates the total number of correctly-reconstructed crystals and
+"Failed to Parse" indicates files that could not be read at all. All percentages are the
+total correct crystals divided by the total number of files. \label{accuracyCOD}
 
-| Library                   | Incorrect Structure | Failed Parses | Total Errors |
-| ------------------------- | :-----------------: | :-----------: | :----------: |
-| `parsnip (sympy, prec=3)` |       **84**        |      385      |   **469**    |
-| `parsnip (prec=3)`        |         203         |      385      |     588      |
-| ASE                       |         125         |      810      |     935      |
-| gemmi                     |        2343         |     **0**     |     2343     |
-
-<!-- `parsnip` is also extremely well documented, with tutorials building from a simple API -->
-<!-- introduction all the way to a detailed guide on using the code with the `HOOMD-Blue` and -->
-<!-- `LAMMPS` simulation engines. We also illustrate the use of `parsnip`'s symbolic parsing -->
-<!-- functionality, with examples on how to ensure the correctness of structures built from -->
-<!-- low-quality data. This is a notable improvement from older libraries like `pycodcif` -->
-<!-- [@CITE] and `PyCIFRW` [@PyCIFRW], which have limited Python API documentation and few -->
-<!-- examples. -->
+| Library                      | Total Correct Crystals | Failed to Parse | Percent Correct |
+| ---------------------------- | :--------------------: | :-------------: | :-------------: |
+| `parsnip (rational, prec=3)` |        **9458**        |       385       |    **93.7%**    |
+| `parsnip (prec=3)`           |          9337          |       385       |      92.5%      |
+| (ASE)                        |          9242          |       810       |      91.5%      |
+| pymatgen                     |          9142          |       805       |      90.5%      |
+| gemmi                        |          8151          |      **0**      |      90.5%      |
 
 # Acknowledgments
 
