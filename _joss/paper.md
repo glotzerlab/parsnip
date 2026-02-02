@@ -49,46 +49,46 @@ arrays for data storage allows Python, C, and FORTRAN libraries to work with `pa
 resulting in a stable, scalable dependency for scientific codebases in materials
 research at the atomic, molecular, and colloidal scales.
 
-# Software Design
-
-<!-- Explain the trade-offs you weighed, the design/architecture you settled on, and why it matters. If other packages exist in this space, you must include an explicit "build vs. contribute" justification explaining why you created new software rather than contributing to existing projects. -->
-
-`parsnip`'s design enables studies of crystallinity in colloidal matter, a feature set
-that is not met by any available tools in the field. By separating units and particle
-data from pure structural information, we are able to provide a domain-agnostic
-interface for the study of crystalline order in general. We also abstract away some
-portions of the CIF syntax to simplify the API -- most notable, we aggregate across
-`data_` blocks to ensure all relevant information is accessible through a uniform
-grammar of queries. This choice enables a user interface that more closely resembles
-other structural data formats like *XYZ*, *MOL*, and *VTP* [@molIUPAC; @vtkBook].
-
-Our unique approach to the CIF specification extends to the design of our parser as
-well. While most existing tools in the space use parser generators based on the IUCR's
-formal grammar, we identified a non-neglible subset of CIF files that break the formal
-specification but nevertheless contain useful data. To overcome this, `parsnip` does not
-validate the entire syntax tree of the CIF grammar: rather, we eagerly consume nodes
-near the leaves of the tree that appear to contain data. This is a departure from the
-standard "validating" parser strategy, but it enables fast and robust data extraction
-without a significant increase in code complexity.
-
 # Statement of Need
 
 <!-- A section that clearly illustrates the research purpose of the software and places it in the context of related work. This should clearly state what problems the software is designed to solve, who the target audience is, and its relation to other work. -->
+
+More than thirty years of material data of is encoded in the CIF file format, with
+terabytes of elemental and protein structures freely available to researchers. However,
+despite many attempts to curate that data, many files are recorded with errors that make
+accurate reconstruction of the crystals challenging [@MATERIALSPROJECT; @PDB]. CIF files
+store basis positions in symmetrized, fractional coordinates, which require the
+application of the crystal's symmetry to generate candidate positions, followed by a
+deduplication step to remove extraneous atoms. Each of these procedures requires some
+tolerance to handle errors in the original data as well as in the reconstruction step,
+and all existing tools fail to accurately reconstruct some files.
+
+`parsnip`
+
+As a result, all CIF parsers will fail to correctly reconstruct crystals some fraction
+of the time. `parsnip` offers the most accurate structure processing of any available
+tool, with extensive documentation detailing how to use our code for files
+
+<!-- TODO: figure? -->
 
 Materials researchers performing experimental and simulation research are fundamentally
 investigating many of the same research questions. However, crystallographic software
 designed for experimental data often does not scale well to automated workflows — a
 particularly significant problem in interdisciplinary research where the building blocks
-of crystal structures include atoms, macromolecules, and nanoparticles. While many
-excellent libraries provide high-level interfaces and strict class hierarchies for
-crystallographic data, the general nature of simulation science drives a need for
-array-formatted storage that easily translates across simulation frameworks and system
-length-scales. `parsnip` addresses this need by providing a simple, intuitive, and
-well-documented software frontend that integrates tightly with existing standards for
-molecular simulation and analysis. This marks a contrast in design between `parsnip` and
-existing crystallography libraries like **ASE**, which provides wrapper types specific
-to elemental systems and **PyCIFRW**, which lacks clear API documentation and lays out
-data in a non-contiguous manner [@ASE; @PyCIFRW].
+of crystal structures include atoms, macromolecules, and nanoparticles.
+
+Regardless of discipline, the accuracy with which structures can be encoded and decoded
+is paramount to the CIF formalk
+
+While many excellent crystallography libraries provide high-level interfaces and class
+hierarchies for crystallographic data, the general nature of simulation science drives a
+need for array-formatted storage that easily translates across simulation frameworks and
+system length-scales. `parsnip` addresses this need by providing a simple, intuitive,
+and well-documented software frontend that integrates tightly with existing standards
+for molecular simulation and analysis. This marks a contrast in design between `parsnip`
+and existing crystallography libraries like **ASE**, which provides wrapper types
+specific to elemental systems and **PyCIFRW**, which lacks clear API documentation and
+lays out data in a non-contiguous manner [@ASE; @PyCIFRW].
 
 # State of the Field
 
@@ -99,7 +99,7 @@ and protein datasets for which the CIF and mmCIF specifications were originally
 designed. This is a fundamental change to the scope of the library, and necessitates
 novel tooling to support the greater diversity of systems. For example, while both
 `parsnip` and the **gemmi** [@GEMMI] library support macromolecular data encoded in the
-mmCIF format, `parsnip` standaradizes its API to ensure all inputs are handled in a
+mmCIF format, `parsnip` standardizes its API to ensure all inputs are handled in a
 consistent, programmatic way. In contrast, **gemmi** separates the parsing API and data
 structures between the two, improving performance at the expense of generality.
 
@@ -111,6 +111,28 @@ crystallography. Existing crystallography libraries like **ASE** [@ASE] and **py
 [@PYMATGEN] encode atomic information into the data structures and types of parsed
 information, requiring postprocessing for studies where that information is unnecessary
 or incorrect.
+
+# Software Design
+
+<!-- Explain the trade-offs you weighed, the design/architecture you settled on, and why it matters. If other packages exist in this space, you must include an explicit "build vs. contribute" justification explaining why you created new software rather than contributing to existing projects. -->
+
+`parsnip`'s design enables studies of crystallinity in colloidal matter, a feature set
+that is not met by any available tools in the field. By separating units and particle
+data from pure structural information, we are able to provide a general interface for
+the study of ordered matter across scales. We also abstract away some portions of the
+CIF syntax to simplify the API -- most notable, we aggregate across `data_` blocks to
+ensure all relevant information is accessible through a uniform grammar of queries. This
+choice enables a user interface that more closely resembles other structural data
+formats like *XYZ*, *MOL*, and *VTP* [@molIUPAC; @vtkBook].
+
+Our unique approach to the CIF specification extends to the design of our parser as
+well. While most existing tools in the space use parser generators based on the IUCR's
+formal grammar, we identified a non-neglible subset of CIF files that break the formal
+specification but nevertheless contain useful data. To overcome this, `parsnip` does not
+validate the entire syntax tree of the CIF grammar: rather, we eagerly consume nodes
+near the leaves of the tree that appear to contain data. This is a departure from the
+standard "validating" parser strategy, but it enables fast and robust data extraction
+without a significant increase in code complexity.
 
 # Research Impact Statement
 
@@ -126,7 +148,7 @@ stored in databases like the Crystallography Open Database (COD) [@COD] enables 
 construction of reference datasets for both classical and machine-learned
 characterization techniques.
 
-`parsnip`also supports Unix-style wildcard queries, simplifying common lookup patterns
+`parsnip` also supports Unix-style wildcard queries, simplifying common lookup patterns
 like cell parameter extraction and space group identification. Single-character
 wildcards enable specification-compliant queries into heterogeneous databases of both
 CIF and mmCIF files, further accelerating programmatic materials exploration. Although
