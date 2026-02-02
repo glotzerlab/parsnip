@@ -54,20 +54,18 @@ research at the atomic, molecular, and colloidal scales.
 <!-- A section that clearly illustrates the research purpose of the software and places it in the context of related work. This should clearly state what problems the software is designed to solve, who the target audience is, and its relation to other work. -->
 
 More than thirty years of material data of is encoded in the CIF file format, with
-terabytes of elemental and protein structures freely available to researchers. However,
-despite many attempts to curate that data, many files are recorded with errors that make
-accurate reconstruction of the crystals challenging [@MATERIALSPROJECT; @PDB]. CIF files
-store basis positions in symmetrized, fractional coordinates, which require the
-application of the crystal's symmetry to generate candidate positions, followed by a
-deduplication step to remove extraneous atoms. Each of these procedures requires some
-tolerance to handle errors in the original data as well as in the reconstruction step,
-and all existing tools fail to accurately reconstruct some files.
-
-`parsnip`
-
-As a result, all CIF parsers will fail to correctly reconstruct crystals some fraction
-of the time. `parsnip` offers the most accurate structure processing of any available
-tool, with extensive documentation detailing how to use our code for files
+terabytes of elemental and protein structures freely available to researchers
+[@MATERIALSPROJECT; @PDB]. While early CIF parsers were predominantly written in C and
+Fortran, the advent of Python opened new opportunities for simple, scriptable access to
+crystallographic data. **PyCifRW** is one of the earliest such tools, offering a
+complete and specification complicant parsers for the CIF format [@PyCIFRW]. **ASE**, a
+tool designed to initialize atomistic simulations, added support for CIF files as an
+alternative to their NetCDF initialization for DFT simulations [@ASE_ORIG; @ASE]. This
+marked a transition from pure IO libraries to combined IO and analysis tools, with both
+**ASE** and later projects like **pymatgen** including code to characterize and
+manipulate structures [@pymatgen]. One of the most recent CIF libraries, **gemmi**, also
+follows this trend, although significant amounts of code are committed to quickly and
+accurately parsing the CIF grammar.
 
 <!-- TODO: figure? -->
 
