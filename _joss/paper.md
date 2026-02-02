@@ -162,22 +162,21 @@ find. Table \ref{accuracyCOD} shows `parsnip`'s excellent performance compared t
 contemporaries: **parnsnip**'s symbolic parsing mode is the most accurate of all tested
 CIF libraries, and is able to correctly reconstruct more files than the next best
 alternative, **ASE**. We note that our results use a single, fixed parsing precision for
-all 10,099 files: however, as discussed in `parsnip`'s documentation, tailoring the
+all 10,099 files: however, as discussed `in parsnip`'s documentation, tailoring the
 parse precision to match the precision of the data in the file yields even better
 results.
 
 : Comparison of unit-cell reconstruction accuracy for 10099 CIF files from the COD.
 "Total Corrrect" indicates the total number of correctly-reconstructed crystals and
-"Failed to Parse" indicates files that could not be read at all. All percentages are the
-total correct crystals divided by the total number of files. \label{accuracyCOD}
+"Failed to Parse" indicates files that could not be read at all.\label{accuracyCOD}
 
-| Library                      | Total Correct Crystals | Failed to Parse | Percent Correct |
-| ---------------------------- | :--------------------: | :-------------: | :-------------: |
-| `parsnip (rational, prec=3)` |        **9458**        |       385       |    **93.7%**    |
-| `parsnip (prec=3)`           |          9337          |       385       |      92.5%      |
-| (ASE)                        |          9242          |       810       |      91.5%      |
-| pymatgen                     |          9142          |       805       |      90.5%      |
-| gemmi                        |          8151          |      **0**      |      90.5%      |
+| Library                      | Correct Crystals | Incorrect Crystals | Failed to Parse | Percent Correct |
+| ---------------------------- | :--------------: | :----------------: | :-------------: | :-------------: |
+| `parsnip (rational, prec=3)` |     **9458**     |        256         |       385       |    **93.7%**    |
+| `parsnip (prec=3)`           |       9337       |        377         |       385       |      92.5%      |
+| (ASE)                        |       9242       |       **47**       |       810       |      91.5%      |
+| pymatgen                     |       9142       |        147         |       810       |      90.5%      |
+| gemmi                        |       8151       |        1948        |      **0**      |      90.5%      |
 
 # Acknowledgments
 
