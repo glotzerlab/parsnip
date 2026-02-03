@@ -11,12 +11,19 @@ of string data extracted from CIF files by methods in ``parsnip.parse``.
 
 from __future__ import annotations
 
+import json
 import re
 import sys
+from pathlib import Path
 from typing import Literal, TypeVar
 
 import numpy as np
 from numpy.typing import ArrayLike
+
+with open(Path(__file__).parent / "symops.json") as f:
+    _full_dict = json.load(f)
+
+    SYMOPS_DICT_IT = {k: v["xyz"] for k, v in _full_dict.items()}
 
 T = TypeVar("T")
 
@@ -253,3 +260,14 @@ def _box_from_lengths_and_angles(l1, l2, l3, alpha, beta, gamma):
     yz = (c - b * a2x) / (ly * lz)
 
     return tuple(float(x) for x in [lx, ly, lz, xy, xz, yz])
+
+
+def lookup_symops(cif) -> np.ndarray | None:
+    """Look up symmetry ops by international tables number."""
+    group_number = cif["_space_group_IT_number"] or cif["_symmetry_Int_Tables_number"]
+
+    if group_number is not None:
+        symops = SYMOPS_DICT_IT.get(str(group_number).strip())
+        if symops is not None:
+            return np.array(symops)[:, None]
+    return None
