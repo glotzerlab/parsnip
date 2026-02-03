@@ -799,13 +799,6 @@ class CifFile:
     def symops(self) -> np.ndarray | None:
         r"""Extract the symmetry operations in a `parsable algebraic form`_.
 
-        .. info::
-
-            If the raw symmetry operations are not stored in the file, a lookup based
-            on the keys ``_space_group_IT_number`` and ``_symmetry_Int_Tables_number``
-            will be attempted. If these values are present, the symmetry operations will
-            be based on the stored space group number.
-
         Example
         -------
         >>> cif.symops
