@@ -35,6 +35,9 @@ Issues = "https://github.com/glotzerlab/parsnip/issues"
 packages=["parsnip"]
 include-package-data = true
 
+[tool.setuptools.package-data]
+parsnip = ["symops.json"]
+
 [tool.setuptools.dynamic]
 optional-dependencies.tests = { file = ["tests/requirements.in"] }
 optional-dependencies.doc = { file = ["doc/requirements.in"] }
