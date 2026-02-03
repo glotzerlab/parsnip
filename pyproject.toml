@@ -33,6 +33,7 @@ Issues = "https://github.com/glotzerlab/parsnip/issues"
 
 [tool.setuptools]
 packages=["parsnip"]
+include-package-data = true
 
 [tool.setuptools.dynamic]
 optional-dependencies.tests = { file = ["tests/requirements.in"] }
