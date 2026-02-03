@@ -1,3 +1,6 @@
+# Copyright (c) 2025-2026, The Regents of the University of Michigan
+# This file is from the parsnip project, released under the BSD 3-Clause License.
+
 import json
 
 import requests
@@ -11,16 +14,25 @@ def build_sg_dict():
     for i in tqdm.tqdm(range(1, 231)):
         url = f"http://img.chem.ucl.ac.uk/sgp/LARGE/{i:03d}az3.htm"
         response = requests.get(url, timeout=10)
-
-        # Parse text inside a specific FONT tag. Ideally we'd take something more
-        # clearly structured, but this does uniquely extract the data we want
         soup = BeautifulSoup(response.content, "html.parser")
-        text = soup.find("font", {"face": "COURIER"}).get_text()
 
-        # data formatted "x, y, z x...,y...,z..." -> [["x", "y", "z"], ...]
-        data[str(i)] = [
-            line.replace(" ", "") for line in text.splitlines() if "," in line
-        ]
+        # Extract symops
+        text = soup.find("font", {"face": "COURIER"}).get_text()
+        symops = [line.replace(" ", "") for line in text.splitlines() if "," in line]
+
+        # Extract Hermann-Mauguin notation
+        header_font = soup.find("font", {"size": "+2"})
+        if header_font:
+            header_text = header_font.get_text(" ", strip=True)
+            # Normalize whitespace
+            header_text = " ".join(header_text.split()).removeprefix("Space Group")
+            hm_symbol = header_text.strip()
+        else:
+            raise ValueError("Did not find HM symbol!")
+
+        # { "1": { "xyz": [...], "HM": "P 1" } }
+        data[str(i)] = {"xyz": symops, "HM": hm_symbol}
+
     return data
 
 
