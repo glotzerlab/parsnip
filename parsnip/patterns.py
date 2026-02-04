@@ -23,8 +23,15 @@ from numpy.typing import ArrayLike
 with open(Path(__file__).parent / "symops.json") as f:
 
     def _normalize(string: str | None):
-        """Normalize a lookup, passing through falsy values."""
-        return "" if string is None else re.sub(r"['\"\s;]", "", string)
+        """Normalize a lookup by stripping spaces and matched quotes."""
+        if string is None:
+            return ""
+        string = string.strip()
+        if string[0] == '"' and string[-1] == '"':
+            string = string.strip('"')
+        elif string[0] == "'" and string[-1] == "'":
+            string = string.strip("'")
+        return re.sub(r"[\s;]", "", string)
 
     # Process to extract the required data, in the specific format we need
     _full_dict = {
@@ -36,13 +43,14 @@ with open(Path(__file__).parent / "symops.json") as f:
         _normalize(k): v["symops"]
         for v in _full_dict.values()
         for k in (
+            # All four variants are present in COD. We could force the default setting
+            # to save a bit of memory, but I'd rather have the accuracy
             v["hermann_mauguin_full"],
             v["hermann_mauguin_full"].split(":")[0],
             v["hermann_mauguin_short"],
             v["hermann_mauguin_short"].split(":")[0],
         )
     }
-    print(SYMOPS_BY_HM)
     SYMOPS_BY_INTL = {
         _normalize(v["table_number"]): v["symops"] for k, v in _full_dict.items()
     }
