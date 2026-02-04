@@ -13,10 +13,9 @@ https://github.com/openbabel/openbabel/blob/889c350feb179b43aa43985799910149d4ea
 """
 
 import re
-from pathlib import Path
 
 
-def build_sg_dict(openbabel_db_path: Path | str, crossref_db_path: Path | str):
+def build_sg_dict(openbabel_db_path, crossref_db_path):
     r"""Process the OpenBabel space group dict into a JSON.
 
     As of writing this, the OB database has 541 settings+sgs. There are 530 standard
@@ -79,7 +78,7 @@ def build_sg_dict(openbabel_db_path: Path | str, crossref_db_path: Path | str):
 
 
 if __name__ == "__main__":
-    import json  # noqa: f401 I001
+    import json
 
     OUTPUT_FN = "parsnip/symops.json"
     INPUT_FN = "space-groups.txt"
@@ -92,8 +91,9 @@ if __name__ == "__main__":
     with open(OUTPUT_FN) as f:
         json.load(f)
 
-    # Properties to test (TODO)
+    # Properties to test
     # [ ] only one default setting per sg
     # [ ] all sgs represented
     # [ ] short symbols are correct? may be hard
     # [ ] number of symops is consistent
+    # [x] Queries reconstruct the original inputs
