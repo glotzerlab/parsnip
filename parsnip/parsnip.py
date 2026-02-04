@@ -100,6 +100,7 @@ from parsnip.patterns import (
     _flatten_or_none,
     _is_data,
     _is_key,
+    _lookup_symops,
     _matrix_from_lengths_and_angles,
     _safe_eval,
     _strip_comments,
@@ -107,7 +108,6 @@ from parsnip.patterns import (
     _try_cast_to_numeric,
     _write_debug_output,
     cast_array_to_float,
-    lookup_symops,
 )
 
 NONTABLE_LINE_PREFIXES = ("_", "#")
@@ -820,7 +820,7 @@ class CifFile:
             if symops is not None:
                 self._symops_key = self._wildcard_mapping[key]
                 return symops
-        return lookup_symops(self)
+        return _lookup_symops(self)
 
     @property
     def _cell_keys(self):

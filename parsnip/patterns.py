@@ -21,9 +21,21 @@ import numpy as np
 from numpy.typing import ArrayLike
 
 with open(Path(__file__).parent / "symops.json") as f:
+
+    def _normalize(string: str):
+        """Normalize a lookup."""
+        return re.sub(r"['\"\s;]", "", string)
+
     _full_dict = json.load(f)
 
-    SYMOPS_DICT_IT = {k: v["xyz"] for k, v in _full_dict.items()}
+    SYMOPS_BY_HALL = {_normalize(k): v["symops"] for k, v in _full_dict.items()}
+    SYMOPS_BY_INTL = {
+        _normalize(v["table_number"]): v["symops"] for k, v in _full_dict.items()
+    }
+    SYMOPS_BY_HM = {
+        _normalize(v["hermann_mauguin_full"]): v["symops"]
+        for k, v in _full_dict.items()
+    }
 
 T = TypeVar("T")
 
@@ -262,12 +274,30 @@ def _box_from_lengths_and_angles(l1, l2, l3, alpha, beta, gamma):
     return tuple(float(x) for x in [lx, ly, lz, xy, xz, yz])
 
 
-def lookup_symops(cif) -> np.ndarray | None:
-    """Look up symmetry ops by international tables number."""
-    group_number = cif["_space_group_IT_number"] or cif["_symmetry_Int_Tables_number"]
+def _lookup_symops(cif) -> np.ndarray | None:
+    """Look up the symmetry operations for a space group.
 
-    if group_number is not None:
-        symops = SYMOPS_DICT_IT.get(str(group_number).strip())
-        if symops is not None:
-            return np.array(symops)[:, None]
-    return None
+    Note that we choose the default setting (as listed in the International Tables) if
+    the provided lookup is ambiguous.
+
+    The space group is extracted from the following keys, in descending priority:
+    - _space_group_name_Hall         # Unambiguous but not always present
+    - _space_group_name_H-M_alt      # Can include extended (or short) HM symbols
+    - _symmetry_space_group_name_H-M # Deprecated, ambiguous setting.
+    - _space_group_IT_number         # Ambiguous setting
+    - _symmetry_Int_Tables_number    # Deprecated, ambiguous setting
+    """
+    symops = None
+    if (hall := cif["_space_group_name_Hall"]) is not None:
+        symops = SYMOPS_BY_HALL.get(_normalize(hall))
+    if not symops and (
+        hm := cif["_space_group_name_H-M_alt"] or cif["_symmetry_space_group_name_H-M"]
+    ):
+        symops = SYMOPS_BY_HM.get(_normalize(hm))
+
+    if not symops and (
+        it := (cif["_space_group_IT_number"] or cif["_symmetry_Int_Tables_number"])
+    ):
+        symops = SYMOPS_BY_INTL.get(_normalize(it))
+
+    return symops
