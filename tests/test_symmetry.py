@@ -53,10 +53,10 @@ def lookup_test_cases():
     return cases
 
 
-@pytest.mark.parametrize(("key", "value", "expected_symops"), lookup_test_cases())
-def test_symops_lookup(key, value, expected_symops):
+@pytest.mark.parametrize(("cif_key", "value", "expected_symops"), lookup_test_cases())
+def test_symops_lookup(cif_key, value, expected_symops):
     # Construct a simple CIF with the key-value pair. This is parsed as a raw string.
-    cif_content = f"data_test\n{key} '{value}'"
+    cif_content = f"data_test\n{cif_key} '{value}'"
 
     with pytest.warns(RuntimeWarning, match="File input was parsed"):
         cif = CifFile(cif_content)
