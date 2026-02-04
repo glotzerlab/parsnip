@@ -22,20 +22,31 @@ from numpy.typing import ArrayLike
 
 with open(Path(__file__).parent / "symops.json") as f:
 
-    def _normalize(string: str):
-        """Normalize a lookup."""
-        return re.sub(r"['\"\s;]", "", string)
+    def _normalize(string: str | None):
+        """Normalize a lookup, passing through falsy values."""
+        return "" if string is None else re.sub(r"['\"\s;]", "", string)
 
-    _full_dict = json.load(f)
-
+    # Process to extract the required data, in the specific format we need
+    _full_dict = {
+        k: v | {"symops": np.asarray(v["symops"])[:, None]}
+        for (k, v) in json.load(f).items()
+    }
     SYMOPS_BY_HALL = {_normalize(k): v["symops"] for k, v in _full_dict.items()}
+    SYMOPS_BY_HM = {
+        _normalize(k): v["symops"]
+        for v in _full_dict.values()
+        for k in (
+            v["hermann_mauguin_full"],
+            v["hermann_mauguin_full"].split(":")[0],
+            v["hermann_mauguin_short"],
+            v["hermann_mauguin_short"].split(":")[0],
+        )
+    }
+    print(SYMOPS_BY_HM)
     SYMOPS_BY_INTL = {
         _normalize(v["table_number"]): v["symops"] for k, v in _full_dict.items()
     }
-    SYMOPS_BY_HM = {
-        _normalize(v["hermann_mauguin_full"]): v["symops"]
-        for k, v in _full_dict.items()
-    }
+
 
 T = TypeVar("T")
 
@@ -288,16 +299,17 @@ def _lookup_symops(cif) -> np.ndarray | None:
     - _symmetry_Int_Tables_number    # Deprecated, ambiguous setting
     """
     symops = None
+    hall, hm, it = None, None, None
     if (hall := cif["_space_group_name_Hall"]) is not None:
         symops = SYMOPS_BY_HALL.get(_normalize(hall))
-    if not symops and (
+
+    if symops is None and (
         hm := cif["_space_group_name_H-M_alt"] or cif["_symmetry_space_group_name_H-M"]
     ):
         symops = SYMOPS_BY_HM.get(_normalize(hm))
 
-    if not symops and (
-        it := (cif["_space_group_IT_number"] or cif["_symmetry_Int_Tables_number"])
+    if symops is None and (
+        it := cif["_space_group_IT_number"] or cif["_symmetry_Int_Tables_number"]
     ):
         symops = SYMOPS_BY_INTL.get(_normalize(it))
-
     return symops
