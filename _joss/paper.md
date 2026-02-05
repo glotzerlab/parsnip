@@ -170,13 +170,12 @@ results.
 "Total Corrrect" indicates the total number of correctly-reconstructed crystals and
 "Failed to Parse" indicates files that could not be read at all.\label{accuracyCOD}
 
-| Library                      | Correct Crystals | Incorrect Crystals | Failed to Parse | Percent Correct |
-| ---------------------------- | :--------------: | :----------------: | :-------------: | :-------------: |
-| `parsnip (rational, prec=3)` |     **9458**     |        256         |       385       |    **93.7%**    |
-| `parsnip (prec=3)`           |       9337       |        377         |       385       |      92.5%      |
-| (ASE)                        |       9242       |       **47**       |       810       |      91.5%      |
-| pymatgen                     |       9142       |        147         |       810       |      90.5%      |
-| gemmi                        |       8151       |        1948        |      **0**      |      90.5%      |
+| Library              | Correct Crystals | Incorrect Crystals | Failed to Parse | Percent Correct |
+| -------------------- | :--------------: | :----------------: | :-------------: | :-------------: |
+| `parsnip (rational)` |     **9689**     |       **21**       |       389       |    **95.9%**    |
+| (ASE)                |       9252       |         37         |       810       |      91.6%      |
+| pymatgen             |       9248       |         46         |       805       |      91.6%      |
+| gemmi                |       8282       |        1817        |      **0**      |      82.0%      |
 
 # Acknowledgments
 
