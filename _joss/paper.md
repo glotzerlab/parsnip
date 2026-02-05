@@ -151,7 +151,7 @@ construction of reference datasets for both classical and machine-learned
 characterization techniques.
 
 Tests against 10,099 CIF files from the Crystallography Open Database (COD) shows we are
-able to correctly extract 93.7% of structures, more than any other library we could
+able to correctly extract 95.9% of structures, more than any other library we could
 find. Table \ref{accuracyCOD} shows `parsnip`'s excellent performance compared to its
 contemporaries: **parnsnip**'s rational parsing approach is the most accurate of all
 tested CIF libraries, and is able to correctly reconstruct more files than the next best
@@ -164,12 +164,12 @@ results.
 "Total Corrrect" indicates the total number of correctly-reconstructed crystals and
 "Failed to Parse" indicates files that could not be read at all.\label{accuracyCOD}
 
-| Library              | Correct Crystals | Incorrect Crystals | Failed to Parse | Percent Correct |
-| -------------------- | :--------------: | :----------------: | :-------------: | :-------------: |
-| `parsnip (rational)` |     **9689**     |       **21**       |       389       |    **95.9%**    |
-| (ASE)                |       9252       |         37         |       810       |      91.6%      |
-| pymatgen             |       9248       |         46         |       805       |      91.6%      |
-| gemmi                |       8282       |        1817        |      **0**      |      82.0%      |
+| Library   | Correct Crystals | Incorrect Crystals | Failed to Parse | Percent Correct |
+| --------- | :--------------: | :----------------: | :-------------: | :-------------: |
+| `parsnip` |     **9689**     |       **21**       |       389       |    **95.9%**    |
+| ASE       |       9252       |         37         |       810       |      91.6%      |
+| pymatgen  |       9248       |         46         |       805       |      91.6%      |
+| gemmi     |       8282       |        1817        |      **0**      |      82.0%      |
 
 `parsnip` also supports Unix-style wildcard queries, simplifying common lookup patterns
 like cell parameter extraction and space group identification. Single-character
