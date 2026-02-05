@@ -666,7 +666,10 @@ class CifFile:
 
         frac_strs = self._read_wyckoff_positions()
         if len(frac_strs) == 0:
-            msg = f"No Wyckoff positions were found when constructing unit cell. Found wyckoff_keys: {self._raw_wyckoff_keys or None}"
+            msg = (
+                "No Wyckoff positions were found when constructing unit cell. "
+                f"Found wyckoff_keys: {self._raw_wyckoff_keys or None}"
+            )
             raise ParseError(msg)
 
         all_frac_positions = [
