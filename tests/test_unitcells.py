@@ -70,7 +70,7 @@ def test_build_unit_cell_errors(cif_data):
 
 @cif_files_mark
 @pytest.mark.parametrize("n_decimal_places", [2, 3, 4, 5, 6, 9])
-@pytest.mark.parametrize("parse_mode", ["python_float", "sympy"])
+@pytest.mark.parametrize("parse_mode", ["python_float", "sympy", "rational"])
 @pytest.mark.parametrize(
     "cols",
     [
