@@ -6,7 +6,7 @@ import pytest
 
 import parsnip
 from parsnip import CifFile
-from parsnip.patterns import _normalize
+from parsnip.patterns import SYMOPS_BY_HALL, SYMOPS_BY_HM, SYMOPS_BY_INTL, _normalize
 
 # Load reference data, relative to the main package installation
 SYMOPS_PATH = Path(parsnip.__file__).parent / "symops.json"
@@ -71,3 +71,27 @@ def test_symops_lookup_none():
     with pytest.warns(RuntimeWarning, match="File input was parsed"):
         cif = CifFile(cif_content)
     assert cif.symops is None
+
+
+def test_all_spacegroups_present():
+    present_numbers = {int(data["table_number"]) for data in RAW_DATA.values()}
+    assert present_numbers == {*range(1, 231)}
+
+
+def test_database_correct_size():
+    assert len(SYMOPS_BY_HALL) == 541
+    assert len(SYMOPS_BY_INTL) == 230
+    # This one has multiple entries per value, so there are MORE than 541 keys.
+    # Due to overlaps, the correct number does not have a simple closed form
+    assert len(SYMOPS_BY_HM) == 661
+
+
+def test_single_default_setting():
+    default_counts = {str(i): 0 for i in range(1, 231)}
+
+    for data in RAW_DATA.values():
+        if data["is_default_setting"]:
+            table_num = data["table_number"]
+            default_counts[table_num] = default_counts.get(table_num, 0) + 1
+
+    np.testing.assert_array_equal([default_counts[str(i)] for i in range(1, 231)], 1)
