@@ -96,7 +96,7 @@ See section 3.2 of dx.doi.org/10.1107/S1600576715021871 for clarification.
 """
 
 _SAFE_STRING_RE = re.compile(r"(\(\d+\))|[^\d\[\]\,\+\-\/\*\.]")
-_SAFE_FRACTN_RE = re.compile(r"([-+]?\d*[/.]?\d+)")
+_SAFE_FRACTN_RE = re.compile(rf"([-+]?\d{_PROG_STAR}[/.]?\d{_PROG_PLUS})")
 
 
 def _contains_wildcard(s: str) -> bool:
