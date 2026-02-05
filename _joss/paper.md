@@ -127,7 +127,7 @@ still many files that cannot be accurately reconstructed by other tools. Standar
 lattice. These operations have the form of the form $(x \pm \mathbb{Q}) \mod 1$, where
 $x$ is experimentally determined. While Wyckoff positions can have arbitrary real
 values, the data stored in CIF files is necessarily finite. For this reason, the actual
-set of valid, parseable positions is the group $\mathbb{Q} \mod 1$. Rather than
+set of valid, parsable positions is the group $\mathbb{Q} \mod 1$. Rather than
 evaluating expressions in floating point arithmetic like other CIF libraries, `parsnip`
 actually evaluates unit cell positions in the correct rational form. We then convert
 back to floating point values for a tolerance-based deduplication check, which catches
