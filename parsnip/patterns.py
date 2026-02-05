@@ -96,6 +96,7 @@ See section 3.2 of dx.doi.org/10.1107/S1600576715021871 for clarification.
 """
 
 _SAFE_STRING_RE = re.compile(r"(\(\d+\))|[^\d\[\]\,\+\-\/\*\.]")
+_SAFE_FRACTN_RE = re.compile(r"(\d+\.?\d*|\.\d+)")
 
 
 def _contains_wildcard(s: str) -> bool:
@@ -105,6 +106,24 @@ def _contains_wildcard(s: str) -> bool:
 def _flatten_or_none(ls: list[T]):
     """Return the sole element from a list of l=1, None if l=0, else l."""
     return None if not ls else ls[0] if len(ls) == 1 else ls
+
+
+def _rational_evaluate_array(arr: str) -> list[list[float]]:
+    from fractions import Fraction
+
+    def _eval_expr(expr):
+        safe_expr = re.sub(_SAFE_FRACTN_RE, r'Fraction("\1")', expr.strip())
+        return eval(safe_expr, {"__builtins__": {}}, {"Fraction": Fraction})  # noqa: S307
+
+    one = Fraction(1)
+
+    return [
+        [
+            float(_eval_expr(coord) % one)
+            for coord in ls.strip("]").strip("[").split(",")
+        ]
+        for ls in arr.split("],")
+    ]
 
 
 def _sympy_evaluate_array(arr: str) -> list[list[float]]:
@@ -126,7 +145,7 @@ def _safe_eval(
     y: int | float,
     z: int | float,
     *,
-    parse_mode: Literal["python_float", "sympy"] = "python_float",
+    parse_mode: Literal["python_float", "rational", "sympy"] = "python_float",
 ) -> list[list[float]]:
     """Attempt to safely evaluate a string of symmetry equivalent positions.
 
@@ -160,7 +179,8 @@ def _safe_eval(
     """
     # Replace x, y, and z with positional format specifiers and then format in values
     substituted_string = (
-        str_input.replace("x", "{0}")
+        str_input.lower()
+        .replace("x", "{0}")
         .replace("y", "{1}")
         .replace("z", "{2}")
         .format(x, y, z)
@@ -169,6 +189,8 @@ def _safe_eval(
     # Remove any unexpected characters from the string, including precision specifiers.
     safe_string = _SAFE_STRING_RE.sub("", substituted_string)
 
+    if parse_mode == "rational":
+        return _rational_evaluate_array(safe_string)
     if parse_mode == "sympy":
         return _sympy_evaluate_array(safe_string)
     if parse_mode == "python_float":

@@ -544,7 +544,7 @@ class CifFile:
         self,
         n_decimal_places: int = 4,
         additional_columns: str | Iterable[str] | None = None,
-        parse_mode: Literal["python_float", "sympy"] = "python_float",
+        parse_mode: Literal["python_float", "rational", "sympy"] = "python_float",
         verbose: bool = False,
     ):
         """Reconstruct fractional atomic positions from Wyckoff sites and symops.
@@ -603,10 +603,12 @@ class CifFile:
                 the Wyckoff site positions. This data is replicated alongside the atomic
                 coordinates and returned in an auxiliary array.
                 Default value = ``None``
-            parse_mode : {'sympy', 'python_float'}, optional
-                Whether to parse lattice sites symbolically (``parse_mode='sympy'``) or
-                numerically (``parse_mode='python_float'``). Sympy is typically more
-                accurate, but may be slower. Default value = ``'python_float'``
+            parse_mode : {'rational', 'sympy', 'python_float'}, optional
+                Whether to parse lattice sites rationally (``parse_mode='rational'``),
+                symbolically (``parse_mode='sympy'``) or numerically
+                (``parse_mode='python_float'``). 'rational' is typically faster and more
+                accurate than 'python_float' for fractional coordinates.
+                Default value = ``'python_float'``
             verbose : bool, optional
                 Whether to print debug information about the uniqueness checks.
                 Default value = ``False``
@@ -631,7 +633,7 @@ class CifFile:
                 "Sympy is not available! Please set parse_mode='python_float' "
                 "or install sympy."
             )
-        valid_modes = {"sympy", "python_float"}
+        valid_modes = {"rational", "sympy", "python_float"}
         if parse_mode not in valid_modes:
             raise ValueError(f"Parse mode '{parse_mode}' not in {valid_modes}.")
 
@@ -664,11 +666,13 @@ class CifFile:
         )
 
         frac_strs = self._read_wyckoff_positions()
+        if len(frac_strs) == 0:
+            msg = f"No Wyckoff positions were found when constructing unit cell. Found wyckoff_keys: {self._raw_wyckoff_keys or None}"
+            raise ParseError(msg)
 
         all_frac_positions = [
             _safe_eval(symops_str, *xyz, parse_mode=parse_mode) for xyz in frac_strs
         ]  # Compute N_symmetry_elements coordinates for each Wyckoff site
-
         pos = np.vstack(all_frac_positions)
 
         # Wrap into box - works generally because these are fractional coordinates
@@ -845,8 +849,15 @@ class CifFile:
         wyckoff_position_data = [
             self.get_from_loops(key) for key in self.__class__._WYCKOFF_KEYS
         ]
+        wyckoff_position_data = [
+            (col[(col != ".") & (col != "?")][:, None] if col is not None else col)
+            for col in wyckoff_position_data
+        ]
 
-        if all(x is None for x in wyckoff_position_data) and self._strict:
+        if (
+            all((x is None or len(x) == 0) for x in wyckoff_position_data)
+            and self._strict
+        ):
             msg = "No wyckoff position data was found!"
             raise ParseError(msg)
 
@@ -1010,6 +1021,7 @@ class CifFile:
 
                 if n_elements % n_cols != 0:
                     msg = (
+                        f"CifFile('{self._fn}') : "
                         f"Parsed data for table {len(self.loops) + 1} cannot be"
                         f" resolved into a table of the expected size and will be "
                         f"ignored. \nGot n={n_elements} items, which cannot be "
