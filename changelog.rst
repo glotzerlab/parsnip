@@ -11,6 +11,7 @@ Added
 ~~~~~
 - New rational parsing mode based on ``fractions.Fraction`` (#161)
 - Spacegroup symop lookup when a table of translation operators is not provided (#160)
+- Support for ``loop_`` data entries containing unescaped quotes (#162)
 
 Changed
 ~~~~~~~
