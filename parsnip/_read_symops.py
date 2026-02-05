@@ -90,10 +90,3 @@ if __name__ == "__main__":
 
     with open(OUTPUT_FN) as f:
         json.load(f)
-
-    # Properties to test
-    # [ ] only one default setting per sg
-    # [ ] all sgs represented
-    # [ ] short symbols are correct? may be hard
-    # [ ] number of symops is consistent
-    # [x] Queries reconstruct the original inputs
