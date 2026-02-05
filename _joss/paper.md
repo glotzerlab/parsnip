@@ -54,9 +54,9 @@ research at the atomic, molecular, and colloidal scales.
 <!-- A section that clearly illustrates the research purpose of the software and places it in the context of related work. This should clearly state what problems the software is designed to solve, who the target audience is, and its relation to other work. -->
 
 More than thirty-five years of material data of is encoded in the CIF file format, with
-terabytes of elemental and protein structures freely available to researchers
-[@MATERIALSPROJECT; @PDB]. While early CIF parsers were predominantly written in C and
-Fortran, the growth of Python opened new opportunities for simple, scriptable access to
+terabytes of elemental and protein structures freely available to researchers [@COD;
+@PDB; @mpapi]. While early CIF parsers were predominantly written in C and Fortran, the
+growth of Python opened new opportunities for simple, scriptable access to
 crystallographic data. **PyCifRW** is one of the earliest such tools, offering a
 complete and specification complicant parser for the CIF format [@PyCIFRW]. Soon
 thereafter, **ASE**, a tool designed to initialize atomistic simulations, added support
@@ -150,14 +150,6 @@ stored in databases like the Crystallography Open Database (COD) [@COD] enables 
 construction of reference datasets for both classical and machine-learned
 characterization techniques.
 
-`parsnip` also supports Unix-style wildcard queries, simplifying common lookup patterns
-like cell parameter extraction and space group identification. Single-character
-wildcards enable specification-compliant queries into heterogeneous databases of both
-CIF and mmCIF files, further accelerating programmatic materials exploration. Although
-the **gemmi** library does support a similar style of wildcard through their
-`gemmi grep` command-line tool, its use is limited to bash scripting and each wildcard
-query requires the file to be re-parsed in its entirety [@GEMMI].
-
 Tests against 10,099 CIF files from the Crystallography Open Database (COD) shows we are
 able to correctly extract 93.7% of structures, more than any other library we could
 find. Table \ref{accuracyCOD} shows `parsnip`'s excellent performance compared to its
@@ -178,6 +170,35 @@ results.
 | (ASE)                |       9252       |         37         |       810       |      91.6%      |
 | pymatgen             |       9248       |         46         |       805       |      91.6%      |
 | gemmi                |       8282       |        1817        |      **0**      |      82.0%      |
+
+`parsnip` also supports Unix-style wildcard queries, simplifying common lookup patterns
+like cell parameter extraction and space group identification. Single-character
+wildcards enable specification-compliant queries into heterogeneous databases of both
+CIF and mmCIF files, further accelerating programmatic materials exploration. Most
+importantly, this allows users to extract equivalent data entries whose naming depends
+on specification. For example, there are many cases where the mmCIF key-naming
+convention differs from standard CIF files by a single character. The following code
+block shows two examples where this wildcard syntax simplifies user scripts. Although
+the **gemmi** library does support a similar style of wildcard through their
+`gemmi grep` command-line tool, its use is limited to bash scripting and each wildcard
+query requires the file to be re-parsed in its entirety [@GEMMI].
+
+```python
+from parsnip import CifFile
+
+crystal = CifFile("my_data.cif")
+protein = CifFile("protein.mmcif")
+
+cif_cell_keys = ("_cell_length_a", "_cell_length_b", "_cell_length_c")
+mmc_cell_keys = ("_cell.length_a", "_cell.length_b", "_cell.length_c")
+
+# Wildcard to extract all cell lengths
+assert all(crystal[cif_cell_keys] == crystal["_cell_length*"])
+
+# Wildcard to extract the same data from CIF and mmCIF
+assert all(protein[mmc_cell_keys] == protein["_cell?length*"])
+assert all(crystal[mmc_cell_keys] == crystal["_cell?length*"])
+```
 
 # Acknowledgments
 
