@@ -111,6 +111,10 @@ def _flatten_or_none(ls: list[T]):
 def _rational_evaluate_array(arr: str) -> list[list[float]]:
     """Evaluate an array over the ring Q%1."""
     from fractions import Fraction
+    from importlib.util import find_spec
+
+    if find_spec("cfractions") is not None:
+        from cfractions import Fraction
 
     one = Fraction(1)
     zero = Fraction(0)
