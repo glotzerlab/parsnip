@@ -53,7 +53,7 @@ research at the atomic, molecular, and colloidal scales.
 
 <!-- A section that clearly illustrates the research purpose of the software and places it in the context of related work. This should clearly state what problems the software is designed to solve, who the target audience is, and its relation to other work. -->
 
-More than thirty years of material data of is encoded in the CIF file format, with
+More than thirty-five years of material data of is encoded in the CIF file format, with
 terabytes of elemental and protein structures freely available to researchers
 [@MATERIALSPROJECT; @PDB]. While early CIF parsers were predominantly written in C and
 Fortran, the growth of Python opened new opportunities for simple, scriptable access to
@@ -117,9 +117,11 @@ well. While most existing tools in the space use parser generators based on the 
 formal grammar, we identified a non-neglible subset of CIF files that break the formal
 specification but nevertheless contain useful data. To overcome this, `parsnip` does not
 validate the entire syntax tree of the CIF grammar: rather, we eagerly consume nodes
-near the leaves of the tree that appear to contain data. This is a departure from the
+near the leaves of the tree that appear to contain data. Most commonly, this allows
+`parsnip` to parse data entries with missing or incorrectly escaped delimiters,
+correctly extracting data that would otherwise be lost. This is a departure from the
 standard "validating" parser strategy, but it enables fast and robust data extraction
-without a significant increase in code complexity.
+without significant increases to code complexity.
 
 While this parsing technique alone provides significant accuracy benefits, there are
 still many files that cannot be accurately reconstructed by other tools. Standard,
