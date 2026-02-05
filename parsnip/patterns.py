@@ -96,7 +96,7 @@ See section 3.2 of dx.doi.org/10.1107/S1600576715021871 for clarification.
 """
 
 _SAFE_STRING_RE = re.compile(r"(\(\d+\))|[^\d\[\]\,\+\-\/\*\.]")
-_SAFE_FRACTN_RE = re.compile(r"(\d+\.?\d*|\.\d+)")
+_SAFE_FRACTN_RE = re.compile(r"([-+]?\d*[/.]?\d+)")
 
 
 def _contains_wildcard(s: str) -> bool:
@@ -109,17 +109,20 @@ def _flatten_or_none(ls: list[T]):
 
 
 def _rational_evaluate_array(arr: str) -> list[list[float]]:
+    """Evaluate an array over the ring Q%1."""
     from fractions import Fraction
 
-    def _eval_expr(expr):
-        safe_expr = re.sub(_SAFE_FRACTN_RE, r'Fraction("\1")', expr.strip())
-        return eval(safe_expr, {"__builtins__": {}}, {"Fraction": Fraction})  # noqa: S307
-
     one = Fraction(1)
+    zero = Fraction(0)
+
+    def _parse_expr(expr: str) -> Fraction:
+        """Convert a string into valid Rational numbers and sum."""
+        expr = expr.strip().replace("--", "+")
+        return sum(Fraction(x) for x in _SAFE_FRACTN_RE.findall(expr)) or zero
 
     return [
         [
-            float(_eval_expr(coord) % one)
+            float(_parse_expr(coord) % one)
             for coord in ls.strip("]").strip("[").split(",")
         ]
         for ls in arr.split("],")
