@@ -35,11 +35,12 @@ numpy==2.2.6
     #   matplotlib
     #   pycifrw
     #   scipy
-packaging==25.0
+packaging==26.0
     # via
     #   matplotlib
     #   pytest
     #   pytest-doctestplus
+    #   wheel
 pillow==12.1.0
     # via matplotlib
 pluggy==1.6.0
@@ -52,14 +53,14 @@ pycifrw==5.0.1
     # via -r tests/requirements.in
 pygments==2.19.2
     # via pytest
-pyparsing==3.3.1
+pyparsing==3.3.2
     # via matplotlib
 pytest==9.0.2
     # via
     #   -r tests/requirements.in
     #   pytest-doctestplus
     #   pytest-xdist
-pytest-doctestplus==1.6.0
+pytest-doctestplus==1.7.1
     # via -r tests/requirements.in
 pytest-xdist==3.8.0
     # via -r tests/requirements.in
@@ -67,7 +68,7 @@ python-dateutil==2.9.0.post0
     # via matplotlib
 scipy==1.15.3
     # via ase
-setuptools==80.9.0
+setuptools==80.10.2
     # via -r tests/requirements.in
 six==1.17.0
     # via python-dateutil
@@ -75,11 +76,11 @@ sympy==1.14.0
     # via
     #   -r requirements-sympy.in
     #   -r tests/requirements.in
-tomli==2.3.0
+tomli==2.4.0
     # via pytest
 typing-extensions==4.15.0
     # via exceptiongroup
-wcwidth==0.2.14
+wcwidth==0.5.3
     # via prettytable
-wheel==0.45.1
+wheel==0.46.3
     # via -r tests/requirements.in

@@ -1,4 +1,4 @@
-# Copyright (c) 2025, The Regents of the University of Michigan
+# Copyright (c) 2025-2026, The Regents of the University of Michigan
 # This file is from the parsnip project, released under the BSD 3-Clause License.
 
 """Functions and classes to process string data.
@@ -11,12 +11,63 @@ of string data extracted from CIF files by methods in ``parsnip.parse``.
 
 from __future__ import annotations
 
+import json
 import re
 import sys
+from pathlib import Path
 from typing import Literal, TypeVar
 
 import numpy as np
 from numpy.typing import ArrayLike
+
+
+def _normalize(string: str | None):
+    """Normalize a lookup by stripping spaces and matched quotes."""
+    if string is None:
+        return ""
+    string = string.strip()
+    if string[0] == '"' and string[-1] == '"':
+        string = string.strip('"')
+    elif string[0] == "'" and string[-1] == "'":
+        string = string.strip("'")
+    return re.sub(r"[\s;]", "", string)
+
+
+def _normalize_hall(string: str | None):
+    """Normalize a lookup by stripping spaces and matched quotes."""
+    if string is None:
+        return ""
+    string = string.strip()
+    if string[0] == '"' and string[-1] == '"':
+        string = string.strip('"')
+    elif string[0] == "'" and string[-1] == "'":
+        string = string.strip("'")
+    return string
+
+
+with open(Path(__file__).parent / "symops.json") as f:
+    # Process to extract the required data, in the specific format we need
+    _full_dict = {
+        k: v | {"symops": np.asarray(v["symops"])[:, None]}
+        for (k, v) in json.load(f).items()
+    }
+    SYMOPS_BY_HALL = {_normalize_hall(k): v["symops"] for k, v in _full_dict.items()}
+    SYMOPS_BY_HM = {
+        _normalize(k): v["symops"]
+        for v in _full_dict.values()
+        for k in (
+            # All four variants are present in COD. We could force the default setting
+            # to save a bit of memory, but I'd rather have the accuracy
+            v["hermann_mauguin_full"],
+            v["hermann_mauguin_full"].split(":")[0],
+            v["hermann_mauguin_short"],
+            v["hermann_mauguin_short"].split(":")[0],
+        )
+    }
+    SYMOPS_BY_INTL = {
+        _normalize(v["table_number"]): v["symops"] for k, v in _full_dict.items()
+    }
+
 
 T = TypeVar("T")
 
@@ -45,6 +96,7 @@ See section 3.2 of dx.doi.org/10.1107/S1600576715021871 for clarification.
 """
 
 _SAFE_STRING_RE = re.compile(r"(\(\d+\))|[^\d\[\]\,\+\-\/\*\.]")
+_SAFE_FRACTN_RE = re.compile(rf"([-+]?\d{_PROG_STAR}[/.]?\d{_PROG_PLUS})")
 
 
 def _contains_wildcard(s: str) -> bool:
@@ -54,6 +106,31 @@ def _contains_wildcard(s: str) -> bool:
 def _flatten_or_none(ls: list[T]):
     """Return the sole element from a list of l=1, None if l=0, else l."""
     return None if not ls else ls[0] if len(ls) == 1 else ls
+
+
+def _rational_evaluate_array(arr: str) -> list[list[float]]:
+    """Evaluate an array over the ring Q%1."""
+    from fractions import Fraction
+    from importlib.util import find_spec
+
+    if find_spec("cfractions") is not None:
+        from cfractions import Fraction
+
+    one = Fraction(1)
+    zero = Fraction(0)
+
+    def _parse_expr(expr: str) -> Fraction:
+        """Convert a string into valid Rational numbers and sum."""
+        expr = expr.strip().replace("--", "+")
+        return sum(Fraction(x) for x in _SAFE_FRACTN_RE.findall(expr)) or zero
+
+    return [
+        [
+            float(_parse_expr(coord) % one)
+            for coord in ls.strip("]").strip("[").split(",")
+        ]
+        for ls in arr.split("],")
+    ]
 
 
 def _sympy_evaluate_array(arr: str) -> list[list[float]]:
@@ -75,7 +152,7 @@ def _safe_eval(
     y: int | float,
     z: int | float,
     *,
-    parse_mode: Literal["python_float", "sympy"] = "python_float",
+    parse_mode: Literal["python_float", "rational", "sympy"] = "python_float",
 ) -> list[list[float]]:
     """Attempt to safely evaluate a string of symmetry equivalent positions.
 
@@ -109,7 +186,8 @@ def _safe_eval(
     """
     # Replace x, y, and z with positional format specifiers and then format in values
     substituted_string = (
-        str_input.replace("x", "{0}")
+        str_input.lower()
+        .replace("x", "{0}")
         .replace("y", "{1}")
         .replace("z", "{2}")
         .format(x, y, z)
@@ -118,6 +196,8 @@ def _safe_eval(
     # Remove any unexpected characters from the string, including precision specifiers.
     safe_string = _SAFE_STRING_RE.sub("", substituted_string)
 
+    if parse_mode == "rational":
+        return _rational_evaluate_array(safe_string)
     if parse_mode == "sympy":
         return _sympy_evaluate_array(safe_string)
     if parse_mode == "python_float":
@@ -253,3 +333,32 @@ def _box_from_lengths_and_angles(l1, l2, l3, alpha, beta, gamma):
     yz = (c - b * a2x) / (ly * lz)
 
     return tuple(float(x) for x in [lx, ly, lz, xy, xz, yz])
+
+
+def _lookup_symops(cif) -> np.ndarray | None:
+    """Look up the symmetry operations for a space group.
+
+    Note that we choose the default setting (as listed in the International Tables) if
+    the provided lookup is ambiguous.
+
+    The space group is extracted from the following keys, in descending priority:
+    - _space_group_name_Hall         # Unambiguous but not always present
+    - _space_group_name_H-M_alt      # Can include extended (or short) HM symbols
+    - _symmetry_space_group_name_H-M # Deprecated, ambiguous setting.
+    - _space_group_IT_number         # Ambiguous setting
+    - _symmetry_Int_Tables_number    # Deprecated, ambiguous setting
+    """
+    symops = None
+    if (hall := cif["_space_group_name_Hall"]) is not None:
+        symops = SYMOPS_BY_HALL.get(_normalize_hall(hall))
+
+    if symops is None and (
+        hm := cif["_space_group_name_H-M_alt"] or cif["_symmetry_space_group_name_H-M"]
+    ):
+        symops = SYMOPS_BY_HM.get(_normalize(hm))
+
+    if symops is None and (
+        it := cif["_space_group_IT_number"] or cif["_symmetry_Int_Tables_number"]
+    ):
+        symops = SYMOPS_BY_INTL.get(_normalize(it))
+    return symops
