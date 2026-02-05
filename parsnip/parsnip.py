@@ -544,7 +544,7 @@ class CifFile:
         self,
         n_decimal_places: int = 3,
         additional_columns: str | Iterable[str] | None = None,
-        parse_mode: Literal["python_float", "rational", "sympy"] = "python_float",
+        parse_mode: Literal["rational", "python_float", "sympy"] = "rational",
         verbose: bool = False,
     ):
         """Reconstruct fractional atomic positions from Wyckoff sites and symops.
@@ -561,8 +561,7 @@ class CifFile:
             If the parsed unit cell has more atoms than expected, decrease
             ``n_decimal_places`` to account for noise. If the unit cell has fewer atoms
             than expected, increase ``n_decimal_places`` to ensure atoms are compared
-            with sufficient precision. In many cases, setting ``parse_mode='sympy'``
-            can improve the accuracy of reconstructed unit cells.
+            with sufficient precision.
 
         Example
         -------
@@ -604,11 +603,11 @@ class CifFile:
                 coordinates and returned in an auxiliary array.
                 Default value = ``None``
             parse_mode : {'rational', 'sympy', 'python_float'}, optional
-                Whether to parse lattice sites rationally (``parse_mode='rational'``),
-                symbolically (``parse_mode='sympy'``) or numerically
-                (``parse_mode='python_float'``). 'rational' is typically faster and more
-                accurate than 'python_float' for fractional coordinates.
-                Default value = ``'python_float'``
+                Whether to parse lattice sites using rational
+                (``parse_mode='rational'``) or floating-point
+                (``parse_mode='python_float'``) arithmetic. 'rational' is more accurate
+                than 'python_float', but may take more time.
+                Default value = ``'rational'``
             verbose : bool, optional
                 Whether to print debug information about the uniqueness checks.
                 Default value = ``False``
