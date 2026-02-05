@@ -129,7 +129,7 @@ $x$ is experimentally determined. While Wyckoff positions can have arbitrary rea
 values, the data stored in CIF files is necessarily finite. For this reason, the actual
 set of valid, parseable positions is the group $\mathbb{Q} \mod 1$. Rather than
 evaluating expressions in floating point arithmetic like other CIF libraries, `parsnip`
-actually evaluates unit cell positions in the correct rational form. We then convert to
+actually evaluates unit cell positions in the correct rational form. We then convert
 back to floating point values for a tolerance-based deduplication check, which catches
 edge cases in recorded data where values are not rounded consistently (e.g.
 $\left(1/3, 2/3\right) \to \left(0.3333, 0.6666\right)$).
@@ -157,10 +157,10 @@ the **gemmi** library does support a similar style of wildcard through their
 query requires the file to be re-parsed in its entirety [@GEMMI].
 
 Tests against 10,099 CIF files from the Crystallography Open Database (COD) shows we are
-able to correctly extract 95.4% of structures, more than any other library we could
+able to correctly extract 93.7% of structures, more than any other library we could
 find. Table \ref{accuracyCOD} shows `parsnip`'s excellent performance compared to its
-contemporaries: **parnsnip**'s symbolic parsing mode is the most accurate of all tested
-CIF libraries, and is able to correctly reconstruct more files than the next best
+contemporaries: **parnsnip**'s rational parsing approach is the most accurate of all
+tested CIF libraries, and is able to correctly reconstruct more files than the next best
 alternative, **ASE**. We note that our results use a single, fixed parsing precision for
 all 10,099 files: however, as discussed `in parsnip`'s documentation, tailoring the
 parse precision to match the precision of the data in the file yields even better
