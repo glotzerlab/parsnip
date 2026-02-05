@@ -632,6 +632,14 @@ class CifFile:
                 "Sympy is not available! Please set parse_mode='python_float' "
                 "or install sympy."
             )
+        if parse_mode == "sympy":
+            msg = (
+                "The `sympy` parse mode is deprecated in favor of `rational`, the new "
+                "default. `rational` is as accurate as sympy, much faster, and does not"
+                " require any dependencies. Please convert existing codes to use the "
+                "`parse_mode='rational'`."
+            )
+            warnings.warn(msg, category=DeprecationWarning, stacklevel=2)
         valid_modes = {"rational", "sympy", "python_float"}
         if parse_mode not in valid_modes:
             raise ValueError(f"Parse mode '{parse_mode}' not in {valid_modes}.")

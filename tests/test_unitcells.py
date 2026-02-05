@@ -82,6 +82,10 @@ def test_build_unit_cell_errors(cif_data):
 def test_build_unit_cell(cif_data, n_decimal_places, parse_mode, cols):
     warnings.filterwarnings("ignore", "crystal system", category=UserWarning)
 
+    warnings.filterwarnings(
+        "ignore", "The `sympy` parse mode is deprecated", category=DeprecationWarning
+    )
+
     if (
         "PDB_4INS_head.cif" in cif_data.filename
         or ("no42.cif" in cif_data.filename and n_decimal_places > 3)
@@ -172,6 +176,9 @@ def test_invalid_unit_cell(cif_data):
 )
 @pytest.mark.parametrize("n_decimal_places", [3, 4])
 def test_build_accuracy(filename, n_decimal_places):
+    warnings.filterwarnings(
+        "ignore", "The `sympy` parse mode is deprecated", category=DeprecationWarning
+    )
     if (
         "A5B10C8D4_mC108_15_a2ef_5f_4f_2f.cif" in filename
         or "A2B2CD2_oP14_34_c_c_a_c.cif" in filename
