@@ -563,6 +563,12 @@ class CifFile:
             than expected, increase ``n_decimal_places`` to ensure atoms are compared
             with sufficient precision.
 
+        .. tip::
+
+            For improved performance, install the [cfractions](https://pypi.org/project/cfractions/)
+            library. ``parsnip`` will automatically detect if it's present and use the
+            more optimized path when constructing unit cells.
+
         Example
         -------
         Construct the atomic positions of the FCC unit cell from its Wyckoff sites:
