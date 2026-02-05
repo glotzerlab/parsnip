@@ -88,23 +88,28 @@ once again.
         >>> np.testing.assert_array_equal(one_decimal_place, three_decimal_places)
 
 
-Symbolic Parsing
-^^^^^^^^^^^^^^^^
+Increasing Performance
+^^^^^^^^^^^^^^^^^^^^^^
 
-In some cases, particularly in structures with many atoms, careful tuning of numerical
-precision is not enough to accurately reproduce a crystal. **parsnip** includes a
-specialized parser that uses rational arithmetic to correctly compare fractions that
-only differ by a few units in last place. To enable this, set ``parse_mode="rational"``
-when building the unit cell.
+In some cases, particularly when constructing thousands of unti cells, the performance
+of parsnip's ``build_unit_cell`` may become a bottleneck. **parsnip** includes several
+tools for resolving this: first, ``parse_mode="python_float"`` attempts to build unit
+cells using floating point arithmetic rather than rational expression. This is less
+accurate, but is still sufficient for high-quality databases and stuctures. For the
+best combination of performance and accuracy, installing the `cfractions`_ library lets
+**parsnip** use more optimized code for unit cell reconstruction.
+
+.. _cfractions: https://pypi.org/project/cfractions/
 
 .. doctest::
 
+    >>> # uv pip install cfractions
     >>> cif = CifFile("hP3.cif")
-    >>> symbolic = cif.build_unit_cell(n_decimal_places=4, parse_mode="rational")
-    >>> symbolic
+    >>> faster = cif.build_unit_cell(n_decimal_places=4)
+    >>> faster
     array([[0.2254    , 0.        , 0.33333  ],
            [0.        , 0.2254    , 0.6666633],
            [0.7746    , 0.7746    , 0.99999667]])
-    >>> assert symbolic.shape == correct_uc.shape
+    >>> assert faster.shape == correct_uc.shape
 
 .. _sympy: https://www.sympy.org/en/index.html

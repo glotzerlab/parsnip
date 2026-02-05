@@ -565,9 +565,11 @@ class CifFile:
 
         .. tip::
 
-            For improved performance, install the [cfractions](https://pypi.org/project/cfractions/)
-            library. ``parsnip`` will automatically detect if it's present and use the
+            For improved performance, install the `cfractions`_ library. ``parsnip``
+             will automatically detect if it is installed and use the
             more optimized path when constructing unit cells.
+
+        .. _cfractions: https://pypi.org/project/cfractions/
 
         Example
         -------
