@@ -9,6 +9,24 @@ v0.X.X - 20XX-XX-XX
 
 Added
 ~~~~~
+- New rational parsing mode based on ``fractions.Fraction`` (#161)
+- Spacegroup symop lookup when a table of translation operators is not provided (#160)
+- Support for ``loop_`` data entries containing unescaped quotes (#162)
+
+Changed
+~~~~~~~
+- ``parse_mode='rational'`` is now the default setting in build_unit_cell (#161)
+- ``n_decimal_places=3`` is now the default setting in build_unit_cell (#161)
+
+Deprecated
+~~~~~~~~~~
+- ``parse_mode='sympy'`` is now deprecated in favor of ``rational`` (#161)
+
+v0.5.0 - 2026-01-02
+-------------------
+
+Added
+~~~~~
 - Tutorial on loading CIF files in HOOMD-Blue
 - Tutorial on loading CIF files in LAMMPS
 - Tutorial on reconstructing CIF files with limited numerical precision
