@@ -1125,11 +1125,17 @@ class CifFile:
         # Matcher for <LoopBody> syntactic units, which may span multiple lines.
         # Note that this allows for backtracking, as <SingleQuotedString> and
         # <DoubleQuotedString> values may contain whitespace and quotation marks.
+        # Note that we match in descending order of specificity -- so we first look for
+        # <CharString>, followed by specific <XString> types, then finally ordinary
+        # space-delimited values. This lets use circumvent regular expressions inability
+        # to balance quotes: we simply greedily consume balanced strings where possible,
+        # or fall back to unbalanced tokens where necessary.
         "space_delimited_data": (
             "("
             r";[^;]*?;|"  # Non-semicolon data bracketed by semicolons
-            r"'(?:'\S|[^'])*'|"  # Data with single quotes not followed by \s
-            rf"[^';\"\s]{_PROG_STAR}"  # Additional non-bracketed data
+            r"'(?:\\'|'\S|[^'])*'|"  # Data with single quotes, allowing escapes
+            # Additional non-bracketed data with at most one single or double quote
+            rf"[^';\"\s]{_PROG_STAR}(?:['\"][^';\"\s]{_PROG_STAR})*"
             ")"
         ),
         # Matcher for <Comments> syntactic units
