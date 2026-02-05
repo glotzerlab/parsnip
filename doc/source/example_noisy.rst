@@ -46,7 +46,7 @@ Rebuilding our crystal results in an error:
 .. doctest::
 
     >>> lower_precision_cif = CifFile("hP3-four-decimal-places.cif")
-    >>> uc = lower_precision_cif.build_unit_cell()
+    >>> uc = lower_precision_cif.build_unit_cell(n_decimal_places=4)
     >>> uc # doctest: +SKIP
     array([[0.2254    , 0.        , 0.3333    ],  # A
            [0.        , 0.2254    , 0.66663333],  # B
@@ -56,24 +56,24 @@ Rebuilding our crystal results in an error:
     >>> uc.shape == correct_uc.shape # Our unit cell has duplicate atoms!
     False
 
-By default, **parsnip** uses four decimal places of accuracy to reconstruct crystals.
+By default, **parsnip** uses three decimal places of accuracy to reconstruct crystals.
 This yields the best overall accuracy (tested with several thousand CIFs), but is not
 always the best choice in general. A good rule of thumb is to use one fewer decimal
 places than the CIF file contains. This ensures positions are rounded sufficiently to
 detect duplicate atoms, and avoids issues in complex structures where Wyckoff positions
-may be very close to one another. Making this change results in the correct structure
+may be very close to one another. Using this setting results in the correct structure
 once again.
 
 
 .. doctest::
 
     >>> cif = CifFile("hP3-four-decimal-places.cif")
-    >>> four_decimal_places = cif.build_unit_cell(n_decimal_places=3)
-    >>> four_decimal_places
+    >>> three_decimal_places = cif.build_unit_cell(n_decimal_places=3)
+    >>> three_decimal_places
     array([[0.2254    , 0.        , 0.3333    ],
            [0.        , 0.2254    , 0.66663333],
            [0.7746    , 0.7746    , 0.99996667]])
-    >>> assert four_decimal_places.shape == correct_uc.shape
+    >>> assert three_decimal_places.shape == correct_uc.shape
 
 .. important::
 
@@ -85,7 +85,7 @@ once again.
 
         >>> cif = CifFile("hP3-four-decimal-places.cif")
         >>> one_decimal_place = cif.build_unit_cell(n_decimal_places=1)
-        >>> np.testing.assert_array_equal(one_decimal_place, four_decimal_places)
+        >>> np.testing.assert_array_equal(one_decimal_place, three_decimal_places)
 
 
 Symbolic Parsing
@@ -94,13 +94,13 @@ Symbolic Parsing
 In some cases, particularly in structures with many atoms, careful tuning of numerical
 precision is not enough to accurately reproduce a crystal. **parsnip** includes a
 specialized parser that uses rational arithmetic to correctly compare fractions that
-only differ by a few units in last place. To enable this, install the `sympy`_ library
-and set ``parse_mode="sympy"`` when building the unit cell.
+only differ by a few units in last place. To enable this, set ``parse_mode="rational"``
+when building the unit cell.
 
 .. doctest::
 
     >>> cif = CifFile("hP3.cif")
-    >>> symbolic = cif.build_unit_cell(n_decimal_places=4, parse_mode="sympy")
+    >>> symbolic = cif.build_unit_cell(n_decimal_places=4, parse_mode="rational")
     >>> symbolic
     array([[0.2254    , 0.        , 0.33333  ],
            [0.        , 0.2254    , 0.6666633],

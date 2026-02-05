@@ -542,7 +542,7 @@ class CifFile:
 
     def build_unit_cell(
         self,
-        n_decimal_places: int = 4,
+        n_decimal_places: int = 3,
         additional_columns: str | Iterable[str] | None = None,
         parse_mode: Literal["python_float", "rational", "sympy"] = "python_float",
         verbose: bool = False,
