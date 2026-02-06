@@ -88,8 +88,8 @@ designed. This is a fundamental change to the scope of the library, and necessit
 novel tooling to support the greater diversity of systems. For example, while both
 `parsnip` and the **gemmi** [@GEMMI] library support macromolecular data encoded in the
 mmCIF format, `parsnip` standardizes its API to ensure all inputs are handled in a
-consistent, programmatic way. In contrast, **gemmi** separates the parsing API and data
-structures between the two, improving performance at the expense of generality.
+consistent, programmatic way. In contrast, **gemmi** has separate parsing methods and
+data structures for each file type, improving performance at the expense of generality.
 
 Existing crystallography libraries like **ASE** [@ASE] and **pymatgen** [@pymatgen]
 encode atomic information into the data structures and types of parsed information,
