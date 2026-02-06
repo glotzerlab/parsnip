@@ -46,8 +46,8 @@ Convenient methods for parsing unit cell parameters, reconstructing particle pos
 and identifying site symmetry data are exposed to streamline common workflows in
 materials data science. `parsnip`'s clear documentation of conventions and units
 eliminates ambiguities common to interdisciplinary research. `parsnip`'s use of NumPy
-structured arrays for data storage allows Python, C, and FORTRAN libraries to work with
-`parsnip`, resulting in a stable, scalable dependency for scientific codebases in
+structured arrays for data storage simplifies integration into Python, C, and FORTRAN
+libraries, resulting in a stable, scalable dependency for scientific codebases in
 materials research at the atomic, molecular, and colloidal scales.
 
 # Statement of Need
