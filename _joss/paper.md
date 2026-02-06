@@ -44,21 +44,21 @@ both of which can be expanded with Unix-style wildcards to simplify complex quer
 Convenient methods for parsing unit cell parameters, reconstructing particle positions,
 and identifying site symmetry data are exposed to streamline common workflows in
 materials data science. `parsnip`'s clear documentation of conventions and units
-eliminates ambiguities common to interdisciplinary research. Our use of NumPy structured
-arrays for data storage allows Python, C, and FORTRAN libraries to work with `parsnip`,
-resulting in a stable, scalable dependency for scientific codebases in materials
-research at the atomic, molecular, and colloidal scales.
+eliminates ambiguities common to interdisciplinary research. `parsnip`'s use of NumPy
+structured arrays for data storage allows Python, C, and FORTRAN libraries to work with
+`parsnip`, resulting in a stable, scalable dependency for scientific codebases in
+materials research at the atomic, molecular, and colloidal scales.
 
 # Statement of Need
 
 <!-- A section that clearly illustrates the research purpose of the software and places it in the context of related work. This should clearly state what problems the software is designed to solve, who the target audience is, and its relation to other work. -->
 
-More than thirty-five years of material data of is encoded in the CIF file format, with
+More than thirty-five years of material data is encoded in the CIF file format, with
 terabytes of elemental and protein structures freely available to researchers [@COD;
 @PDB; @mpapi]. While early CIF parsers were predominantly written in C and Fortran, the
 growth of Python opened new opportunities for simple, scriptable access to
 crystallographic data. **PyCifRW** is one of the earliest such tools, offering a
-complete and specification complicant parser for the CIF format [@PyCIFRW]. Soon
+complete and specification compliant parser for the CIF format [@PyCIFRW]. Soon
 thereafter, **ASE**, a tool designed to initialize atomistic simulations, added support
 for CIF files as an alternative to NetCDF inputs for DFT simulations [@ASE_ORIG; @ASE].
 This marked a transition from pure IO libraries to mixed IO and analysis tools, with
@@ -70,12 +70,12 @@ accurately parsing the CIF grammar.
 While all of these tools provide excellent interfaces for researchers working with
 atomic materials, the structure and typing of alternative libraries is ill-suited to
 interdisciplinary research, where the building blocks of crystal structures include
-atoms, macromolecules, and nanoparticles. The explosion of simulation research in
-superatomic systems has driven a need for scalable, array-formatted crystallographic
-data that easily translates across simulation frameworks and system length-scales.
-`parsnip` addresses this need by providing a simple, intuitive, and well-documented
-software frontend that integrates tightly with existing standards for molecular
-simulation and analysis [@HOOMD; @LAMMPS].
+atoms, molecules, macromolecules, and nanoparticles. The explosion of simulation
+research in superatomic systems has driven a need for scalable, array-formatted
+crystallographic data that easily translates across simulation frameworks and system
+length-scales. `parsnip` addresses this need by providing a simple, intuitive, and
+well-documented software frontend that integrates tightly with existing standards for
+molecular simulation and analysis [@HOOMD; @LAMMPS].
 
 # State of the Field
 
@@ -107,7 +107,7 @@ with the basis positions, rather than fixed keys as required by other tools.
 that is not met by any available tools in the field. By separating units and particle
 data from pure structural information, we are able to provide a general interface for
 the study of ordered matter across scales. We also abstract away some portions of the
-CIF syntax to simplify the API -- most notable, we aggregate across `data_` blocks to
+CIF syntax to simplify the API -- most notable, we aggregate across data blocks to
 ensure all relevant information is accessible through a uniform grammar of queries. This
 choice enables a user interface that more closely resembles other structural data
 formats like *XYZ*, *MOL*, and *VTP* [@molIUPAC; @vtkBook].
@@ -126,14 +126,14 @@ without significant increases to code complexity.
 While this parsing technique alone provides significant accuracy benefits, there are
 still many files that cannot be accurately reconstructed by other tools. Standard,
 "symmetrized" CIF data requires the application of symmetry operations to reconstruct a
-lattice. These operations have the form of the form $(x \pm \mathbb{Q}) \mod 1$, where
-$x$ is experimentally determined. While Wyckoff positions can have arbitrary real
-values, the data stored in CIF files is necessarily finite. For this reason, the actual
-set of valid, parsable positions is the group $\mathbb{Q} \mod 1$. Rather than
-evaluating expressions in floating point arithmetic like other CIF libraries, `parsnip`
-actually evaluates unit cell positions in the correct rational form. We then convert
-back to floating point values for a tolerance-based deduplication check, which catches
-edge cases in recorded data where values are not rounded consistently (e.g.
+lattice. These operations have the form $(x \pm \mathbb{Q})\mod 1$, where $x$ is
+experimentally determined. Although Wyckoff positions can have arbitrary real values,
+the data stored in CIF files is necessarily finite. For this reason, the actual set of
+valid, parsable positions is the group $\mathbb{Q} \mod 1$. Rather than evaluating
+expressions in floating point arithmetic like other CIF libraries, `parsnip` evaluates
+unit cell positions in the correct rational form. We then convert back to floating point
+values for a tolerance-based deduplication check, which catches edge cases in recorded
+data where values are not rounded consistently (e.g.
 $\left(1/3, 2/3\right) \to \left(0.3333, 0.6666\right)$).
 
 # Research Impact Statement
@@ -156,7 +156,7 @@ find. Table \ref{accuracyCOD} shows `parsnip`'s excellent performance compared t
 contemporaries: **parnsnip**'s rational parsing approach is the most accurate of all
 tested CIF libraries, and is able to correctly reconstruct more files than the next best
 alternative, **ASE**. We note that our results use a single, fixed parsing precision for
-all 10,099 files: however, as discussed `in parsnip`'s documentation, tailoring the
+all 10,099 files. However, as discussed `in parsnip`'s documentation, tailoring the
 parse precision to match the precision of the data in the file yields even better
 results.
 
@@ -180,7 +180,7 @@ on specification. For example, there are many cases where the mmCIF key-naming
 convention differs from standard CIF files by a single character. The following code
 block shows two examples where this wildcard syntax simplifies user scripts. Although
 the **gemmi** library does support a similar style of wildcard through their
-`gemmi grep` command-line tool, its use is limited to bash scripting and each wildcard
+`gemmi grep` command-line tool, its use is limited to bash scripting, and each wildcard
 query requires the file to be re-parsed in its entirety [@GEMMI].
 
 ```python
