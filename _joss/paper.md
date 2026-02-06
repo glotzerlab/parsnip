@@ -133,8 +133,8 @@ the data stored in CIF files is necessarily finite. For this reason, the actual 
 valid, parsable positions is the group $\mathbb{Q} \mod 1$. Rather than evaluating
 expressions in floating point arithmetic like other CIF libraries, `parsnip` evaluates
 unit cell positions in the correct rational form. We then convert back to floating point
-values for a tolerance-based deduplication check, which catches edge cases in recorded
-data where values are not rounded consistently (e.g.
+values for a tolerance-based check to remove duplicate atoms, which catches edge cases
+in recorded data where values are not rounded consistently (e.g.
 $\left(1/3, 2/3\right) \to \left(0.3333, 0.6666\right)$).
 
 # Research Impact Statement
