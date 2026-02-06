@@ -127,13 +127,13 @@ without significant increases to code complexity.
 While this parsing technique alone provides significant accuracy benefits, there are
 still many files that cannot be accurately reconstructed by other tools. Standard,
 "symmetrized" CIF data requires the application of symmetry operations to reconstruct a
-lattice. These operations are the sum of an experimentally-determined value $x$ and a
-rational translation, with values wrapped into the range $[0, 1)$. Although Wyckoff
-positions can have arbitrary real values, the data stored in CIF files is necessarily
-finite. For this reason, the actual set of valid, parsable positions is the group of
-rational numbers modulo one. Rather than evaluating expressions in floating point
-arithmetic like other CIF libraries, `parsnip` evaluates unit cell positions in the
-correct rational form. We then convert back to floating point values for a
+lattice. These operations are the sum of an experimentally-determined value Wyckoff
+position and a rational translation, with values wrapped into the range $[0, 1)$.
+Although Wyckoff positions can have arbitrary real values, the data stored in CIF files
+is necessarily finite. For this reason, the actual set of valid, parsable positions is
+the group of rational numbers modulo one. Rather than evaluating expressions in floating
+point arithmetic like other CIF libraries, `parsnip` evaluates unit cell positions in
+the correct rational form. We then convert back to floating point values for a
 tolerance-based check to remove duplicate atoms, which catches edge cases in recorded
 data where values are not rounded consistently (e.g.
 $\left(1/3, 2/3\right) \to \left(0.3333, 0.6666\right)$).
