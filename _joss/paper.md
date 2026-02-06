@@ -1,5 +1,5 @@
 ---
-title: "parsnip: Streamlined Crystallographic Data Parsing for Simulation Science"
+title: "parsnip: Streamlined Crystallographic Data Parsing for Assembly Science and Engineering"
 tags:
   - Python
   - crystallography
