@@ -32,12 +32,13 @@ interface allows for the rapid incorporation of `parsnip` into existing librarie
 the molecular simulation ecosystem [@Freud2020].
 
 `parsnip`'s primary functionality lies in its ability to accurately reconstruct unit
-cells from experimental data recorded with limited precision, often with only a few
-decimal places. Through a combination of rational and floating-point arithmetic, we
-achieve class-leading accuracy when reconstructing large and complex structures.
-`parsnip`'s detailed processing of structural data yields better alignment with reported
-space group and point group symmetries than existing tools [@ASE; @PyCIFRW; @GEMMI],
-providing an ideal foundation for studies centered on material design.
+cells from simulation data and from experimental data recorded with limited precision,
+often with only a few decimal places. Through a combination of rational and
+floating-point arithmetic, we achieve class-leading accuracy when reconstructing large
+and complex structures. `parsnip`'s detailed processing of structural data yields better
+alignment with reported space group and point group symmetries than existing tools
+[@ASE; @PyCIFRW; @GEMMI], providing an ideal foundation for studies centered on material
+design.
 
 `parsnip` supports a dictionary-like lookup format for both scalar and tabular data,
 both of which can be expanded with Unix-style wildcards to simplify complex queries.
