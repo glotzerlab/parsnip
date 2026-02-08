@@ -68,7 +68,7 @@ python-dateutil==2.9.0.post0
     # via matplotlib
 scipy==1.15.3
     # via ase
-setuptools==81.0.0
+setuptools==82.0.0
     # via -r tests/requirements.in
 six==1.17.0
     # via python-dateutil
