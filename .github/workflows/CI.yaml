@@ -16,8 +16,17 @@ jobs:
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
         runs-on: ["ubuntu-24.04"]
         include:
-          - runs-on: "macos-15"
+          - runs-on: "ubuntu-24.04"
             python-version: "3.13"
+            freethreaded: true
+          - runs-on: "ubuntu-24.04"
+            python-version: "3.14"
+            freethreaded: true
+          - runs-on: "macos-15"
+            python-version: "3.14"
+            freethreaded: true
+          - runs-on: "macos-15"
+            python-version: "3.14"
           - runs-on: "macos-15"
             python-version: "3.9"
     # Pull in the test script from run_tests and distribute python from matrix versions
@@ -26,6 +35,7 @@ jobs:
       python-version: ${{ matrix.python-version }}
       runs-on: ${{ matrix.runs-on }}
       requirements-file: ".github/requirements-${{ matrix.python-version }}.txt"
+      freethreaded: ${{ matrix.freethreaded }}
 
   # run-tests-legacy-python:
   #   needs: run-tests-modern-python # Wait until tests pass on python 3.9+
@@ -60,6 +70,6 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-    - run: jq --exit-status 'all(.result == "success")' <<< '${{ toJson(needs) }}'
-    - name: Done
-      run: exit 0
+      - run: jq --exit-status 'all(.result == "success")' <<< '${{ toJson(needs) }}'
+      - name: Done
+        run: exit 0
