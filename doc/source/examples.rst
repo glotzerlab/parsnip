@@ -17,3 +17,4 @@ structures from existing data.
 
    example_simulation
    example_noisy
+   example_new_structures
