@@ -64,7 +64,7 @@ pytest-xdist==3.8.0
     # via -r tests/requirements.in
 python-dateutil==2.9.0.post0
     # via matplotlib
-scipy==1.17.0
+scipy==1.17.1
     # via ase
 setuptools==82.0.0
     # via -r tests/requirements.in
