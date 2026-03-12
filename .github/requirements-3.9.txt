@@ -12,7 +12,7 @@ execnet==2.1.2
     # via pytest-xdist
 fonttools==4.60.2
     # via matplotlib
-gemmi==0.7.4
+gemmi==0.7.5
     # via -r tests/requirements.in
 gsd==4.0.0
     # via -r tests/requirements.in
@@ -70,7 +70,7 @@ python-dateutil==2.9.0.post0
     # via matplotlib
 scipy==1.13.1
     # via ase
-setuptools==82.0.0
+setuptools==82.0.1
     # via -r tests/requirements.in
 six==1.17.0
     # via python-dateutil
