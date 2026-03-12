@@ -8,15 +8,15 @@ cycler==0.12.1
     # via matplotlib
 execnet==2.1.2
     # via pytest-xdist
-fonttools==4.61.1
+fonttools==4.62.0
     # via matplotlib
-gemmi==0.7.4
+gemmi==0.7.5
     # via -r tests/requirements.in
 gsd==4.2.0
     # via -r tests/requirements.in
 iniconfig==2.3.0
     # via pytest
-kiwisolver==1.4.9
+kiwisolver==1.5.0
     # via matplotlib
 matplotlib==3.10.8
     # via ase
@@ -24,7 +24,7 @@ more-itertools==10.8.0
     # via parsnip-cif (pyproject.toml)
 mpmath==1.3.0
     # via sympy
-numpy==2.4.2
+numpy==2.4.3
     # via
     #   parsnip-cif (pyproject.toml)
     #   ase
@@ -66,7 +66,7 @@ python-dateutil==2.9.0.post0
     # via matplotlib
 scipy==1.17.1
     # via ase
-setuptools==82.0.0
+setuptools==82.0.1
     # via -r tests/requirements.in
 six==1.17.0
     # via python-dateutil
