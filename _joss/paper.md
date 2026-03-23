@@ -10,12 +10,12 @@ authors:
     affiliation: 1
   - name: Sharon C. Glotzer
     orcid: 0000-0002-7197-0085
-    affiliation: "[1, 2]"
+    affiliation: "1, 2"
 affiliations:
- - name: Materials Science and Engineering, University of Michigan, United States
+ - name: Materials Science and Engineering, University of Michigan, United States of America
    index: 1
    ror: 00jmfr291
- - name: Department of Chemical Engineering, University of Michigan
+ - name: Department of Chemical Engineering, University of Michigan, United States of America
    index: 2
 date: 2 January 2026
 bibliography: paper.bib
