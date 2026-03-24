@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "parsnip-cif"
-version = "0.4.1"
+version = "0.5.0"
 requires-python = ">=3.9"
 description = "Minimal library for parsing CIF & mmCIF files in Python."
 readme = "README.rst"
@@ -33,6 +33,10 @@ Issues = "https://github.com/glotzerlab/parsnip/issues"
 
 [tool.setuptools]
 packages=["parsnip"]
+include-package-data = true
+
+[tool.setuptools.package-data]
+parsnip = ["symops.json"]
 
 [tool.setuptools.dynamic]
 optional-dependencies.tests = { file = ["tests/requirements.in"] }

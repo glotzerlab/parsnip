@@ -6,9 +6,6 @@
 
 .. _header:
 
-..
-  TODO: set up Readthedocs, PyPI, and conda-forge
-
 |ReadTheDocs|
 |PyPI|
 |conda-forge|
@@ -75,8 +72,7 @@ additional dependencies are required to run the tests and build the docs.
 .. code:: bash
 
     pip install .            # Install with no additional dependencies
-    pip install .[sympy]     # Install with sympy for symbolic unit cell math
-    pip install .[tests]     # Install with dependencies required to run tests (including sympy)
+    pip install .[tests]     # Install with dependencies required to run tests
     pip install .[tests,doc] # Install with dependencies required to run tests and make docs
 
 Dependencies

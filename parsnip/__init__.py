@@ -1,8 +1,8 @@
-# Copyright (c) 2025, The Regents of the University of Michigan
+# Copyright (c) 2025-2026, The Regents of the University of Michigan
 # This file is from the parsnip project, released under the BSD 3-Clause License.
 
 """``parsnip``: a package for the simple reading and processing of .cif files."""
 
 from .parsnip import CifFile
 
-__version__ = "0.4.1"
+__version__ = "0.5.0"

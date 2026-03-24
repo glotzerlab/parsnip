@@ -24,8 +24,8 @@ from parsnip._errors import ParseWarning
 def _gemmi_read_table(filename, keys):
     try:
         return np.array(cif.read_file(filename).sole_block().find(keys))
-    except (RuntimeError, ValueError):
-        pytest.skip("Gemmi failed to read file!")
+    except (RuntimeError, ValueError) as e:
+        pytest.skip(f"Gemmi failed to read file: {e}")
 
 
 @all_files_mark
@@ -35,7 +35,7 @@ def test_read_symops(cif_data):
     np.testing.assert_array_equal(parsnip_symops, gemmi_symops)
 
 
-@all_files_mark  # TODO: test with conversions to numeric as well
+@all_files_mark
 def test_read_wyckoff_positions(cif_data):
     parsnip_data = cif_data.file.wyckoff_positions
     gemmi_data = _gemmi_read_table(cif_data.filename, cif_data.file._wyckoff_site_keys)
@@ -70,7 +70,7 @@ def test_build_unit_cell_errors(cif_data):
 
 @cif_files_mark
 @pytest.mark.parametrize("n_decimal_places", [2, 3, 4, 5, 6, 9])
-@pytest.mark.parametrize("parse_mode", ["python_float", "sympy"])
+@pytest.mark.parametrize("parse_mode", ["python_float", "sympy", "rational"])
 @pytest.mark.parametrize(
     "cols",
     [
@@ -81,6 +81,10 @@ def test_build_unit_cell_errors(cif_data):
 )
 def test_build_unit_cell(cif_data, n_decimal_places, parse_mode, cols):
     warnings.filterwarnings("ignore", "crystal system", category=UserWarning)
+
+    warnings.filterwarnings(
+        "ignore", "The `sympy` parse mode is deprecated", category=DeprecationWarning
+    )
 
     if (
         "PDB_4INS_head.cif" in cif_data.filename
@@ -172,6 +176,9 @@ def test_invalid_unit_cell(cif_data):
 )
 @pytest.mark.parametrize("n_decimal_places", [3, 4])
 def test_build_accuracy(filename, n_decimal_places):
+    warnings.filterwarnings(
+        "ignore", "The `sympy` parse mode is deprecated", category=DeprecationWarning
+    )
     if (
         "A5B10C8D4_mC108_15_a2ef_5f_4f_2f.cif" in filename
         or "A2B2CD2_oP14_34_c_c_a_c.cif" in filename
