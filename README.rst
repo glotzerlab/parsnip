@@ -84,3 +84,12 @@ Dependencies
    more-itertools
 
 .. _contributing:
+
+Support and Contribution
+========================
+
+Please visit our repository on `GitHub <https://github.com/glotzerlab/parsnip>`__ for the library source code.
+Any issues or bugs may be reported at our `issue tracker <https://github.com/glotzerlab/parsnip/issues>`__, and
+tips and best practices for contributing to the project are included in the
+`development guide <https://parsnip-cif.readthedocs.io/en/latest/development.html>`__.
+All contributions to **parsnip** are welcomed via pull requests!
