@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools","wheel"]
+requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -32,7 +32,7 @@ Source = "https://github.com/glotzerlab/parsnip"
 Issues = "https://github.com/glotzerlab/parsnip/issues"
 
 [tool.setuptools]
-packages=["parsnip"]
+packages = ["parsnip"]
 include-package-data = true
 
 [tool.setuptools.package-data]
@@ -43,13 +43,15 @@ optional-dependencies.tests = { file = ["tests/requirements.in"] }
 optional-dependencies.doc = { file = ["doc/requirements.in"] }
 optional-dependencies.sympy = { file = ["requirements-sympy.in"] }
 
+[dependency-groups]
+doc = ["parsnip-cif[doc]"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests", "parsnip", "doc"]
 addopts = ["--doctest-plus", "--doctest-glob='*.rst'", "-W", "error::Warning"]
 doctest_rst = true
 doctest_optionflags = ["NORMALIZE_WHITESPACE", "ELLIPSIS", "FLOAT_CMP"]
 console_output_style = "progress"
-
 
 [tool.ruff]
 include = ["*.py", "*.ipynb"]

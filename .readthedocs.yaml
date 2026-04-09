@@ -12,7 +12,6 @@ sphinx:
 python:
   install:
     - method: uv
-      command: pip
-      path: .
-      extras:
+      command: sync
+      groups:
         - doc
