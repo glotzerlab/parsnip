@@ -3,7 +3,7 @@ version: 2
 build:
   os: ubuntu-lts-latest
   tools:
-    python: "3.12"
+    python: "3.14"
 
 sphinx:
   configuration: doc/source/conf.py
@@ -11,7 +11,7 @@ sphinx:
 
 python:
   install:
-    - method: pip
-      path: .
-      extra_requirements:
+    - method: uv
+      command: sync
+      groups:
         - doc
