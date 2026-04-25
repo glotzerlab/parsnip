@@ -4,7 +4,7 @@ Quickstart Tutorial
 ===================
 
 Once you have :ref:`installed <installation>` **parsnip**, most workflows involve reading a CIF file.
-Let's assume we have the file `my_file.cif` in the current directory, and these are its contents:
+Let's assume we have the file `example_file.cif` in the current directory, and these are its contents:
 
 .. literalinclude:: example_file.cif
 
