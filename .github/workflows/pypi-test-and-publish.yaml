@@ -46,7 +46,19 @@ jobs:
       with:
         name: python-package-distributions
         path: dist/
+
+    # If a PR originated from a fork, the token required for upload is not present
+    # Should this be the case, we skip the TestPyPI action
+    - name: Check OIDC token availability
+      id: check-oidc
+      run: |
+        if [ -n "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" ]; then
+          echo "available=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "available=false" >> "$GITHUB_OUTPUT"
+        fi
     - name: Publish to TestPyPI
+      if: steps.check-oidc.outputs.available == 'true'
       uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b # v1.14.0
       with:
         repository-url: https://test.pypi.org/legacy/
