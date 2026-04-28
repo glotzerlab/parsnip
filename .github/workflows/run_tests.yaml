@@ -37,7 +37,14 @@ jobs:
         uv pip install . -r ${{ inputs.requirements-file }} -v --reinstall --system
         python -c "import parsnip; print('parsnip', parsnip.__version__)"
 
-        python -c "import sys; print('GIL:', getattr(sys, '_is_gil_enabled', lambda: 'unknown')())"
+    - name: Verify GIL disabled
+      if: inputs.freethreaded
+      run: python -c "import sys; assert not sys._is_gil_enabled()"
+
+    - name: Verify GIL enabled
+      if: ${{ !inputs.freethreaded }}
+      run: |
+        python -c "import sys; assert getattr(sys, '_is_gil_enabled', lambda: True)()"
 
     - name: Test with pytest
       run: python -m ${{ runner.os != 'Windows' && 'pytest' || 'pytest tests' }} -v -n auto
