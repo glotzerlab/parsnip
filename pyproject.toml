@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools","wheel"]
+requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -10,21 +10,21 @@ description = "Minimal library for parsing CIF & mmCIF files in Python."
 readme = "README.rst"
 license-files = ["LICENSE"]
 authors = [
-    {name = "Jen Bradley", email = "jenbrad@umich.edu"},
+  { name = "Jen Bradley", email = "jenbrad@umich.edu" },
 ]
 dependencies = ["numpy>=1.19", "more-itertools"]
 keywords = [
-        "Development Status :: 4 - Beta",
-        "License :: OSI Approved :: BSD License",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python :: 3.11",
-        "Programming Language :: Python :: 3.12",
-        "Topic :: Scientific/Engineering :: Physics",
-        "Topic :: Scientific/Engineering :: Chemistry",
-    ]
+  "Development Status :: 4 - Beta",
+  "License :: OSI Approved :: BSD License",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Physics",
+  "Topic :: Scientific/Engineering :: Chemistry",
+]
 dynamic = ["optional-dependencies"]
 
 [project.urls]
@@ -32,7 +32,7 @@ Source = "https://github.com/glotzerlab/parsnip"
 Issues = "https://github.com/glotzerlab/parsnip/issues"
 
 [tool.setuptools]
-packages=["parsnip"]
+packages = ["parsnip"]
 include-package-data = true
 
 [tool.setuptools.package-data]
@@ -43,13 +43,15 @@ optional-dependencies.tests = { file = ["tests/requirements.in"] }
 optional-dependencies.doc = { file = ["doc/requirements.in"] }
 optional-dependencies.sympy = { file = ["requirements-sympy.in"] }
 
+[dependency-groups]
+doc = ["parsnip-cif[doc]"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests", "parsnip", "doc"]
 addopts = ["--doctest-plus", "--doctest-glob='*.rst'", "-W", "error::Warning"]
 doctest_rst = true
 doctest_optionflags = ["NORMALIZE_WHITESPACE", "ELLIPSIS", "FLOAT_CMP"]
 console_output_style = "progress"
-
 
 [tool.ruff]
 include = ["*.py", "*.ipynb"]
@@ -58,24 +60,24 @@ line-length = 88
 
 [tool.ruff.lint]
 select = [
-    "B",   # flake8-bugbear
-    "D",   # pydocstyle
-    "E",   # pycodestyle-error
-    "F",   # pyflakes
-    "I",   # isort
-    "N",   # pep8-naming
-    "S",   # flake8-bandit
-    "W",   # pycodestyle-warning
-    "C4",  # check list comprehensions and generators
-    "PT",  # pytest style checks
-    "UP",  # pyupgrade
-    "NPY", # check for use of deprecated numpy functions
-    "SIM", # check for duplicate/needlessly verbose code
-    "ISC", # checks for implicit string concatenation
-    "RET", # check for unnecessary branches surround returned values
-    "RUF", # reduce ambiguity in string concatenation and iterable combination
-    "PIE790", # remove unnecessary pass statements
-    "PIE794", # enable c-style single definition of variables
+  "B", # flake8-bugbear
+  "D", # pydocstyle
+  "E", # pycodestyle-error
+  "F", # pyflakes
+  "I", # isort
+  "N", # pep8-naming
+  "S", # flake8-bandit
+  "W", # pycodestyle-warning
+  "C4", # check list comprehensions and generators
+  "PT", # pytest style checks
+  "UP", # pyupgrade
+  "NPY", # check for use of deprecated numpy functions
+  "SIM", # check for duplicate/needlessly verbose code
+  "ISC", # checks for implicit string concatenation
+  "RET", # check for unnecessary branches surround returned values
+  "RUF", # reduce ambiguity in string concatenation and iterable combination
+  "PIE790", # remove unnecessary pass statements
+  "PIE794", # enable c-style single definition of variables
 ]
 ignore = [
   "S101", # Assertions are a good thing
@@ -104,7 +106,7 @@ indent-style = "space"
 
 [tool.coverage.run]
 omit = [
-    "parsnip/coverage.py",
+  "parsnip/coverage.py",
 ]
 
 [tool.bumpversion] # https://github.com/callowayproject/bump-my-version
@@ -113,8 +115,13 @@ commit = false
 message = "Bump version: {current_version} → {new_version}"
 
 [[tool.bumpversion.files]]
-filename="pyproject.toml"
+filename = "pyproject.toml"
 [[tool.bumpversion.files]]
-filename="doc/source/conf.py"
+filename = "doc/source/conf.py"
 [[tool.bumpversion.files]]
-filename="parsnip/__init__.py"
+filename = "parsnip/__init__.py"
+
+[tool.uv.workspace]
+members = [
+  ".",
+]
