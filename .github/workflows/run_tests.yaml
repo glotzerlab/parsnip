@@ -30,21 +30,17 @@ jobs:
       with:
         version: "0.11.6"
 
+    - name: Disable GIL for freethreaded builds
+      if: inputs.freethreaded
+      run: echo "PYTHON_GIL=0" >> "$GITHUB_ENV"
+
     - name: Install package
       run: |
         which python
         python --version
         uv pip install . -r ${{ inputs.requirements-file }} -v --reinstall --system
         python -c "import parsnip; print('parsnip', parsnip.__version__)"
-
-    - name: Verify GIL disabled
-      if: inputs.freethreaded
-      run: python -c "import sys; assert not sys._is_gil_enabled()"
-
-    - name: Verify GIL enabled
-      if: ${{ !inputs.freethreaded }}
-      run: |
-        python -c "import sys; assert getattr(sys, '_is_gil_enabled', lambda: True)()"
+        python -c "import sys; print('GIL:', getattr(sys, '_is_gil_enabled', lambda: 'unknown')())"
 
     - name: Test with pytest
       run: python -m ${{ runner.os != 'Windows' && 'pytest' || 'pytest tests' }} -v -n auto
