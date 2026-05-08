@@ -45,7 +45,7 @@ Documentation
 API documentation should be written as part of the docstrings of the package in the `Numpy style <https://numpydoc.readthedocs.io/en/latest/format.html>`__.
 
 Docstrings are automatically validated using `pydocstyle <http://www.pydocstyle.org/>`_ whenever the ruff prek hooks are run.
-The `official documentation <https://parsnip.readthedocs.io/>`_ is generated from the docstrings using `Sphinx <http://www.sphinx-doc.org/en/stable/index.html>`_.
+The `official documentation <https://parsnip-cif.readthedocs.io/>`_ is generated from the docstrings using `Sphinx <http://www.sphinx-doc.org/en/stable/index.html>`_.
 
 In addition to API documentation, inline comments are strongly encouraged. Code should
 be written as transparently as possible, so the primary goal of documentation should
