@@ -45,7 +45,8 @@ optional-dependencies.sympy = { file = ["requirements-sympy.in"] }
 
 [tool.pytest.ini_options]
 testpaths = ["tests", "parsnip", "doc"]
-addopts = ["--doctest-plus", "--doctest-glob='*.rst'", "-W", "error::Warning"]
+norecursedirs = ["_joss", "extract_symops.py"]
+addopts = ["--doctest-plus", "--doctest-glob='*.rst'", "-W", "error::Warning", "--ignore=extract_symops.py"]
 doctest_rst = true
 doctest_optionflags = ["NORMALIZE_WHITESPACE", "ELLIPSIS", "FLOAT_CMP"]
 console_output_style = "progress"
