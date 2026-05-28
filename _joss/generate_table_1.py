@@ -155,6 +155,9 @@ def get_cell_formula_units_z(cif_path: str) -> int | None:
 
 # def fetch_cod_files(cod_dir: Path, limit: int = 1000) -> list[Path]:
 #     """Fetch CIF files from the COD database.
+#
+#     NOTE: This was written before I realized there was an rsync endpoint. Using that
+#     is much preferred to SQL. See https://wiki.crystallography.net/howtoobtaincod/
 
 #     Args:
 #         cod_dir: Directory to store CIF files
@@ -213,10 +216,7 @@ def print_summary_table(parsers: list[Parser], num_files: int):
             print(f"{parser.name.upper()} MISMATCHES ({len(parser.mismatches)}):")
             print("-" * 60)
             for name, expected, actual, is_hr in parser.mismatches[
-                : 5
-                if "rational" not in parser.name
-                else 64
-                # :5
+                :10
             ]:  # Show first 10
                 hr_note = " (hR, 3x applied)" if is_hr else ""
                 print(f"{name}: expected {expected}, got {actual}{hr_note}")
@@ -284,7 +284,7 @@ if __name__ == "__main__":
         Parser("pymatgen", count_atoms_pymatgen),
     ]
 
-    # Process COD files, using a consesus between parsers as the correct output.
+    # Process COD files, using a consensus between parsers as the correct output.
     # Note that, in cases where structures may have multiple formula units, we allow for
     # the replicated (_cell_formula_units_Z>=1) or minimal structure (both are valid).
     cod_file_count = 0
