@@ -33,3 +33,5 @@ __pycache__/
 # Development tooling
 .ipynb_checkpoints/
 .ruff_cache/
+
+cifs/*
