@@ -24,6 +24,8 @@ from tqdm import tqdm
 
 import parsnip
 
+COD_FILES = list(Path("./cifs").glob("*.cif"))
+
 # Filter out ASE setting warnings, which do not affect the results.
 warnings.filterwarnings(action="ignore", category=UserWarning, message="crystal system")
 warnings.filterwarnings(
@@ -31,8 +33,6 @@ warnings.filterwarnings(
 )
 warnings.filterwarnings(action="ignore", category=UserWarning)
 warnings.filterwarnings(action="ignore", category=parsnip._errors.ParseWarning)
-
-COD_FILES = list(Path("./cifs").glob("*.cif"))
 
 
 @dataclass
@@ -66,6 +66,7 @@ def count_atoms_parsnip_rational_3(cif_path: Path | str) -> int:
     cif = parsnip.CifFile(str(cif_path))
     unit_cell = cif.build_unit_cell(n_decimal_places=3, parse_mode="rational")
     return len(unit_cell)
+
 
 def count_atoms_pymatgen(cif_path: Path | str) -> int:
     """Count atoms using pymatgen's CifParser."""
