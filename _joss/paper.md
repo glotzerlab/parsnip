@@ -152,15 +152,14 @@ stored in databases like the Crystallography Open Database (COD) [@COD] enables 
 construction of reference datasets for both classical and machine-learned
 characterization techniques.
 
-Tests against 10,099 CIF files from the Crystallography Open Database (COD) shows we are
-able to correctly extract 95.9% of structures, more than any other library we could
-find. Table \ref{accuracyCOD} shows `parsnip`'s excellent performance compared to its
-contemporaries: **parnsnip**'s rational parsing approach is the most accurate of all
-tested CIF libraries, and is able to correctly reconstruct more files than the next best
-alternative, **ASE**. We note that our results use a single, fixed parsing precision for
-all 10,099 files. However, as discussed `in parsnip`'s documentation, tailoring the
-parse precision to match the precision of the data in the file yields even better
-results.
+We performed tests of parsnip and three other CIF parsing libraries against a subset of
+the Crystallography Open Database (COD), choosing the correct structure to be the most
+frequently reported value across the four packages. Table \ref{accuracyCOD} shows that
+`parsnip`'s rational parsing approach was able to correctly extract 95.9% of structures,
+more than any other library we could find. We note that our results use a single, fixed
+parsing precision for all 10,099 files. However, as discussed `in parsnip`'s
+documentation, tailoring the parse precision to match the precision of the data in the
+file yields even better results.
 
 : Comparison of unit-cell reconstruction accuracy for 10099 CIF files from the COD.
 "Total Corrrect" indicates the total number of correctly-reconstructed crystals and
