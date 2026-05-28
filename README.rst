@@ -75,6 +75,14 @@ additional dependencies are required to run the tests and build the docs.
     pip install .[tests]     # Install with dependencies required to run tests
     pip install .[tests,doc] # Install with dependencies required to run tests and make docs
 
+To obtain a correct set of locked dependencies, we recommend the use of the ``uv``
+package manager to install from ``uv.lock``:
+
+.. code:: bash
+
+   uv sync --extra tests # Or --all-extras to build the documentation
+
+
 Dependencies
 ^^^^^^^^^^^^
 
