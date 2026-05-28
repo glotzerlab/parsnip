@@ -275,13 +275,6 @@ if __name__ == "__main__":
                     )
                 )
 
-        # Print progress update every 1000 files
-        if cod_file_count % 1_000 == 0:
-            print(f"\n{'=' * 70}")
-            print(f"PROGRESS UPDATE: {cod_file_count:,} COD files processed")
-            print(f"{'=' * 70}")
-            print_summary_table(cod_parsers, cod_file_count)
-
     print("\n" + "=" * 70)
     print("COD FILES (ref = consensus)")
     print("=" * 70)
