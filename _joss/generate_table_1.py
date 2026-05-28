@@ -67,67 +67,6 @@ def count_atoms_parsnip_rational_3(cif_path: Path | str) -> int:
     unit_cell = cif.build_unit_cell(n_decimal_places=3, parse_mode="rational")
     return len(unit_cell)
 
-
-def count_atoms_parsnip_sympy_3(cif_path: Path | str) -> int:
-    """Count atoms using parsnip's build_unit_cell."""
-    cif = parsnip.CifFile(str(cif_path))
-    unit_cell = cif.build_unit_cell(n_decimal_places=3, parse_mode="sympy")
-    return len(unit_cell)
-
-
-def count_atoms_parsnip_sympy_4(cif_path: Path | str) -> int:
-    """Count atoms using parsnip's build_unit_cell."""
-    cif = parsnip.CifFile(str(cif_path))
-    unit_cell = cif.build_unit_cell(n_decimal_places=4, parse_mode="sympy")
-    return len(unit_cell)
-
-
-def count_atoms_parsnip_rational_4(cif_path: Path | str) -> int:
-    """Count atoms using parsnip's build_unit_cell."""
-    cif = parsnip.CifFile(str(cif_path))
-    unit_cell = cif.build_unit_cell(n_decimal_places=4, parse_mode="rational")
-    return len(unit_cell)
-
-
-def count_atoms_parsnip_sympy_5(cif_path: Path | str) -> int:
-    """Count atoms using parsnip's build_unit_cell."""
-    cif = parsnip.CifFile(str(cif_path))
-    unit_cell = cif.build_unit_cell(n_decimal_places=5, parse_mode="sympy")
-    return len(unit_cell)
-
-
-def count_atoms_parsnip_tuned(cif_path: Path | str) -> int:
-    """Count atoms using parsnip's build_unit_cell."""
-    cif = parsnip.CifFile(str(cif_path))
-    # n_decimal_places = 4 if "" not in str(cif_path)
-    n_decimal_places = 4
-    if "A12B36CD12_cF488_210_h_3h_a_fg.cif" in str(cif_path):
-        n_decimal_places = 3
-    unit_cell = cif.build_unit_cell(n_decimal_places, parse_mode="sympy")
-    return len(unit_cell)
-
-
-def count_atoms_parsnip_4(cif_path: Path | str) -> int:
-    """Count atoms using parsnip's build_unit_cell."""
-    cif = parsnip.CifFile(str(cif_path))
-    unit_cell = cif.build_unit_cell(n_decimal_places=4, parse_mode="python_float")
-    return len(unit_cell)
-
-
-def count_atoms_parsnip_5(cif_path: Path | str) -> int:
-    """Count atoms using parsnip's build_unit_cell."""
-    cif = parsnip.CifFile(str(cif_path))
-    unit_cell = cif.build_unit_cell(n_decimal_places=5, parse_mode="python_float")
-    return len(unit_cell)
-
-
-def count_atoms_parsnip_3(cif_path: Path | str) -> int:
-    """Count atoms using parsnip's build_unit_cell."""
-    cif = parsnip.CifFile(str(cif_path))
-    unit_cell = cif.build_unit_cell(n_decimal_places=3, parse_mode="python_float")
-    return len(unit_cell)
-
-
 def count_atoms_pymatgen(cif_path: Path | str) -> int:
     """Count atoms using pymatgen's CifParser."""
     parser = CifParser(str(cif_path), check_cif=False)
