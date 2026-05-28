@@ -167,7 +167,7 @@ def print_summary_table(parsers: list[Parser], num_files: int):
         if parser.errors:
             print(f"{parser.name.upper()} ERRORS ({len(parser.errors)}):")
             print("-" * 60)
-            for name, msg in parser.errors[:10]:  # Show first 10 # TODO
+            for name, msg in parser.errors[:10]:  # Show first 10 errors per parser
                 print(f"{name}: {msg}")
             if len(parser.errors) > 10:
                 print(f"... and {len(parser.errors) - 10} more")
