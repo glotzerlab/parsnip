@@ -155,9 +155,7 @@ def print_summary_table(parsers: list[Parser], num_files: int):
         if parser.mismatches:
             print(f"{parser.name.upper()} MISMATCHES ({len(parser.mismatches)}):")
             print("-" * 60)
-            for name, expected, actual, is_hr in parser.mismatches[
-                :10
-            ]:  # Show first 10
+            for name, expected, actual, is_hr in parser.mismatches[:10]:
                 hr_note = " (hR, 3x applied)" if is_hr else ""
                 print(f"{name}: expected {expected}, got {actual}{hr_note}")
             if len(parser.mismatches) > 10:
