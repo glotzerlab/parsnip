@@ -5,7 +5,7 @@ following command will download the required files to a new parsnip/cifs directo
 
 ```bash
 > mkdir -p cifs && sed 's|^|http://www.crystallography.net/cod/|' \
-  _joss/table_1_cifs.txt | wget --no-clobber -i - -P ./cifs
+  _joss/table_1_cifs.txt | wget --timestamping -i - -P ./cifs
 
 > python ./_joss/generate_table_1.py
 ```
