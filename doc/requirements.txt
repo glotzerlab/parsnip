@@ -4,20 +4,20 @@ accessible-pygments==0.0.5
     # via furo
 alabaster==1.0.0
     # via sphinx
-autodocsumm==0.2.14
-    # via -r doc/requirements.in
+autodocsumm==0.2.15
+    # via -r requirements.in
 babel==2.18.0
     # via sphinx
 beautifulsoup4==4.14.3
     # via furo
 certifi==2026.2.25
     # via requests
-charset-normalizer==3.4.6
+charset-normalizer==3.4.7
     # via requests
-docutils==0.21.2
+docutils==0.22.4
     # via sphinx
 furo==2025.12.19
-    # via -r doc/requirements.in
+    # via -r requirements.in
 idna==3.11
     # via requests
 imagesize==2.0.0
@@ -28,42 +28,36 @@ jinja2==3.1.6
     # via sphinx
 markupsafe==3.0.3
     # via jinja2
-more-itertools==10.8.0
-    # via parsnip-cif (pyproject.toml)
-numpy==2.4.3
-    # via
-    #   -r doc/requirements.in
-    #   parsnip-cif (pyproject.toml)
-packaging==26.0
+numpy==2.4.4
+    # via -r requirements.in
+packaging==26.1
     # via
     #   pytest
     #   pytest-doctestplus
     #   sphinx
 pluggy==1.6.0
     # via pytest
-pygments==2.19.2
+pygments==2.20.0
     # via
     #   accessible-pygments
     #   furo
     #   pytest
     #   sphinx
-pytest==9.0.2
+pytest==9.0.3
     # via pytest-doctestplus
 pytest-doctestplus==1.7.1
-    # via -r doc/requirements.in
-requests==2.32.5
+    # via -r requirements.in
+requests==2.33.1
     # via sphinx
 roman-numerals==4.1.0
-    # via roman-numerals-py
-roman-numerals-py==4.1.0
     # via sphinx
 snowballstemmer==3.0.1
     # via sphinx
 soupsieve==2.8.3
     # via beautifulsoup4
-sphinx==8.2.3
+sphinx==9.1.0
     # via
-    #   -r doc/requirements.in
+    #   -r requirements.in
     #   autodocsumm
     #   furo
     #   sphinx-basic-ng
@@ -72,9 +66,9 @@ sphinx==8.2.3
 sphinx-basic-ng==1.0.0b2
     # via furo
 sphinx-copybutton==0.5.2
-    # via -r doc/requirements.in
+    # via -r requirements.in
 sphinx-notfound-page==1.1.0
-    # via -r doc/requirements.in
+    # via -r requirements.in
 sphinxcontrib-applehelp==2.0.0
     # via sphinx
 sphinxcontrib-devhelp==2.0.0
@@ -89,5 +83,5 @@ sphinxcontrib-serializinghtml==2.0.0
     # via sphinx
 typing-extensions==4.15.0
     # via beautifulsoup4
-urllib3==2.6.3
+urllib3==2.7.0
     # via requests

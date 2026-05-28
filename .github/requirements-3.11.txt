@@ -12,7 +12,7 @@ fonttools==4.62.1
     # via matplotlib
 gemmi==0.7.5
     # via -r tests/requirements.in
-gsd==4.2.0
+gsd==5.0.1
     # via -r tests/requirements.in
 iniconfig==2.3.0
     # via pytest
@@ -20,11 +20,11 @@ kiwisolver==1.5.0
     # via matplotlib
 matplotlib==3.10.8
     # via ase
-more-itertools==10.8.0
+more-itertools==11.0.2
     # via parsnip-cif (pyproject.toml)
 mpmath==1.3.0
     # via sympy
-numpy==2.4.3
+numpy==2.4.4
     # via
     #   parsnip-cif (pyproject.toml)
     #   ase
@@ -33,13 +33,13 @@ numpy==2.4.3
     #   matplotlib
     #   pycifrw
     #   scipy
-packaging==26.0
+packaging==26.1
     # via
     #   matplotlib
     #   pytest
     #   pytest-doctestplus
     #   wheel
-pillow==12.1.1
+pillow==12.2.0
     # via matplotlib
 pluggy==1.6.0
     # via pytest
@@ -49,11 +49,11 @@ prettytable==3.17.0
     # via pycifrw
 pycifrw==5.0.1
     # via -r tests/requirements.in
-pygments==2.19.2
+pygments==2.20.0
     # via pytest
 pyparsing==3.3.2
     # via matplotlib
-pytest==9.0.2
+pytest==9.0.3
     # via
     #   -r tests/requirements.in
     #   pytest-doctestplus
