@@ -175,7 +175,7 @@ def print_summary_table(parsers: list[Parser], num_files: int):
     print("=" * 95)
     print(
         f"{'Library':<22} | {'Correct Crystals':<18} {'Incorrect Crystals':<18}"
-        f" {'Failed to Parse':<16} {'Correct %':>15}"
+        f" {'Failed to Parse':<12} {'Correct %':>15}"
     )
     print("-" * 95)
 
@@ -191,7 +191,7 @@ def print_summary_table(parsers: list[Parser], num_files: int):
 
         print(
             f"{parser.name:<22} | {correct_crystals:<18} {incorrect_crystals:<18} "
-            f"{failed:<16} {pct:>14.1f}%"
+            f"{failed:<12} {pct:>14.1f}%"
         )
 
         total_correct += correct_crystals
