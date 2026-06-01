@@ -1,6 +1,6 @@
 # Contributing to parsnip
 
-First off, thanks for taking the time to contribute!
+First of all, thank you for taking the time to contribute!
 
 All types of contributions are encouraged and valued. See the
 [Table of Contents](#table-of-contents) for different ways to help and details about how
