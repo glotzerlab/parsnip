@@ -161,7 +161,7 @@ parsing precision for all 10,099 files. However, as discussed `in parsnip`'s
 documentation, tailoring the parse precision to match the precision of the data in the
 file yields even better results.
 
-: Comparison of unit-cell reconstruction accuracy for 10099 CIF files from the COD.
+: Comparison of unit-cell reconstruction consensus for 10099 CIF files from the COD.
 "Total Correct" indicates the total number of correctly-reconstructed crystals and
 "Failed to Parse" indicates files that could not be read at all.\label{accuracyCOD}
 
