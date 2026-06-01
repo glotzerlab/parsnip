@@ -27,7 +27,7 @@ experience for all involved. The community looks forward to your contributions.
 - [I Want To Contribute](#i-want-to-contribute)
 - [Reporting Bugs](#reporting-bugs)
 - [Suggesting Enhancements](#suggesting-enhancements)
-- [Your First Code Contribution](#developing-and-contributing-code)
+- [Developing and Contributing Code](#developing-and-contributing-code)
 
 ## I Have a Question
 
