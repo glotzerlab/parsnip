@@ -75,12 +75,12 @@ us fix any potential bug as fast as possible.
 - Also make sure to search the internet (including Stack Overflow) to see if users
   outside of the GitHub community have discussed the issue.
 - Collect information about the bug:
-- Stack trace (Traceback)
-- OS, Platform and Version (Windows, Linux, macOS, x86, ARM)
-- Version of the interpreter, compiler, SDK, runtime environment, package manager,
-  depending on what seems relevant.
-- Possibly your input and the output
-- Can you reliably reproduce the issue? And can you reproduce it with older versions?
+  - Stack trace (Traceback)
+  - OS, Platform and Version (Windows, Linux, macOS, x86, ARM)
+  - Version of the interpreter, compiler, SDK, runtime environment, package manager,
+    depending on what seems relevant.
+  - Possibly your input and the output
+  - Can you reliably reproduce the issue? And can you reproduce it with older versions?
 
 The more information provided, the better!
 
