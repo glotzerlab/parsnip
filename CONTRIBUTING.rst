@@ -74,4 +74,3 @@ Doctests are automatically integrated with ``pytest`` via
 `pytest-doctestplus <https://github.com/scientific-python/pytest-doctestplus>`_.
 
 To run the tests, simply execute ``pytest`` at the root of the repository.
-
