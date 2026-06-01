@@ -1,3 +1,6 @@
+# Copyright (c) 2025-2026, The Regents of the University of Michigan
+# This file is from the parsnip project, released under the BSD 3-Clause License.
+
 r"""Measure the accuracy of various CIF parsers using a consensus-based system.
 
 To reproduce the figure from the paper, download the files from `cifs.txt`. The
