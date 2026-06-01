@@ -179,7 +179,7 @@ template to request any enhancements!
 ## Developing and Contributing Code
 
 Please refer to our [development guide](./doc/source/development.rst) for a detailed
-introduction to developing `parnsip`, including our style guidelines and use of CI for
+introduction to developing `parsnip`, including our style guidelines and use of CI for
 automated testing.
 
 ## Attribution
