@@ -113,7 +113,7 @@ Once it's filed:
   will not be addressed until they are reproduced.
 - If the team is able to reproduce the issue, it will be marked `needs-fix`, as well as
   possibly other tags (such as `critical`), and the issue will be left to be
-  [implemented by someone](#your-first-code-contribution).
+  [implemented by someone](#developing-and-contributing-code).
 
 When generating a GitHub issue, feel free to use our
 [bug report template](https://github.com/glotzerlab/parsnip/issues/new?template=bug_report.md)
