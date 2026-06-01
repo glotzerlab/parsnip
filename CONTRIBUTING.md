@@ -58,10 +58,7 @@ We will then take care of the issue as soon as possible!
 
 #### Before Submitting a Bug Report
 
-A good bug report shouldn't leave others needing to chase you up for more information.
-Therefore, we ask you to investigate carefully, collect information and describe the
-issue in detail in your report. Please complete the following steps in advance to help
-us fix any potential bug as fast as possible.
+Please complete the following steps before submitting a bug report:
 
 - Make sure that you are using the latest version.
 - Determine if your bug is really a bug and not a usage error: for example, using
