@@ -1,5 +1,3 @@
-<!-- omit in toc -->
-
 # Contributing to parsnip
 
 First off, thanks for taking the time to contribute!
@@ -17,8 +15,6 @@ experience for all involved. The community looks forward to your contributions.
 > - Star the project
 > - Refer this project in your project's readme
 > - Mention the project at local meetups and tell your friends/colleagues
-
-<!-- omit in toc -->
 
 ## Table of Contents
 
@@ -51,7 +47,7 @@ We will then take care of the issue as soon as possible!
 
 ## I Want To Contribute
 
-> ### Legal Notice <!-- omit in toc -->
+> ### Legal Notice
 >
 > When contributing to this project, you must agree that you have authored 100% of the
 > content, that you have the necessary rights to the content and that the content you
@@ -59,8 +55,6 @@ We will then take care of the issue as soon as possible!
 > to our [Contributor Agreement](./contributoragreement.md)
 
 ### Reporting Bugs
-
-<!-- omit in toc -->
 
 #### Before Submitting a Bug Report
 
@@ -89,8 +83,6 @@ us fix any potential bug as fast as possible.
 - Can you reliably reproduce the issue? And can you reproduce it with older versions?
 
 The more information provided, the better!
-
-<!-- omit in toc -->
 
 #### How Do I Submit a Good Bug Report?
 
@@ -134,8 +126,6 @@ This section guides you through submitting an enhancement suggestion for parsnip
 Following these guidelines will help maintainers and the community to understand your
 suggestion and find related suggestions.
 
-<!-- omit in toc -->
-
 #### Before Submitting an Enhancement
 
 - Make sure that you are using the latest version.
@@ -150,8 +140,6 @@ suggestion and find related suggestions.
   feature. Keep in mind that we want features that will be useful to the majority of our
   users and not just a small subset. If you're just targeting a minority of users,
   consider writing an add-on library.
-
-<!-- omit in toc -->
 
 #### How Do I Submit a Good Enhancement Suggestion?
 
