@@ -67,7 +67,7 @@ us fix any potential bug as fast as possible.
 - Determine if your bug is really a bug and not a usage error: for example, using
   incompatible environments or versions of software. Make sure that you have read the
   [documentation](https://parsnip-cif.readthedocs.io/en/latest/). If you are looking for
-  support, you might want to check out [the Questions reference](#i-have-a-question)).
+  support, you might want to check out [the Questions reference](#i-have-a-question).
 - To see if other users have experienced (and potentially already solved) the same issue
   you are having, check if there is not already a bug report existing for your bug or
   error in the
