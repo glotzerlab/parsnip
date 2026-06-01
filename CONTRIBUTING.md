@@ -101,27 +101,15 @@ project:
   case.
 - Provide the information you collected in the previous section.
 
-Once it's filed:
-
-- The project team will label the issue accordingly.
-- A team member will try to reproduce the issue with your provided steps. If there are
-  no reproduction steps or no obvious way to reproduce the issue, the team will ask you
-  for those steps and mark the issue as `needs-repro`. Bugs with the `needs-repro` tag
-  will not be addressed until they are reproduced.
-- If the team is able to reproduce the issue, it will be marked `needs-fix`, as well as
-  possibly other tags (such as `critical`), and the issue will be left to be
-  [implemented by someone](#developing-and-contributing-code).
-
 When generating a GitHub issue, feel free to use our
 [bug report template](https://github.com/glotzerlab/parsnip/issues/new?template=bug_report.md)
 to help format your query.
 
 ### Suggesting Enhancements
 
-This section guides you through submitting an enhancement suggestion for parsnip,
-**including completely new features and minor improvements to existing functionality**.
-Following these guidelines will help maintainers and the community to understand your
-suggestion and find related suggestions.
+Enhancement suggestions — including new features and improvements to existing
+functionality — are tracked as
+[GitHub issues](https://github.com/glotzerlab/parsnip/issues).
 
 #### Before Submitting an Enhancement
 
@@ -139,9 +127,6 @@ suggestion and find related suggestions.
   consider writing an add-on library.
 
 #### How Do I Submit a Good Enhancement Suggestion?
-
-Enhancement suggestions are tracked as
-[GitHub issues](https://github.com/glotzerlab/parsnip/issues).
 
 - Use a **clear and descriptive title** for the issue to identify the suggestion.
 - Provide a **step-by-step description of the suggested enhancement** in as many details
