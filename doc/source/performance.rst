@@ -25,7 +25,8 @@ tools for resolving this: first, ``parse_mode="python_float"`` attempts to build
 cells using floating point arithmetic rather than rational expression. This is less
 accurate, but is still sufficient for high-quality databases and stuctures. For the
 best combination of performance and accuracy, installing the `cfractions`_ library lets
-**parsnip** use more optimized code for unit cell reconstruction.
+**parsnip** use more optimized code for unit cell reconstruction. This is functionally
+equivalent to the default mode, but several times faster.
 
 .. _cfractions: https://pypi.org/project/cfractions/
 
@@ -38,6 +39,6 @@ best combination of performance and accuracy, installing the `cfractions`_ libra
     array([[0.2254    , 0.        , 0.33333  ],
            [0.        , 0.2254    , 0.6666633],
            [0.7746    , 0.7746    , 0.99999667]])
-    >>> assert faster.shape == correct_uc.shape
+    >>> assert faster.shape == (3, 3)
 
 .. _sympy: https://www.sympy.org/en/index.html
