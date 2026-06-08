@@ -95,6 +95,7 @@ from parsnip.patterns import (
     _WHITESPACE,
     _accumulate_nonsimple_data,
     _box_from_lengths_and_angles,
+    _compile_float_eval,
     _contains_wildcard,
     _dtype_from_int,
     _flatten_or_none,
@@ -102,7 +103,6 @@ from parsnip.patterns import (
     _is_key,
     _lookup_symops,
     _matrix_from_lengths_and_angles,
-    _compile_float_eval,
     _safe_eval,
     _strip_comments,
     _strip_quotes,
@@ -697,8 +697,7 @@ class CifFile:
             all_frac_positions = [_fn(*xyz) for xyz in wyckoff_floats]
         else:
             all_frac_positions = [
-                _safe_eval(symops_str, *xyz, parse_mode=parse_mode)
-                for xyz in frac_strs
+                _safe_eval(symops_str, *xyz, parse_mode=parse_mode) for xyz in frac_strs
             ]
         pos = np.vstack(all_frac_positions)
 
