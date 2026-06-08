@@ -33,6 +33,7 @@ equivalent to the default mode, but several times faster.
 .. doctest::
 
     >>> # uv pip install cfractions
+    >>> from parsnip import CifFile
     >>> cif = CifFile("hP3.cif")
     >>> faster = cif.build_unit_cell(n_decimal_places=4)
     >>> faster
