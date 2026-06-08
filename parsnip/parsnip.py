@@ -1029,13 +1029,19 @@ class CifFile:
                     )
                     loop_keys.extend(self._cpat["key_list"].findall(line))
 
+                max_len = 0
                 while _is_data(data_iter.peek(None)):
                     line = _accumulate_nonsimple_data(
                         data_iter, _strip_comments(next(data_iter))
                     )
-                    parsed_line = self._cpat["space_delimited_data"].findall(line)
-                    parsed_line = [m for m in parsed_line if m != "" and m != ","]
-                    loop_data.extend([parsed_line] if parsed_line else [])
+                    if "'" not in line and '"' not in line and ";" not in line:
+                        parsed_line = line.split()
+                    else:
+                        parsed_line = self._cpat["space_delimited_data"].findall(line)
+                        parsed_line = [m for m in parsed_line if m != "" and m != ","]
+                    if parsed_line:
+                        loop_data.append(parsed_line)
+                        max_len = max(max_len, max(map(len, parsed_line)))
 
                 n_elements, n_cols = (
                     sum(len(row) for row in loop_data),
@@ -1064,7 +1070,7 @@ class CifFile:
                     msg = "Loop data is empty, but n_cols > 0: check CIF file syntax."
                     _warn_or_err(msg, self._strict)
                     continue
-                dt = _dtype_from_int(max(len(s) for l in loop_data for s in l))
+                dt = _dtype_from_int(max_len)
 
                 if len(set(loop_keys)) < len(loop_keys):
                     msg = "Duplicate loop keys detected - table will not be processed."
