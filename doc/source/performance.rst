@@ -35,6 +35,8 @@ equivalent to the default mode, but several times faster.
     >>> # uv pip install cfractions
     >>> from parsnip import CifFile
     >>> cif = CifFile("hP3.cif")
+
+    >>> # If `cfractions` is available it is used by the default `parse_mode="rational"`
     >>> faster = cif.build_unit_cell(n_decimal_places=4)
     >>> faster
     array([[0.2254    , 0.        , 0.33333  ],
@@ -42,4 +44,8 @@ equivalent to the default mode, but several times faster.
            [0.7746    , 0.7746    , 0.99999667]])
     >>> assert faster.shape == (3, 3)
 
-.. _sympy: https://www.sympy.org/en/index.html
+
+
+.. figure:: ../generate_benchmark_plots/benchmark_parse_modes.svg
+   :width: 50%
+   :align: center
