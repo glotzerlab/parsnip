@@ -17,6 +17,7 @@
    installation
    quickstart
    examples
+   performance
 
 
 .. toctree::
