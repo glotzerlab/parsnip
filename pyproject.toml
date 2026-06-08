@@ -48,8 +48,8 @@ doc = ["parsnip-cif[doc]"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests", "parsnip", "doc"]
-norecursedirs = ["_joss", "extract_symops.py"]
-addopts = ["--doctest-plus", "--doctest-glob='*.rst'", "-W", "error::Warning", "--ignore=extract_symops.py"]
+norecursedirs = ["_joss", "extract_symops.py", "generate_benchmark_plots"]
+addopts = ["--doctest-plus", "--doctest-glob='*.rst'", "-W", "error::Warning", "--ignore=extract_symops.py", "--ignore=doc/generate_benchmark_plots"]
 doctest_rst = true
 doctest_optionflags = ["NORMALIZE_WHITESPACE", "ELLIPSIS", "FLOAT_CMP"]
 console_output_style = "progress"
