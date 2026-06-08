@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-06-08T12:46:01.391097</dc:date>
+    <dc:date>2026-06-08T12:55:12.079674</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -41,12 +41,12 @@ z
     <g id="xtick_1">
      <g id="line2d_1">
       <defs>
-       <path id="m4a64b6fd32" d="M 0 0
+       <path id="ma99bfb00c0" d="M 0 0
 L 0 3.5
 " style="stroke: #262626; stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#m4a64b6fd32" x="96.28" y="119.10625" style="fill: #262626; stroke: #262626; stroke-width: 0.8"/>
+       <use xlink:href="#ma99bfb00c0" x="96.28" y="119.10625" style="fill: #262626; stroke: #262626; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_1">
@@ -98,12 +98,12 @@ z
     <g id="xtick_2">
      <g id="line2d_2">
       <g>
-       <use xlink:href="#m4a64b6fd32" x="184.267779" y="119.10625" style="fill: #262626; stroke: #262626; stroke-width: 0.8"/>
+       <use xlink:href="#ma99bfb00c0" x="184.399334" y="119.10625" style="fill: #262626; stroke: #262626; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_2">
       <!-- 10 -->
-      <g style="fill: #262626" transform="translate(179.059966 132.773438) scale(0.1 -0.1)">
+      <g style="fill: #262626" transform="translate(179.191522 132.773438) scale(0.1 -0.1)">
        <defs>
         <path id="Afacad-Regular-31" d="M 720 0
 L 720 400
@@ -127,12 +127,12 @@ z
     <g id="xtick_3">
      <g id="line2d_3">
       <g>
-       <use xlink:href="#m4a64b6fd32" x="272.255557" y="119.10625" style="fill: #262626; stroke: #262626; stroke-width: 0.8"/>
+       <use xlink:href="#ma99bfb00c0" x="272.518668" y="119.10625" style="fill: #262626; stroke: #262626; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_3">
       <!-- 20 -->
-      <g style="fill: #262626" transform="translate(267.047745 132.773438) scale(0.1 -0.1)">
+      <g style="fill: #262626" transform="translate(267.310856 132.773438) scale(0.1 -0.1)">
        <defs>
         <path id="Afacad-Regular-32" d="M 529 0
 L 2133 2387
@@ -168,12 +168,12 @@ z
     <g id="xtick_4">
      <g id="line2d_4">
       <g>
-       <use xlink:href="#m4a64b6fd32" x="360.243336" y="119.10625" style="fill: #262626; stroke: #262626; stroke-width: 0.8"/>
+       <use xlink:href="#ma99bfb00c0" x="360.638002" y="119.10625" style="fill: #262626; stroke: #262626; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_4">
       <!-- 30 -->
-      <g style="fill: #262626" transform="translate(355.035523 132.773438) scale(0.1 -0.1)">
+      <g style="fill: #262626" transform="translate(355.43019 132.773438) scale(0.1 -0.1)">
        <defs>
         <path id="Afacad-Regular-33" d="M 1520 -53
 Q 1138 -53 820 124
@@ -211,12 +211,12 @@ z
     <g id="xtick_5">
      <g id="line2d_5">
       <g>
-       <use xlink:href="#m4a64b6fd32" x="448.231114" y="119.10625" style="fill: #262626; stroke: #262626; stroke-width: 0.8"/>
+       <use xlink:href="#ma99bfb00c0" x="448.757336" y="119.10625" style="fill: #262626; stroke: #262626; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_5">
       <!-- 40 -->
-      <g style="fill: #262626" transform="translate(443.023302 132.773438) scale(0.1 -0.1)">
+      <g style="fill: #262626" transform="translate(443.549524 132.773438) scale(0.1 -0.1)">
        <defs>
         <path id="Afacad-Regular-34" d="M 2027 0
 L 2027 1076
@@ -874,19 +874,19 @@ z
    </g>
    <g id="patch_3">
     <path d="M 96.28 29.010284
-L 255.666105 29.010284
-L 255.666105 47.517392
+L 255.346699 29.010284
+L 255.346699 47.517392
 L 96.28 47.517392
 z
-" clip-path="url(#pa862c450f5)" style="fill: #53fbdd; stroke: #ffffff; stroke-width: 0.5; stroke-linejoin: miter"/>
+" clip-path="url(#pab0aa29e8b)" style="fill: #53fbdd; stroke: #ffffff; stroke-width: 0.5; stroke-linejoin: miter"/>
    </g>
    <g id="patch_4">
     <path d="M 96.28 62.659571
-L 289.586988 62.659571
-L 289.586988 81.166679
+L 295.252476 62.659571
+L 295.252476 81.166679
 L 96.28 81.166679
 z
-" clip-path="url(#pa862c450f5)" style="fill: #00c9a4; stroke: #ffffff; stroke-width: 0.5; stroke-linejoin: miter"/>
+" clip-path="url(#pab0aa29e8b)" style="fill: #00c9a4; stroke: #ffffff; stroke-width: 0.5; stroke-linejoin: miter"/>
    </g>
    <g id="patch_5">
     <path d="M 96.28 96.308858
@@ -894,57 +894,7 @@ L 390.294815 96.308858
 L 390.294815 114.815966
 L 96.28 114.815966
 z
-" clip-path="url(#pa862c450f5)" style="fill: #006c60; stroke: #ffffff; stroke-width: 0.5; stroke-linejoin: miter"/>
-   </g>
-   <g id="LineCollection_1">
-    <path d="M 243.618796 38.263838
-L 267.713415 38.263838
-" clip-path="url(#pa862c450f5)" style="fill: none; stroke: #000000"/>
-   </g>
-   <g id="line2d_6">
-    <defs>
-     <path id="ma20edec470" d="M 0 3
-L 0 -3
-" style="stroke: #000000"/>
-    </defs>
-    <g clip-path="url(#pa862c450f5)">
-     <use xlink:href="#ma20edec470" x="243.618796" y="38.263838" style="fill: #1f77b4; stroke: #000000"/>
-    </g>
-   </g>
-   <g id="line2d_7">
-    <g clip-path="url(#pa862c450f5)">
-     <use xlink:href="#ma20edec470" x="267.713415" y="38.263838" style="fill: #1f77b4; stroke: #000000"/>
-    </g>
-   </g>
-   <g id="LineCollection_2">
-    <path d="M 280.461201 71.913125
-L 298.712774 71.913125
-" clip-path="url(#pa862c450f5)" style="fill: none; stroke: #000000"/>
-   </g>
-   <g id="line2d_8">
-    <g clip-path="url(#pa862c450f5)">
-     <use xlink:href="#ma20edec470" x="280.461201" y="71.913125" style="fill: #1f77b4; stroke: #000000"/>
-    </g>
-   </g>
-   <g id="line2d_9">
-    <g clip-path="url(#pa862c450f5)">
-     <use xlink:href="#ma20edec470" x="298.712774" y="71.913125" style="fill: #1f77b4; stroke: #000000"/>
-    </g>
-   </g>
-   <g id="LineCollection_3">
-    <path d="M 360.982489 105.562412
-L 419.607141 105.562412
-" clip-path="url(#pa862c450f5)" style="fill: none; stroke: #000000"/>
-   </g>
-   <g id="line2d_10">
-    <g clip-path="url(#pa862c450f5)">
-     <use xlink:href="#ma20edec470" x="360.982489" y="105.562412" style="fill: #1f77b4; stroke: #000000"/>
-    </g>
-   </g>
-   <g id="line2d_11">
-    <g clip-path="url(#pa862c450f5)">
-     <use xlink:href="#ma20edec470" x="419.607141" y="105.562412" style="fill: #1f77b4; stroke: #000000"/>
-    </g>
+" clip-path="url(#pab0aa29e8b)" style="fill: #006c60; stroke: #ffffff; stroke-width: 0.5; stroke-linejoin: miter"/>
    </g>
    <g id="patch_6">
     <path d="M 96.28 119.10625
@@ -952,7 +902,7 @@ L 493.2 119.10625
 " style="fill: none; stroke: #262626; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="text_10">
-    <!-- 18.11 μs/atom   -->
+    <!-- 18.05 ± 1.60 μs/atom   -->
     <g style="fill: #262626" transform="translate(102.160296 40.326807) scale(0.09 -0.09)">
      <defs>
       <path id="Afacad-Regular-38" d="M 1667 -53
@@ -1013,6 +963,89 @@ Q 947 147 849 47
 Q 751 -53 600 -53
 z
 " transform="scale(0.015625)"/>
+      <path id="Afacad-Regular-35" d="M 1520 -53
+Q 1138 -53 820 124
+Q 502 302 320 613
+L 613 1196
+Q 662 853 917 626
+Q 1173 400 1520 400
+Q 1769 400 1975 522
+Q 2182 644 2304 848
+Q 2427 1053 2427 1302
+Q 2427 1551 2302 1755
+Q 2178 1960 1971 2082
+Q 1765 2204 1507 2204
+Q 1285 2204 1091 2104
+Q 898 2004 773 1836
+L 773 4000
+L 2578 4000
+L 2578 3547
+L 1209 3547
+L 1209 2560
+Q 1298 2600 1393 2615
+Q 1489 2631 1578 2631
+Q 1938 2631 2240 2457
+Q 2542 2284 2724 1984
+Q 2907 1684 2907 1302
+Q 2907 920 2716 613
+Q 2525 307 2211 127
+Q 1898 -53 1520 -53
+z
+" transform="scale(0.015625)"/>
+      <path id="Afacad-Regular-b1" d="M 400 2067
+L 400 2467
+L 1453 2467
+L 1453 3533
+L 1880 3533
+L 1880 2467
+L 2933 2467
+L 2933 2067
+L 1880 2067
+L 1880 1133
+L 1453 1133
+L 1453 2067
+L 400 2067
+z
+M 400 342
+L 400 724
+L 2933 724
+L 2933 342
+L 400 342
+z
+" transform="scale(0.015625)"/>
+      <path id="Afacad-Regular-36" d="M 1693 -53
+Q 1302 -53 984 127
+Q 667 307 480 613
+Q 293 920 293 1302
+Q 293 1476 337 1642
+Q 382 1809 458 1956
+L 1529 4000
+L 2080 4000
+L 1253 2476
+Q 1378 2573 1507 2606
+Q 1636 2640 1769 2640
+Q 2133 2640 2433 2466
+Q 2733 2293 2913 1991
+Q 3093 1689 3093 1307
+Q 3093 924 2906 615
+Q 2720 307 2402 127
+Q 2085 -53 1693 -53
+z
+M 1698 400
+Q 1956 400 2162 522
+Q 2369 644 2491 851
+Q 2613 1058 2613 1311
+Q 2613 1560 2491 1766
+Q 2369 1973 2162 2097
+Q 1956 2222 1698 2222
+Q 1445 2222 1236 2097
+Q 1027 1973 904 1766
+Q 782 1560 782 1311
+Q 782 1058 904 851
+Q 1027 644 1236 522
+Q 1445 400 1698 400
+z
+" transform="scale(0.015625)"/>
       <path id="Afacad-Regular-2f" d="M -373 -800
 L 2053 4267
 L 2507 4267
@@ -1024,22 +1057,29 @@ z
      <use xlink:href="#Afacad-Regular-31"/>
      <use xlink:href="#Afacad-Regular-38" transform="translate(52.083328 0)"/>
      <use xlink:href="#Afacad-Regular-2e" transform="translate(104.166656 0)"/>
-     <use xlink:href="#Afacad-Regular-31" transform="translate(122.916656 0)"/>
-     <use xlink:href="#Afacad-Regular-31" transform="translate(174.999985 0)"/>
+     <use xlink:href="#Afacad-Regular-30" transform="translate(122.916656 0)"/>
+     <use xlink:href="#Afacad-Regular-35" transform="translate(174.999985 0)"/>
      <use xlink:href="#Afacad-Regular-20" transform="translate(227.083313 0)"/>
-     <use xlink:href="#Afacad-Regular-3bc" transform="translate(247.916641 0)"/>
-     <use xlink:href="#Afacad-Regular-73" transform="translate(299.999969 0)"/>
-     <use xlink:href="#Afacad-Regular-2f" transform="translate(335.416626 0)"/>
-     <use xlink:href="#Afacad-Regular-61" transform="translate(368.749954 0)"/>
-     <use xlink:href="#Afacad-Regular-74" transform="translate(421.527725 0)"/>
-     <use xlink:href="#Afacad-Regular-6f" transform="translate(452.777725 0)"/>
-     <use xlink:href="#Afacad-Regular-6d" transform="translate(504.166611 0)"/>
-     <use xlink:href="#Afacad-Regular-20" transform="translate(581.944382 0)"/>
-     <use xlink:href="#Afacad-Regular-20" transform="translate(602.77771 0)"/>
+     <use xlink:href="#Afacad-Regular-b1" transform="translate(247.916641 0)"/>
+     <use xlink:href="#Afacad-Regular-20" transform="translate(299.999969 0)"/>
+     <use xlink:href="#Afacad-Regular-31" transform="translate(320.833298 0)"/>
+     <use xlink:href="#Afacad-Regular-2e" transform="translate(372.916626 0)"/>
+     <use xlink:href="#Afacad-Regular-36" transform="translate(391.666626 0)"/>
+     <use xlink:href="#Afacad-Regular-30" transform="translate(443.749954 0)"/>
+     <use xlink:href="#Afacad-Regular-20" transform="translate(495.833282 0)"/>
+     <use xlink:href="#Afacad-Regular-3bc" transform="translate(516.666611 0)"/>
+     <use xlink:href="#Afacad-Regular-73" transform="translate(568.749939 0)"/>
+     <use xlink:href="#Afacad-Regular-2f" transform="translate(604.166595 0)"/>
+     <use xlink:href="#Afacad-Regular-61" transform="translate(637.499924 0)"/>
+     <use xlink:href="#Afacad-Regular-74" transform="translate(690.277695 0)"/>
+     <use xlink:href="#Afacad-Regular-6f" transform="translate(721.527695 0)"/>
+     <use xlink:href="#Afacad-Regular-6d" transform="translate(772.91658 0)"/>
+     <use xlink:href="#Afacad-Regular-20" transform="translate(850.694351 0)"/>
+     <use xlink:href="#Afacad-Regular-20" transform="translate(871.527679 0)"/>
     </g>
    </g>
    <g id="text_11">
-    <!-- 21.97 μs/atom   -->
+    <!-- 22.58 ± 4.98 μs/atom   -->
     <g style="fill: #262626" transform="translate(102.160296 73.976094) scale(0.09 -0.09)">
      <defs>
       <path id="Afacad-Regular-39" d="M 1227 0
@@ -1075,6 +1115,35 @@ Q 1009 2076 1209 1958
 Q 1409 1840 1653 1840
 z
 " transform="scale(0.015625)"/>
+     </defs>
+     <use xlink:href="#Afacad-Regular-32"/>
+     <use xlink:href="#Afacad-Regular-32" transform="translate(52.083328 0)"/>
+     <use xlink:href="#Afacad-Regular-2e" transform="translate(104.166656 0)"/>
+     <use xlink:href="#Afacad-Regular-35" transform="translate(122.916656 0)"/>
+     <use xlink:href="#Afacad-Regular-38" transform="translate(174.999985 0)"/>
+     <use xlink:href="#Afacad-Regular-20" transform="translate(227.083313 0)"/>
+     <use xlink:href="#Afacad-Regular-b1" transform="translate(247.916641 0)"/>
+     <use xlink:href="#Afacad-Regular-20" transform="translate(299.999969 0)"/>
+     <use xlink:href="#Afacad-Regular-34" transform="translate(320.833298 0)"/>
+     <use xlink:href="#Afacad-Regular-2e" transform="translate(372.916626 0)"/>
+     <use xlink:href="#Afacad-Regular-39" transform="translate(391.666626 0)"/>
+     <use xlink:href="#Afacad-Regular-38" transform="translate(443.749954 0)"/>
+     <use xlink:href="#Afacad-Regular-20" transform="translate(495.833282 0)"/>
+     <use xlink:href="#Afacad-Regular-3bc" transform="translate(516.666611 0)"/>
+     <use xlink:href="#Afacad-Regular-73" transform="translate(568.749939 0)"/>
+     <use xlink:href="#Afacad-Regular-2f" transform="translate(604.166595 0)"/>
+     <use xlink:href="#Afacad-Regular-61" transform="translate(637.499924 0)"/>
+     <use xlink:href="#Afacad-Regular-74" transform="translate(690.277695 0)"/>
+     <use xlink:href="#Afacad-Regular-6f" transform="translate(721.527695 0)"/>
+     <use xlink:href="#Afacad-Regular-6d" transform="translate(772.91658 0)"/>
+     <use xlink:href="#Afacad-Regular-20" transform="translate(850.694351 0)"/>
+     <use xlink:href="#Afacad-Regular-20" transform="translate(871.527679 0)"/>
+    </g>
+   </g>
+   <g id="text_12">
+    <!-- 33.37 ± 3.61 μs/atom   -->
+    <g style="fill: #262626" transform="translate(102.160296 107.625381) scale(0.09 -0.09)">
+     <defs>
       <path id="Afacad-Regular-37" d="M 569 0
 L 2338 3547
 L 427 3547
@@ -1085,41 +1154,28 @@ L 569 0
 z
 " transform="scale(0.015625)"/>
      </defs>
-     <use xlink:href="#Afacad-Regular-32"/>
-     <use xlink:href="#Afacad-Regular-31" transform="translate(52.083328 0)"/>
-     <use xlink:href="#Afacad-Regular-2e" transform="translate(104.166656 0)"/>
-     <use xlink:href="#Afacad-Regular-39" transform="translate(122.916656 0)"/>
-     <use xlink:href="#Afacad-Regular-37" transform="translate(174.999985 0)"/>
-     <use xlink:href="#Afacad-Regular-20" transform="translate(227.083313 0)"/>
-     <use xlink:href="#Afacad-Regular-3bc" transform="translate(247.916641 0)"/>
-     <use xlink:href="#Afacad-Regular-73" transform="translate(299.999969 0)"/>
-     <use xlink:href="#Afacad-Regular-2f" transform="translate(335.416626 0)"/>
-     <use xlink:href="#Afacad-Regular-61" transform="translate(368.749954 0)"/>
-     <use xlink:href="#Afacad-Regular-74" transform="translate(421.527725 0)"/>
-     <use xlink:href="#Afacad-Regular-6f" transform="translate(452.777725 0)"/>
-     <use xlink:href="#Afacad-Regular-6d" transform="translate(504.166611 0)"/>
-     <use xlink:href="#Afacad-Regular-20" transform="translate(581.944382 0)"/>
-     <use xlink:href="#Afacad-Regular-20" transform="translate(602.77771 0)"/>
-    </g>
-   </g>
-   <g id="text_12">
-    <!-- 33.42 μs/atom   -->
-    <g style="fill: #262626" transform="translate(102.160296 107.625381) scale(0.09 -0.09)">
      <use xlink:href="#Afacad-Regular-33"/>
      <use xlink:href="#Afacad-Regular-33" transform="translate(52.083328 0)"/>
      <use xlink:href="#Afacad-Regular-2e" transform="translate(104.166656 0)"/>
-     <use xlink:href="#Afacad-Regular-34" transform="translate(122.916656 0)"/>
-     <use xlink:href="#Afacad-Regular-32" transform="translate(174.999985 0)"/>
+     <use xlink:href="#Afacad-Regular-33" transform="translate(122.916656 0)"/>
+     <use xlink:href="#Afacad-Regular-37" transform="translate(174.999985 0)"/>
      <use xlink:href="#Afacad-Regular-20" transform="translate(227.083313 0)"/>
-     <use xlink:href="#Afacad-Regular-3bc" transform="translate(247.916641 0)"/>
-     <use xlink:href="#Afacad-Regular-73" transform="translate(299.999969 0)"/>
-     <use xlink:href="#Afacad-Regular-2f" transform="translate(335.416626 0)"/>
-     <use xlink:href="#Afacad-Regular-61" transform="translate(368.749954 0)"/>
-     <use xlink:href="#Afacad-Regular-74" transform="translate(421.527725 0)"/>
-     <use xlink:href="#Afacad-Regular-6f" transform="translate(452.777725 0)"/>
-     <use xlink:href="#Afacad-Regular-6d" transform="translate(504.166611 0)"/>
-     <use xlink:href="#Afacad-Regular-20" transform="translate(581.944382 0)"/>
-     <use xlink:href="#Afacad-Regular-20" transform="translate(602.77771 0)"/>
+     <use xlink:href="#Afacad-Regular-b1" transform="translate(247.916641 0)"/>
+     <use xlink:href="#Afacad-Regular-20" transform="translate(299.999969 0)"/>
+     <use xlink:href="#Afacad-Regular-33" transform="translate(320.833298 0)"/>
+     <use xlink:href="#Afacad-Regular-2e" transform="translate(372.916626 0)"/>
+     <use xlink:href="#Afacad-Regular-36" transform="translate(391.666626 0)"/>
+     <use xlink:href="#Afacad-Regular-31" transform="translate(443.749954 0)"/>
+     <use xlink:href="#Afacad-Regular-20" transform="translate(495.833282 0)"/>
+     <use xlink:href="#Afacad-Regular-3bc" transform="translate(516.666611 0)"/>
+     <use xlink:href="#Afacad-Regular-73" transform="translate(568.749939 0)"/>
+     <use xlink:href="#Afacad-Regular-2f" transform="translate(604.166595 0)"/>
+     <use xlink:href="#Afacad-Regular-61" transform="translate(637.499924 0)"/>
+     <use xlink:href="#Afacad-Regular-74" transform="translate(690.277695 0)"/>
+     <use xlink:href="#Afacad-Regular-6f" transform="translate(721.527695 0)"/>
+     <use xlink:href="#Afacad-Regular-6d" transform="translate(772.91658 0)"/>
+     <use xlink:href="#Afacad-Regular-20" transform="translate(850.694351 0)"/>
+     <use xlink:href="#Afacad-Regular-20" transform="translate(871.527679 0)"/>
     </g>
    </g>
    <g id="text_13">
@@ -1190,7 +1246,7 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="pa862c450f5">
+  <clipPath id="pab0aa29e8b">
    <rect x="96.28" y="24.72" width="396.92" height="94.38625"/>
   </clipPath>
  </defs>

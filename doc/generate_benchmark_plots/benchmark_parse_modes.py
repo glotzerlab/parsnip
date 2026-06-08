@@ -99,20 +99,11 @@ def plot(results, out_path: str):
 
     y = list(range(len(labels)))
     for i, (lab, m, s) in enumerate(zip(labels, means, stds)):
-        ax.barh(
-            i,
-            m,
-            height=0.55,
-            color=colors[lab],
-            edgecolor="white",
-            linewidth=0.5,
-            xerr=s,
-            error_kw={"lw": 1, "capsize": 3},
-        )
+        ax.barh(i, m, height=0.55, color=colors[lab], edgecolor="white", linewidth=0.5)
         ax.text(
             max(means) * 0.02,
             i,
-            f"{m:.2f} μs/atom  ",
+            f"{m:.2f} ± {s:.2f} μs/atom  ",
             va="center",
             ha="left",
             fontsize=9,
