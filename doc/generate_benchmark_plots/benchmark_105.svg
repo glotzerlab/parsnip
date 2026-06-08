@@ -1,0 +1,1424 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="504pt" height="230.4pt" viewBox="0 0 504 230.4" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-06-02T12:13:41.238050</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.9, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 230.4
+L 504 230.4
+L 504 0
+L 0 0
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 75.445 190.6
+L 465.615 190.6
+L 465.615 24.838125
+L 75.445 24.838125
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="m83d9b3ce4a" d="M 0 0
+L 0 3.5
+" style="stroke: #262626; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m83d9b3ce4a" x="75.445" y="190.6" style="fill: #262626; stroke: #262626; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <!-- 0 -->
+      <g style="fill: #262626" transform="translate(72.841094 204.267188) scale(0.1 -0.1)">
+       <defs>
+        <path id="Afacad-Regular-30" d="M 1667 -53
+Q 1316 -53 1053 122
+Q 791 298 615 593
+Q 440 889 353 1255
+Q 267 1622 267 2000
+Q 267 2378 353 2744
+Q 440 3111 615 3406
+Q 791 3702 1053 3877
+Q 1316 4053 1667 4053
+Q 2018 4053 2280 3877
+Q 2542 3702 2717 3406
+Q 2893 3111 2980 2744
+Q 3067 2378 3067 2000
+Q 3067 1622 2980 1255
+Q 2893 889 2717 593
+Q 2542 298 2280 122
+Q 2018 -53 1667 -53
+z
+M 1667 400
+Q 1902 400 2071 542
+Q 2240 684 2346 920
+Q 2453 1156 2506 1438
+Q 2560 1720 2560 2000
+Q 2560 2280 2506 2562
+Q 2453 2844 2346 3080
+Q 2240 3316 2071 3458
+Q 1902 3600 1667 3600
+Q 1436 3600 1264 3458
+Q 1093 3316 986 3080
+Q 880 2844 826 2562
+Q 773 2280 773 2000
+Q 773 1720 826 1438
+Q 880 1156 986 920
+Q 1093 684 1264 542
+Q 1436 400 1667 400
+z
+" transform="scale(0.015625)"/>
+       </defs>
+       <use xlink:href="#Afacad-Regular-30"/>
+      </g>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#m83d9b3ce4a" x="140.473333" y="190.6" style="fill: #262626; stroke: #262626; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <!-- 10 -->
+      <g style="fill: #262626" transform="translate(135.265521 204.267188) scale(0.1 -0.1)">
+       <defs>
+        <path id="Afacad-Regular-31" d="M 720 0
+L 720 400
+L 1645 400
+L 1645 3369
+L 720 2898
+L 720 3378
+L 2133 4089
+L 2133 400
+L 2880 400
+L 2880 0
+L 720 0
+z
+" transform="scale(0.015625)"/>
+       </defs>
+       <use xlink:href="#Afacad-Regular-31"/>
+       <use xlink:href="#Afacad-Regular-30" transform="translate(52.083328 0)"/>
+      </g>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#m83d9b3ce4a" x="205.501667" y="190.6" style="fill: #262626; stroke: #262626; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <!-- 20 -->
+      <g style="fill: #262626" transform="translate(200.293854 204.267188) scale(0.1 -0.1)">
+       <defs>
+        <path id="Afacad-Regular-32" d="M 529 0
+L 2133 2387
+Q 2245 2556 2287 2680
+Q 2329 2804 2329 2911
+Q 2329 3200 2124 3400
+Q 1920 3600 1627 3600
+Q 1333 3600 1131 3400
+Q 929 3200 929 2911
+Q 929 2591 1200 2373
+L 591 2373
+Q 449 2644 449 2911
+Q 449 3236 609 3493
+Q 769 3751 1038 3902
+Q 1307 4053 1631 4053
+Q 1956 4053 2222 3902
+Q 2489 3751 2649 3493
+Q 2809 3236 2809 2911
+Q 2809 2720 2747 2535
+Q 2685 2351 2529 2129
+L 1373 453
+L 2885 453
+L 2885 0
+L 529 0
+z
+" transform="scale(0.015625)"/>
+       </defs>
+       <use xlink:href="#Afacad-Regular-32"/>
+       <use xlink:href="#Afacad-Regular-30" transform="translate(52.083328 0)"/>
+      </g>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#m83d9b3ce4a" x="270.53" y="190.6" style="fill: #262626; stroke: #262626; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <!-- 30 -->
+      <g style="fill: #262626" transform="translate(265.322188 204.267188) scale(0.1 -0.1)">
+       <defs>
+        <path id="Afacad-Regular-33" d="M 1520 -53
+Q 1138 -53 820 124
+Q 502 302 320 613
+L 613 1196
+Q 662 853 917 626
+Q 1173 400 1520 400
+Q 1773 400 1980 522
+Q 2187 644 2307 848
+Q 2427 1053 2427 1307
+Q 2427 1556 2304 1762
+Q 2182 1969 1977 2091
+Q 1773 2213 1520 2213
+Q 1396 2213 1287 2182
+Q 1178 2151 1089 2102
+L 1849 3573
+L 613 3573
+L 613 4000
+L 2587 4000
+L 1836 2600
+Q 2133 2542 2375 2360
+Q 2618 2178 2762 1909
+Q 2907 1640 2907 1307
+Q 2907 924 2720 615
+Q 2533 307 2217 127
+Q 1902 -53 1520 -53
+z
+" transform="scale(0.015625)"/>
+       </defs>
+       <use xlink:href="#Afacad-Regular-33"/>
+       <use xlink:href="#Afacad-Regular-30" transform="translate(52.083328 0)"/>
+      </g>
+     </g>
+    </g>
+    <g id="xtick_5">
+     <g id="line2d_5">
+      <g>
+       <use xlink:href="#m83d9b3ce4a" x="335.558333" y="190.6" style="fill: #262626; stroke: #262626; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_5">
+      <!-- 40 -->
+      <g style="fill: #262626" transform="translate(330.350521 204.267188) scale(0.1 -0.1)">
+       <defs>
+        <path id="Afacad-Regular-34" d="M 2027 0
+L 2027 1076
+L 107 1076
+L 1605 4000
+L 2138 4000
+L 840 1502
+L 2040 1502
+L 2040 2400
+L 2493 2640
+L 2493 1502
+L 3093 1502
+L 3093 1076
+L 2507 1076
+L 2507 0
+L 2027 0
+z
+" transform="scale(0.015625)"/>
+       </defs>
+       <use xlink:href="#Afacad-Regular-34"/>
+       <use xlink:href="#Afacad-Regular-30" transform="translate(52.083328 0)"/>
+      </g>
+     </g>
+    </g>
+    <g id="xtick_6">
+     <g id="line2d_6">
+      <g>
+       <use xlink:href="#m83d9b3ce4a" x="400.586667" y="190.6" style="fill: #262626; stroke: #262626; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_6">
+      <!-- 50 -->
+      <g style="fill: #262626" transform="translate(395.378854 204.267188) scale(0.1 -0.1)">
+       <defs>
+        <path id="Afacad-Regular-35" d="M 1520 -53
+Q 1138 -53 820 124
+Q 502 302 320 613
+L 613 1196
+Q 662 853 917 626
+Q 1173 400 1520 400
+Q 1769 400 1975 522
+Q 2182 644 2304 848
+Q 2427 1053 2427 1302
+Q 2427 1551 2302 1755
+Q 2178 1960 1971 2082
+Q 1765 2204 1507 2204
+Q 1285 2204 1091 2104
+Q 898 2004 773 1836
+L 773 4000
+L 2578 4000
+L 2578 3547
+L 1209 3547
+L 1209 2560
+Q 1298 2600 1393 2615
+Q 1489 2631 1578 2631
+Q 1938 2631 2240 2457
+Q 2542 2284 2724 1984
+Q 2907 1684 2907 1302
+Q 2907 920 2716 613
+Q 2525 307 2211 127
+Q 1898 -53 1520 -53
+z
+" transform="scale(0.015625)"/>
+       </defs>
+       <use xlink:href="#Afacad-Regular-35"/>
+       <use xlink:href="#Afacad-Regular-30" transform="translate(52.083328 0)"/>
+      </g>
+     </g>
+    </g>
+    <g id="xtick_7">
+     <g id="line2d_7">
+      <g>
+       <use xlink:href="#m83d9b3ce4a" x="465.615" y="190.6" style="fill: #262626; stroke: #262626; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_7">
+      <!-- 60 -->
+      <g style="fill: #262626" transform="translate(460.407188 204.267188) scale(0.1 -0.1)">
+       <defs>
+        <path id="Afacad-Regular-36" d="M 1693 -53
+Q 1302 -53 984 127
+Q 667 307 480 613
+Q 293 920 293 1302
+Q 293 1476 337 1642
+Q 382 1809 458 1956
+L 1529 4000
+L 2080 4000
+L 1253 2476
+Q 1378 2573 1507 2606
+Q 1636 2640 1769 2640
+Q 2133 2640 2433 2466
+Q 2733 2293 2913 1991
+Q 3093 1689 3093 1307
+Q 3093 924 2906 615
+Q 2720 307 2402 127
+Q 2085 -53 1693 -53
+z
+M 1698 400
+Q 1956 400 2162 522
+Q 2369 644 2491 851
+Q 2613 1058 2613 1311
+Q 2613 1560 2491 1766
+Q 2369 1973 2162 2097
+Q 1956 2222 1698 2222
+Q 1445 2222 1236 2097
+Q 1027 1973 904 1766
+Q 782 1560 782 1311
+Q 782 1058 904 851
+Q 1027 644 1236 522
+Q 1445 400 1698 400
+z
+" transform="scale(0.015625)"/>
+       </defs>
+       <use xlink:href="#Afacad-Regular-36"/>
+       <use xlink:href="#Afacad-Regular-30" transform="translate(52.083328 0)"/>
+      </g>
+     </g>
+    </g>
+    <g id="text_8">
+     <!-- Wall-clock time (s) -->
+     <g style="fill: #262626" transform="translate(234.072969 217.017188) scale(0.1 -0.1)">
+      <defs>
+       <path id="Afacad-Regular-57" d="M 1596 -133
+L 53 4000
+L 569 4000
+L 1476 1600
+Q 1525 1476 1556 1362
+Q 1587 1249 1622 1093
+Q 1658 1249 1691 1362
+Q 1725 1476 1769 1600
+L 2685 4133
+L 3596 1600
+Q 3636 1489 3673 1375
+Q 3711 1262 3742 1093
+Q 3778 1262 3813 1375
+Q 3849 1489 3893 1600
+L 4800 4000
+L 5280 4000
+L 3742 -133
+L 2818 2462
+Q 2778 2578 2742 2687
+Q 2707 2796 2671 2964
+Q 2636 2796 2600 2687
+Q 2565 2578 2525 2462
+L 1596 -133
+z
+" transform="scale(0.015625)"/>
+       <path id="Afacad-Regular-61" d="M 1569 -36
+Q 1205 -36 902 148
+Q 600 333 420 644
+Q 240 956 240 1333
+Q 240 1711 420 2022
+Q 600 2333 902 2517
+Q 1205 2702 1569 2702
+Q 1845 2702 2087 2600
+Q 2329 2498 2507 2316
+L 2507 2667
+L 2951 2667
+L 2951 0
+L 2507 0
+L 2507 351
+Q 2329 173 2087 68
+Q 1845 -36 1569 -36
+z
+M 1631 400
+Q 1885 400 2091 526
+Q 2298 653 2420 864
+Q 2542 1076 2542 1333
+Q 2542 1591 2420 1802
+Q 2298 2013 2091 2140
+Q 1885 2267 1631 2267
+Q 1378 2267 1171 2140
+Q 965 2013 842 1802
+Q 720 1591 720 1333
+Q 720 1076 842 864
+Q 965 653 1171 526
+Q 1378 400 1631 400
+z
+" transform="scale(0.015625)"/>
+       <path id="Afacad-Regular-6c" d="M 427 0
+L 427 4267
+L 907 4267
+L 907 0
+L 427 0
+z
+" transform="scale(0.015625)"/>
+       <path id="Afacad-Regular-2d" d="M 133 1120
+L 133 1547
+L 1467 1547
+L 1467 1120
+L 133 1120
+z
+" transform="scale(0.015625)"/>
+       <path id="Afacad-Regular-63" d="M 1653 -53
+Q 1262 -53 942 133
+Q 622 320 431 635
+Q 240 951 240 1333
+Q 240 1716 431 2031
+Q 622 2347 942 2533
+Q 1262 2720 1653 2720
+Q 1942 2720 2195 2618
+Q 2449 2516 2640 2347
+L 2493 1742
+Q 2382 1964 2157 2115
+Q 1933 2267 1649 2267
+Q 1391 2267 1180 2140
+Q 969 2013 844 1802
+Q 720 1591 720 1333
+Q 720 1080 844 866
+Q 969 653 1180 526
+Q 1391 400 1649 400
+Q 1933 400 2157 546
+Q 2382 693 2493 924
+L 2640 320
+Q 2449 151 2195 49
+Q 1942 -53 1653 -53
+z
+" transform="scale(0.015625)"/>
+       <path id="Afacad-Regular-6f" d="M 1645 -53
+Q 1258 -53 938 133
+Q 618 320 429 635
+Q 240 951 240 1333
+Q 240 1720 429 2033
+Q 618 2347 938 2533
+Q 1258 2720 1645 2720
+Q 2036 2720 2353 2533
+Q 2671 2347 2860 2033
+Q 3049 1720 3049 1333
+Q 3049 951 2860 635
+Q 2671 320 2353 133
+Q 2036 -53 1645 -53
+z
+M 1645 400
+Q 1902 400 2111 526
+Q 2320 653 2444 864
+Q 2569 1076 2569 1333
+Q 2569 1591 2444 1802
+Q 2320 2013 2111 2140
+Q 1902 2267 1645 2267
+Q 1387 2267 1178 2140
+Q 969 2013 844 1802
+Q 720 1591 720 1333
+Q 720 1076 844 864
+Q 969 653 1178 526
+Q 1387 400 1645 400
+z
+" transform="scale(0.015625)"/>
+       <path id="Afacad-Regular-6b" d="M 2165 0
+L 960 1467
+L 1951 2667
+L 2507 2667
+L 1533 1502
+L 2773 0
+L 2165 0
+z
+M 427 0
+L 427 4267
+L 907 4267
+L 907 0
+L 427 0
+z
+" transform="scale(0.015625)"/>
+       <path id="Afacad-Regular-20" transform="scale(0.015625)"/>
+       <path id="Afacad-Regular-74" d="M 738 0
+L 738 2267
+L 133 2267
+L 133 2667
+L 751 2667
+L 751 3556
+L 1205 3556
+L 1205 2667
+L 1867 2667
+L 1867 2267
+L 1218 2267
+L 1218 0
+L 738 0
+z
+" transform="scale(0.015625)"/>
+       <path id="Afacad-Regular-69" d="M 427 0
+L 427 2667
+L 907 2667
+L 907 0
+L 427 0
+z
+M 664 3147
+Q 531 3147 437 3240
+Q 344 3333 344 3467
+Q 344 3604 437 3695
+Q 531 3787 664 3787
+Q 802 3787 893 3695
+Q 984 3604 984 3467
+Q 984 3333 893 3240
+Q 802 3147 664 3147
+z
+" transform="scale(0.015625)"/>
+       <path id="Afacad-Regular-6d" d="M 427 0
+L 427 2667
+L 871 2667
+L 871 2284
+Q 1018 2502 1242 2611
+Q 1467 2720 1716 2720
+Q 1987 2720 2213 2593
+Q 2440 2467 2578 2240
+Q 2733 2480 2980 2600
+Q 3227 2720 3502 2720
+Q 3805 2720 4056 2578
+Q 4307 2436 4456 2180
+Q 4605 1924 4605 1578
+L 4605 0
+L 4125 0
+L 4125 1520
+Q 4125 1884 3918 2073
+Q 3711 2262 3440 2262
+Q 3271 2262 3113 2186
+Q 2956 2111 2856 1951
+Q 2756 1791 2756 1533
+L 2756 0
+L 2276 0
+L 2276 1520
+Q 2276 1773 2176 1937
+Q 2076 2102 1918 2184
+Q 1760 2267 1591 2267
+Q 1427 2267 1269 2191
+Q 1111 2116 1009 1956
+Q 907 1796 907 1533
+L 907 0
+L 427 0
+z
+" transform="scale(0.015625)"/>
+       <path id="Afacad-Regular-65" d="M 1698 -53
+Q 1280 -53 949 133
+Q 618 320 429 642
+Q 240 964 240 1360
+Q 240 1738 422 2047
+Q 605 2356 913 2538
+Q 1222 2720 1596 2720
+Q 1965 2720 2271 2544
+Q 2578 2369 2760 2071
+Q 2942 1773 2942 1396
+L 2942 1200
+L 1200 1200
+Q 1085 1200 965 1209
+Q 845 1218 729 1236
+Q 778 880 1051 640
+Q 1325 400 1702 400
+Q 1956 400 2173 515
+Q 2391 631 2525 822
+L 2658 276
+Q 2467 120 2220 33
+Q 1973 -53 1698 -53
+z
+M 716 1560
+Q 956 1600 1200 1600
+L 2085 1600
+Q 2182 1600 2277 1593
+Q 2373 1587 2471 1578
+Q 2409 1889 2160 2091
+Q 1911 2293 1596 2293
+Q 1271 2293 1026 2077
+Q 782 1862 716 1560
+z
+" transform="scale(0.015625)"/>
+       <path id="Afacad-Regular-28" d="M 1196 -800
+Q 858 -244 669 398
+Q 480 1040 480 1733
+Q 480 2427 669 3069
+Q 858 3711 1196 4267
+L 1733 4267
+Q 1365 3729 1162 3089
+Q 960 2449 960 1733
+Q 960 1022 1162 380
+Q 1365 -262 1733 -800
+L 1196 -800
+z
+" transform="scale(0.015625)"/>
+       <path id="Afacad-Regular-73" d="M 1116 -53
+Q 911 -53 678 24
+Q 445 102 276 284
+L 409 809
+Q 533 600 729 478
+Q 925 356 1147 356
+Q 1360 356 1466 460
+Q 1573 564 1573 716
+Q 1573 889 1460 969
+Q 1347 1049 1258 1080
+L 898 1218
+Q 800 1258 662 1335
+Q 525 1413 422 1560
+Q 320 1707 320 1942
+Q 320 2156 422 2333
+Q 525 2511 711 2615
+Q 898 2720 1151 2720
+Q 1351 2720 1569 2649
+Q 1787 2578 1938 2409
+L 1805 1884
+Q 1698 2080 1515 2195
+Q 1333 2311 1138 2311
+Q 956 2311 851 2209
+Q 747 2107 747 1973
+Q 747 1867 818 1782
+Q 889 1698 1031 1644
+L 1391 1507
+Q 1489 1471 1633 1391
+Q 1778 1311 1889 1160
+Q 2000 1009 2000 751
+Q 2000 391 1749 169
+Q 1498 -53 1116 -53
+z
+" transform="scale(0.015625)"/>
+       <path id="Afacad-Regular-29" d="M 373 -800
+Q 742 -262 944 380
+Q 1147 1022 1147 1733
+Q 1147 2449 944 3089
+Q 742 3729 373 4267
+L 911 4267
+Q 1253 3711 1440 3069
+Q 1627 2427 1627 1733
+Q 1627 1040 1440 398
+Q 1253 -244 911 -800
+L 373 -800
+z
+" transform="scale(0.015625)"/>
+      </defs>
+      <use xlink:href="#Afacad-Regular-57"/>
+      <use xlink:href="#Afacad-Regular-61" transform="translate(83.333328 0)"/>
+      <use xlink:href="#Afacad-Regular-6c" transform="translate(136.111099 0)"/>
+      <use xlink:href="#Afacad-Regular-6c" transform="translate(156.944427 0)"/>
+      <use xlink:href="#Afacad-Regular-2d" transform="translate(177.777756 0)"/>
+      <use xlink:href="#Afacad-Regular-63" transform="translate(202.777756 0)"/>
+      <use xlink:href="#Afacad-Regular-6c" transform="translate(246.527756 0)"/>
+      <use xlink:href="#Afacad-Regular-6f" transform="translate(267.361084 0)"/>
+      <use xlink:href="#Afacad-Regular-63" transform="translate(318.749969 0)"/>
+      <use xlink:href="#Afacad-Regular-6b" transform="translate(362.499969 0)"/>
+      <use xlink:href="#Afacad-Regular-20" transform="translate(406.249969 0)"/>
+      <use xlink:href="#Afacad-Regular-74" transform="translate(427.083298 0)"/>
+      <use xlink:href="#Afacad-Regular-69" transform="translate(458.333298 0)"/>
+      <use xlink:href="#Afacad-Regular-6d" transform="translate(479.166626 0)"/>
+      <use xlink:href="#Afacad-Regular-65" transform="translate(556.944397 0)"/>
+      <use xlink:href="#Afacad-Regular-20" transform="translate(606.249954 0)"/>
+      <use xlink:href="#Afacad-Regular-28" transform="translate(627.083282 0)"/>
+      <use xlink:href="#Afacad-Regular-73" transform="translate(660.416611 0)"/>
+      <use xlink:href="#Afacad-Regular-29" transform="translate(695.833267 0)"/>
+     </g>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="text_9">
+      <!-- parsnip -->
+      <g style="fill: #262626" transform="translate(38.860625 43.173101) scale(0.1 -0.1)">
+       <defs>
+        <path id="Afacad-Regular-70" d="M 427 -1333
+L 427 2667
+L 871 2667
+L 871 2316
+Q 1053 2498 1293 2600
+Q 1533 2702 1809 2702
+Q 2178 2702 2478 2517
+Q 2778 2333 2958 2022
+Q 3138 1711 3138 1333
+Q 3138 956 2958 644
+Q 2778 333 2478 148
+Q 2178 -36 1809 -36
+Q 1547 -36 1316 57
+Q 1085 151 907 316
+L 907 -1333
+L 427 -1333
+z
+M 1747 400
+Q 2000 400 2206 526
+Q 2413 653 2535 864
+Q 2658 1076 2658 1333
+Q 2658 1591 2535 1802
+Q 2413 2013 2206 2140
+Q 2000 2267 1747 2267
+Q 1493 2267 1286 2140
+Q 1080 2013 958 1802
+Q 836 1591 836 1333
+Q 836 1076 958 864
+Q 1080 653 1286 526
+Q 1493 400 1747 400
+z
+" transform="scale(0.015625)"/>
+        <path id="Afacad-Regular-72" d="M 427 0
+L 427 2667
+L 871 2667
+L 871 2178
+Q 1013 2413 1249 2553
+Q 1485 2693 1809 2693
+L 1929 2213
+Q 1845 2240 1733 2240
+Q 1360 2240 1133 2002
+Q 907 1764 907 1324
+L 907 0
+L 427 0
+z
+" transform="scale(0.015625)"/>
+        <path id="Afacad-Regular-6e" d="M 427 0
+L 427 2667
+L 871 2667
+L 871 2236
+Q 1018 2471 1251 2595
+Q 1485 2720 1756 2720
+Q 2040 2720 2282 2580
+Q 2525 2440 2676 2175
+Q 2827 1911 2827 1533
+L 2827 0
+L 2347 0
+L 2347 1467
+Q 2347 1782 2158 2024
+Q 1969 2267 1627 2267
+Q 1347 2267 1127 2064
+Q 907 1862 907 1480
+L 907 0
+L 427 0
+z
+" transform="scale(0.015625)"/>
+       </defs>
+       <use xlink:href="#Afacad-Regular-70"/>
+       <use xlink:href="#Afacad-Regular-61" transform="translate(52.777771 0)"/>
+       <use xlink:href="#Afacad-Regular-72" transform="translate(105.555542 0)"/>
+       <use xlink:href="#Afacad-Regular-73" transform="translate(136.805542 0)"/>
+       <use xlink:href="#Afacad-Regular-6e" transform="translate(172.222198 0)"/>
+       <use xlink:href="#Afacad-Regular-69" transform="translate(222.222198 0)"/>
+       <use xlink:href="#Afacad-Regular-70" transform="translate(243.055527 0)"/>
+      </g>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="text_10">
+      <!-- gemmi -->
+      <g style="fill: #262626" transform="translate(40.596563 70.282735) scale(0.1 -0.1)">
+       <defs>
+        <path id="Afacad-Regular-67" d="M 1507 -1387
+Q 1200 -1387 949 -1298
+Q 698 -1209 502 -1053
+L 636 -511
+Q 769 -702 991 -822
+Q 1213 -942 1502 -942
+Q 1951 -942 2229 -671
+Q 2507 -400 2507 27
+L 2507 351
+Q 2329 173 2087 68
+Q 1845 -36 1569 -36
+Q 1205 -36 902 148
+Q 600 333 420 644
+Q 240 956 240 1333
+Q 240 1711 420 2022
+Q 600 2333 902 2517
+Q 1205 2702 1569 2702
+Q 1845 2702 2087 2600
+Q 2329 2498 2507 2316
+L 2507 2667
+L 2951 2667
+L 2951 0
+Q 2951 -436 2749 -747
+Q 2547 -1058 2218 -1222
+Q 1889 -1387 1507 -1387
+z
+M 1631 400
+Q 1885 400 2091 526
+Q 2298 653 2420 864
+Q 2542 1076 2542 1333
+Q 2542 1591 2420 1802
+Q 2298 2013 2091 2140
+Q 1885 2267 1631 2267
+Q 1378 2267 1171 2140
+Q 965 2013 842 1802
+Q 720 1591 720 1333
+Q 720 1076 842 864
+Q 965 653 1171 526
+Q 1378 400 1631 400
+z
+" transform="scale(0.015625)"/>
+       </defs>
+       <use xlink:href="#Afacad-Regular-67"/>
+       <use xlink:href="#Afacad-Regular-65" transform="translate(52.777771 0)"/>
+       <use xlink:href="#Afacad-Regular-6d" transform="translate(102.083328 0)"/>
+       <use xlink:href="#Afacad-Regular-6d" transform="translate(179.861099 0)"/>
+       <use xlink:href="#Afacad-Regular-69" transform="translate(257.63887 0)"/>
+      </g>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="text_11">
+      <!-- PyCifRW (flex) -->
+      <g style="fill: #262626" transform="translate(10.668438 97.518151) scale(0.1 -0.1)">
+       <defs>
+        <path id="Afacad-Regular-50" d="M 560 0
+L 560 4000
+L 1551 4000
+Q 1947 4000 2220 3880
+Q 2493 3760 2662 3566
+Q 2831 3373 2909 3146
+Q 2987 2920 2987 2702
+Q 2987 2489 2911 2262
+Q 2836 2036 2667 1840
+Q 2498 1644 2222 1524
+Q 1947 1404 1551 1404
+L 1067 1404
+L 1067 0
+L 560 0
+z
+M 1067 1858
+L 1525 1858
+Q 1885 1858 2093 1984
+Q 2302 2111 2391 2304
+Q 2480 2498 2480 2702
+Q 2480 2898 2393 3093
+Q 2307 3289 2100 3418
+Q 1893 3547 1525 3547
+L 1067 3547
+L 1067 1858
+z
+" transform="scale(0.015625)"/>
+        <path id="Afacad-Regular-79" d="M 316 -1333
+L 1182 391
+L 53 2667
+L 596 2667
+L 1165 1511
+Q 1240 1356 1311 1204
+Q 1382 1053 1453 840
+Q 1529 1053 1598 1206
+Q 1667 1360 1747 1511
+L 2325 2667
+L 2836 2667
+L 836 -1333
+L 316 -1333
+z
+" transform="scale(0.015625)"/>
+        <path id="Afacad-Regular-43" d="M 2356 -80
+Q 1925 -80 1545 82
+Q 1165 244 878 528
+Q 591 813 429 1191
+Q 267 1569 267 2000
+Q 267 2431 429 2809
+Q 591 3187 878 3471
+Q 1165 3756 1545 3918
+Q 1925 4080 2356 4080
+Q 2782 4080 3155 3922
+Q 3529 3764 3813 3489
+L 3667 2876
+Q 3462 3204 3117 3402
+Q 2773 3600 2356 3600
+Q 1916 3600 1562 3384
+Q 1209 3169 1000 2806
+Q 791 2444 791 2000
+Q 791 1560 1000 1195
+Q 1209 831 1562 615
+Q 1916 400 2356 400
+Q 2778 400 3120 600
+Q 3462 800 3667 1124
+L 3813 511
+Q 3529 240 3155 80
+Q 2782 -80 2356 -80
+z
+" transform="scale(0.015625)"/>
+        <path id="Afacad-Regular-66" d="M 738 0
+L 738 2267
+L 133 2267
+L 133 2667
+L 751 2667
+L 751 3431
+Q 751 3867 1009 4093
+Q 1267 4320 1622 4320
+Q 1756 4320 1896 4289
+Q 2036 4258 2160 4182
+L 2045 3716
+Q 1858 3920 1609 3920
+Q 1458 3920 1331 3818
+Q 1205 3716 1205 3422
+L 1205 2667
+L 1867 2667
+L 1867 2267
+L 1218 2267
+L 1218 0
+L 738 0
+z
+" transform="scale(0.015625)"/>
+        <path id="Afacad-Regular-52" d="M 573 0
+L 573 4000
+L 1578 4000
+Q 1956 4000 2227 3849
+Q 2498 3698 2647 3451
+Q 2796 3204 2796 2911
+Q 2796 2582 2609 2320
+Q 2422 2058 2098 1933
+L 3440 0
+L 2849 0
+L 1578 1840
+L 1080 1840
+L 1080 0
+L 573 0
+z
+M 1080 2267
+L 1578 2267
+Q 1836 2267 1998 2362
+Q 2160 2458 2238 2607
+Q 2316 2756 2316 2911
+Q 2316 3191 2113 3369
+Q 1911 3547 1578 3547
+L 1080 3547
+L 1080 2267
+z
+" transform="scale(0.015625)"/>
+        <path id="Afacad-Regular-78" d="M 107 0
+L 1045 1413
+L 209 2667
+L 769 2667
+L 1027 2258
+Q 1111 2129 1193 1989
+Q 1276 1849 1338 1702
+Q 1405 1849 1487 1986
+Q 1569 2124 1653 2258
+L 1907 2667
+L 2458 2667
+L 1622 1413
+L 2560 0
+L 1991 0
+L 1627 582
+Q 1547 711 1467 842
+Q 1387 973 1325 1116
+Q 1262 973 1182 842
+Q 1102 711 1022 582
+L 658 0
+L 107 0
+z
+" transform="scale(0.015625)"/>
+       </defs>
+       <use xlink:href="#Afacad-Regular-50"/>
+       <use xlink:href="#Afacad-Regular-79" transform="translate(50 0)"/>
+       <use xlink:href="#Afacad-Regular-43" transform="translate(95.138885 0)"/>
+       <use xlink:href="#Afacad-Regular-69" transform="translate(157.638885 0)"/>
+       <use xlink:href="#Afacad-Regular-66" transform="translate(178.472214 0)"/>
+       <use xlink:href="#Afacad-Regular-52" transform="translate(209.722214 0)"/>
+       <use xlink:href="#Afacad-Regular-57" transform="translate(263.88887 0)"/>
+       <use xlink:href="#Afacad-Regular-20" transform="translate(347.222198 0)"/>
+       <use xlink:href="#Afacad-Regular-28" transform="translate(368.055527 0)"/>
+       <use xlink:href="#Afacad-Regular-66" transform="translate(401.388855 0)"/>
+       <use xlink:href="#Afacad-Regular-6c" transform="translate(432.638855 0)"/>
+       <use xlink:href="#Afacad-Regular-65" transform="translate(453.472183 0)"/>
+       <use xlink:href="#Afacad-Regular-78" transform="translate(502.77774 0)"/>
+       <use xlink:href="#Afacad-Regular-29" transform="translate(544.444397 0)"/>
+      </g>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="text_12">
+      <!-- PyCifRW -->
+      <g style="fill: #262626" transform="translate(33.723125 124.669974) scale(0.1 -0.1)">
+       <use xlink:href="#Afacad-Regular-50"/>
+       <use xlink:href="#Afacad-Regular-79" transform="translate(50 0)"/>
+       <use xlink:href="#Afacad-Regular-43" transform="translate(95.138885 0)"/>
+       <use xlink:href="#Afacad-Regular-69" transform="translate(157.638885 0)"/>
+       <use xlink:href="#Afacad-Regular-66" transform="translate(178.472214 0)"/>
+       <use xlink:href="#Afacad-Regular-52" transform="translate(209.722214 0)"/>
+       <use xlink:href="#Afacad-Regular-57" transform="translate(263.88887 0)"/>
+      </g>
+     </g>
+    </g>
+    <g id="ytick_5">
+     <g id="text_13">
+      <!-- pymatgen -->
+      <g style="fill: #262626" transform="translate(27.262188 151.738202) scale(0.1 -0.1)">
+       <use xlink:href="#Afacad-Regular-70"/>
+       <use xlink:href="#Afacad-Regular-79" transform="translate(52.777771 0)"/>
+       <use xlink:href="#Afacad-Regular-6d" transform="translate(97.916656 0)"/>
+       <use xlink:href="#Afacad-Regular-61" transform="translate(175.694427 0)"/>
+       <use xlink:href="#Afacad-Regular-74" transform="translate(228.472198 0)"/>
+       <use xlink:href="#Afacad-Regular-67" transform="translate(259.722198 0)"/>
+       <use xlink:href="#Afacad-Regular-65" transform="translate(312.499969 0)"/>
+       <use xlink:href="#Afacad-Regular-6e" transform="translate(361.805527 0)"/>
+      </g>
+     </g>
+    </g>
+    <g id="ytick_6">
+     <g id="text_14">
+      <!-- ASE -->
+      <g style="fill: #262626" transform="translate(53.930938 178.932212) scale(0.1 -0.1)">
+       <defs>
+        <path id="Afacad-Regular-41" d="M 80 0
+L 1773 4133
+L 1782 4133
+L 3476 0
+L 2938 0
+L 2467 1187
+L 1067 1187
+L 591 0
+L 80 0
+z
+M 1236 1609
+L 2298 1609
+L 1982 2400
+Q 1925 2551 1871 2697
+Q 1818 2844 1765 3049
+Q 1711 2844 1662 2700
+Q 1613 2556 1551 2400
+L 1236 1609
+z
+" transform="scale(0.015625)"/>
+        <path id="Afacad-Regular-53" d="M 1422 -53
+Q 1067 -53 780 89
+Q 493 231 325 436
+L 471 1049
+Q 596 800 844 600
+Q 1093 400 1440 400
+Q 1756 400 1962 600
+Q 2169 800 2169 1093
+Q 2169 1307 2067 1444
+Q 1965 1582 1836 1662
+Q 1707 1742 1631 1778
+L 1142 2027
+Q 1027 2089 856 2200
+Q 685 2311 556 2506
+Q 427 2702 427 3013
+Q 427 3316 567 3551
+Q 707 3787 958 3920
+Q 1209 4053 1533 4053
+Q 1853 4053 2097 3940
+Q 2342 3827 2480 3707
+L 2333 3093
+Q 2222 3280 2004 3444
+Q 1787 3609 1511 3609
+Q 1245 3609 1085 3451
+Q 925 3293 925 3062
+Q 925 2884 1007 2768
+Q 1089 2653 1193 2586
+Q 1298 2520 1365 2484
+L 1862 2236
+Q 1951 2191 2086 2111
+Q 2222 2031 2355 1900
+Q 2489 1769 2578 1580
+Q 2667 1391 2667 1124
+Q 2667 782 2504 515
+Q 2342 249 2062 98
+Q 1782 -53 1422 -53
+z
+" transform="scale(0.015625)"/>
+        <path id="Afacad-Regular-45" d="M 560 0
+L 560 4000
+L 2533 4000
+L 2533 3547
+L 1067 3547
+L 1067 2693
+L 2222 2693
+L 2222 2240
+L 1067 2240
+L 1067 453
+L 2533 453
+L 2533 0
+L 560 0
+z
+" transform="scale(0.015625)"/>
+       </defs>
+       <use xlink:href="#Afacad-Regular-41"/>
+       <use xlink:href="#Afacad-Regular-53" transform="translate(55.555557 0)"/>
+       <use xlink:href="#Afacad-Regular-45" transform="translate(101.388885 0)"/>
+      </g>
+     </g>
+    </g>
+   </g>
+   <g id="patch_3">
+    <path d="M 75.445 32.372756
+L 108.008615 32.372756
+L 108.008615 47.306258
+L 75.445 47.306258
+z
+" clip-path="url(#pee21b69ce9)" style="fill: #006c60; stroke: #ffffff; stroke-width: 0.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 75.445 59.524578
+L 76.363961 59.524578
+L 76.363961 74.45808
+L 75.445 74.45808
+z
+" clip-path="url(#pee21b69ce9)" style="fill: #ff9b7d; stroke: #ffffff; stroke-width: 0.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 75.445 86.6764
+L 162.900726 86.6764
+L 162.900726 101.609902
+L 75.445 101.609902
+z
+" clip-path="url(#pee21b69ce9)" style="fill: #203d79; stroke: #ffffff; stroke-width: 0.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 75.445 113.828223
+L 465.615 113.828223
+L 465.615 128.761725
+L 75.445 128.761725
+z
+" clip-path="url(#pee21b69ce9)" style="fill: url(#h6f063c2dcf); stroke: #ffffff; stroke-width: 0.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 75.445 140.980045
+L 465.615 140.980045
+L 465.615 155.913547
+L 75.445 155.913547
+z
+" clip-path="url(#pee21b69ce9)" style="fill: url(#h6f063c2dcf); stroke: #ffffff; stroke-width: 0.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 75.445 168.131867
+L 465.615 168.131867
+L 465.615 183.065369
+L 75.445 183.065369
+z
+" clip-path="url(#pee21b69ce9)" style="fill: url(#h6f063c2dcf); stroke: #ffffff; stroke-width: 0.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 75.445 190.6
+L 465.615 190.6
+" style="fill: none; stroke: #262626; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="text_15">
+    <!--   5.0 s -->
+    <g style="fill: #262626" transform="translate(111.910315 41.902476) scale(0.09 -0.09)">
+     <defs>
+      <path id="Afacad-Regular-2e" d="M 600 -53
+Q 453 -53 353 47
+Q 253 147 253 293
+Q 253 440 353 540
+Q 453 640 600 640
+Q 751 640 849 540
+Q 947 440 947 293
+Q 947 147 849 47
+Q 751 -53 600 -53
+z
+" transform="scale(0.015625)"/>
+     </defs>
+     <use xlink:href="#Afacad-Regular-20"/>
+     <use xlink:href="#Afacad-Regular-20" transform="translate(20.833328 0)"/>
+     <use xlink:href="#Afacad-Regular-35" transform="translate(41.666656 0)"/>
+     <use xlink:href="#Afacad-Regular-2e" transform="translate(93.749985 0)"/>
+     <use xlink:href="#Afacad-Regular-30" transform="translate(112.499985 0)"/>
+     <use xlink:href="#Afacad-Regular-20" transform="translate(164.583313 0)"/>
+     <use xlink:href="#Afacad-Regular-73" transform="translate(185.416641 0)"/>
+    </g>
+   </g>
+   <g id="text_16">
+    <!--   141 ms -->
+    <g style="fill: #262626" transform="translate(80.265661 69.054298) scale(0.09 -0.09)">
+     <use xlink:href="#Afacad-Regular-20"/>
+     <use xlink:href="#Afacad-Regular-20" transform="translate(20.833328 0)"/>
+     <use xlink:href="#Afacad-Regular-31" transform="translate(41.666656 0)"/>
+     <use xlink:href="#Afacad-Regular-34" transform="translate(93.749985 0)"/>
+     <use xlink:href="#Afacad-Regular-31" transform="translate(145.833313 0)"/>
+     <use xlink:href="#Afacad-Regular-20" transform="translate(197.916641 0)"/>
+     <use xlink:href="#Afacad-Regular-6d" transform="translate(218.749969 0)"/>
+     <use xlink:href="#Afacad-Regular-73" transform="translate(296.52774 0)"/>
+    </g>
+   </g>
+   <g id="text_17">
+    <!--   13.4 s -->
+    <g style="fill: #262626" transform="translate(166.802426 96.20612) scale(0.09 -0.09)">
+     <use xlink:href="#Afacad-Regular-20"/>
+     <use xlink:href="#Afacad-Regular-20" transform="translate(20.833328 0)"/>
+     <use xlink:href="#Afacad-Regular-31" transform="translate(41.666656 0)"/>
+     <use xlink:href="#Afacad-Regular-33" transform="translate(93.749985 0)"/>
+     <use xlink:href="#Afacad-Regular-2e" transform="translate(145.833313 0)"/>
+     <use xlink:href="#Afacad-Regular-34" transform="translate(164.583313 0)"/>
+     <use xlink:href="#Afacad-Regular-20" transform="translate(216.666641 0)"/>
+     <use xlink:href="#Afacad-Regular-73" transform="translate(237.499969 0)"/>
+    </g>
+   </g>
+   <g id="text_18">
+    <!--   62 s -->
+    <g style="fill: #555555" transform="translate(465.615 123.357942) scale(0.09 -0.09)">
+     <use xlink:href="#Afacad-Regular-20"/>
+     <use xlink:href="#Afacad-Regular-20" transform="translate(20.833328 0)"/>
+     <use xlink:href="#Afacad-Regular-36" transform="translate(41.666656 0)"/>
+     <use xlink:href="#Afacad-Regular-32" transform="translate(93.749985 0)"/>
+     <use xlink:href="#Afacad-Regular-20" transform="translate(145.833313 0)"/>
+     <use xlink:href="#Afacad-Regular-73" transform="translate(166.666641 0)"/>
+    </g>
+   </g>
+   <g id="text_19">
+    <!--   177 s -->
+    <g style="fill: #555555" transform="translate(465.615 150.509765) scale(0.09 -0.09)">
+     <defs>
+      <path id="Afacad-Regular-37" d="M 569 0
+L 2338 3547
+L 427 3547
+L 427 4000
+L 3089 4000
+L 1111 0
+L 569 0
+z
+" transform="scale(0.015625)"/>
+     </defs>
+     <use xlink:href="#Afacad-Regular-20"/>
+     <use xlink:href="#Afacad-Regular-20" transform="translate(20.833328 0)"/>
+     <use xlink:href="#Afacad-Regular-31" transform="translate(41.666656 0)"/>
+     <use xlink:href="#Afacad-Regular-37" transform="translate(93.749985 0)"/>
+     <use xlink:href="#Afacad-Regular-37" transform="translate(145.833313 0)"/>
+     <use xlink:href="#Afacad-Regular-20" transform="translate(197.916641 0)"/>
+     <use xlink:href="#Afacad-Regular-73" transform="translate(218.749969 0)"/>
+    </g>
+   </g>
+   <g id="text_20">
+    <!--   3639 s -->
+    <g style="fill: #555555" transform="translate(465.615 177.661587) scale(0.09 -0.09)">
+     <defs>
+      <path id="Afacad-Regular-39" d="M 1227 0
+L 2085 1578
+Q 1965 1489 1836 1455
+Q 1707 1422 1578 1422
+Q 1231 1422 940 1593
+Q 649 1764 471 2057
+Q 293 2351 293 2724
+Q 293 3102 477 3402
+Q 662 3702 971 3877
+Q 1280 4053 1653 4053
+Q 2031 4053 2338 3877
+Q 2645 3702 2829 3402
+Q 3013 3102 3013 2724
+Q 3013 2551 2971 2391
+Q 2929 2231 2853 2084
+L 1778 0
+L 1227 0
+z
+M 1653 1840
+Q 1898 1840 2098 1958
+Q 2298 2076 2415 2276
+Q 2533 2476 2533 2720
+Q 2533 2964 2415 3164
+Q 2298 3364 2098 3482
+Q 1898 3600 1653 3600
+Q 1409 3600 1209 3482
+Q 1009 3364 891 3164
+Q 773 2964 773 2720
+Q 773 2476 891 2276
+Q 1009 2076 1209 1958
+Q 1409 1840 1653 1840
+z
+" transform="scale(0.015625)"/>
+     </defs>
+     <use xlink:href="#Afacad-Regular-20"/>
+     <use xlink:href="#Afacad-Regular-20" transform="translate(20.833328 0)"/>
+     <use xlink:href="#Afacad-Regular-33" transform="translate(41.666656 0)"/>
+     <use xlink:href="#Afacad-Regular-36" transform="translate(93.749985 0)"/>
+     <use xlink:href="#Afacad-Regular-33" transform="translate(145.833313 0)"/>
+     <use xlink:href="#Afacad-Regular-39" transform="translate(197.916641 0)"/>
+     <use xlink:href="#Afacad-Regular-20" transform="translate(249.999969 0)"/>
+     <use xlink:href="#Afacad-Regular-73" transform="translate(270.833298 0)"/>
+    </g>
+   </g>
+   <g id="text_21">
+    <!-- ltalirz/cif-parsing-benchmark -->
+    <g style="fill: #262626" transform="translate(202.070938 18.838125) scale(0.12 -0.12)">
+     <defs>
+      <path id="Afacad-Regular-7a" d="M 178 0
+L 1440 2240
+L 258 2240
+L 258 2667
+L 2178 2667
+L 916 427
+L 2107 427
+L 2107 0
+L 178 0
+z
+" transform="scale(0.015625)"/>
+      <path id="Afacad-Regular-2f" d="M -373 -800
+L 2053 4267
+L 2507 4267
+L 80 -800
+L -373 -800
+z
+" transform="scale(0.015625)"/>
+      <path id="Afacad-Regular-62" d="M 1809 -36
+Q 1533 -36 1293 68
+Q 1053 173 871 351
+L 871 0
+L 427 0
+L 427 4267
+L 907 4267
+L 907 2351
+Q 1085 2516 1316 2609
+Q 1547 2702 1809 2702
+Q 2178 2702 2478 2517
+Q 2778 2333 2958 2022
+Q 3138 1711 3138 1333
+Q 3138 956 2958 644
+Q 2778 333 2478 148
+Q 2178 -36 1809 -36
+z
+M 1747 400
+Q 2000 400 2206 526
+Q 2413 653 2535 864
+Q 2658 1076 2658 1333
+Q 2658 1591 2535 1802
+Q 2413 2013 2206 2140
+Q 2000 2267 1747 2267
+Q 1493 2267 1286 2140
+Q 1080 2013 958 1802
+Q 836 1591 836 1333
+Q 836 1076 958 864
+Q 1080 653 1286 526
+Q 1493 400 1747 400
+z
+" transform="scale(0.015625)"/>
+      <path id="Afacad-Regular-68" d="M 427 0
+L 427 4267
+L 907 4267
+L 907 2289
+Q 1058 2498 1280 2609
+Q 1502 2720 1756 2720
+Q 2040 2720 2282 2580
+Q 2525 2440 2676 2175
+Q 2827 1911 2827 1533
+L 2827 0
+L 2347 0
+L 2347 1467
+Q 2347 1782 2158 2024
+Q 1969 2267 1627 2267
+Q 1347 2267 1127 2064
+Q 907 1862 907 1480
+L 907 0
+L 427 0
+z
+" transform="scale(0.015625)"/>
+     </defs>
+     <use xlink:href="#Afacad-Regular-6c"/>
+     <use xlink:href="#Afacad-Regular-74" transform="translate(20.833328 0)"/>
+     <use xlink:href="#Afacad-Regular-61" transform="translate(52.083328 0)"/>
+     <use xlink:href="#Afacad-Regular-6c" transform="translate(104.861099 0)"/>
+     <use xlink:href="#Afacad-Regular-69" transform="translate(125.694427 0)"/>
+     <use xlink:href="#Afacad-Regular-72" transform="translate(146.527756 0)"/>
+     <use xlink:href="#Afacad-Regular-7a" transform="translate(177.777756 0)"/>
+     <use xlink:href="#Afacad-Regular-2f" transform="translate(214.583313 0)"/>
+     <use xlink:href="#Afacad-Regular-63" transform="translate(247.916641 0)"/>
+     <use xlink:href="#Afacad-Regular-69" transform="translate(291.666641 0)"/>
+     <use xlink:href="#Afacad-Regular-66" transform="translate(312.499969 0)"/>
+     <use xlink:href="#Afacad-Regular-2d" transform="translate(343.749969 0)"/>
+     <use xlink:href="#Afacad-Regular-70" transform="translate(368.749969 0)"/>
+     <use xlink:href="#Afacad-Regular-61" transform="translate(421.52774 0)"/>
+     <use xlink:href="#Afacad-Regular-72" transform="translate(474.305511 0)"/>
+     <use xlink:href="#Afacad-Regular-73" transform="translate(505.555511 0)"/>
+     <use xlink:href="#Afacad-Regular-69" transform="translate(540.972168 0)"/>
+     <use xlink:href="#Afacad-Regular-6e" transform="translate(561.805496 0)"/>
+     <use xlink:href="#Afacad-Regular-67" transform="translate(611.805496 0)"/>
+     <use xlink:href="#Afacad-Regular-2d" transform="translate(664.583267 0)"/>
+     <use xlink:href="#Afacad-Regular-62" transform="translate(689.583267 0)"/>
+     <use xlink:href="#Afacad-Regular-65" transform="translate(742.361038 0)"/>
+     <use xlink:href="#Afacad-Regular-6e" transform="translate(791.666595 0)"/>
+     <use xlink:href="#Afacad-Regular-63" transform="translate(841.666595 0)"/>
+     <use xlink:href="#Afacad-Regular-68" transform="translate(885.416595 0)"/>
+     <use xlink:href="#Afacad-Regular-6d" transform="translate(935.416595 0)"/>
+     <use xlink:href="#Afacad-Regular-61" transform="translate(1013.194366 0)"/>
+     <use xlink:href="#Afacad-Regular-72" transform="translate(1065.972137 0)"/>
+     <use xlink:href="#Afacad-Regular-6b" transform="translate(1097.222137 0)"/>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pee21b69ce9">
+   <rect x="75.445" y="24.838125" width="390.17" height="165.761875"/>
+  </clipPath>
+ </defs>
+ <defs>
+  <pattern id="h6f063c2dcf" patternUnits="userSpaceOnUse" x="0" y="0" width="72" height="72">
+   <rect x="0" y="0" width="73" height="73" fill="#b0b0b0"/>
+   <path d="M -36 36
+L 36 -36
+M -32 40
+L 40 -32
+M -28 44
+L 44 -28
+M -24 48
+L 48 -24
+M -20 52
+L 52 -20
+M -16 56
+L 56 -16
+M -12 60
+L 60 -12
+M -8 64
+L 64 -8
+M -4 68
+L 68 -4
+M 0 72
+L 72 0
+M 4 76
+L 76 4
+M 8 80
+L 80 8
+M 12 84
+L 84 12
+M 16 88
+L 88 16
+M 20 92
+L 92 20
+M 24 96
+L 96 24
+M 28 100
+L 100 28
+M 32 104
+L 104 32
+M 36 108
+L 108 36
+" style="fill: #ffffff; stroke: #ffffff; stroke-width: 1.0; stroke-linecap: butt; stroke-linejoin: miter"/>
+  </pattern>
+ </defs>
+</svg>
