@@ -1028,8 +1028,11 @@ class CifFile:
                     line = _accumulate_nonsimple_data(
                         data_iter, _strip_comments(next(data_iter))
                     )
-                    parsed_line = self._cpat["space_delimited_data"].findall(line)
-                    parsed_line = [m for m in parsed_line if m != "" and m != ","]
+                    if "'" not in line and '"' not in line and ";" not in line:
+                        parsed_line = line.split()
+                    else:
+                        parsed_line = self._cpat["space_delimited_data"].findall(line)
+                        parsed_line = [m for m in parsed_line if m != "" and m != ","]
                     if parsed_line:
                         loop_data.append(parsed_line)
                         max_len = max(max_len, max(map(len, parsed_line)))
