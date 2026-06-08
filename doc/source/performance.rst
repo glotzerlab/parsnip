@@ -4,7 +4,7 @@
 Performance
 ===========
 
-Although `parsnip` is optimized for accuracy rather than performace, our parsing
+Although ``parsnip`` is optimized for accuracy rather than performace, our parsing
 strategy results in file reads and unit-cell reconstructions that are 3-500x faster than
 comparable tools. The following data makes use of [ltalirz/cif-parsing-benchmark](https://github.com/ltalirz/cif-parsing-benchmark), a benchmark that profiles the parsing
 throughput of several open-source CIF libraries.
@@ -13,7 +13,7 @@ throughput of several open-source CIF libraries.
    :width: 90%
    :align: center
 
-While not the fastest CIF parser around, `parsnip` achieves competetive performance when
+While not the fastest CIF parser around, ``parsnip`` achieves competetive performance when
 reading files in addition to our class-leading accuracy.
 
 Increasing Performance
@@ -25,7 +25,7 @@ tools for resolving this: first, ``parse_mode="python_float"`` attempts to build
 cells using floating point arithmetic rather than rational expression. This is less
 accurate, but is still sufficient for high-quality databases and stuctures. For the
 best combination of performance and accuracy, installing the `cfractions`_ library lets
-**parsnip** use more optimized code for unit cell reconstruction. This is functionally
+``parsnip`` use more optimized code for unit cell reconstruction. This is functionally
 equivalent to the default mode, but several times faster.
 
 .. _cfractions: https://pypi.org/project/cfractions/
@@ -55,4 +55,4 @@ Reproducing these Benchmarks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 All benchmarks in this file were obtained using Python 3.13.2 on an M1 Macbook Pro, with
-parsnip version <TODO> and the `uv.lock` file associated with that tag.
+parsnip version <TODO> and the ``uv.lock`` file associated with that tag.
