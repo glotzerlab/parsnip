@@ -13,7 +13,11 @@ echo "Cloning cif-parsing-benchmark into $BENCH_DIR"
 git clone git@github.com:janbridley/cif-parsing-benchmark.git "$BENCH_DIR"
 cd "$BENCH_DIR"
 
-uv pip install -r requirements.txt
+uv venv .venv
+source .venv/bin/activate
+
+uv sync
+
 tar -xf structures.tar.xz
 echo "Running benchmarks..." && bash benchmark.sh
 
