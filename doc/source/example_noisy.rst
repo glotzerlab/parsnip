@@ -86,4 +86,3 @@ once again.
         >>> cif = CifFile("hP3-four-decimal-places.cif")
         >>> one_decimal_place = cif.build_unit_cell(n_decimal_places=1)
         >>> np.testing.assert_array_equal(one_decimal_place, three_decimal_places)
-
