@@ -10,7 +10,7 @@ comparable tools. The following data makes use of [ltalirz/cif-parsing-benchmark
 throughput of several open-source CIF libraries.
 
 .. figure:: ../generate_benchmark_plots/benchmark_105.svg
-   :width: 50%
+   :width: 90%
    :align: center
 
 While not the fastest CIF parser around, `parsnip` achieves competetive performance when
@@ -47,7 +47,7 @@ equivalent to the default mode, but several times faster.
 
 
 .. figure:: ../generate_benchmark_plots/benchmark_parse_modes.svg
-   :width: 50%
+   :width: 90%
    :align: center
 
 
