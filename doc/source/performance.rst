@@ -49,3 +49,11 @@ equivalent to the default mode, but several times faster.
 .. figure:: ../generate_benchmark_plots/benchmark_parse_modes.svg
    :width: 50%
    :align: center
+
+
+Reproducing these Benchmarks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+All benchmarks in this file were obtained using Python 3.13.2 on an M1 Macbook Pro, with
+parsnip version <TODO> and the `uv.lock` file associated with that tag.
+

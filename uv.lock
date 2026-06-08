@@ -1667,6 +1667,11 @@ tests = [
     { name = "wheel" },
 ]
 
+[package.dev-dependencies]
+doc = [
+    { name = "parsnip-cif", extra = ["doc"] },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "ase", marker = "extra == 'tests'" },
@@ -1674,8 +1679,8 @@ requires-dist = [
     { name = "furo", marker = "extra == 'doc'" },
     { name = "gemmi", marker = "extra == 'tests'" },
     { name = "gsd", marker = "extra == 'tests'" },
-    { name = "more-itertools" },
-    { name = "numpy", specifier = ">=1.19" },
+    { name = "more-itertools", specifier = "<12.0" },
+    { name = "numpy", specifier = ">=1.19,<3.0" },
     { name = "numpy", marker = "extra == 'doc'", specifier = ">=1.26.4" },
     { name = "pycifrw", marker = "extra == 'tests'", specifier = "!=5.0.0" },
     { name = "pytest", marker = "extra == 'tests'" },
@@ -1691,6 +1696,9 @@ requires-dist = [
     { name = "wheel", marker = "extra == 'tests'" },
 ]
 provides-extras = ["tests", "doc", "sympy"]
+
+[package.metadata.requires-dev]
+doc = [{ name = "parsnip-cif", extras = ["doc"] }]
 
 [[package]]
 name = "pillow"
