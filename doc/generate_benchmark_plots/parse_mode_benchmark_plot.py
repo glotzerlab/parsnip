@@ -63,6 +63,7 @@ def bench(cif_path: Path, n_runs: int = 200, n_warmup: int = 10):
 
 
 def plot(results, out_path: str):
+    """Generate a plot of the parse mode benchmark results."""
     import matplotlib
 
     matplotlib.use("Agg")
@@ -86,8 +87,8 @@ def plot(results, out_path: str):
     }
 
     labels = list(results.keys())
-    means = [results[l].mean() * 1e6 for l in labels]
-    stds = [results[l].std() * 1e6 for l in labels]
+    means = [results[label].mean() * 1e6 for label in labels]
+    stds = [results[label].std() * 1e6 for label in labels]
     display_names = {
         "python_float": "python_float",
         "cfractions": "rational (cfractions)",
