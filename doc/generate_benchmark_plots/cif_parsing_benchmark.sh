@@ -21,6 +21,6 @@ uv sync
 tar -xf structures.tar.xz
 echo "Running benchmarks..." && bash benchmark.sh
 
-python "$PLOT_DIR/plot.py" --out "$PLOT_DIR/benchmark_105.svg"
+python "$PLOT_DIR/cif_parsing_benchmark_plot.py" --out "$PLOT_DIR/benchmark_105.svg"
 
 echo "... saved to $PLOT_DIR/benchmark_105.svg"
