@@ -122,9 +122,12 @@ near the leaves of the tree that appear to contain data. Most commonly, this all
 `parsnip` to parse data entries with missing or incorrectly escaped delimiters,
 correctly extracting data that would otherwise be lost. This is a departure from the
 standard "validating" parser strategy, but it enables fast and robust data extraction
-without significant increases to code complexity.
+without significant increases to code complexity. As detailed in our performance guide,
+`parsnip` an complete a standardized CIF benchmark 3 to 100 times faster than most
+open-source libraries, though significantly slower than the novel **gemmi** parser
+[@GEMMI].
 
-While this parsing technique alone provides significant accuracy benefits, there are
+While our parsing technique alone provides significant accuracy benefits, there are
 still many files that cannot be accurately reconstructed by other tools. Standard,
 "symmetrized" CIF data requires the application of symmetry operations to reconstruct a
 lattice. These operations are the sum of an experimentally-determined value Wyckoff
