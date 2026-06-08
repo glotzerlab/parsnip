@@ -120,7 +120,7 @@ def plot(results, out_path: str):
         )
 
     ax.set_yticks(y)
-    ax.set_yticklabels([display_names[l] for l in labels])
+    ax.set_yticklabels([display_names[lab] for lab in labels])
     ax.invert_yaxis()
     ax.set_xlim(0, max(means) * 1.35)
     ax.set_xlabel("Wall-clock time per atom (μs)", fontproperties=font)
@@ -140,7 +140,7 @@ def plot(results, out_path: str):
 
 if __name__ == "__main__":
     out = Path(__file__).parent / "benchmark_parse_modes.svg"
-    runs = 200
+    runs = 5_000
 
     print(f"Benchmarking {DEFAULT_CIF} ({runs} runs per mode)")
     results = bench(DEFAULT_CIF, n_runs=runs)
