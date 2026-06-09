@@ -547,6 +547,7 @@ class CifFile:
         additional_columns: str | Iterable[str] | None = None,
         parse_mode: Literal["rational", "python_float", "sympy"] = "rational",
         verbose: bool = False,
+        snap_fractions: bool = True,
     ):
         """Reconstruct fractional atomic positions from Wyckoff sites and symops.
 
@@ -622,6 +623,10 @@ class CifFile:
             verbose : bool, optional
                 Whether to print debug information about the uniqueness checks.
                 Default value = ``False``
+            snap_fractions : bool, optional
+                Whether to snap decimal approximations of common crystallographic
+                fractions (e.g., ``0.3333`` to ``1/3``) before applying symmetry
+                operations. Default value = ``True``
 
         Returns
         -------
@@ -691,13 +696,13 @@ class CifFile:
             )
             raise ParseError(msg)
 
-        snapped = np.vectorize(_snap_coord_str)(frac_strs)
+        coords = np.vectorize(_snap_coord_str)(frac_strs) if snap_fractions else frac_strs
         if verbose:
-            mask = snapped != frac_strs
-            for original, new in zip(frac_strs[mask], snapped[mask]):
+            mask = coords != frac_strs
+            for original, new in zip(frac_strs[mask], coords[mask]):
                 print(f"  Snapped {original} -> {new}")
         all_frac_positions = [
-            _safe_eval(symops_str, *xyz, parse_mode=parse_mode) for xyz in snapped
+            _safe_eval(symops_str, *xyz, parse_mode=parse_mode) for xyz in coords
         ]  # Compute N_symmetry_elements coordinates for each Wyckoff site
         pos = np.vstack(all_frac_positions)
 
