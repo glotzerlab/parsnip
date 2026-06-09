@@ -109,10 +109,15 @@ _SAFE_TEMPLATE_RE = re.compile(r"[^\d\[\]\,\+\-\/\*\.xyz]")
 _SAFE_FRACTN_RE = re.compile(rf"([-+]?\d{_PROG_STAR}[/.]?\d{_PROG_PLUS})")
 _IDEAL_FRACS = (
     Fraction(0),
+    Fraction(1, 12),
     Fraction(1, 6),
     Fraction(1, 3),
+    Fraction(5, 12),
+    Fraction(1, 2),
+    Fraction(7, 12),
     Fraction(2, 3),
     Fraction(5, 6),
+    Fraction(11, 12),
 )
 _UNCERT_RE = re.compile(r"\(.*?\)")
 
@@ -137,7 +142,7 @@ def _snap_coord_str(s: str) -> str:
     if frac_part in _IDEAL_FRACS:
         return s
     dp = len(clean.partition(".")[2]) if "." in clean else 0
-    if dp == 0:
+    if dp <= 1:
         return s
     half_ulp = 0.5 * 10**-dp
     for ideal in _IDEAL_FRACS:
