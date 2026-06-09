@@ -13,6 +13,7 @@ Added
 - Spacegroup symop lookup when a table of translation operators is not provided (#160)
 - Support for ``loop_`` data entries containing unescaped quotes (#162)
 - Improved performance when parsing well-structured CIF files (#222)
+- Improved performance when using the ``python_float`` parse mode (#224)
 
 Changed
 ~~~~~~~
