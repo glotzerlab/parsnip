@@ -24,7 +24,7 @@ def lookup_test_cases():
 
     # H-M Symbols, tiled out into the full/short and with/without setting options.
     hm_map = {}
-    for data in RAW_DATA.values():
+    for data in sorted(RAW_DATA.values(), key=lambda d: d["is_default_setting"]):
         variants = [
             data["hermann_mauguin_full"],
             data["hermann_mauguin_full"].split(":")[0],
@@ -40,7 +40,7 @@ def lookup_test_cases():
 
     # International tables numbers
     it_map = {}
-    for data in RAW_DATA.values():
+    for data in sorted(RAW_DATA.values(), key=lambda d: d["is_default_setting"]):
         it_map[_normalize(data["table_number"])] = (
             data["table_number"],
             data["symops"],
