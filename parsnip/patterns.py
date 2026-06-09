@@ -13,9 +13,9 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 from fractions import Fraction as _StdFraction
 from importlib.util import find_spec as _find_spec
-import sys
 from pathlib import Path
 from typing import Literal, TypeVar
 
@@ -104,8 +104,13 @@ See section 3.2 of dx.doi.org/10.1107/S1600576715021871 for clarification.
 
 _SAFE_STRING_RE = re.compile(r"(\(\d+\))|[^\d\[\]\,\+\-\/\*\.]")
 _SAFE_FRACTN_RE = re.compile(rf"([-+]?\d{_PROG_STAR}[/.]?\d{_PROG_PLUS})")
-_IDEAL_FRACS = (Fraction(0), Fraction(1, 6), Fraction(1, 4), Fraction(1, 3),
-                Fraction(1, 2), Fraction(2, 3), Fraction(3, 4), Fraction(5, 6))
+_IDEAL_FRACS = (
+    Fraction(0),
+    Fraction(1, 6),
+    Fraction(1, 3),
+    Fraction(2, 3),
+    Fraction(5, 6),
+)
 _UNCERT_RE = re.compile(r"\(.*?\)")
 
 
