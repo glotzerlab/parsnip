@@ -126,7 +126,7 @@ def _snap_coord_str(s: str) -> str:
     except (ValueError, ZeroDivisionError):
         return s
     frac_part = abs(f) % 1
-    if frac_part == 0 or frac_part in _IDEAL_FRACS:
+    if frac_part in _IDEAL_FRACS:
         return s
     dp = len(clean.partition(".")[2]) if "." in clean else 0
     if dp == 0:
