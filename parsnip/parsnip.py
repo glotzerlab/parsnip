@@ -546,8 +546,8 @@ class CifFile:
         n_decimal_places: int = 3,
         additional_columns: str | Iterable[str] | None = None,
         parse_mode: Literal["rational", "python_float", "sympy"] = "rational",
-        verbose: bool = False,
         snap_fractions: bool = True,
+        verbose: bool = False,
     ):
         """Reconstruct fractional atomic positions from Wyckoff sites and symops.
 
@@ -620,13 +620,13 @@ class CifFile:
                 (``parse_mode='python_float'``) arithmetic. 'rational' is more accurate
                 than 'python_float', but may take more time.
                 Default value = ``'rational'``
-            verbose : bool, optional
-                Whether to print debug information about the uniqueness checks.
-                Default value = ``False``
             snap_fractions : bool, optional
                 Whether to snap decimal approximations of common crystallographic
                 fractions (e.g., ``0.3333`` to ``1/3``) before applying symmetry
                 operations. Default value = ``True``
+            verbose : bool, optional
+                Whether to print debug information about the uniqueness checks.
+                Default value = ``False``
 
         Returns
         -------
