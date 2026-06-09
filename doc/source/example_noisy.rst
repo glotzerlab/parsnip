@@ -36,7 +36,7 @@ places of accuracy, while the symmetry operations are provided in a rational for
 **parsnip**'s default settings are able to correctly reproduce the unit cell -- but
 the mismatch between numerical data and the symmetry operation strings can cause issues.
 If we truncate the Wyckoff position data, even by one decimal place, the additional
-numerical error can cause errors in our final structure:
+numerical error can result in extra atoms in the output structure:
 
 .. literalinclude:: hP3-four-decimal-places.cif
    :diff: hP3.cif
