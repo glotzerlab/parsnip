@@ -13,6 +13,9 @@ Added
 - Spacegroup symop lookup when a table of translation operators is not provided (#160)
 - Support for ``loop_`` data entries containing unescaped quotes (#162)
 - Improved performance when parsing well-structured CIF files (#222)
+- Configurable toggle for "snapping" near-fractional Wyckoff positions to exact ratios.
+  This improves the parsing accuracy for structures with incorrectly or inconsistently
+  rounded fractions (#223)
 
 Changed
 ~~~~~~~
