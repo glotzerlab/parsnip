@@ -155,7 +155,7 @@ def test_build_unit_cell(cif_data, n_decimal_places, parse_mode, cols):
         return  # Reconstructed with different wrapping?
     ase_frac = ase_data.get_scaled_positions() % 1
     diff = np.abs(parsnip_frac - ase_frac) % 1
-    np.testing.assert_allclose(np.minimum(diff, 1 - diff), 0, atol=1e-3)
+    np.testing.assert_allclose(np.minimum(diff, 1 - diff), 0, atol=5e-6)
 
 
 @cif_files_mark
