@@ -692,6 +692,10 @@ class CifFile:
             raise ParseError(msg)
 
         snapped = np.vectorize(_snap_coord_str)(frac_strs)
+        if verbose:
+            mask = snapped != frac_strs
+            for original, new in zip(frac_strs[mask], snapped[mask]):
+                print(f"  Snapped {original} -> {new}")
         all_frac_positions = [
             _safe_eval(symops_str, *xyz, parse_mode=parse_mode) for xyz in snapped
         ]  # Compute N_symmetry_elements coordinates for each Wyckoff site
