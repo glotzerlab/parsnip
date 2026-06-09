@@ -95,6 +95,7 @@ from parsnip.patterns import (
     _WHITESPACE,
     _accumulate_nonsimple_data,
     _box_from_lengths_and_angles,
+    _compile_float_eval,
     _contains_wildcard,
     _dtype_from_int,
     _flatten_or_none,
@@ -690,9 +691,14 @@ class CifFile:
             )
             raise ParseError(msg)
 
-        all_frac_positions = [
-            _safe_eval(symops_str, *xyz, parse_mode=parse_mode) for xyz in frac_strs
-        ]  # Compute N_symmetry_elements coordinates for each Wyckoff site
+        if parse_mode == "python_float":
+            _fn = _compile_float_eval(symops_str)
+            wyckoff_floats = cast_array_to_float(frac_strs, dtype=float)
+            all_frac_positions = [_fn(*xyz) for xyz in wyckoff_floats]
+        else:
+            all_frac_positions = [
+                _safe_eval(symops_str, *xyz, parse_mode=parse_mode) for xyz in frac_strs
+            ]
         pos = np.vstack(all_frac_positions)
 
         # Wrap into box - works generally because these are fractional coordinates
