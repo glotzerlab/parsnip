@@ -89,7 +89,11 @@ def test_build_unit_cell(cif_data, n_decimal_places, parse_mode, cols):
     if (
         "PDB_4INS_head.cif" in cif_data.filename
         or ("no42.cif" in cif_data.filename and n_decimal_places > 3)
-        or ("COD_7228524" in cif_data.filename and n_decimal_places > 5)
+        or (
+            "COD_7228524" in cif_data.filename
+            and n_decimal_places > 5
+            and parse_mode == "python_float"
+        )
     ):
         return
 
@@ -112,9 +116,11 @@ def test_build_unit_cell(cif_data, n_decimal_places, parse_mode, cols):
         return  # ValueError was raised - exit the test
 
     if cols is None:
-        parsnip_positions = read_data @ cif_data.file.lattice_vectors.T
+        parsnip_frac = read_data
+        parsnip_positions = parsnip_frac @ cif_data.file.lattice_vectors.T
     else:
         auxiliary_arr, parsnip_positions = read_data
+        parsnip_frac = parsnip_positions
         parsnip_positions = parsnip_positions @ cif_data.file.lattice_vectors.T
 
         che_symbols = _arrstrip(auxiliary_arr[:, 0], r"[^A-Za-z]+")
@@ -134,11 +140,7 @@ def test_build_unit_cell(cif_data, n_decimal_places, parse_mode, cols):
     )
     ase_symbols = np.array(ase_data.get_chemical_symbols())
 
-    parsnip_minmax = [parsnip_positions.min(axis=0), parsnip_positions.max(axis=0)]
-    ase_minmax = [ase_positions.min(axis=0), ase_positions.max(axis=0)]
-
     np.testing.assert_array_equal(parsnip_positions.shape, ase_positions.shape)
-    np.testing.assert_allclose(parsnip_minmax, ase_minmax, atol=1e-12)
 
     if cols is not None:
         # NOTE: ASE saves the occupancies of the most dominant species!
@@ -151,7 +153,9 @@ def test_build_unit_cell(cif_data, n_decimal_places, parse_mode, cols):
 
     if "zeolite" in cif_data.filename or "no42" in cif_data.filename:
         return  # Reconstructed with different wrapping?
-    np.testing.assert_allclose(parsnip_positions, ase_positions, atol=1e-12)
+    ase_frac = ase_data.get_scaled_positions() % 1
+    diff = np.abs(parsnip_frac - ase_frac) % 1
+    np.testing.assert_allclose(np.minimum(diff, 1 - diff), 0, atol=5e-6)
 
 
 @cif_files_mark

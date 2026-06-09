@@ -14,11 +14,18 @@ from __future__ import annotations
 import json
 import re
 import sys
+from fractions import Fraction as _StdFraction
+from importlib.util import find_spec as _find_spec
 from pathlib import Path
 from typing import Literal, TypeVar
 
 import numpy as np
 from numpy.typing import ArrayLike
+
+if _find_spec("cfractions") is not None:
+    from cfractions import Fraction
+else:
+    Fraction = _StdFraction
 
 
 def _normalize(string: str | None):
@@ -98,6 +105,14 @@ See section 3.2 of dx.doi.org/10.1107/S1600576715021871 for clarification.
 _SAFE_STRING_RE = re.compile(r"(\(\d+\))|[^\d\[\]\,\+\-\/\*\.]")
 _SAFE_TEMPLATE_RE = re.compile(r"[^\d\[\]\,\+\-\/\*\.xyz]")
 _SAFE_FRACTN_RE = re.compile(rf"([-+]?\d{_PROG_STAR}[/.]?\d{_PROG_PLUS})")
+_IDEAL_FRACS = (
+    Fraction(0),
+    Fraction(1, 6),
+    Fraction(1, 3),
+    Fraction(2, 3),
+    Fraction(5, 6),
+)
+_UNCERT_RE = re.compile(r"\(.*?\)")
 
 
 def _contains_wildcard(s: str) -> bool:
@@ -109,14 +124,31 @@ def _flatten_or_none(ls: list[T]):
     return None if not ls else ls[0] if len(ls) == 1 else ls
 
 
+def _snap_coord_str(s: str) -> str:
+    """Snap a coordinate string to an exact fraction if it is a valid rounding."""
+    clean = _UNCERT_RE.sub("", s)
+    try:
+        f = Fraction(clean)
+    except (ValueError, ZeroDivisionError):
+        return s
+    frac_part = abs(f) % 1
+    if frac_part in _IDEAL_FRACS:
+        return s
+    dp = len(clean.partition(".")[2]) if "." in clean else 0
+    if dp == 0:
+        return s
+    half_ulp = 0.5 * 10**-dp
+    for ideal in _IDEAL_FRACS:
+        if abs(frac_part - ideal) > half_ulp:
+            continue
+        if round(float(ideal), dp) == round(float(frac_part), dp):
+            int_part = abs(f) - frac_part
+            return str((1 if f >= 0 else -1) * (int_part + ideal))
+    return s
+
+
 def _rational_evaluate_array(arr: str) -> list[list[float]]:
     """Evaluate an array over the ring Q%1."""
-    from fractions import Fraction
-    from importlib.util import find_spec
-
-    if find_spec("cfractions") is not None:
-        from cfractions import Fraction
-
     one = Fraction(1)
     zero = Fraction(0)
 
@@ -231,7 +263,9 @@ def _write_debug_output(unique_indices, unique_counts, pos, check="Initial"):
     print()
 
 
-def cast_array_to_float(arr: ArrayLike | None, dtype: type = np.float32):
+def cast_array_to_float(
+    arr: ArrayLike | None, dtype: type = np.float32, *, handle_fractions: bool = False
+):
     """Cast a Numpy array to a dtype, pruning significant digits from numerical values.
 
     Args:
@@ -239,6 +273,9 @@ def cast_array_to_float(arr: ArrayLike | None, dtype: type = np.float32):
         dtype (type, optional):
             dtype to cast array to.
             Default value = ``np.float32``
+        handle_fractions (bool, optional):
+            When ``True``, interpret fraction strings (e.g. ``"1/3"``) via
+            ``Fraction`` before casting. Default value = ``False``
 
     Returns
     -------
@@ -249,9 +286,10 @@ def cast_array_to_float(arr: ArrayLike | None, dtype: type = np.float32):
     if np.array(arr).shape == (0,):
         return np.array((), dtype=dtype)
     arr = [(el if el is not None else "nan") for el in arr]
-    # if any(el is None for el in arr):
-    #     raise TypeError("Input array contains `None` and cannot be cast!")
-    return np.char.partition(arr, "(")[..., 0].astype(dtype)
+    stripped = np.char.partition(arr, "(")[..., 0]
+    if handle_fractions:
+        return np.vectorize(lambda s: dtype(Fraction(s)))(stripped)
+    return stripped.astype(dtype)
 
 
 def _accumulate_nonsimple_data(data_iter, line: str = ""):

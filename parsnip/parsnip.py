@@ -104,6 +104,7 @@ from parsnip.patterns import (
     _lookup_symops,
     _matrix_from_lengths_and_angles,
     _safe_eval,
+    _snap_coord_str,
     _strip_comments,
     _strip_quotes,
     _try_cast_to_numeric,
@@ -546,6 +547,7 @@ class CifFile:
         n_decimal_places: int = 3,
         additional_columns: str | Iterable[str] | None = None,
         parse_mode: Literal["rational", "python_float", "sympy"] = "rational",
+        snap_fractions: bool = True,
         verbose: bool = False,
     ):
         """Reconstruct fractional atomic positions from Wyckoff sites and symops.
@@ -619,6 +621,10 @@ class CifFile:
                 (``parse_mode='python_float'``) arithmetic. 'rational' is more accurate
                 than 'python_float', but may take more time.
                 Default value = ``'rational'``
+            snap_fractions : bool, optional
+                Whether to snap decimal approximations of common crystallographic
+                fractions (e.g., ``0.3333`` to ``1/3``) before applying symmetry
+                operations. Default value = ``True``
             verbose : bool, optional
                 Whether to print debug information about the uniqueness checks.
                 Default value = ``False``
@@ -691,13 +697,22 @@ class CifFile:
             )
             raise ParseError(msg)
 
+        coords = (
+            np.vectorize(_snap_coord_str)(frac_strs) if snap_fractions else frac_strs
+        )
+        if verbose:
+            mask = coords != frac_strs
+            for original, new in zip(frac_strs[mask], coords[mask]):
+                print(f"  Snapped {original} -> {new}")
         if parse_mode == "python_float":
             _fn = _compile_float_eval(symops_str)
-            wyckoff_floats = cast_array_to_float(frac_strs, dtype=float)
+            wyckoff_floats = cast_array_to_float(
+                coords, dtype=float, handle_fractions=snap_fractions
+            )
             all_frac_positions = [_fn(*xyz) for xyz in wyckoff_floats]
         else:
             all_frac_positions = [
-                _safe_eval(symops_str, *xyz, parse_mode=parse_mode) for xyz in frac_strs
+                _safe_eval(symops_str, *xyz, parse_mode=parse_mode) for xyz in coords
             ]
         pos = np.vstack(all_frac_positions)
 
