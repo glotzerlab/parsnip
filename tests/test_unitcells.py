@@ -140,9 +140,6 @@ def test_build_unit_cell(cif_data, n_decimal_places, parse_mode, cols):
     )
     ase_symbols = np.array(ase_data.get_chemical_symbols())
 
-    parsnip_minmax = [parsnip_positions.min(axis=0), parsnip_positions.max(axis=0)]
-    ase_minmax = [ase_positions.min(axis=0), ase_positions.max(axis=0)]
-
     np.testing.assert_array_equal(parsnip_positions.shape, ase_positions.shape)
 
     if cols is not None:
