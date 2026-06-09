@@ -9,8 +9,8 @@ v0.X.X - 20XX-XX-XX
 
 Added
 ~~~~~
-- New rational parsing mode based on ``fractions.Fraction`` (#161)
 - Spacegroup symop lookup when a table of translation operators is not provided (#160)
+- New rational parsing mode based on ``fractions.Fraction`` (#161)
 - Support for ``loop_`` data entries containing unescaped quotes (#162)
 - Improved performance when parsing well-structured CIF files (#222)
 - Configurable toggle for "snapping" near-fractional Wyckoff positions to exact ratios.
