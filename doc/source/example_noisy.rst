@@ -35,27 +35,52 @@ places of accuracy, while the symmetry operations are provided in a rational for
 
 **parsnip**'s default settings are able to correctly reproduce the unit cell -- but
 the mismatch between numerical data and the symmetry operation strings can cause issues.
-If we truncate the Wyckoff position data, even by one decimal place, we might expect
-the reconstructed crystal to contain duplicate atoms:
+If we truncate the Wyckoff position data, even by one decimal place, the additional
+numerical error can cause errors in our final structure:
 
 .. literalinclude:: hP3-four-decimal-places.cif
    :diff: hP3.cif
 
-However, **parsnip**'s rational mode recognizes truncated representations of exact
-fractions (e.g., ``0.3333`` is identified as ``1/3``) and snaps them to their exact
-values before applying symmetry operations. This means the truncated file still
-produces the correct structure:
-
 .. doctest::
 
     >>> lower_precision_cif = CifFile("hP3-four-decimal-places.cif")
-    >>> uc = lower_precision_cif.build_unit_cell(n_decimal_places=4)
+    >>> uc = lower_precision_cif.build_unit_cell(n_decimal_places=4, snap_fractions=False)
+    >>> uc # doctest: +SKIP
+    array([[0.2254    , 0.        , 0.3333    ],  # A
+           [0.        , 0.2254    , 0.66663333],  # B
+           [0.7746    , 0.7746    , 0.99996667],  # C
+           [0.2254    , 0.        , 0.33336667],  # A
+           [0.        , 0.2254    , 0.6667    ]]) # B
+    >>> uc.shape == correct_uc.shape
+    False
+
+To handle this, **parsnip**'s ``snap_fractions`` mode (which is enabled by default)
+recognizes truncated representations of exact fractions (e.g., ``0.3333`` is identified
+as ``1/3``) and snaps them to their exact values before applying symmetry operations:
+
+.. doctest::
+
+    >>> uc = lower_precision_cif.build_unit_cell(n_decimal_places=4, snap_fractions=True)
     >>> uc
     array([[0.2254    , 0.        , 0.33333333],
            [0.        , 0.2254    , 0.66666667],
            [0.7746    , 0.7746    , 0.        ]])
     >>> uc.shape == correct_uc.shape
     True
+
+Pass ``verbose=True`` to see which coordinates were snapped:
+
+.. doctest::
+
+    >>> lower_precision_cif.build_unit_cell(n_decimal_places=4, verbose=True) # doctest: +SKIP
+      Snapped 0.3333 -> 1/3
+    array([[0.2254    , 0.        , 0.33333333],
+           [0.        , 0.2254    , 0.66666667],
+           [0.7746    , 0.7746    , 0.        ]])
+
+
+Working with Low-Precision Files
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 For structures where coordinates are not near ideal fractions, the ``n_decimal_places``
 parameter controls deduplication precision. By default, **parsnip** uses three decimal
