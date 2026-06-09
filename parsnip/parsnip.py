@@ -696,7 +696,9 @@ class CifFile:
             )
             raise ParseError(msg)
 
-        coords = np.vectorize(_snap_coord_str)(frac_strs) if snap_fractions else frac_strs
+        coords = (
+            np.vectorize(_snap_coord_str)(frac_strs) if snap_fractions else frac_strs
+        )
         if verbose:
             mask = coords != frac_strs
             for original, new in zip(frac_strs[mask], coords[mask]):
