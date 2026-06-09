@@ -131,8 +131,9 @@ def _snap_coord_str(s: str) -> str:
     dp = len(clean.partition(".")[2]) if "." in clean else 0
     if dp == 0:
         return s
+    half_ulp = 0.5 * 10**-dp
     for ideal in _IDEAL_FRACS:
-        if abs(frac_part - ideal) > 1e-3:
+        if abs(frac_part - ideal) > half_ulp:
             continue
         if round(float(ideal), dp) == round(float(frac_part), dp):
             int_part = abs(f) - frac_part
