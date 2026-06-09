@@ -51,7 +51,7 @@ numerical error can result in extra atoms in the output structure:
            [0.7746    , 0.7746    , 0.99996667],  # C
            [0.2254    , 0.        , 0.33336667],  # A
            [0.        , 0.2254    , 0.6667    ]]) # B
-    >>> uc.shape == correct_uc.shape
+    >>> uc.shape == correct_uc.shape # Our unit cell has duplicate atoms!
     False
 
 To handle this, **parsnip**'s ``snap_fractions`` mode (which is enabled by default)
