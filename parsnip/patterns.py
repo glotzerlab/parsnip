@@ -37,7 +37,7 @@ def _normalize(string: str | None):
         string = string.strip('"')
     elif string[0] == "'" and string[-1] == "'":
         string = string.strip("'")
-    return re.sub(r"[\s;]", "", string)
+    return re.sub(r"[\s;_]", "", string)
 
 
 def _normalize_hall(string: str | None):
