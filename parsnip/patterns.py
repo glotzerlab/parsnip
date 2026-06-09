@@ -103,6 +103,7 @@ See section 3.2 of dx.doi.org/10.1107/S1600576715021871 for clarification.
 """
 
 _SAFE_STRING_RE = re.compile(r"(\(\d+\))|[^\d\[\]\,\+\-\/\*\.]")
+_SAFE_TEMPLATE_RE = re.compile(r"[^\d\[\]\,\+\-\/\*\.xyz]")
 _SAFE_FRACTN_RE = re.compile(rf"([-+]?\d{_PROG_STAR}[/.]?\d{_PROG_PLUS})")
 _IDEAL_FRACS = (
     Fraction(0),
@@ -176,6 +177,16 @@ def _sympy_evaluate_array(arr: str) -> list[list[float]]:
         ]
         for ls in arr.split("],")
     ]
+
+
+def _compile_float_eval(str_input: str):
+    """Pre-compile a symops template into a callable for ``python_float`` mode.
+
+    Sanitizes the template string and compiles it into a ``lambda x, y, z`` that
+    can be called repeatedly with different coordinates.
+    """
+    safe_template = _SAFE_TEMPLATE_RE.sub("", str_input.lower())
+    return eval(f"lambda x, y, z: {safe_template}", {"__builtins__": {}}, {})  # noqa: S307
 
 
 def _safe_eval(

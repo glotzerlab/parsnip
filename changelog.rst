@@ -16,6 +16,7 @@ Added
 - Configurable toggle for "snapping" near-fractional Wyckoff positions to exact ratios.
   This improves the parsing accuracy for structures with incorrectly or inconsistently
   rounded fractions (#223)
+- Improved performance when using the ``python_float`` parse mode (#224)
 
 Changed
 ~~~~~~~
