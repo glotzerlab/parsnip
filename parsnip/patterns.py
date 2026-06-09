@@ -304,8 +304,8 @@ def _accumulate_nonsimple_data(data_iter, line: str = ""):
     delimiter_count = 0
     while _line_is_continued(data_iter.peek(None)):
         while data_iter.peek(None) and delimiter_count < 2:
-            buffer = data_iter.peek().replace(" ", "")
-            if buffer[:1] == ";" or any(s in buffer for s in ALLOWED_DELIMITERS):
+            peek_prefix = data_iter.peek().lstrip()[:3]
+            if peek_prefix[:1] == ";" or peek_prefix == "'''" or peek_prefix == '"""':
                 delimiter_count += 1
             line += next(data_iter)
 
