@@ -706,7 +706,9 @@ class CifFile:
                 print(f"  Snapped {original} -> {new}")
         if parse_mode == "python_float":
             _fn = _compile_float_eval(symops_str)
-            wyckoff_floats = cast_array_to_float(coords, dtype=float)
+            wyckoff_floats = cast_array_to_float(
+                coords, dtype=float, handle_fractions=snap_fractions
+            )
             all_frac_positions = [_fn(*xyz) for xyz in wyckoff_floats]
         else:
             all_frac_positions = [

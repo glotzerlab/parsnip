@@ -263,7 +263,9 @@ def _write_debug_output(unique_indices, unique_counts, pos, check="Initial"):
     print()
 
 
-def cast_array_to_float(arr: ArrayLike | None, dtype: type = np.float32):
+def cast_array_to_float(
+    arr: ArrayLike | None, dtype: type = np.float32, *, handle_fractions: bool = False
+):
     """Cast a Numpy array to a dtype, pruning significant digits from numerical values.
 
     Args:
@@ -271,6 +273,9 @@ def cast_array_to_float(arr: ArrayLike | None, dtype: type = np.float32):
         dtype (type, optional):
             dtype to cast array to.
             Default value = ``np.float32``
+        handle_fractions (bool, optional):
+            When ``True``, interpret fraction strings (e.g. ``"1/3"``) via
+            ``Fraction`` before casting. Default value = ``False``
 
     Returns
     -------
@@ -281,9 +286,10 @@ def cast_array_to_float(arr: ArrayLike | None, dtype: type = np.float32):
     if np.array(arr).shape == (0,):
         return np.array((), dtype=dtype)
     arr = [(el if el is not None else "nan") for el in arr]
-    # if any(el is None for el in arr):
-    #     raise TypeError("Input array contains `None` and cannot be cast!")
-    return np.char.partition(arr, "(")[..., 0].astype(dtype)
+    stripped = np.char.partition(arr, "(")[..., 0]
+    if handle_fractions:
+        return np.vectorize(lambda s: dtype(Fraction(s)))(stripped)
+    return stripped.astype(dtype)
 
 
 def _accumulate_nonsimple_data(data_iter, line: str = ""):
