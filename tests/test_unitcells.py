@@ -89,8 +89,11 @@ def test_build_unit_cell(cif_data, n_decimal_places, parse_mode, cols):
     if (
         "PDB_4INS_head.cif" in cif_data.filename
         or ("no42.cif" in cif_data.filename and n_decimal_places > 3)
-        or ("COD_7228524" in cif_data.filename and n_decimal_places > 5
-            and parse_mode == "python_float")
+        or (
+            "COD_7228524" in cif_data.filename
+            and n_decimal_places > 5
+            and parse_mode == "python_float"
+        )
     ):
         return
 
