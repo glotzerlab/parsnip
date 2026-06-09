@@ -54,9 +54,14 @@ def _normalize_hall(string: str | None):
 
 with open(Path(__file__).parent / "symops.json") as f:
     # Process to extract the required data, in the specific format we need
+    # We move default settings to the end so that underspecific symbols like HM and IT
+    # use the standard setting where possible.
+    _items = sorted(
+        json.load(f).items(), key=lambda kv: kv[1]["is_default_setting"]
+    )
     _full_dict = {
         k: v | {"symops": np.asarray(v["symops"])[:, None]}
-        for (k, v) in json.load(f).items()
+        for (k, v) in _items
     }
     SYMOPS_BY_HALL = {_normalize_hall(k): v["symops"] for k, v in _full_dict.items()}
     SYMOPS_BY_HM = {
