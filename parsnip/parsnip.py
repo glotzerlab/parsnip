@@ -103,6 +103,7 @@ from parsnip.patterns import (
     _lookup_symops,
     _matrix_from_lengths_and_angles,
     _safe_eval,
+    _snap_coord_str,
     _strip_comments,
     _strip_quotes,
     _try_cast_to_numeric,
@@ -690,8 +691,12 @@ class CifFile:
             )
             raise ParseError(msg)
 
+        snapped = np.array(
+            [[_snap_coord_str(frac_strs[i, j]) for j in range(frac_strs.shape[1])]
+             for i in range(frac_strs.shape[0])]
+        )
         all_frac_positions = [
-            _safe_eval(symops_str, *xyz, parse_mode=parse_mode) for xyz in frac_strs
+            _safe_eval(symops_str, *xyz, parse_mode=parse_mode) for xyz in snapped
         ]  # Compute N_symmetry_elements coordinates for each Wyckoff site
         pos = np.vstack(all_frac_positions)
 
