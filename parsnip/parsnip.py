@@ -103,7 +103,7 @@ from parsnip.patterns import (
     _is_key,
     _lookup_symops,
     _safe_eval,
-    _snap_coord_str,
+    _snap_position,
     _strip_comments,
     _strip_quotes,
     _try_cast_to_numeric,
@@ -694,7 +694,9 @@ class CifFile:
             raise ParseError(msg)
 
         coords = (
-            np.vectorize(_snap_coord_str)(frac_strs) if snap_fractions else frac_strs
+            np.array([_snap_position(row) for row in frac_strs])
+            if snap_fractions
+            else frac_strs
         )
         if verbose:
             mask = coords != frac_strs
@@ -1026,6 +1028,12 @@ class CifFile:
                         continue
 
                 while _is_key(data_iter.peek(None)):
+                    peeked = data_iter.peek(None)
+                    remainder = (
+                        self._cpat["key_list"].sub("", _strip_comments(peeked)).strip()
+                    )
+                    if remainder:
+                        break
                     line = _accumulate_nonsimple_data(
                         data_iter, _strip_comments(next(data_iter))
                     )

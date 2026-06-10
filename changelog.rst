@@ -15,7 +15,7 @@ Added
 - Improved performance when parsing well-structured CIF files (#222)
 - Configurable toggle for "snapping" near-fractional Wyckoff positions to exact ratios.
   This improves the parsing accuracy for structures with incorrectly or inconsistently
-  rounded fractions (#223)
+  rounded fractions (#223, #230)
 - Improved performance when using the ``python_float`` parse mode (#224)
 
 Changed

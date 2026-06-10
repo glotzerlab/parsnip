@@ -27,6 +27,8 @@ if _find_spec("cfractions") is not None:
 else:
     Fraction = _StdFraction
 
+ONE_PERCENT = Fraction(1, 100)
+
 
 def _normalize(string: str | None):
     """Normalize a lookup by stripping spaces and matched quotes."""
@@ -109,12 +111,19 @@ _SAFE_TEMPLATE_RE = re.compile(r"[^\d\[\]\,\+\-\/\*\.xyz]")
 _SAFE_FRACTN_RE = re.compile(rf"([-+]?\d{_PROG_STAR}[/.]?\d{_PROG_PLUS})")
 _IDEAL_FRACS = (
     Fraction(0),
+    Fraction(1, 12),
     Fraction(1, 6),
     Fraction(1, 3),
+    Fraction(5, 12),
+    Fraction(1, 2),
+    Fraction(7, 12),
     Fraction(2, 3),
     Fraction(5, 6),
+    Fraction(11, 12),
 )
-_UNCERT_RE = re.compile(r"\(.*?\)")
+# The uncertainty part of a <Numeric> token. Note we are less strict than the official
+# grammar we allow for degenerate uncertainties without a numeric component
+_NUMERIC_UNCERTAINTY_RE = re.compile(r"\(\d*?\)")
 
 
 def _contains_wildcard(s: str) -> bool:
@@ -128,7 +137,7 @@ def _flatten_or_none(ls: list[T]):
 
 def _snap_coord_str(s: str) -> str:
     """Snap a coordinate string to an exact fraction if it is a valid rounding."""
-    clean = _UNCERT_RE.sub("", s)
+    clean = _NUMERIC_UNCERTAINTY_RE.sub("", s)
     try:
         f = Fraction(clean)
     except (ValueError, ZeroDivisionError):
@@ -137,16 +146,32 @@ def _snap_coord_str(s: str) -> str:
     if frac_part in _IDEAL_FRACS:
         return s
     dp = len(clean.partition(".")[2]) if "." in clean else 0
-    if dp == 0:
+    if dp <= 1:
         return s
-    half_ulp = 0.5 * 10**-dp
+    tol = Fraction(2, 3 * 10**dp)
     for ideal in _IDEAL_FRACS:
-        if abs(frac_part - ideal) > half_ulp:
+        if abs(frac_part - ideal) > tol:
             continue
-        if round(float(ideal), dp) == round(float(frac_part), dp):
-            int_part = abs(f) - frac_part
-            return str((1 if f >= 0 else -1) * (int_part + ideal))
+        int_part = abs(f) - frac_part
+        return str((1 if f >= 0 else -1) * (int_part + ideal))
     return s
+
+
+def _snap_position(row: np.ndarray) -> tuple[str, str, str]:
+    """Snap a Wyckoff position, preserving `y=2x%1` Wyckoff constraints."""
+    rx, ry, rz = row[0], row[1], row[2]
+    sx, sy, sz = _snap_coord_str(rx), _snap_coord_str(ry), _snap_coord_str(rz)
+
+    if sx != rx or sy != ry:
+        fx = Fraction(_NUMERIC_UNCERTAINTY_RE.sub("", str(rx)))
+        fy = Fraction(_NUMERIC_UNCERTAINTY_RE.sub("", str(ry)))
+        if min(abs((fy - 2 * fx) % 1), 1 - abs((fy - 2 * fx) % 1)) < ONE_PERCENT:
+            if sx != rx:
+                sy = str((2 * Fraction(_NUMERIC_UNCERTAINTY_RE.sub("", sx))) % 1)
+            elif sy != ry:
+                sx = str((Fraction(_NUMERIC_UNCERTAINTY_RE.sub("", sy)) / 2) % 1)
+
+    return sx, sy, sz
 
 
 def _rational_evaluate_array(arr: str) -> list[list[float]]:
