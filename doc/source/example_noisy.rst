@@ -27,26 +27,24 @@ places of accuracy, while the symmetry operations are provided in a rational for
     >>> # Let's make sure we reconstruct the unit cell's three atoms
     >>> correct_uc = cif.build_unit_cell()
     >>> correct_uc
-    array([[0.2254    , 0.        , 0.33333   ],
-           [0.        , 0.2254    , 0.66666333],
-           [0.7746    , 0.7746    , 0.99999667]])
+    array([[0.2254    , 0.        , 0.33333333],
+           [0.        , 0.2254    , 0.66666667],
+           [0.7746    , 0.7746    , 0.        ]])
     >>> site_multiplicity = int(cif["_atom_site_symmetry_multiplicity"].squeeze())
     >>> assert len(correct_uc) == site_multiplicity
 
 **parsnip**'s default settings are able to correctly reproduce the unit cell -- but
 the mismatch between numerical data and the symmetry operation strings can cause issues.
-If we truncate the Wyckoff position data, even by one decimal place, the reconstructed
-crystal contains duplicate atoms:
+If we truncate the Wyckoff position data, even by one decimal place, the additional
+numerical error can result in extra atoms in the output structure:
 
 .. literalinclude:: hP3-four-decimal-places.cif
    :diff: hP3.cif
 
-Rebuilding our crystal results in an error:
-
 .. doctest::
 
     >>> lower_precision_cif = CifFile("hP3-four-decimal-places.cif")
-    >>> uc = lower_precision_cif.build_unit_cell(n_decimal_places=4)
+    >>> uc = lower_precision_cif.build_unit_cell(n_decimal_places=4, snap_fractions=False)
     >>> uc # doctest: +SKIP
     array([[0.2254    , 0.        , 0.3333    ],  # A
            [0.        , 0.2254    , 0.66663333],  # B
@@ -56,24 +54,39 @@ Rebuilding our crystal results in an error:
     >>> uc.shape == correct_uc.shape # Our unit cell has duplicate atoms!
     False
 
-By default, **parsnip** uses three decimal places of accuracy to reconstruct crystals.
-This yields the best overall accuracy (tested with several thousand CIFs), but is not
-always the best choice in general. A good rule of thumb is to use one fewer decimal
-places than the CIF file contains. This ensures positions are rounded sufficiently to
-detect duplicate atoms, and avoids issues in complex structures where Wyckoff positions
-may be very close to one another. Using this setting results in the correct structure
-once again.
-
+To handle this, **parsnip**'s ``snap_fractions`` mode (which is enabled by default)
+recognizes truncated representations of exact fractions (e.g., ``0.3333`` is identified
+as ``1/3``) and snaps them to their exact values before applying symmetry operations:
 
 .. doctest::
 
-    >>> cif = CifFile("hP3-four-decimal-places.cif")
-    >>> three_decimal_places = cif.build_unit_cell(n_decimal_places=3)
-    >>> three_decimal_places
-    array([[0.2254    , 0.        , 0.3333    ],
-           [0.        , 0.2254    , 0.66663333],
-           [0.7746    , 0.7746    , 0.99996667]])
-    >>> assert three_decimal_places.shape == correct_uc.shape
+    >>> uc = lower_precision_cif.build_unit_cell(n_decimal_places=4, snap_fractions=True)
+    >>> uc
+    array([[0.2254    , 0.        , 0.33333333],
+           [0.        , 0.2254    , 0.66666667],
+           [0.7746    , 0.7746    , 0.        ]])
+    >>> uc.shape == correct_uc.shape
+    True
+
+Pass ``verbose=True`` to see which coordinates were snapped:
+
+.. doctest::
+
+    >>> lower_precision_cif.build_unit_cell(n_decimal_places=4, verbose=True) # doctest: +SKIP
+      Snapped 0.3333 -> 1/3
+    array([[0.2254    , 0.        , 0.33333333],
+           [0.        , 0.2254    , 0.66666667],
+           [0.7746    , 0.7746    , 0.        ]])
+
+
+Working with Low-Precision Files
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+For structures where coordinates are not near ideal fractions, the ``n_decimal_places``
+parameter controls deduplication precision. By default, **parsnip** uses three decimal
+places, which yields the best overall accuracy. A good rule of thumb is to use one
+fewer decimal place than the CIF file contains, ensuring positions are rounded
+sufficiently to detect duplicate atoms in complex structures.
 
 .. important::
 
@@ -85,4 +98,31 @@ once again.
 
         >>> cif = CifFile("hP3-four-decimal-places.cif")
         >>> one_decimal_place = cif.build_unit_cell(n_decimal_places=1)
-        >>> np.testing.assert_array_equal(one_decimal_place, three_decimal_places)
+        >>> np.testing.assert_array_equal(one_decimal_place, uc)
+
+
+Increasing Performance
+^^^^^^^^^^^^^^^^^^^^^^
+
+In some cases, particularly when constructing thousands of unti cells, the performance
+of parsnip's ``build_unit_cell`` may become a bottleneck. **parsnip** includes several
+tools for resolving this: first, ``parse_mode="python_float"`` attempts to build unit
+cells using floating point arithmetic rather than rational expression. This is less
+accurate, but is still sufficient for high-quality databases and stuctures. For the
+best combination of performance and accuracy, installing the `cfractions`_ library lets
+**parsnip** use more optimized code for unit cell reconstruction.
+
+.. _cfractions: https://pypi.org/project/cfractions/
+
+.. doctest::
+
+    >>> # uv pip install cfractions
+    >>> cif = CifFile("hP3.cif")
+    >>> faster = cif.build_unit_cell(n_decimal_places=4)
+    >>> faster
+    array([[0.2254    , 0.        , 0.33333333],
+           [0.        , 0.2254    , 0.66666667],
+           [0.7746    , 0.7746    , 0.        ]])
+    >>> assert faster.shape == correct_uc.shape
+
+.. _sympy: https://www.sympy.org/en/index.html
