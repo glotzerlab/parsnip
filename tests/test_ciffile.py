@@ -9,6 +9,8 @@ from parsnip import CifFile
 from parsnip._errors import ParseWarning
 
 
+
+
 @cif_files_mark
 def test_cast_values(cif_data):
     uncast_pairs = cif_data.file.pairs
@@ -73,3 +75,20 @@ def test_open_buffered(cif_data):
         cif = CifFile(f)
 
     _array_assertion_verbose(keys, cif.get_from_pairs(keys), stored_data)
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        # Semicolon inside text content should not be treated as a delimiter
+        ";\n  my text is here ;\n;\n",
+        # Semicolons within multi-line text body are preserved
+        ";\nThe cif grammar allows delimiters in delimited text; this is hard\n;\n",
+    ],
+    ids=["trailing_semicolon_in_body", "inline_semicolon_in_body"],
+)
+def test_semicolon_text_values(value):
+    cif_content = f"data_test\n_some_key\n{value}\n"
+    with pytest.warns(RuntimeWarning, match="parsed as a raw CIF data block"):
+        cif = CifFile(cif_content)
+    assert cif["_some_key"] == value.rstrip("\n")
+
