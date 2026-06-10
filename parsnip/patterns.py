@@ -153,6 +153,37 @@ def _snap_coord_str(s: str) -> str:
     return s
 
 
+def _snap_coord_row(row: np.ndarray) -> list[str]:
+    """Snap a row of coordinate strings, preserving y = 2x mod 1 constraints."""
+    snapped = [_snap_coord_str(v) for v in row]
+    if len(snapped) < 2:
+        return snapped
+
+    x_orig, y_orig = str(row[0]), str(row[1])
+    x_snap, y_snap = snapped[0], snapped[1]
+    if x_snap == x_orig and y_snap == y_orig:
+        return snapped
+
+    try:
+        fx = Fraction(_UNCERT_RE.sub("", x_orig))
+        fy = Fraction(_UNCERT_RE.sub("", y_orig))
+        fsx = Fraction(_UNCERT_RE.sub("", x_snap))
+        fsy = Fraction(_UNCERT_RE.sub("", y_snap))
+
+        orig_diff = min(abs((fy - 2 * fx) % 1), abs((2 * fx - fy) % 1))
+        if orig_diff < Fraction(1, 100):
+            snap_diff = min(abs((fsy - 2 * fsx) % 1), abs((2 * fsx - fsy) % 1))
+            if snap_diff > orig_diff + Fraction(1, 1000):
+                if fsx != fx:
+                    snapped[1] = str((2 * fsx) % 1)
+                elif fsy != fy:
+                    snapped[0] = str((fsy / 2) % 1)
+    except (ValueError, ZeroDivisionError):
+        pass
+
+    return snapped
+
+
 def _rational_evaluate_array(arr: str) -> list[list[float]]:
     """Evaluate an array over the ring Q%1."""
     one = Fraction(1)

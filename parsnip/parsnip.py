@@ -104,7 +104,7 @@ from parsnip.patterns import (
     _lookup_symops,
     _matrix_from_lengths_and_angles,
     _safe_eval,
-    _snap_coord_str,
+    _snap_coord_row,
     _strip_comments,
     _strip_quotes,
     _try_cast_to_numeric,
@@ -699,7 +699,9 @@ class CifFile:
             raise ParseError(msg)
 
         coords = (
-            np.vectorize(_snap_coord_str)(frac_strs) if snap_fractions else frac_strs
+            np.array([_snap_coord_row(row) for row in frac_strs])
+            if snap_fractions
+            else frac_strs
         )
         if verbose:
             mask = coords != frac_strs
