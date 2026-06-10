@@ -121,7 +121,7 @@ _IDEAL_FRACS = (
     Fraction(5, 6),
     Fraction(11, 12),
 )
-_UNCERT_RE = re.compile(r"\(.*?\)")
+_NUMERIC_RE = re.compile(r"\(\d*?\)")  # The error part of a <Numeric> token
 
 
 def _contains_wildcard(s: str) -> bool:
@@ -135,7 +135,7 @@ def _flatten_or_none(ls: list[T]):
 
 def _snap_coord_str(s: str) -> str:
     """Snap a coordinate string to an exact fraction if it is a valid rounding."""
-    clean = _UNCERT_RE.sub("", s)
+    clean = _NUMERIC_RE.sub("", s)
     try:
         f = Fraction(clean)
     except (ValueError, ZeroDivisionError):
@@ -161,13 +161,13 @@ def _snap_position(row: np.ndarray) -> tuple[str, str, str]:
     sx, sy, sz = _snap_coord_str(rx), _snap_coord_str(ry), _snap_coord_str(rz)
 
     if sx != rx or sy != ry:
-        fx = Fraction(_UNCERT_RE.sub("", str(rx)))
-        fy = Fraction(_UNCERT_RE.sub("", str(ry)))
+        fx = Fraction(_NUMERIC_RE.sub("", str(rx)))
+        fy = Fraction(_NUMERIC_RE.sub("", str(ry)))
         if min(abs((fy - 2 * fx) % 1), 1 - abs((fy - 2 * fx) % 1)) < ONE_PERCENT:
             if sx != rx:
-                sy = str((2 * Fraction(_UNCERT_RE.sub("", sx))) % 1)
+                sy = str((2 * Fraction(_NUMERIC_RE.sub("", sx))) % 1)
             elif sy != ry:
-                sx = str((Fraction(_UNCERT_RE.sub("", sy)) / 2) % 1)
+                sx = str((Fraction(_NUMERIC_RE.sub("", sy)) / 2) % 1)
 
     return sx, sy, sz
 
