@@ -22,6 +22,8 @@ Changed
 ~~~~~~~
 - ``parse_mode='rational'`` is now the default setting in build_unit_cell (#161)
 - ``n_decimal_places=3`` is now the default setting in build_unit_cell (#161)
+- The default centering is now preferred when symmetry operations are looked up from
+  an underspecified space-group representation (#226)
 
 Deprecated
 ~~~~~~~~~~
