@@ -148,9 +148,6 @@ def _snap_coord_str(s: str) -> str:
     for ideal in _IDEAL_FRACS:
         if abs(frac_part - ideal) > tol:
             continue
-        if round(float(ideal), dp) == round(float(frac_part), dp):
-            int_part = abs(f) - frac_part
-            return str((1 if f >= 0 else -1) * (int_part + ideal))
         int_part = abs(f) - frac_part
         return str((1 if f >= 0 else -1) * (int_part + ideal))
     return s
