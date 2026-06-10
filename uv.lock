@@ -1671,6 +1671,9 @@ tests = [
 doc = [
     { name = "parsnip-cif", extra = ["doc"] },
 ]
+tests = [
+    { name = "parsnip-cif", extra = ["tests"] },
+]
 
 [package.metadata]
 requires-dist = [
@@ -1699,6 +1702,7 @@ provides-extras = ["tests", "doc", "sympy"]
 
 [package.metadata.requires-dev]
 doc = [{ name = "parsnip-cif", extras = ["doc"] }]
+tests = [{ name = "parsnip-cif", extras = ["tests"] }]
 
 [[package]]
 name = "pillow"

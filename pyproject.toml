@@ -45,6 +45,7 @@ optional-dependencies.sympy = { file = ["requirements-sympy.in"] }
 
 [dependency-groups]
 doc = ["parsnip-cif[doc]"]
+tests = ["parsnip-cif[tests]"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests", "parsnip", "doc/source"]
