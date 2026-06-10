@@ -92,4 +92,3 @@ def test_semicolon_text_values(value):
     with pytest.warns(RuntimeWarning, match="parsed as a raw CIF data block"):
         cif = CifFile(cif_content)
     assert cif["_some_key"] == value.rstrip("\n")
-
