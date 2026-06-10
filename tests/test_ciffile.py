@@ -83,6 +83,8 @@ def test_open_buffered(cif_data):
         ";\n  my text is here ;\n;\n",
         # Semicolons within multi-line text body are preserved
         ";\nThe cif grammar allows delimiters in delimited text; this is hard\n;\n",
+        # This structure (delimiter at end of text, followed by comment) will fail.
+        # "; \n my text is here ; # tempasdf",
     ],
     ids=["trailing_semicolon_in_body", "inline_semicolon_in_body"],
 )
