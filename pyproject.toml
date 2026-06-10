@@ -49,8 +49,14 @@ tests = ["parsnip-cif[tests]"]
 tables = ["pymatgen", "gemmi", "ase", "spglib", "matplotlib"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests", "parsnip", "doc"]
-addopts = ["--doctest-plus", "--doctest-glob='*.rst'", "-W", "error::Warning"]
+testpaths = ["tests", "parsnip", "doc/source"]
+addopts = [
+  "--doctest-plus",
+  "--doctest-glob='*.rst'",
+  "-W",
+  "error::Warning",
+  "--ignore=doc/generate_benchmark_plots",
+]
 doctest_rst = true
 doctest_optionflags = ["NORMALIZE_WHITESPACE", "ELLIPSIS", "FLOAT_CMP"]
 console_output_style = "progress"
