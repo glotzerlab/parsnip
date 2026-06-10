@@ -26,6 +26,8 @@ Changed
   an underspecified space-group representation (#226)
 - Handling of certain types of delimited data entries that contain the delimiter
   themselves. This increases accuracy in a small percent of COD files (#228)
+- Site deduplication is now performed solely in fractional space where the rounding
+  tolerance directly maps to stored coordinates (#229)
 
 Fixed
 ~~~~~
