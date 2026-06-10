@@ -1029,9 +1029,9 @@ class CifFile:
 
                 while _is_key(data_iter.peek(None)):
                     peeked = data_iter.peek(None)
-                    remainder = self._cpat["key_list"].sub(
-                        "", _strip_comments(peeked)
-                    ).strip()
+                    remainder = (
+                        self._cpat["key_list"].sub("", _strip_comments(peeked)).strip()
+                    )
                     if remainder:
                         break
                     line = _accumulate_nonsimple_data(

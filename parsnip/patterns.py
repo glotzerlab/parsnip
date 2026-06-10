@@ -126,7 +126,6 @@ _IDEAL_FRACS = (
 _NUMERIC_RE = re.compile(r"\(\d*?\)")
 
 
-
 def _contains_wildcard(s: str) -> bool:
     return "?" in s or "*" in s
 
