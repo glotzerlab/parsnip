@@ -102,9 +102,8 @@ from parsnip.patterns import (
     _is_data,
     _is_key,
     _lookup_symops,
-    _matrix_from_lengths_and_angles,
     _safe_eval,
-    _snap_coord_str,
+    _snap_position,
     _strip_comments,
     _strip_quotes,
     _try_cast_to_numeric,
@@ -513,20 +512,21 @@ class CifFile:
         angle_keys = ("_cell?angle_alpha", "_cell?angle_beta", "_cell?angle_gamma")
         box_keys = ("_cell?length_a", "_cell?length_b", "_cell?length_c", *angle_keys)
 
+        raw_data = self[box_keys]
+        if any(value is None for value in raw_data):
+            missing = [k for k, v in zip(box_keys, raw_data) if v is None]
+            msg = f"Keys {missing} did not return any data!"
+            raise ValueError(msg)
+
         if self.cast_values:
-            cell_data = np.asarray([float(x) for x in self[box_keys]])
+            cell_data = np.asarray([float(x) for x in raw_data])
         else:
-            cell_data = cast_array_to_float(arr=self[box_keys], dtype=np.float64)
+            cell_data = cast_array_to_float(arr=raw_data, dtype=np.float64)
 
         self._raw_cell_keys = [self._wildcard_mapping[key] for key in box_keys]
 
         def angle_is_invalid(x: float):
             return x <= 0.0 or x >= 180.0
-
-        if any(value is None for value in cell_data):
-            missing = [k for k, v in zip(box_keys, cell_data) if v is None]
-            msg = f"Keys {missing} did not return any data!"
-            raise ValueError(msg)
 
         if any(angle_is_invalid(value) for value in cell_data[3:]):
             invalid = [
@@ -681,10 +681,6 @@ class CifFile:
                 )
                 raise ValueError(msg)
 
-        # Read the cell params and convert to a matrix of basis vectors
-        cell = self.read_cell_params(degrees=False)
-        cell_matrix = _matrix_from_lengths_and_angles(*cell)
-
         symops_str = np.array2string(
             np.array(symops), separator=",", threshold=np.inf, floatmode="unique"
         )
@@ -698,7 +694,9 @@ class CifFile:
             raise ParseError(msg)
 
         coords = (
-            np.vectorize(_snap_coord_str)(frac_strs) if snap_fractions else frac_strs
+            np.array([_snap_position(row) for row in frac_strs])
+            if snap_fractions
+            else frac_strs
         )
         if verbose:
             mask = coords != frac_strs
@@ -718,25 +716,16 @@ class CifFile:
 
         # Wrap into box - works generally because these are fractional coordinates
         unrounded_pos = pos.copy() % 1
-        pos = pos.round(n_decimal_places) % 1
+        pos = np.round(unrounded_pos, n_decimal_places) % 1
+        pos[pos == -0.0] = 0.0  # Un-sign zeros
 
         # Filter unique points
         _, unique_fractional, unique_counts = np.unique(
             pos, return_index=True, return_counts=True, axis=0
         )
 
-        # Double-check for duplicates with real space coordinates
-        real_space_positions = pos @ cell_matrix
-
-        _, unique_realspace, unique_counts = np.unique(
-            real_space_positions.round(n_decimal_places),
-            return_index=True,
-            return_counts=True,
-            axis=0,
-        )
-
         # Merge unique points from realspace and fractional calculations
-        unique_indices = sorted({*unique_fractional} & {*unique_realspace})
+        unique_indices = sorted(unique_fractional)
 
         if verbose:
             _write_debug_output(
@@ -1039,6 +1028,12 @@ class CifFile:
                         continue
 
                 while _is_key(data_iter.peek(None)):
+                    peeked = data_iter.peek(None)
+                    remainder = (
+                        self._cpat["key_list"].sub("", _strip_comments(peeked)).strip()
+                    )
+                    if remainder:
+                        break
                     line = _accumulate_nonsimple_data(
                         data_iter, _strip_comments(next(data_iter))
                     )
