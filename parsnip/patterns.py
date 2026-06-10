@@ -144,20 +144,10 @@ def _snap_coord_str(s: str) -> str:
     dp = len(clean.partition(".")[2]) if "." in clean else 0
     if dp <= 1:
         return s
-    ulp = Fraction(1, 10**dp)
+    tol = Fraction(2, 3 * 10**dp)
     for ideal in _IDEAL_FRACS:
-        exactly_representable = round(float(ideal), dp) == float(ideal)
-        tol = Fraction(1, 2 * 10**dp) if exactly_representable else ulp
         if abs(frac_part - ideal) > tol:
             continue
-        ideal_r = round(float(ideal), dp)
-        actual_r = round(float(frac_part), dp)
-        if exactly_representable:
-            if ideal_r != actual_r:
-                continue
-        else:
-            if abs(ideal_r - actual_r) - float(ulp) > 1e-15:
-                continue
         int_part = abs(f) - frac_part
         return str((1 if f >= 0 else -1) * (int_part + ideal))
     return s
