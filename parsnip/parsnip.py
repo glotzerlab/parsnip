@@ -102,7 +102,6 @@ from parsnip.patterns import (
     _is_data,
     _is_key,
     _lookup_symops,
-    _matrix_from_lengths_and_angles,
     _safe_eval,
     _snap_coord_str,
     _strip_comments,
@@ -681,10 +680,6 @@ class CifFile:
                     "_fract_[xyz]` loop and cannot be included in the unit cell."
                 )
                 raise ValueError(msg)
-
-        # Read the cell params and convert to a matrix of basis vectors
-        cell = self.read_cell_params(degrees=False)
-        cell_matrix = _matrix_from_lengths_and_angles(*cell)
 
         symops_str = np.array2string(
             np.array(symops), separator=",", threshold=np.inf, floatmode="unique"
