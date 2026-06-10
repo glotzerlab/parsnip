@@ -27,6 +27,8 @@ if _find_spec("cfractions") is not None:
 else:
     Fraction = _StdFraction
 
+ONE_PERCENT = Fraction(1, 100)
+
 
 def _normalize(string: str | None):
     """Normalize a lookup by stripping spaces and matched quotes."""
@@ -151,6 +153,26 @@ def _snap_coord_str(s: str) -> str:
         int_part = abs(f) - frac_part
         return str((1 if f >= 0 else -1) * (int_part + ideal))
     return s
+
+
+def _snap_position(row: np.ndarray) -> tuple[str, str, str]:
+    """Snap a Wyckoff position, preserving `y=2x%1` Wyckoff constraints."""
+    rx, ry, rz = row[0], row[1], row[2]
+    sx, sy, sz = _snap_coord_str(rx), _snap_coord_str(ry), _snap_coord_str(rz)
+
+    if sx != rx or sy != ry:
+        try:
+            fx = Fraction(_UNCERT_RE.sub("", str(rx)))
+            fy = Fraction(_UNCERT_RE.sub("", str(ry)))
+            if min(abs((fy - 2 * fx) % 1), 1 - abs((fy - 2 * fx) % 1)) < ONE_PERCENT:
+                if sx != rx:
+                    sy = str((2 * Fraction(_UNCERT_RE.sub("", sx))) % 1)
+                elif sy != ry:
+                    sx = str((Fraction(_UNCERT_RE.sub("", sy)) / 2) % 1)
+        except (ValueError, ZeroDivisionError):
+            pass
+
+    return sx, sy, sz
 
 
 def _rational_evaluate_array(arr: str) -> list[list[float]]:
