@@ -155,22 +155,28 @@ def _snap_coord_str(s: str) -> str:
     return s
 
 
+def _frac(s: str) -> Fraction | None:
+    s = _UNCERT_RE.sub("", s)
+    try:
+        return Fraction(s)
+    except (ValueError, ZeroDivisionError):
+        return None
+
+
 def _snap_position(row: np.ndarray) -> tuple[str, str, str]:
     """Snap a Wyckoff position, preserving `y=2x%1` Wyckoff constraints."""
     rx, ry, rz = row[0], row[1], row[2]
     sx, sy, sz = _snap_coord_str(rx), _snap_coord_str(ry), _snap_coord_str(rz)
 
     if sx != rx or sy != ry:
-        try:
-            fx = Fraction(_UNCERT_RE.sub("", str(rx)))
-            fy = Fraction(_UNCERT_RE.sub("", str(ry)))
-            if min(abs((fy - 2 * fx) % 1), 1 - abs((fy - 2 * fx) % 1)) < ONE_PERCENT:
-                if sx != rx:
-                    sy = str((2 * Fraction(_UNCERT_RE.sub("", sx))) % 1)
-                elif sy != ry:
-                    sx = str((Fraction(_UNCERT_RE.sub("", sy)) / 2) % 1)
-        except (ValueError, ZeroDivisionError):
-            pass
+        fx, fy = _frac(str(rx)), _frac(str(ry))
+        if fx is None or fy is None:
+            return sx, sy, sz
+        if min(abs((fy - 2 * fx) % 1), 1 - abs((fy - 2 * fx) % 1)) < ONE_PERCENT:
+            if sx != rx:
+                sy = str((2 * _frac(sx)) % 1)
+            elif sy != ry:
+                sx = str((_frac(sy) / 2) % 1)
 
     return sx, sy, sz
 
