@@ -102,7 +102,6 @@ from parsnip.patterns import (
     _is_data,
     _is_key,
     _lookup_symops,
-    _matrix_from_lengths_and_angles,
     _safe_eval,
     _snap_coord_str,
     _strip_comments,
@@ -682,10 +681,6 @@ class CifFile:
                 )
                 raise ValueError(msg)
 
-        # Read the cell params and convert to a matrix of basis vectors
-        cell = self.read_cell_params(degrees=False)
-        cell_matrix = _matrix_from_lengths_and_angles(*cell)
-
         symops_str = np.array2string(
             np.array(symops), separator=",", threshold=np.inf, floatmode="unique"
         )
@@ -719,25 +714,16 @@ class CifFile:
 
         # Wrap into box - works generally because these are fractional coordinates
         unrounded_pos = pos.copy() % 1
-        pos = pos.round(n_decimal_places) % 1
+        pos = np.round(unrounded_pos, n_decimal_places) % 1
+        pos[pos == -0.0] = 0.0  # Un-sign zeros
 
         # Filter unique points
         _, unique_fractional, unique_counts = np.unique(
             pos, return_index=True, return_counts=True, axis=0
         )
 
-        # Double-check for duplicates with real space coordinates
-        real_space_positions = pos @ cell_matrix
-
-        _, unique_realspace, unique_counts = np.unique(
-            real_space_positions.round(n_decimal_places),
-            return_index=True,
-            return_counts=True,
-            axis=0,
-        )
-
         # Merge unique points from realspace and fractional calculations
-        unique_indices = sorted({*unique_fractional} & {*unique_realspace})
+        unique_indices = sorted(unique_fractional)
 
         if verbose:
             _write_debug_output(

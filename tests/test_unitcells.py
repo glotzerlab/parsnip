@@ -181,7 +181,7 @@ def test_invalid_unit_cell(cif_data):
     cif_data.file._pairs["_cell_angle_alpha"] = "180"
 
     with pytest.raises(ValueError, match="outside the valid range"):
-        cif_data.file.build_unit_cell()
+        cif_data.file.box
     cif_data.file._pairs["_cell_angle_alpha"] = previous_alpha
 
 
