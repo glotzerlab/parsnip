@@ -25,6 +25,10 @@ Changed
 - The default centering is now preferred when symmetry operations are looked up from
   an underspecified space-group representation (#226)
 
+Fixed
+~~~~~
+- Missing cell data now raises an error when attempting to ``build_unit_cell`` (#227)
+
 Deprecated
 ~~~~~~~~~~
 - ``parse_mode='sympy'`` is now deprecated in favor of ``rational`` (#161)
