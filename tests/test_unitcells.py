@@ -159,6 +159,20 @@ def test_build_unit_cell(cif_data, n_decimal_places, parse_mode, cols):
 
 
 @cif_files_mark
+def test_missing_box_data(cif_data):
+    if "PDB" in cif_data.filename:
+        return
+
+    previous_cell_a = cif_data.file._pairs.pop("_cell_length_a", None)
+
+    with pytest.raises(ValueError, match="did not return any data"):
+        cif_data.file.read_cell_params()
+
+    if previous_cell_a is not None:
+        cif_data.file._pairs["_cell_length_a"] = previous_cell_a
+
+
+@cif_files_mark
 def test_invalid_unit_cell(cif_data):
     if "PDB" in cif_data.filename:
         return

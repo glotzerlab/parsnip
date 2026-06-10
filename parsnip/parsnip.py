@@ -513,20 +513,21 @@ class CifFile:
         angle_keys = ("_cell?angle_alpha", "_cell?angle_beta", "_cell?angle_gamma")
         box_keys = ("_cell?length_a", "_cell?length_b", "_cell?length_c", *angle_keys)
 
+        raw_data = self[box_keys]
+        if any(value is None for value in raw_data):
+            missing = [k for k, v in zip(box_keys, raw_data) if v is None]
+            msg = f"Keys {missing} did not return any data!"
+            raise ValueError(msg)
+
         if self.cast_values:
-            cell_data = np.asarray([float(x) for x in self[box_keys]])
+            cell_data = np.asarray([float(x) for x in raw_data])
         else:
-            cell_data = cast_array_to_float(arr=self[box_keys], dtype=np.float64)
+            cell_data = cast_array_to_float(arr=raw_data, dtype=np.float64)
 
         self._raw_cell_keys = [self._wildcard_mapping[key] for key in box_keys]
 
         def angle_is_invalid(x: float):
             return x <= 0.0 or x >= 180.0
-
-        if any(value is None for value in cell_data):
-            missing = [k for k, v in zip(box_keys, cell_data) if v is None]
-            msg = f"Keys {missing} did not return any data!"
-            raise ValueError(msg)
 
         if any(angle_is_invalid(value) for value in cell_data[3:]):
             invalid = [
