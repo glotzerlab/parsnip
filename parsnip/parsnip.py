@@ -719,25 +719,16 @@ class CifFile:
 
         # Wrap into box - works generally because these are fractional coordinates
         unrounded_pos = pos.copy() % 1
-        pos = pos.round(n_decimal_places) % 1
+        pos = np.round(unrounded_pos, n_decimal_places) % 1
+        pos[pos == 0.0] = 0.0 # Un-sign zeros for comparison
 
         # Filter unique points
         _, unique_fractional, unique_counts = np.unique(
             pos, return_index=True, return_counts=True, axis=0
         )
 
-        # Double-check for duplicates with real space coordinates
-        real_space_positions = pos @ cell_matrix
-
-        _, unique_realspace, unique_counts = np.unique(
-            real_space_positions.round(n_decimal_places),
-            return_index=True,
-            return_counts=True,
-            axis=0,
-        )
-
         # Merge unique points from realspace and fractional calculations
-        unique_indices = sorted({*unique_fractional} & {*unique_realspace})
+        unique_indices = sorted(unique_fractional)
 
         if verbose:
             _write_debug_output(
