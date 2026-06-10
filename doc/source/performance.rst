@@ -39,9 +39,9 @@ equivalent to the default mode, but several times faster.
     >>> # If `cfractions` is available it is used by the default `parse_mode="rational"`
     >>> faster = cif.build_unit_cell(n_decimal_places=4)
     >>> faster
-    array([[0.2254    , 0.        , 0.33333  ],
-           [0.        , 0.2254    , 0.6666633],
-           [0.7746    , 0.7746    , 0.99999667]])
+    array([[0.2254    , 0.        , 0.33333333],
+           [0.        , 0.2254    , 0.66666667],
+           [0.7746    , 0.7746    , 0.        ]])
     >>> assert faster.shape == (3, 3)
 
 
