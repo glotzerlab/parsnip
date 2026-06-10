@@ -121,7 +121,10 @@ _IDEAL_FRACS = (
     Fraction(5, 6),
     Fraction(11, 12),
 )
-_NUMERIC_RE = re.compile(r"\(\d*?\)")  # The error part of a <Numeric> token
+# The uncertainty part of a <Numeric> token. Note we are less strict than the official
+# grammar we allow for degenerate uncertainties without a numeric component
+_NUMERIC_RE = re.compile(r"\(\d*?\)")
+
 
 
 def _contains_wildcard(s: str) -> bool:
