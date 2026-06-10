@@ -24,6 +24,8 @@ Changed
 - ``n_decimal_places=3`` is now the default setting in build_unit_cell (#161)
 - The default centering is now preferred when symmetry operations are looked up from
   an underspecified space-group representation (#226)
+- Handling of certain types of delimited data entries that contain the delimiter
+  themselves. This increases accuracy in a small percent of COD files (#228)
 
 Fixed
 ~~~~~
