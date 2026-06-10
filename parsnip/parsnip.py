@@ -720,7 +720,7 @@ class CifFile:
         # Wrap into box - works generally because these are fractional coordinates
         unrounded_pos = pos.copy() % 1
         pos = np.round(unrounded_pos, n_decimal_places) % 1
-        pos[pos == -0.0] = 0.0 # Un-sign zeros
+        pos[pos == -0.0] = 0.0  # Un-sign zeros
 
         # Filter unique points
         _, unique_fractional, unique_counts = np.unique(
