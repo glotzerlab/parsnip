@@ -173,8 +173,6 @@ def _snap_position(row: np.ndarray) -> tuple[str, str, str]:
 
     return sx, sy, sz
 
-    return sx, sy, sz
-
 
 def _rational_evaluate_array(arr: str) -> list[list[float]]:
     """Evaluate an array over the ring Q%1."""
