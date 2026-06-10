@@ -55,4 +55,4 @@ Reproducing these Benchmarks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 All benchmarks in this file were obtained using Python 3.13.2 on an M1 Macbook Pro, with
-parsnip version <TODO> and the ``uv.lock`` file associated with that tag.
+``parsnip`` version 0.6.0 and the ``uv.lock`` file associated with that tag.
