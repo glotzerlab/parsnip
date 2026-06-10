@@ -453,7 +453,7 @@ class CifFile:
         result = []
         if isinstance(index, str):
             index = self._cpat["bracket"].sub(r"[\1]", index)
-            for table, labels in zip(self.loops, self.loop_labels):
+            for table, labels in zip(self.loops, self.loop_labels, strict=False):
                 matching_keys = fnfilter(labels, index)
                 match = table[matching_keys]
 
@@ -514,7 +514,7 @@ class CifFile:
 
         raw_data = self[box_keys]
         if any(value is None for value in raw_data):
-            missing = [k for k, v in zip(box_keys, raw_data) if v is None]
+            missing = [k for k, v in zip(box_keys, raw_data, strict=False) if v is None]
             msg = f"Keys {missing} did not return any data!"
             raise ValueError(msg)
 
@@ -530,7 +530,9 @@ class CifFile:
 
         if any(angle_is_invalid(value) for value in cell_data[3:]):
             invalid = [
-                k for k, v in zip(angle_keys, cell_data[3:]) if angle_is_invalid(v)
+                k
+                for k, v in zip(angle_keys, cell_data[3:], strict=False)
+                if angle_is_invalid(v)
             ]
             msg = f"Keys {invalid} are outside the valid range (0 <= θ <= 180)."
             raise ValueError(msg)
@@ -700,7 +702,7 @@ class CifFile:
         )
         if verbose:
             mask = coords != frac_strs
-            for original, new in zip(frac_strs[mask], coords[mask]):
+            for original, new in zip(frac_strs[mask], coords[mask], strict=False):
                 print(f"  Snapped {original} -> {new}")
         if parse_mode == "python_float":
             _fn = _compile_float_eval(symops_str)
@@ -893,7 +895,9 @@ class CifFile:
 
         self._raw_wyckoff_keys = [
             self._wildcard_mapping[k]
-            for (k, v) in zip(self.__class__._WYCKOFF_KEYS, wyckoff_position_data)
+            for (k, v) in zip(
+                self.__class__._WYCKOFF_KEYS, wyckoff_position_data, strict=False
+            )
             if v is not None
         ]
         return np.hstack([x for x in wyckoff_position_data if x is not None] or [[]])
@@ -1101,7 +1105,7 @@ class CifFile:
                     )
                     raise ValueError(msg) from e
 
-                labeled_type = [*zip(loop_keys, [dt] * n_cols)]
+                labeled_type = [*zip(loop_keys, [dt] * n_cols, strict=False)]
                 try:
                     rectable.dtype = labeled_type
                 except ValueError as e:
