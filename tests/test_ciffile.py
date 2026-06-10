@@ -9,8 +9,6 @@ from parsnip import CifFile
 from parsnip._errors import ParseWarning
 
 
-
-
 @cif_files_mark
 def test_cast_values(cif_data):
     uncast_pairs = cif_data.file.pairs
@@ -75,6 +73,7 @@ def test_open_buffered(cif_data):
         cif = CifFile(f)
 
     _array_assertion_verbose(keys, cif.get_from_pairs(keys), stored_data)
+
 
 @pytest.mark.parametrize(
     "value",
