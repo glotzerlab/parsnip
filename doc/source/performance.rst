@@ -55,4 +55,20 @@ Reproducing these Benchmarks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 All benchmarks in this file were obtained using Python 3.13.2 on an M1 Macbook Pro, with
-``parsnip`` version 0.6.0 and the ``uv.lock`` file associated with that tag.
+``parsnip`` version 0.6.1 and the ``uv.lock`` file associated with that tag. To
+reproduce the results on your own hardware, run the following commands from the root
+of the repository:
+
+```bash
+uv sync --group tables
+
+# Measure parsnip's performance reading CIF files
+./doc/generate_benchmark_plots/cif_parsing_benchmark.sh
+
+# Compare the efficiency of various parsing modes
+./doc/generate_benchmark_plots/parse_mode_benchmark_plot.py
+
+# Measure the space group and unit cell reconstruction accuracy
+python _joss/generate_table_1.py
+python _joss/generate_table_2.py
+```
