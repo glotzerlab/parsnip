@@ -46,7 +46,7 @@ optional-dependencies.sympy = { file = ["requirements-sympy.in"] }
 [dependency-groups]
 doc = ["parsnip-cif[doc]"]
 tests = ["parsnip-cif[tests]"]
-tables = ["pymatgen", "gemmi", "ase", "spglib", "matplotlib"]
+tables = ["cfractions", "pymatgen", "gemmi", "ase", "spglib", "matplotlib", "seaborn"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests", "parsnip", "doc/source"]
