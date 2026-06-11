@@ -192,10 +192,10 @@ space-group data.\label{accuracyCOD}
 
 | Library       | Correct Space Group | Symmetry Too High | Symmetry Too Low | Undetermined |
 | ------------- | :-----------------: | :---------------: | :--------------: | :----------: |
-| **`parsnip`** |      **8802**       |        105        |      **43**      |   **164**    |
-| ASE           |        8473         |        106        |       357        |     178      |
-| pymatgen      |        8109         |        98         |       420        |     486      |
-| gemmi         |        8361         |      **82**       |        46        |     625      |
+| **`parsnip`** |      **8800**       |        105        |      **43**      |   **164**    |
+| ASE           |        8471         |        106        |       357        |     178      |
+| pymatgen      |        8108         |        98         |       420        |     486      |
+| gemmi         |        8359         |      **82**       |        46        |     625      |
 
 `parsnip` also supports Unix-style wildcard queries, simplifying common lookup patterns
 like cell parameter extraction and space group identification. Single-character
