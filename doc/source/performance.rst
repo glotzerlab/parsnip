@@ -59,16 +59,16 @@ All benchmarks in this file were obtained using Python 3.13.2 on an M1 Macbook P
 reproduce the results on your own hardware, run the following commands from the root
 of the repository:
 
-```bash
-uv sync --group tables
+.. code-block:: console
 
-# Measure parsnip's performance reading CIF files
-./doc/generate_benchmark_plots/cif_parsing_benchmark.sh
+   uv sync --group tables
 
-# Compare the efficiency of various parsing modes
-./doc/generate_benchmark_plots/parse_mode_benchmark_plot.py
+   # Measure parsnip's performance reading CIF files
+   ./doc/generate_benchmark_plots/cif_parsing_benchmark.sh
 
-# Measure the space group and unit cell reconstruction accuracy
-python _joss/generate_table_1.py
-python _joss/generate_table_2.py
-```
+   # Compare the efficiency of various parsing modes
+   ./doc/generate_benchmark_plots/parse_mode_benchmark_plot.py
+
+   # Measure the space group and unit cell reconstruction accuracy
+   python _joss/generate_table_1.py
+   python _joss/generate_table_2.py
