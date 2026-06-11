@@ -61,14 +61,14 @@ of the repository:
 
 .. code-block:: console
 
-   uv sync --group tables
+   > uv sync --group tables
 
-   # Measure parsnip's performance reading CIF files
-   ./doc/generate_benchmark_plots/cif_parsing_benchmark.sh
+   > # Measure parsnip's performance reading CIF files
+   > ./doc/generate_benchmark_plots/cif_parsing_benchmark.sh
 
-   # Compare the efficiency of various parsing modes
-   ./doc/generate_benchmark_plots/parse_mode_benchmark_plot.py
+   > # Compare the efficiency of various parsing modes
+   > ./doc/generate_benchmark_plots/parse_mode_benchmark_plot.py
 
-   # Measure the space group and unit cell reconstruction accuracy
-   python _joss/generate_table_1.py
-   python _joss/generate_table_2.py
+   > # Measure the space group and unit cell reconstruction accuracy
+   > python _joss/generate_table_1.py
+   > python _joss/generate_table_2.py
