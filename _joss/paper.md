@@ -170,10 +170,32 @@ file yields even better results.
 
 | Library       | Correct Crystals | Incorrect Crystals | Failed to Parse | Percent Correct |
 | ------------- | :--------------: | :----------------: | :-------------: | :-------------: |
-| **`parsnip`** |     **9689**     |       **21**       |       389       |    **95.9%**    |
-| ASE           |       9252       |         37         |       810       |      91.6%      |
-| pymatgen      |       9248       |         46         |       805       |      91.6%      |
-| gemmi         |       8282       |        1817        |      **0**      |      82.0%      |
+| **`parsnip`** |     **9740**     |       **17**       |       337       |    **96.5%**    |
+| ASE           |       9247       |         37         |       810       |      91.6%      |
+| pymatgen      |       9255       |         35         |       804       |      91.7%      |
+| gemmi         |       8277       |        1817        |      **0**      |      82.0%      |
+
+`parsnip` equals or outperforms the tested suite of libraries in accurately reproducing
+the space group of crystal data. Table \ref{spacegroupCOD} demonstrates this efficacy,
+using the 9112 CIF files from the previous test that included explicit space group
+information. Using `spglib==2.7.0` with `symprec=1e-3`, the reconstructions are
+evaluated against the original file's keys and classified into four categories: "Correct
+Space Group" (matches the original record); "Symmetry Too High" (often due to incorrect
+rounding); "Symmetry Too Low" (often due to extraneous sites); and "Undetermined" (no
+space group identified at the given precision). We note that while `parsnip` does not
+have the lowest total number of "Symmetry Too High" cases, the additional errors
+primarily occur where numeric placeholder values like `-1` are present, as we treat such
+entries as valid data where other tools do not.
+
+: Comparison of space-group accuracy for 9114 CIF files from the COD with stored
+space-group data.\label{accuracyCOD}
+
+| Library       | Correct Space Group | Symmetry Too High | Symmetry Too Low | Undetermined |
+| ------------- | :-----------------: | :---------------: | :--------------: | :----------: |
+| **`parsnip`** |      **8802**       |        105        |      **43**      |   **164**    |
+| ASE           |        8473         |        106        |       357        |     178      |
+| pymatgen      |        8109         |        98         |       420        |     486      |
+| gemmi         |        8361         |      **82**       |        46        |     625      |
 
 `parsnip` also supports Unix-style wildcard queries, simplifying common lookup patterns
 like cell parameter extraction and space group identification. Single-character
