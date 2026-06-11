@@ -6,13 +6,13 @@
 
 import time
 from contextlib import nullcontext
-from importlib.util import find_spec
 from pathlib import Path
 from unittest.mock import patch
 
 import numpy as np
 
 from parsnip import CifFile
+from parsnip.patterns import _StdFraction
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 DEFAULT_CIF = REPO_ROOT / "tests/sample_data/AFLOW_mC24.cif"
@@ -25,12 +25,6 @@ MODES = [
 ]
 
 
-def _hide_cfractions(name, package=None):
-    if name == "cfractions":
-        return None
-    return find_spec(name, package)
-
-
 def bench(cif_path: Path, n_runs: int = 200, n_warmup: int = 10):
     """Run a benchmark recording the per-atom performance of unit cell construction."""
     cif = CifFile(cif_path)
@@ -40,7 +34,7 @@ def bench(cif_path: Path, n_runs: int = 200, n_warmup: int = 10):
     results = {}
     for label, parse_mode, use_cfractions in MODES:
         if not use_cfractions:
-            ctx = patch("importlib.util.find_spec", side_effect=_hide_cfractions)
+            ctx = patch("parsnip.patterns.Fraction", _StdFraction)
         else:
             ctx = nullcontext()
 
