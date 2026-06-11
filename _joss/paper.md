@@ -158,7 +158,7 @@ characterization techniques.
 We performed tests of parsnip and three other CIF parsing libraries against a subset of
 the Crystallography Open Database (COD), choosing the correct structure to be the most
 frequently reported value across the four packages. Table \ref{accuracyCOD} shows that
-`parsnip`'s rational parsing approach was able to correctly extract 95.9% of structures,
+`parsnip`'s rational parsing approach was able to correctly extract 96.5% of structures,
 more than any other library we could find. We note that our results use a single, fixed
 parsing precision for all 10,094 files. However, as discussed `in parsnip`'s
 documentation, tailoring the parse precision to match the precision of the data in the
