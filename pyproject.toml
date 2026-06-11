@@ -5,14 +5,14 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "parsnip-cif"
 version = "0.6.0"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 description = "Minimal library for parsing CIF & mmCIF files in Python."
 readme = "README.rst"
 license-files = ["LICENSE"]
 authors = [
   { name = "Jen Bradley", email = "jenbrad@umich.edu" },
 ]
-dependencies = ["numpy>=1.19", "more-itertools"]
+dependencies = ["numpy>=1.19,<3.0", "more-itertools<12.0"]
 keywords = [
   "Development Status :: 4 - Beta",
   "License :: OSI Approved :: BSD License",
@@ -45,10 +45,18 @@ optional-dependencies.sympy = { file = ["requirements-sympy.in"] }
 
 [dependency-groups]
 doc = ["parsnip-cif[doc]"]
+tests = ["parsnip-cif[tests]"]
+tables = ["cfractions", "pymatgen", "gemmi", "ase", "spglib", "matplotlib", "seaborn"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests", "parsnip", "doc"]
-addopts = ["--doctest-plus", "--doctest-glob='*.rst'", "-W", "error::Warning"]
+testpaths = ["tests", "parsnip", "doc/source"]
+addopts = [
+  "--doctest-plus",
+  "--doctest-glob='*.rst'",
+  "-W",
+  "error::Warning",
+  "--ignore=doc/generate_benchmark_plots",
+]
 doctest_rst = true
 doctest_optionflags = ["NORMALIZE_WHITESPACE", "ELLIPSIS", "FLOAT_CMP"]
 console_output_style = "progress"

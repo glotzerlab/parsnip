@@ -283,7 +283,9 @@ def _write_debug_output(unique_indices, unique_counts, pos, check="Initial"):
         print("(duplicate point, number of occurrences)")
         [
             print(pt, count)
-            for pt, count in zip(np.asarray(pos)[unique_indices], unique_counts)
+            for pt, count in zip(
+                np.asarray(pos)[unique_indices], unique_counts, strict=False
+            )
             if count > 1
         ]
 
