@@ -188,7 +188,7 @@ primarily occur where numeric placeholder values like `-1` are present, as we tr
 entries as valid data where other tools do not.
 
 : Comparison of space-group accuracy for 9114 CIF files from the COD with stored
-space-group data.\label{accuracyCOD}
+space-group data.\label{spacegroupCOD}
 
 | Library       | Correct Space Group | Symmetry Too High | Symmetry Too Low | Undetermined |
 | ------------- | :-----------------: | :---------------: | :--------------: | :----------: |
