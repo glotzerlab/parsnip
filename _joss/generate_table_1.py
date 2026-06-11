@@ -16,9 +16,9 @@ following command will download the required files to a new parsnip/cifs directo
 
 import re
 import warnings
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable
 
 import gemmi
 from ase.io.cif import read_cif
