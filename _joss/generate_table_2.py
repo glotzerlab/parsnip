@@ -239,29 +239,3 @@ if __name__ == "__main__":
                 print(f"  {f}: {r[:100]}")
             if len(exceptions) > 5:
                 print(f"  ... and {len(exceptions) - 5} more exceptions")
-
-    # # Bar chart
-    # fig, ax = plt.subplots(figsize=(8, 5))
-
-    # names = [p.name for p in parsers]
-    # x = np.arange(len(names))
-    # width = 0.25
-
-    # ax.bar(
-    #     x - width, [p.correct for p in parsers], width, label="Correct", color="#2ca02c"
-    # )
-    # ax.bar(x, [p.too_high for p in parsers], width, label="Too high", color="#ff7f0e")
-    # ax.bar(
-    #     x + width, [p.too_low for p in parsers], width, label="Too low", color="#1f77b4"
-    # )
-
-    # ax.set_xticks(x)
-    # ax.set_xticklabels(names, rotation=15, ha="right")
-    # ax.set_ylabel("Number of structures")
-    # ax.set_title(f"Space group accuracy (symprec={SYMPREC})")
-    # ax.legend()
-
-    # plt.tight_layout()
-    # plt.savefig("_joss/table_2.pdf")
-    # plt.savefig("_joss/table_2.png", dpi=150)
-    # print("\nSaved figure to _joss/table_2.pdf and _joss/table_2.png")
