@@ -14,11 +14,20 @@ from __future__ import annotations
 import json
 import re
 import sys
+from fractions import Fraction as _StdFraction
+from importlib.util import find_spec as _find_spec
 from pathlib import Path
 from typing import Literal, TypeVar
 
 import numpy as np
 from numpy.typing import ArrayLike
+
+if _find_spec("cfractions") is not None:
+    from cfractions import Fraction
+else:
+    Fraction = _StdFraction
+
+ONE_PERCENT = Fraction(1, 100)
 
 
 def _normalize(string: str | None):
@@ -30,7 +39,7 @@ def _normalize(string: str | None):
         string = string.strip('"')
     elif string[0] == "'" and string[-1] == "'":
         string = string.strip("'")
-    return re.sub(r"[\s;]", "", string)
+    return re.sub(r"[\s;_]", "", string)
 
 
 def _normalize_hall(string: str | None):
@@ -47,9 +56,11 @@ def _normalize_hall(string: str | None):
 
 with open(Path(__file__).parent / "symops.json") as f:
     # Process to extract the required data, in the specific format we need
+    # We move default settings to the end so that underspecific symbols like HM and IT
+    # use the standard setting where possible.
+    _items = sorted(json.load(f).items(), key=lambda kv: kv[1]["is_default_setting"])
     _full_dict = {
-        k: v | {"symops": np.asarray(v["symops"])[:, None]}
-        for (k, v) in json.load(f).items()
+        k: v | {"symops": np.asarray(v["symops"])[:, None]} for (k, v) in _items
     }
     SYMOPS_BY_HALL = {_normalize_hall(k): v["symops"] for k, v in _full_dict.items()}
     SYMOPS_BY_HM = {
@@ -96,7 +107,23 @@ See section 3.2 of dx.doi.org/10.1107/S1600576715021871 for clarification.
 """
 
 _SAFE_STRING_RE = re.compile(r"(\(\d+\))|[^\d\[\]\,\+\-\/\*\.]")
+_SAFE_TEMPLATE_RE = re.compile(r"[^\d\[\]\,\+\-\/\*\.xyz]")
 _SAFE_FRACTN_RE = re.compile(rf"([-+]?\d{_PROG_STAR}[/.]?\d{_PROG_PLUS})")
+_IDEAL_FRACS = (
+    Fraction(0),
+    Fraction(1, 12),
+    Fraction(1, 6),
+    Fraction(1, 3),
+    Fraction(5, 12),
+    Fraction(1, 2),
+    Fraction(7, 12),
+    Fraction(2, 3),
+    Fraction(5, 6),
+    Fraction(11, 12),
+)
+# The uncertainty part of a <Numeric> token. Note we are less strict than the official
+# grammar we allow for degenerate uncertainties without a numeric component
+_NUMERIC_UNCERTAINTY_RE = re.compile(r"\(\d*?\)")
 
 
 def _contains_wildcard(s: str) -> bool:
@@ -108,14 +135,47 @@ def _flatten_or_none(ls: list[T]):
     return None if not ls else ls[0] if len(ls) == 1 else ls
 
 
+def _snap_coord_str(s: str) -> str:
+    """Snap a coordinate string to an exact fraction if it is a valid rounding."""
+    clean = _NUMERIC_UNCERTAINTY_RE.sub("", s)
+    try:
+        f = Fraction(clean)
+    except (ValueError, ZeroDivisionError):
+        return s
+    frac_part = abs(f) % 1
+    if frac_part in _IDEAL_FRACS:
+        return s
+    dp = len(clean.partition(".")[2]) if "." in clean else 0
+    if dp <= 1:
+        return s
+    tol = Fraction(2, 3 * 10**dp)
+    for ideal in _IDEAL_FRACS:
+        if abs(frac_part - ideal) > tol:
+            continue
+        int_part = abs(f) - frac_part
+        return str((1 if f >= 0 else -1) * (int_part + ideal))
+    return s
+
+
+def _snap_position(row: np.ndarray) -> tuple[str, str, str]:
+    """Snap a Wyckoff position, preserving `y=2x%1` Wyckoff constraints."""
+    rx, ry, rz = row[0], row[1], row[2]
+    sx, sy, sz = _snap_coord_str(rx), _snap_coord_str(ry), _snap_coord_str(rz)
+
+    if sx != rx or sy != ry:
+        fx = Fraction(_NUMERIC_UNCERTAINTY_RE.sub("", str(rx)))
+        fy = Fraction(_NUMERIC_UNCERTAINTY_RE.sub("", str(ry)))
+        if min(abs((fy - 2 * fx) % 1), 1 - abs((fy - 2 * fx) % 1)) < ONE_PERCENT:
+            if sx != rx:
+                sy = str((2 * Fraction(_NUMERIC_UNCERTAINTY_RE.sub("", sx))) % 1)
+            elif sy != ry:
+                sx = str((Fraction(_NUMERIC_UNCERTAINTY_RE.sub("", sy)) / 2) % 1)
+
+    return sx, sy, sz
+
+
 def _rational_evaluate_array(arr: str) -> list[list[float]]:
     """Evaluate an array over the ring Q%1."""
-    from fractions import Fraction
-    from importlib.util import find_spec
-
-    if find_spec("cfractions") is not None:
-        from cfractions import Fraction
-
     one = Fraction(1)
     zero = Fraction(0)
 
@@ -144,6 +204,16 @@ def _sympy_evaluate_array(arr: str) -> list[list[float]]:
         ]
         for ls in arr.split("],")
     ]
+
+
+def _compile_float_eval(str_input: str):
+    """Pre-compile a symops template into a callable for ``python_float`` mode.
+
+    Sanitizes the template string and compiles it into a ``lambda x, y, z`` that
+    can be called repeatedly with different coordinates.
+    """
+    safe_template = _SAFE_TEMPLATE_RE.sub("", str_input.lower())
+    return eval(f"lambda x, y, z: {safe_template}", {"__builtins__": {}}, {})  # noqa: S307
 
 
 def _safe_eval(
@@ -213,14 +283,18 @@ def _write_debug_output(unique_indices, unique_counts, pos, check="Initial"):
         print("(duplicate point, number of occurrences)")
         [
             print(pt, count)
-            for pt, count in zip(np.asarray(pos)[unique_indices], unique_counts)
+            for pt, count in zip(
+                np.asarray(pos)[unique_indices], unique_counts, strict=False
+            )
             if count > 1
         ]
 
     print()
 
 
-def cast_array_to_float(arr: ArrayLike | None, dtype: type = np.float32):
+def cast_array_to_float(
+    arr: ArrayLike | None, dtype: type = np.float32, *, handle_fractions: bool = False
+):
     """Cast a Numpy array to a dtype, pruning significant digits from numerical values.
 
     Args:
@@ -228,6 +302,9 @@ def cast_array_to_float(arr: ArrayLike | None, dtype: type = np.float32):
         dtype (type, optional):
             dtype to cast array to.
             Default value = ``np.float32``
+        handle_fractions (bool, optional):
+            When ``True``, interpret fraction strings (e.g. ``"1/3"``) via
+            ``Fraction`` before casting. Default value = ``False``
 
     Returns
     -------
@@ -238,9 +315,10 @@ def cast_array_to_float(arr: ArrayLike | None, dtype: type = np.float32):
     if np.array(arr).shape == (0,):
         return np.array((), dtype=dtype)
     arr = [(el if el is not None else "nan") for el in arr]
-    # if any(el is None for el in arr):
-    #     raise TypeError("Input array contains `None` and cannot be cast!")
-    return np.char.partition(arr, "(")[..., 0].astype(dtype)
+    stripped = np.char.partition(arr, "(")[..., 0]
+    if handle_fractions:
+        return np.vectorize(lambda s: dtype(Fraction(s)))(stripped)
+    return stripped.astype(dtype)
 
 
 def _accumulate_nonsimple_data(data_iter, line: str = ""):
@@ -248,8 +326,8 @@ def _accumulate_nonsimple_data(data_iter, line: str = ""):
     delimiter_count = 0
     while _line_is_continued(data_iter.peek(None)):
         while data_iter.peek(None) and delimiter_count < 2:
-            buffer = data_iter.peek().replace(" ", "")
-            if buffer[:1] == ";" or any(s in buffer for s in ALLOWED_DELIMITERS):
+            peek_prefix = data_iter.peek().lstrip()[:3]
+            if peek_prefix[:1] == ";" or peek_prefix == "'''" or peek_prefix == '"""':
                 delimiter_count += 1
             line += next(data_iter)
 

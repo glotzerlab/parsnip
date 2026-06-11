@@ -4,20 +4,42 @@ Changelog
 The format is based on `Keep a Changelog <http://keepachangelog.com/en/1.1.0/>`__.
 This project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`__.
 
-v0.X.X - 20XX-XX-XX
+v0.6.1 - 2026-06-11
+-------------------
+
+Removed
+~~~~~~~
+
+- Support for Python 3.9 (#232)
+
+v0.6.0 - 2026-06-09
 -------------------
 
 Added
 ~~~~~
-- New rational parsing mode based on ``fractions.Fraction`` (#161)
 - Spacegroup symop lookup when a table of translation operators is not provided (#160)
+- New rational parsing mode based on ``fractions.Fraction`` (#161)
 - Support for ``loop_`` data entries containing unescaped quotes (#162)
 - Improved performance when parsing well-structured CIF files (#222)
+- Configurable toggle for "snapping" near-fractional Wyckoff positions to exact ratios.
+  This improves the parsing accuracy for structures with incorrectly or inconsistently
+  rounded fractions (#223, #230)
+- Improved performance when using the ``python_float`` parse mode (#224)
 
 Changed
 ~~~~~~~
 - ``parse_mode='rational'`` is now the default setting in build_unit_cell (#161)
 - ``n_decimal_places=3`` is now the default setting in build_unit_cell (#161)
+- The default centering is now preferred when symmetry operations are looked up from
+  an underspecified space-group representation (#226)
+- Handling of certain types of delimited data entries that contain the delimiter
+  themselves. This increases accuracy in a small percent of COD files (#228)
+- Site deduplication is now performed solely in fractional space where the rounding
+  tolerance directly maps to stored coordinates (#229)
+
+Fixed
+~~~~~
+- Missing cell data now raises an error when attempting to ``build_unit_cell`` (#227)
 
 Deprecated
 ~~~~~~~~~~
