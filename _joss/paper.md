@@ -160,11 +160,11 @@ the Crystallography Open Database (COD), choosing the correct structure to be th
 frequently reported value across the four packages. Table \ref{accuracyCOD} shows that
 `parsnip`'s rational parsing approach was able to correctly extract 95.9% of structures,
 more than any other library we could find. We note that our results use a single, fixed
-parsing precision for all 10,099 files. However, as discussed `in parsnip`'s
+parsing precision for all 10,094 files. However, as discussed `in parsnip`'s
 documentation, tailoring the parse precision to match the precision of the data in the
 file yields even better results.
 
-: Comparison of unit-cell reconstruction consensus for 10099 CIF files from the COD.
+: Comparison of unit-cell reconstruction consensus for 10094 CIF files from the COD.
 "Total Correct" indicates the total number of correctly-reconstructed crystals and
 "Failed to Parse" indicates files that could not be read at all.\label{accuracyCOD}
 
