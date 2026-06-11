@@ -78,7 +78,7 @@ def _color(name, t):
 sns.set_style("ticks")
 fig, ax = plt.subplots(figsize=(7, 3.2))
 
-for i, (n, t) in enumerate(zip(names, times)):
+for i, (n, t) in enumerate(zip(names, times, strict=False)):
     c = _color(n, t)
     bar_end = min(t, CUTOFF)
     if t > CUTOFF:

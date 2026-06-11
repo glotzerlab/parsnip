@@ -99,7 +99,7 @@ def plot(results, out_path: str):
     fig, ax = plt.subplots(figsize=(7, 2.2))
 
     y = list(range(len(labels)))
-    for i, (lab, m, s) in enumerate(zip(labels, means, stds)):
+    for i, (lab, m, s) in enumerate(zip(labels, means, stds, strict=False)):
         ax.barh(i, m, height=0.55, color=colors[lab], edgecolor="white", linewidth=0.5)
         ax.text(
             max(means) * 0.02,
