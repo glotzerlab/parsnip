@@ -75,6 +75,14 @@ additional dependencies are required to run the tests and build the docs.
     pip install .[tests]     # Install with dependencies required to run tests
     pip install .[tests,doc] # Install with dependencies required to run tests and make docs
 
+To obtain a correct set of locked dependencies, we recommend the use of the ``uv``
+package manager to install from ``uv.lock``:
+
+.. code:: bash
+
+   uv sync --extra tests # Or --all-extras to build the documentation
+
+
 Dependencies
 ^^^^^^^^^^^^
 
@@ -84,3 +92,12 @@ Dependencies
    more-itertools
 
 .. _contributing:
+
+Support and Contribution
+========================
+
+Please visit our repository on `GitHub <https://github.com/glotzerlab/parsnip>`__ for the library source code.
+Any issues or bugs may be reported at our `issue tracker <https://github.com/glotzerlab/parsnip/issues>`__, and
+tips and best practices for contributing to the project are included in the
+`development guide <https://parsnip-cif.readthedocs.io/en/latest/development.html>`__.
+All contributions to **parsnip** are welcomed via pull requests!
