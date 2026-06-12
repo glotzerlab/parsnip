@@ -122,9 +122,12 @@ near the leaves of the tree that appear to contain data. Most commonly, this all
 `parsnip` to parse data entries with missing or incorrectly escaped delimiters,
 correctly extracting data that would otherwise be lost. This is a departure from the
 standard "validating" parser strategy, but it enables fast and robust data extraction
-without significant increases to code complexity.
+without significant increases to code complexity. As detailed in our performance guide,
+`parsnip` an complete a standardized CIF benchmark 3 to 100 times faster than most
+open-source libraries, though significantly slower than the novel **gemmi** parser
+[@GEMMI].
 
-While this parsing technique alone provides significant accuracy benefits, there are
+While our parsing technique alone provides significant accuracy benefits, there are
 still many files that cannot be accurately reconstructed by other tools. Standard,
 "symmetrized" CIF data requires the application of symmetry operations to reconstruct a
 lattice. These operations are the sum of an experimentally-determined value Wyckoff
@@ -155,22 +158,44 @@ characterization techniques.
 We performed tests of parsnip and three other CIF parsing libraries against a subset of
 the Crystallography Open Database (COD), choosing the correct structure to be the most
 frequently reported value across the four packages. Table \ref{accuracyCOD} shows that
-`parsnip`'s rational parsing approach was able to correctly extract 95.9% of structures,
+`parsnip`'s rational parsing approach was able to correctly extract 96.5% of structures,
 more than any other library we could find. We note that our results use a single, fixed
-parsing precision for all 10,099 files. However, as discussed `in parsnip`'s
+parsing precision for all 10,094 files. However, as discussed `in parsnip`'s
 documentation, tailoring the parse precision to match the precision of the data in the
 file yields even better results.
 
-: Comparison of unit-cell reconstruction consensus for 10099 CIF files from the COD.
+: Comparison of unit-cell reconstruction consensus for 10094 CIF files from the COD.
 "Total Correct" indicates the total number of correctly-reconstructed crystals and
 "Failed to Parse" indicates files that could not be read at all.\label{accuracyCOD}
 
 | Library       | Correct Crystals | Incorrect Crystals | Failed to Parse | Percent Correct |
 | ------------- | :--------------: | :----------------: | :-------------: | :-------------: |
-| **`parsnip`** |     **9689**     |       **21**       |       389       |    **95.9%**    |
-| ASE           |       9252       |         37         |       810       |      91.6%      |
-| pymatgen      |       9248       |         46         |       805       |      91.6%      |
-| gemmi         |       8282       |        1817        |      **0**      |      82.0%      |
+| **`parsnip`** |     **9740**     |       **17**       |       337       |    **96.5%**    |
+| ASE           |       9247       |         37         |       810       |      91.6%      |
+| pymatgen      |       9255       |         35         |       804       |      91.7%      |
+| gemmi         |       8277       |        1817        |      **0**      |      82.0%      |
+
+`parsnip` equals or outperforms the tested suite of libraries in accurately reproducing
+the space group of crystal data. Table \ref{spacegroupCOD} demonstrates this efficacy,
+using the 9112 CIF files from the previous test that included explicit space group
+information. Using `spglib==2.7.0` with `symprec=1e-3`, the reconstructions are
+evaluated against the original file's keys and classified into four categories: "Correct
+Space Group" (matches the original record); "Symmetry Too High" (often due to incorrect
+rounding); "Symmetry Too Low" (often due to extraneous sites); and "Undetermined" (no
+space group identified at the given precision). We note that while `parsnip` does not
+have the lowest total number of "Symmetry Too High" cases, the additional errors
+primarily occur where numeric placeholder values like `-1` are present, as we treat such
+entries as valid data where other tools do not.
+
+: Comparison of space-group accuracy for 9114 CIF files from the COD with stored
+space-group data.\label{spacegroupCOD}
+
+| Library       | Correct Space Group | Symmetry Too High | Symmetry Too Low | Undetermined |
+| ------------- | :-----------------: | :---------------: | :--------------: | :----------: |
+| **`parsnip`** |      **8800**       |        105        |      **43**      |   **164**    |
+| ASE           |        8471         |        106        |       357        |     178      |
+| pymatgen      |        8108         |        98         |       420        |     486      |
+| gemmi         |        8359         |      **82**       |        46        |     625      |
 
 `parsnip` also supports Unix-style wildcard queries, simplifying common lookup patterns
 like cell parameter extraction and space group identification. Single-character
