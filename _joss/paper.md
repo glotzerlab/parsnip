@@ -165,15 +165,15 @@ documentation, tailoring the parse precision to match the precision of the data 
 file yields even better results.
 
 : Comparison of unit-cell reconstruction consensus for 10094 CIF files from the COD.
-"Total Correct" indicates the total number of correctly-reconstructed crystals and
+"Matches Consensus" indicates the total number of correctly-reconstructed crystals and
 "Failed to Parse" indicates files that could not be read at all.\label{accuracyCOD}
 
-| Library       | Correct Crystals | Incorrect Crystals | Failed to Parse | Percent Correct |
-| ------------- | :--------------: | :----------------: | :-------------: | :-------------: |
-| **`parsnip`** |     **9740**     |       **17**       |       337       |    **96.5%**    |
-| ASE           |       9247       |         37         |       810       |      91.6%      |
-| pymatgen      |       9255       |         35         |       804       |      91.7%      |
-| gemmi         |       8277       |        1817        |      **0**      |      82.0%      |
+| Library       | Matches Consensus | Mismatches Consensus | Failed to Parse | Percent Matching Consensus |
+| ------------- | :---------------: | :------------------: | :-------------: | :------------------------: |
+| **`parsnip`** |     **9740**      |        **17**        |       337       |         **96.5%**          |
+| ASE           |       9247        |          37          |       810       |           91.6%            |
+| pymatgen      |       9255        |          35          |       804       |           91.7%            |
+| gemmi         |       8277        |         1817         |      **0**      |           82.0%            |
 
 `parsnip` equals or outperforms the tested suite of libraries in accurately reproducing
 the space group of crystal data. Table \ref{spacegroupCOD} demonstrates this efficacy,
