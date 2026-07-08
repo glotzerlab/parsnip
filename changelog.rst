@@ -4,6 +4,14 @@ Changelog
 The format is based on `Keep a Changelog <http://keepachangelog.com/en/1.1.0/>`__.
 This project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`__.
 
+v1.0.0 - 2026-07-08
+-------------------
+
+Added
+~~~~~
+- Paper submission, text, and benchmarks for the Journal of Open-Source Software (#134)
+- Performance guide and documentation page (#221)
+
 v0.6.1 - 2026-06-11
 -------------------
 
