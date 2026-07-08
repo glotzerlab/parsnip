@@ -12,6 +12,11 @@ Added
 - Paper submission, text, and benchmarks for the Journal of Open-Source Software (#134)
 - Performance guide and documentation page (#221)
 
+Fixed
+~~~~~
+- Pinned action commits in draft-pdf action (#243)
+- Code styling in performance.rst documentation page (#244)
+
 v0.6.1 - 2026-06-11
 -------------------
 
