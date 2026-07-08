@@ -31,6 +31,13 @@ equivalent to the default mode, but several times faster.
 
 .. _cfractions: https://pypi.org/project/cfractions/
 
+.. testsetup::
+
+    >>> import os
+    >>> import numpy as np
+    >>> if "doc/source" not in os.getcwd(): os.chdir("doc/source")
+    >>> from parsnip import CifFile
+
 .. doctest::
 
     >>> # uv pip install cfractions
