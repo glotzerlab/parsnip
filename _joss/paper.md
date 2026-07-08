@@ -122,7 +122,8 @@ near the leaves of the tree that appear to contain data. Most commonly, this all
 `parsnip` to parse data entries with missing or incorrectly escaped delimiters,
 correctly extracting data that would otherwise be lost. This is a departure from the
 standard "validating" parser strategy, but it enables fast and robust data extraction
-without significant increases to code complexity. As detailed in our performance guide,
+without significant increases to code complexity. As detailed in our
+[performance guide](https://parsnip-cif.readthedocs.io/en/latest/performance.html),
 `parsnip` completes a standardized CIF benchmark 3 to 100 times faster than most
 open-source libraries, though significantly slower than the novel **gemmi** parser
 [@GEMMI].
