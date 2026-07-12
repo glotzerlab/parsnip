@@ -3,5 +3,6 @@ furo
 numpy>=1.26.4
 sphinx>=7.3.7
 sphinx-copybutton
+sphinx-inline-tabs
 sphinx-notfound-page
 pytest-doctestplus
