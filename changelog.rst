@@ -4,6 +4,12 @@ Changelog
 The format is based on `Keep a Changelog <http://keepachangelog.com/en/1.1.0/>`__.
 This project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`__.
 
+v1.0.1 - TBD
+-------------------
+
+Fixed
+~~~~~
+
 v1.0.0 - 2026-07-08
 -------------------
 
