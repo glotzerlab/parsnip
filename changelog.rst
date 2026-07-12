@@ -9,6 +9,7 @@ v1.0.1 - TBD
 
 Fixed
 ~~~~~
+- Fixed ``dtype`` conversion with Numpy 2.5 (#245)
 
 v1.0.0 - 2026-07-08
 -------------------

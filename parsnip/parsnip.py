@@ -1107,7 +1107,7 @@ class CifFile:
 
                 labeled_type = [*zip(loop_keys, [dt] * n_cols, strict=False)]
                 try:
-                    rectable.dtype = labeled_type
+                    rectable = rectable.view(labeled_type)
                 except ValueError as e:
                     msg = (
                         "Loop labels do not match the structure of parsed data.\n"
