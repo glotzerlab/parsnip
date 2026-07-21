@@ -41,7 +41,7 @@ packaging==26.2
     #   pytest
     #   pytest-doctestplus
     #   wheel
-pillow==12.2.0
+pillow==12.3.0
     # via matplotlib
 pluggy==1.6.0
     # via pytest
