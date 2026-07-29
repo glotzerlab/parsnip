@@ -97,8 +97,8 @@ requiring postprocessing for studies where that data is unnecessary or incorrect
 than associating pure crystallographic data with atomic symbols or valence states by
 default, `parsnip` provides only the information required to reconstruct a particular
 structure unless otherwise queried. This approach offers benefits for users who do
-require atomic information, as we are able to provide access to arbirary data associated
-with the basis positions, rather than fixed keys as required by other tools.
+require atomic information, as we are able to provide access to arbitrary data
+associated with the basis positions, rather than fixed keys as required by other tools.
 
 # Software Design
 
@@ -115,7 +115,7 @@ formats like *XYZ*, *MOL*, and *VTP* [@molIUPAC; @vtkBook].
 
 Our unique approach to the CIF specification extends to the design of our parser as
 well. While most existing tools in the space use parser generators based on the IUCR's
-formal grammar, we identified a non-neglible subset of CIF files that break the formal
+formal grammar, we identified a non-negligible subset of CIF files that break the formal
 specification but nevertheless contain useful data. To overcome this, `parsnip` does not
 validate the entire syntax tree of the CIF grammar: rather, we eagerly consume nodes
 near the leaves of the tree that appear to contain data. Most commonly, this allows
