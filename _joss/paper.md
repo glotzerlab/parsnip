@@ -97,8 +97,8 @@ requiring postprocessing for studies where that data is unnecessary or incorrect
 than associating pure crystallographic data with atomic symbols or valence states by
 default, `parsnip` provides only the information required to reconstruct a particular
 structure unless otherwise queried. This approach offers benefits for users who do
-require atomic information, as we are able to provide access to arbirary data associated
-with the basis positions, rather than fixed keys as required by other tools.
+require atomic information, as we are able to provide access to arbitrary data
+associated with the basis positions, rather than fixed keys as required by other tools.
 
 # Software Design
 
