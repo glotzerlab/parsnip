@@ -26,6 +26,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
     "sphinx_copybutton",
+    "sphinx_inline_tabs",
     "pytest_doctestplus.sphinx.doctestplus",
     "autodocsumm",
     "notfound.extension",
