@@ -1,0 +1,34 @@
+cff-version: "1.2.0"
+authors:
+- family-names: Bradley
+  given-names: Jenna
+  orcid: "https://orcid.org/0009-0007-2443-2982"
+- family-names: Glotzer
+  given-names: Sharon C.
+  orcid: "https://orcid.org/0000-0002-7197-0085"
+doi: 10.5281/zenodo.21268059
+message: If you use this software, please cite our article in the
+  Journal of Open Source Software.
+preferred-citation:
+  authors:
+  - family-names: Bradley
+    given-names: Jenna
+    orcid: "https://orcid.org/0009-0007-2443-2982"
+  - family-names: Glotzer
+    given-names: Sharon C.
+    orcid: "https://orcid.org/0000-0002-7197-0085"
+  date-published: 2026-08-12
+  doi: 10.21105/joss.10407
+  issn: 2475-9066
+  issue: 124
+  journal: Journal of Open Source Software
+  publisher:
+    name: Open Journals
+  start: 10407
+  title: "parsnip: Streamlined Crystallographic Data Parsing for
+    Assembly Science and Engineering"
+  type: article
+  url: "https://joss.theoj.org/papers/10.21105/joss.10407"
+  volume: 11
+title: "parsnip: Streamlined Crystallographic Data Parsing for Assembly
+  Science and Engineering"

@@ -35,5 +35,6 @@
    genindex
    development
    changelog
+   citing
    credits
    license
