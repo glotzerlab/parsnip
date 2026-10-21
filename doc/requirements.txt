@@ -10,38 +10,38 @@ babel==2.18.0
     # via sphinx
 beautifulsoup4==4.15.0
     # via furo
-certifi==2026.6.17
+certifi==2026.10.19
     # via requests
-charset-normalizer==3.4.9
+charset-normalizer==3.5.2
     # via requests
-docutils==0.22.4
+docutils==0.23
     # via sphinx
 furo==2025.12.19
     # via -r doc/requirements.in
-idna==3.18
+idna==3.20
     # via requests
-imagesize==2.0.0
+imagesize==2.0.1
     # via sphinx
-iniconfig==2.3.0
+iniconfig==2.3.1
     # via pytest
 jinja2==3.1.6
     # via sphinx
-markupsafe==3.0.3
+markupsafe==3.0.4
     # via jinja2
-more-itertools==11.1.0
+more-itertools==11.2.1
     # via parsnip-cif (pyproject.toml)
-numpy==2.5.1
+numpy==2.5.4
     # via
     #   -r doc/requirements.in
     #   parsnip-cif (pyproject.toml)
-packaging==26.2
+packaging==26.3
     # via
     #   pytest
     #   pytest-doctestplus
     #   sphinx
-pluggy==1.6.0
+pluggy==1.7.0
     # via pytest
-pygments==2.20.0
+pygments==2.21.0
     # via
     #   accessible-pygments
     #   furo
@@ -57,9 +57,9 @@ roman-numerals==4.1.0
     # via sphinx
 snowballstemmer==3.1.1
     # via sphinx
-soupsieve==2.9.1
+soupsieve==3.0.3
     # via beautifulsoup4
-sphinx==9.1.0
+sphinx==9.2.0
     # via
     #   -r doc/requirements.in
     #   autodocsumm
@@ -79,7 +79,7 @@ sphinxcontrib-devhelp==2.0.0
     # via sphinx
 sphinxcontrib-htmlhelp==2.1.0
     # via sphinx
-sphinxcontrib-jsmath==1.0.1
+sphinxcontrib-jsmath==2.0.0
     # via sphinx
 sphinxcontrib-qthelp==2.0.0
     # via sphinx
@@ -87,5 +87,5 @@ sphinxcontrib-serializinghtml==2.0.0
     # via sphinx
 typing-extensions==4.16.0
     # via beautifulsoup4
-urllib3==2.7.0
+urllib3==2.8.0
     # via requests
