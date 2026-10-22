@@ -62,7 +62,7 @@ pytest-doctestplus==1.7.1
     # via -r tests/requirements.in
 pytest-xdist==3.8.0
     # via -r tests/requirements.in
-python-dateutil==2.9.0.post0
+python-dateutil==3.0.0
     # via matplotlib
 scipy==1.18.1
     # via ase
@@ -76,6 +76,8 @@ sympy==1.14.0
     #   -r tests/requirements.in
 typing-extensions==4.16.0
     # via ase
+tzdata==2026.5
+    # via python-dateutil
 wcwidth==0.9.3
     # via prettytable
 wheel==0.48.0
