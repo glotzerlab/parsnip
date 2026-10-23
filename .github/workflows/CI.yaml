@@ -20,6 +20,8 @@ jobs:
             python-version: "3.15"
           - runs-on: "macos-15"
             python-version: "3.11"
+          - runs-on: "ubuntu-26.04-arm"
+            python-version: "3.14"
     # Pull in the test script from run_tests and distribute python from matrix versions
     uses: ./.github/workflows/run_tests.yaml
     with:
