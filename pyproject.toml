@@ -128,6 +128,10 @@ filename = "doc/source/conf.py"
 [[tool.bumpversion.files]]
 filename = "parsnip/__init__.py"
 
+[tool.uv]
+# gemmi 0.7.5 does not build with nanobind 3.x, so we force a compatible version.
+build-constraint-dependencies = ["nanobind<3"]
+
 [tool.uv.workspace]
 members = [
   ".",

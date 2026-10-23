@@ -14,6 +14,9 @@ resolution-markers = [
     "python_full_version < '3.11.5' and sys_platform != 'win32'",
 ]
 
+[manifest]
+build-constraints = [{ name = "nanobind", specifier = "<3" }]
+
 [[package]]
 name = "accessible-pygments"
 version = "0.0.5"
