@@ -9,9 +9,6 @@ on:
       runs-on:
         required: true
         type: string
-      requirements-file:
-        required: true
-        type: string
 
 jobs:
   run_test:
@@ -30,8 +27,8 @@ jobs:
       run: |
         which python
         python --version
-        uv pip install . -r ${{ inputs.requirements-file }} -v --reinstall --system
-        python -c "import parsnip; print('parsnip', parsnip.__version__)"
+        uv sync --locked --no-editable --extra sympy --group tests
+        uv run python -c "import parsnip; print('parsnip', parsnip.__version__)"
 
     - name: Test with pytest
-      run: python -m ${{ runner.os != 'Windows' && 'pytest' || 'pytest tests' }} -v -n auto
+      run: uv run --frozen python -m ${{ runner.os != 'Windows' && 'pytest' || 'pytest tests' }} -v -n auto

@@ -25,7 +25,6 @@ jobs:
     with:
       python-version: ${{ matrix.python-version }}
       runs-on: ${{ matrix.runs-on }}
-      requirements-file: ".github/requirements-${{ matrix.python-version }}.txt"
 
   # run-tests-legacy-python:
   #   needs: run-tests-modern-python # Wait until tests pass on python 3.9+
@@ -38,7 +37,6 @@ jobs:
   #   with:
   #     python-version: ${{ matrix.python-version }}
   #     runs-on: ${{ matrix.runs-on }}
-  #     requirements-file: ".github/requirements-${{ matrix.python-version }}.txt"
 
   run-tests-windows:
     strategy:
@@ -50,7 +48,6 @@ jobs:
     with:
       python-version: ${{ matrix.python-version }}
       runs-on: ${{ matrix.runs-on }}
-      requirements-file: ".github/requirements-${{ matrix.python-version }}.txt"
 
   # This job is used to provide a single requirement for branch merge conditions.
   tests_complete:
