@@ -28,7 +28,7 @@ jobs:
         which python
         python --version
         uv sync --locked --no-editable --extra sympy --group tests
-        uv run python -c "import parsnip; print('parsnip', parsnip.__version__)"
+        uv run python -c "import parsnip, pytest, gemmi; print('parsnip', parsnip.__version__)"
 
     - name: Test with pytest
       run: uv run --frozen ${{ runner.os != 'Windows' && 'pytest' || 'pytest tests' }} -v -n auto
