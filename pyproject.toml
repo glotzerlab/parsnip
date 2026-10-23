@@ -129,8 +129,9 @@ filename = "doc/source/conf.py"
 filename = "parsnip/__init__.py"
 
 [tool.uv]
-# gemmi 0.7.5 does not build with nanobind 3.x, so we force a compatible version.
-build-constraint-dependencies = ["nanobind<3"]
+# gemmi 0.7.5 (no cp315 wheels) must build from source on Python 3.15+, but it
+# does not build with nanobind 3.x, so force a compatible version there only.
+build-constraint-dependencies = ['nanobind<3; python_version >= "3.15"']
 
 [tool.uv.workspace]
 members = [
