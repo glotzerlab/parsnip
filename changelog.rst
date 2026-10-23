@@ -16,7 +16,7 @@ Added
 - Tests and explicit support for Python 3.15
 
 Removed
-~~~~~~
+~~~~~~~
 - Support for Python 3.10
 
 v1.0.0 - 2026-07-08
