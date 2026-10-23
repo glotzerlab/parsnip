@@ -32,4 +32,4 @@ jobs:
         uv run python -c "import parsnip, pytest, gemmi; print('parsnip', parsnip.__version__)"
 
     - name: Test with pytest
-      run: uv run --frozen ${{ runner.os != 'Windows' && 'pytest' || 'pytest tests' }} -v -n auto
+      run: uv run --frozen pytest -v -n auto
