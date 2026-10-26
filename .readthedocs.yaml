@@ -13,5 +13,4 @@ python:
   install:
     - method: uv
       command: sync
-      groups:
-        - doc
+      groups: [doc]
