@@ -11,6 +11,14 @@ Fixed
 ~~~~~
 - Fixed ``dtype`` conversion with Numpy 2.5 (#245)
 
+Added
+~~~~~
+- Tests and explicit support for Python 3.15
+
+Removed
+~~~~~~~
+- Support for Python 3.10
+
 v1.0.0 - 2026-07-08
 -------------------
 

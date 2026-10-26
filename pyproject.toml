@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "parsnip-cif"
 version = "1.0.0"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 description = "Minimal library for parsing CIF & mmCIF files in Python."
 readme = "README.rst"
 license-files = ["LICENSE"]
@@ -16,12 +16,11 @@ dependencies = ["numpy>=1.19,<3.0", "more-itertools<12.0"]
 keywords = [
   "Development Status :: 4 - Beta",
   "License :: OSI Approved :: BSD License",
-  "Programming Language :: Python :: 3.7",
-  "Programming Language :: Python :: 3.8",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.15",
   "Topic :: Scientific/Engineering :: Physics",
   "Topic :: Scientific/Engineering :: Chemistry",
 ]
@@ -128,6 +127,11 @@ filename = "pyproject.toml"
 filename = "doc/source/conf.py"
 [[tool.bumpversion.files]]
 filename = "parsnip/__init__.py"
+
+[tool.uv]
+# gemmi 0.7.5 (no cp315 wheels) must build from source on Python 3.15+, but it
+# does not build with nanobind 3.x, so force a compatible version there only.
+build-constraint-dependencies = ['nanobind<3; python_version >= "3.15"']
 
 [tool.uv.workspace]
 members = [
